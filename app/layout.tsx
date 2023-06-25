@@ -2,6 +2,7 @@
 import "./styles/globals.scss";
 import "./styles/markdown.scss";
 import "./styles/highlight.scss";
+import "./styles/layout.scss";
 import { getClientConfig } from "./config/client";
 
 export const metadata = {
