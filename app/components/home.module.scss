@@ -43,7 +43,10 @@
   width: var(--sidebar-width);
   box-sizing: border-box;
   padding: 20px;
-  background-color: var(--second);
+  // background-color: var(--second);
+  background-color: #fef2f2;
+  background-image: linear-gradient(to top , #f2fdfe 0%, #ecfafd 100%);
+  
   display: flex;
   flex-direction: column;
   box-shadow: inset -2px 0px 2px 0px rgb(0, 0, 0, 0.05);
