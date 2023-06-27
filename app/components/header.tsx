@@ -1,22 +1,83 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-import styles from "./header.module.scss";
-
 import {
   HashRouter as Router,
   Routes,
   Route,
   useLocation,
+  Link,
 } from "react-router-dom";
 
-import { AuthPage } from "./auth";
+import React, { useState } from "react";
+import {
+  AliwangwangOutlined,
+  UsergroupAddOutlined,
+  HighlightOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
 
-function Screen() {
-  return <div className={styles.header}>abc</div>;
-}
+const items: MenuProps["items"] = [
+  {
+    label: "对话",
+    key: "chat",
+    icon: <AliwangwangOutlined />,
+  },
+  {
+    label: "助手(开发中)",
+    key: "assistant",
+    icon: <UsergroupAddOutlined />,
+    disabled: true,
+  },
+  {
+    label: "绘画(开发中)",
+    key: "draw",
+    icon: <HighlightOutlined />,
+    disabled: true,
+  },
+  {
+    label: "商城(开发中)",
+    key: "mall",
+    disabled: true,
+  },
+];
 
-export function Header() {
-  return <Screen />;
+import { Layout, Menu, Button } from "antd";
+
+import styles from "./header.module.scss";
+
+const { Header } = Layout;
+
+export function MainNav() {
+  const [current, setCurrent] = useState("mail");
+
+  const onClick: MenuProps["onClick"] = (e) => {
+    console.log("click ", e);
+    setCurrent(e.key);
+  };
+
+  return (
+    <Header className={styles.header}>
+      <div className={styles.logo}>
+        <img className={styles["logo-image"]} src="/logo-2.png" alt="Logo" />
+        <div className={styles["logo-text"]}>
+          <p className={styles["headline"]}>小光AI</p>
+          <p className={styles["subline"]}>XIAOGUANG.AI</p>
+        </div>
+      </div>
+      <div className={styles["ant-menu"]}>
+        <Menu
+          onClick={onClick}
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={items}
+          style={{ backgroundColor: "transparent", height: "50px" }}
+          className={styles["ant-menu"]}
+        />
+      </div>
+
+      {/* <div className={styles["login-register"]}>
+          <Button type="primary">Login / Register</Button>
+        </div> */}
+    </Header>
+  );
 }

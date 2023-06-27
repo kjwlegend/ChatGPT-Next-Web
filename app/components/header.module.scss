@@ -1,26 +1,81 @@
 .header {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  height: 50px;
+  height: var(--nav-height);
   width: 100%;
-  background-color: #282c34;
-  color: white;
-  font-size: 2rem;
+  color: rgb(91, 105, 230);
   font-weight: 600;
   text-align: center;
-  padding: 20px;
+  padding: 0 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  justify-content: space-between;
+  align-items: center;
 
+  background-color: #fef2f2;
+  background-image: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
+  
+}
 
-  .header-content {
-    background-color: aqua;
+ .logo {
+  margin-left: 15px;
+  margin-right: 40px;
+  height: inherit;
+  display: flex;
+  flex-direction: row;
+
+  .logo-img {
+    height: inherit;
+    margin-right: 10px;
+    
+    img {
+      height: inherit;
+    }
+  }
+  .logo-text{
+    font-size: 1.5rem;
+    line-height: 1rem;
+    font-weight: 600;
+    color: rgb(87 87 87);
+    text-align: left;
+    margin-left: 15px;
+
+    .headline {
+      letter-spacing: 3px;
+    }
+
+    .subline {
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
 
   }
-  
-  .header-title {
-  
+}
+
+.ant-menu {
+  flex-grow: 1;
+  font-size: 15px;
+
+  :global  .ant-menu-horizontal {
+    border-bottom: none;
+
+  }   
+
+}
+
+
+ .header-button {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+   &:hover {
+    background-color: white;
+    color: #282c34;
   }
 }
 

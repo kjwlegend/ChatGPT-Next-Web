@@ -25,7 +25,7 @@
 @media only screen and (min-width: 600px) {
   .tight-container {
     --window-width: 100vw;
-    --window-height: var(--full-height);
+    --window-height: calc(100vh - 165px);
     --window-content-width: calc(100% - var(--sidebar-width));
 
     @include container();

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Layout, Menu, Button } from "antd";
 
+const { Footer } = Layout;
 import styles from "./footer.module.scss";
 
 import {
@@ -13,10 +15,10 @@ import {
 
 import { AuthPage } from "./auth";
 
-function Screen() {
-  return <div className={styles.footer}>footer</div>;
-}
-
-export function Footer() {
-  return <Screen />;
+export function Bottom() {
+  return (
+    <Footer className={styles.footer}>
+      <div className={styles.footerContent}>CopyRight © 2023 by 经纬咨询</div>
+    </Footer>
+  );
 }
