@@ -1,45 +1,55 @@
 import styles from "./auth.module.scss";
-import { IconButton } from "./button";
 
-import { useNavigate } from "react-router-dom";
-import { Path } from "../constant";
-import { useAccessStore } from "../store";
 import Locale from "../locales";
 
-import BotIcon from "../icons/bot.svg";
+import { Tabs } from "antd";
+import type { TabsProps } from "antd";
+
+import CodeLogin from "./code-login";
+import Register from "./register";
+import Login from "./login";
+
+const onChange = (key: string) => {
+  console.log(key);
+};
+
+const items: TabsProps["items"] = [
+  {
+    key: "1",
+    label: `快捷密码登录`,
+    children: <CodeLogin />,
+  },
+  {
+    key: "2",
+    label: `账户登录`,
+    children: <Login />,
+    disabled: true,
+  },
+  {
+    key: "3",
+    label: `账号注册`,
+    children: <Register />,
+    disabled: true,
+  },
+];
 
 export function AuthPage() {
-  const navigate = useNavigate();
-  const access = useAccessStore();
-
-  const goHome = () => navigate(Path.Home);
-
   return (
     <div className={styles["auth-page"]}>
-      <div className={`no-dark ${styles["auth-logo"]}`}>
-        <BotIcon />
+      <div className={styles["welcome-header"]}>
+        <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
+        <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
       </div>
 
-      <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-      <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
-
-      <input
-        className={styles["auth-input"]}
-        type="password"
-        placeholder={Locale.Auth.Input}
-        value={access.accessCode}
-        onChange={(e) => {
-          access.updateCode(e.currentTarget.value);
-        }}
-      />
-
-      <div className={styles["auth-actions"]}>
-        <IconButton
-          text={Locale.Auth.Confirm}
-          type="primary"
-          onClick={goHome}
+      <div className={styles["login-container"]}>
+        <Tabs
+          defaultActiveKey="1"
+          items={items}
+          onChange={onChange}
+          size="large"
+          tabBarGutter={50}
+          centered={true}
         />
-        <IconButton text={Locale.Auth.Later} onClick={goHome} />
       </div>
     </div>
   );

@@ -1,36 +1,38 @@
 .auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
   width: 100%;
-  flex-direction: column;
-
-  .auth-logo {
-    transform: scale(1.4);
-  }
-
-  .auth-title {
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 2;
-  }
-
-  .auth-tips {
-    font-size: 14px;
-  }
-
-  .auth-input {
-    margin: 3vh 0;
-  }
-
-  .auth-actions {
+  margin: 0 auto;
+  padding-top: 50px;
+  
+   .welcome-header {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-direction: column;
+    margin-bottom: 20px;
+    text-align: center;
 
-    button:not(:last-child) {
-      margin-bottom: 10px;
+    .auth-title {
+      font-size: 34px;
+      font-weight: bold;
+      line-height: 2;
     }
-  }
+  
+    .auth-tips {
+      font-size: 24px;
+    }
+
+  
+
+   }
+   .login-container {
+    max-width: 500px;
+    margin: auto;
+
+   }
+
+}
+
+.ant-tabs-nav-wrap {
+  display: flex;
+  justify-content: space-around;
 }

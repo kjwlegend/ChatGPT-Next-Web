@@ -65,7 +65,8 @@
   --window-content-width: calc(100% - var(--sidebar-width));
   --message-max-width: 80%;
   --full-height: 100%;
-  --nav-height: 100px;
+  --nav-height: 80px;
+  --footer-height: 50px;
 }
 
 @media only screen and (max-width: 600px) {
@@ -230,7 +231,7 @@ input[type="password"] {
   background: var(--white);
   color: var(--black);
   padding: 0 10px;
-  max-width: 50%;
+  max-width: 100%;
   font-family: inherit;
 }
 

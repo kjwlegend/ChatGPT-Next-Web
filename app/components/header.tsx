@@ -15,6 +15,8 @@ import {
   HighlightOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
+import LoadingIcon from "../icons/three-dots.svg";
+import { useAppConfig } from "../store/config";
 
 const items: MenuProps["items"] = [
   {
@@ -48,12 +50,22 @@ import styles from "./header.module.scss";
 const { Header } = Layout;
 
 export function MainNav() {
-  const [current, setCurrent] = useState("mail");
+  const [current, setCurrent] = useState("chat");
 
   const onClick: MenuProps["onClick"] = (e) => {
     console.log("click ", e);
     setCurrent(e.key);
   };
+
+  // 等待样式表加载完后, 再显示
+  const [show, setShow] = useState(false);
+  setTimeout(() => {
+    setShow(true);
+  }, 200);
+
+  if (!show) {
+    return <LoadingIcon />;
+  }
 
   return (
     <Header className={styles.header}>

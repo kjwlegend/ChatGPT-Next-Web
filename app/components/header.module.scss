@@ -34,7 +34,6 @@
   }
   .logo-text{
     font-size: 1.5rem;
-    line-height: 1rem;
     font-weight: 600;
     color: rgb(87 87 87);
     text-align: left;
@@ -42,11 +41,15 @@
 
     .headline {
       letter-spacing: 3px;
+    line-height: 0.5rem;
+
     }
 
     .subline {
       font-size: 1rem;
       letter-spacing: 1px;
+    line-height: 0.5rem;
+
     }
 
 
