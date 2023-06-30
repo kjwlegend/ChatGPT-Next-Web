@@ -17,7 +17,6 @@
   height: var(--window-height);
 }
 
-
 .container {
   @include container();
 }
@@ -45,8 +44,8 @@
   padding: 20px;
   // background-color: var(--second);
   background-color: #fef2f2;
-  background-image: linear-gradient(to top , #f2fdfe 0%, #ecfafd 100%);
-  
+  background-image: linear-gradient(to top, #f2fdfe 0%, #ecfafd 100%);
+
   display: flex;
   flex-direction: column;
   box-shadow: inset -2px 0px 2px 0px rgb(0, 0, 0, 0.05);
@@ -101,10 +100,11 @@
   .container {
     min-height: unset;
     min-width: unset;
-    max-height: unset;
+    max-height: var(--window-height);
     min-width: unset;
     border: 0;
     border-radius: 0;
+    height: var(--window-height);
   }
 
   .sidebar {

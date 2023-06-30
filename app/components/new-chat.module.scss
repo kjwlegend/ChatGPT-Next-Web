@@ -8,63 +8,66 @@
   justify-content: center;
   flex-direction: column;
 
-  .mask-header {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    animation: slide-in-from-top ease 0.3s;
-  }
-
-  .mask-cards {
+  .mask-intro {
     display: flex;
     margin-top: 5vh;
     margin-bottom: 20px;
     animation: slide-in ease 0.3s;
 
-    .mask-card {
-      padding: 20px 10px;
-      border: var(--border-in-light);
-      box-shadow: var(--card-shadow);
-      border-radius: 14px;
-      background-color: var(--white);
-      transform: scale(1);
+    .profile {
+      height: 260px;
+      img {
+        height: 100%;
+      }
+    }
+    .des {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
 
-      &:first-child {
-        transform: rotate(-15deg) translateY(5px);
+      .title {
+        font-size: 32px;
+        font-weight: bolder;
+        margin-bottom: 1vh;
+        animation: slide-in ease 0.35s;
       }
 
-      &:last-child {
-        transform: rotate(15deg) translateY(5px);
+      .sub-title {
+        animation: slide-in ease 0.4s;
+      }
+
+      .actions {
+        margin-top: 5vh;
+        margin-bottom: 2vh;
+        animation: slide-in ease 0.45s;
+        display: flex;
+        justify-content: center;
+        font-size: 12px;
+
+        .skip {
+          margin-left: 10px;
+        }
       }
     }
   }
 
-  .title {
-    font-size: 32px;
-    font-weight: bolder;
-    margin-bottom: 1vh;
-    animation: slide-in ease 0.35s;
-  }
+  .mask-card {
+    padding: 20px 10px;
+    border: var(--border-in-light);
+    box-shadow: var(--card-shadow);
+    border-radius: 14px;
+    background-color: var(--white);
+    transform: scale(1);
 
-  .sub-title {
-    animation: slide-in ease 0.4s;
-  }
+    &:first-child {
+      transform: rotate(-15deg) translateY(5px);
+    }
 
-  .actions {
-    margin-top: 5vh;
-    margin-bottom: 2vh;
-    animation: slide-in ease 0.45s;
-    display: flex;
-    justify-content: center;
-    font-size: 12px;
-
-    .skip {
-      margin-left: 10px;
+    &:last-child {
+      transform: rotate(15deg) translateY(5px);
     }
   }
-
   .masks {
     flex-grow: 1;
     width: 100%;
@@ -118,6 +121,55 @@
         .mask-name {
           margin-left: 10px;
           font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+// mobile
+@media (max-width: 768px) {
+  .new-chat {
+    .mask-intro {
+      flex-direction: column;
+      margin-top: 0;
+      margin-bottom: 0;
+      align-items: center;
+      justify-content: center;
+
+      .profile {
+        height: 200px;
+        width: 200px;
+        margin-bottom: 20px;
+        img {
+          display: block;
+          margin: auto;
+        }
+      }
+
+      .des {
+        .title {
+          font-size: 24px;
+        }
+        .sub-title {
+          font-size: 12px;
+        }
+        .actions {
+          flex-direction: row;
+          justify-content: space-around;
+        }
+      }
+    }
+
+    .masks {
+      display: none;
+      .mask-row {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 0;
+
+        .mask {
+          margin-bottom: 10px;
         }
       }
     }

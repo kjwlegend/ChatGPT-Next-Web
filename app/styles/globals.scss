@@ -72,7 +72,7 @@
 @media only screen and (max-width: 600px) {
   :root {
     --window-width: 100vw;
-    --window-height: var(--full-height);
+    --window-height: 85vh;
     --sidebar-width: 100vw;
     --window-content-width: var(--window-width);
     --message-max-width: 100%;

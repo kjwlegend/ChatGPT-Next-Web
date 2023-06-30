@@ -14,10 +14,9 @@
 
   background-color: #fef2f2;
   background-image: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
-  
 }
 
- .logo {
+.logo {
   margin-left: 15px;
   margin-right: 40px;
   height: inherit;
@@ -27,12 +26,12 @@
   .logo-img {
     height: inherit;
     margin-right: 10px;
-    
+
     img {
       height: inherit;
     }
   }
-  .logo-text{
+  .logo-text {
     font-size: 1.5rem;
     font-weight: 600;
     color: rgb(87 87 87);
@@ -41,18 +40,14 @@
 
     .headline {
       letter-spacing: 3px;
-    line-height: 0.5rem;
-
+      line-height: 0.5rem;
     }
 
     .subline {
       font-size: 1rem;
       letter-spacing: 1px;
-    line-height: 0.5rem;
-
+      line-height: 0.5rem;
     }
-
-
   }
 }
 
@@ -60,15 +55,12 @@
   flex-grow: 1;
   font-size: 15px;
 
-  :global  .ant-menu-horizontal {
+  :global .ant-menu-horizontal {
     border-bottom: none;
-
-  }   
-
+  }
 }
 
-
- .header-button {
+.header-button {
   background-color: transparent;
   border: 2px solid white;
   color: white;
@@ -76,9 +68,40 @@
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-   &:hover {
+  &:hover {
     background-color: white;
     color: #282c34;
   }
 }
 
+// mobile version
+@media (max-width: 768px) {
+  .header {
+    padding: 0 10px;
+    .logo {
+      margin: auto;
+      // justify-content: center;
+      // align-items: center;
+      .logo-text {
+        font-size: 1.5rem;
+        margin: auto 25px;
+        .headline {
+          letter-spacing: 1px;
+          line-height: 0.5rem;
+        }
+        .subline {
+          font-size: 0.8rem;
+          letter-spacing: 1px;
+          line-height: 0.5rem;
+        }
+      }
+    }
+    .header-button {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+    }
+  }
+  .ant-menu {
+    display: none;
+  }
+}
