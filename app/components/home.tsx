@@ -150,6 +150,8 @@ function Screen() {
   );
 }
 
+import { MainNav } from "./header";
+import { Bottom } from "./footer";
 export function Home() {
   useSwitchTheme();
 
@@ -164,7 +166,9 @@ export function Home() {
   return (
     <ErrorBoundary>
       <Router>
+        <MainNav />
         <Screen />
+        <Bottom />
       </Router>
     </ErrorBoundary>
   );

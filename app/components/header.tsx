@@ -8,7 +8,7 @@ import {
   Link,
 } from "react-router-dom";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AliwangwangOutlined,
   UsergroupAddOutlined,
@@ -17,6 +17,7 @@ import {
 import type { MenuProps } from "antd";
 import LoadingIcon from "../icons/three-dots.svg";
 import { useAppConfig } from "../store/config";
+import { useMobileScreen } from "../utils";
 
 const items: MenuProps["items"] = [
   {
@@ -52,16 +53,16 @@ const { Header } = Layout;
 export function MainNav() {
   const [current, setCurrent] = useState("chat");
 
-  const onClick: MenuProps["onClick"] = (e) => {
-    console.log("click ", e);
-    setCurrent(e.key);
-  };
-
   // 等待样式表加载完后, 再显示
   const [show, setShow] = useState(false);
   setTimeout(() => {
     setShow(true);
   }, 200);
+
+  const onClick: MenuProps["onClick"] = (e) => {
+    console.log("click ", e);
+    setCurrent(e.key);
+  };
 
   if (!show) {
     return <LoadingIcon />;

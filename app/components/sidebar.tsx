@@ -10,7 +10,7 @@ import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import MaskIcon from "../icons/mask.svg";
 import PluginIcon from "../icons/plugin.svg";
-
+import { MainNav } from "./header";
 import Locale from "../locales";
 
 import { useAppConfig, useChatStore } from "../store";
@@ -106,7 +106,7 @@ export function SideBar(props: { className?: string }) {
   const { onDragMouseDown, shouldNarrow } = useDragSideBar();
   const navigate = useNavigate();
   const config = useAppConfig();
-
+  const isMobileScreen = useMobileScreen();
   useHotKey();
 
   return (
@@ -115,6 +115,8 @@ export function SideBar(props: { className?: string }) {
         shouldNarrow && styles["narrow-sidebar"]
       }`}
     >
+      {isMobileScreen && <MainNav />}
+
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
         <div className={styles["sidebar-title"]} data-tauri-drag-region>
           授权码请联系微信: 56349014

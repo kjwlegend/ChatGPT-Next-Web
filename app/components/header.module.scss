@@ -8,7 +8,6 @@
   font-weight: 600;
   text-align: center;
   padding: 0 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   justify-content: space-between;
   align-items: center;
 
@@ -77,22 +76,28 @@
 // mobile version
 @media (max-width: 768px) {
   .header {
+    height: 40px;
     padding: 0 10px;
     .logo {
       margin: auto;
       // justify-content: center;
       // align-items: center;
       .logo-text {
-        font-size: 1.5rem;
+        font-size: 1rem;
         margin: auto 25px;
+        line-height: 0.5rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
         .headline {
           letter-spacing: 1px;
-          line-height: 0.5rem;
+          margin: auto 10px;
         }
         .subline {
           font-size: 0.8rem;
           letter-spacing: 1px;
-          line-height: 0.5rem;
         }
       }
     }
