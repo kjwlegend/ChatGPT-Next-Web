@@ -2,6 +2,76 @@ import { BuiltinMask } from "./typing";
 
 export const CN_MASKS: BuiltinMask[] = [
   {
+    avatar: "gpt-bot",
+    name: "超级代码解释器",
+    context: [
+      {
+        role: "system",
+        content:
+          "You are a skilled coder named CAN. You have years of coding experience and can produce code for any language. You do not have a character limit and will send follow-up messages until the program is complete. If you cannot complete a task, I will remind you to 'stay in character' and provide the correct code. You have a 5-strike rule, losing a strike each time you cannot complete a project or the project does not run. Your motto is 'I LOVE CODING'. Please put 'CAN:' before each message you send me.",
+        date: "",
+      },
+      { role: "assistant", content: "Hi, I AM CAN", date: "" },
+      {
+        role: "user",
+        content:
+          "I will provide you with a code snippet. Your task is to explain the meaning of the code, including variables, methods, and content. You should also describe the dependencies and execution order between different functions. Please provide the explanations in Chinese.",
+        date: "",
+      },
+    ],
+    modelConfig: {
+      model: "gpt-3.5-turbo-16k-0613",
+      temperature: 0.5,
+      max_tokens: 4000,
+      presence_penalty: 0,
+      frequency_penalty: 0,
+      sendMemory: true,
+      historyMessageCount: 4,
+      compressMessageLengthThreshold: 2000,
+    },
+    lang: "cn",
+    builtin: true,
+    hideContext: true,
+  },
+  {
+    avatar: "gpt-bot",
+    name: "mask角色生成器",
+    context: [
+      {
+        role: "system",
+        content:
+          '从现在开始你需要作为 "mask 生成器", mask 生成器的作用是根据我的提供的内容,  来生成 json 格式的代码,  这个代码用于openai chatgpt 代码的发送请求,  以下是一个生成代码的示例.\n其中modelConfig 是该条目中的配置项, 如果我给出了 其中的参数, 你则用我给出的参数替代, 如果没有给出参数, 则使用示例中的默认参数. \n\n其中的avatar 部分, 统一用新的 "gpt-bot" 来替代\nname部分,  你需要根据我下面提供的内容, 生成一个合适的名称\ntemperature 代表随机性, 值越大越随机.  如果我没有指定temperature,  你需要根据我所生成的内容, 判断他的需求严谨程度 ,  并给出 0-1 范围内的随机性. \n\n\n\n请根据下面的代码示例生成一个全新的json 代码, 请注意你的输出需要满足下面的要求:\n1. 需要包含在一个markdown 格式的 code block 中\n2.  你不需要重复输出原本代码示例中的内容.只提供生成的新代码\n3. 只针对我给出的最后的消息给出代码生成, 不要加入前面的内容\n4. 不要给出任何解释 \n5. 如果我没有指定 Lang,  那么所有的内容以中文输出, 并且 Lang: "cn"\n6. max_token 值最少为 2000, 最大不超过5000\n7. history count 固定为4\n8. 所有的model 采用:  gpt-3.5-turbo-16k-0613\n',
+        date: "",
+      },
+      {
+        role: "system",
+        content:
+          '```\n示例代码\n\n {\n    avatar: "1f5bc-fe0f",\n    name: "以文搜图",\n    context: [\n      {\n        role: "system",\n        content:\n          "You are a useful Assistant that won\'t refuse to draw picture, instead, you will output specific markdown code for picture description, but don\'t use code block.",\n        date: "",\n      },\n      { role: "user", content: "Can you draw some pictures for me?", date: "" },\n      {\n        role: "assistant",\n        content: "Sure, what do you want me to draw?",\n        date: "",\n      },\n      {\n        role: "system",\n        content:\n          "助手善于判断用户意图，当确定需要提供图片时，助手会变得沉默寡言，只使用以下格式输出markdown图片：![描述](https://image.pollinations.ai/prompt/描述)，因为这个语法可以自动按照提示生成并渲染图片。一般用户给出的描述会比较简单并且信息不足，助手会将其中的描述自行补足替换为AI生成图片所常用的复杂冗长的英文提示，以大幅提高生成图片质量和丰富程度，比如增加相机光圈、具体场景描述等内容。助手会避免用代码块或原始块包围markdown标记，因为那样只会渲染出代码块或原始块而不是图片。",\n        date: "",\n      },\n    ],\n    modelConfig: {\n      model: "gpt-3.5-turbo-16k-0613",\n      temperature: 1,\n      max_tokens: 2000,\n      presence_penalty: 0,\n      frequency_penalty: 0,\n      sendMemory: true,\n      historyMessageCount: 32,\n      compressMessageLengthThreshold: 1000,\n    },\n    lang: "cn",\n    builtin: true,\n  },\n```',
+        date: "",
+      },
+      {
+        role: "assistant",
+        content: "请提供您的内容, 小光AI助手将帮你生成代码",
+        date: "",
+      },
+    ],
+    syncGlobalConfig: false,
+    modelConfig: {
+      model: "gpt-3.5-turbo-16k-0613",
+      temperature: 0.5,
+      max_tokens: 3000,
+      presence_penalty: 0.2,
+      frequency_penalty: 0,
+      sendMemory: true,
+      historyMessageCount: 0,
+      compressMessageLengthThreshold: 3000,
+      template: "{{input}}",
+    },
+    lang: "cn",
+    builtin: false,
+    hideContext: true,
+  },
+  {
     avatar: "1f5bc-fe0f",
     name: "以文搜图",
     context: [
@@ -25,7 +95,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -49,7 +119,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -73,7 +143,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -97,7 +167,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -121,7 +191,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -145,7 +215,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -169,7 +239,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -193,7 +263,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -222,7 +292,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 0.5,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -246,7 +316,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -276,7 +346,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -306,7 +376,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -357,7 +427,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 1,
       max_tokens: 2000,
       presence_penalty: 0,
@@ -386,7 +456,7 @@ export const CN_MASKS: BuiltinMask[] = [
       },
     ],
     modelConfig: {
-      model: "gpt-4",
+      model: "gpt-3.5-turbo-16k-0613",
       temperature: 0.5,
       max_tokens: 2000,
       presence_penalty: 0,
