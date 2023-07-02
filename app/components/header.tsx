@@ -13,34 +13,47 @@ import {
   AliwangwangOutlined,
   UsergroupAddOutlined,
   HighlightOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
+
 import type { MenuProps } from "antd";
 import LoadingIcon from "../icons/three-dots.svg";
 import { useAppConfig } from "../store/config";
 import { useMobileScreen } from "../utils";
 
-const items: MenuProps["items"] = [
+const items = [
   {
     label: "对话",
+    title: "对话",
     key: "chat",
     icon: <AliwangwangOutlined />,
+    url: "/chat",
+  },
+  {
+    label: "介绍",
+    key: "intro",
+    icon: <ContainerOutlined />,
+    url: "/intro",
   },
   {
     label: "助手(开发中)",
     key: "assistant",
     icon: <UsergroupAddOutlined />,
     disabled: true,
+    url: "/assistant",
   },
   {
     label: "绘画(开发中)",
     key: "draw",
     icon: <HighlightOutlined />,
     disabled: true,
+    url: "/draw",
   },
   {
     label: "商城(开发中)",
     key: "mall",
     disabled: true,
+    url: "/mall",
   },
 ];
 
@@ -51,7 +64,11 @@ import styles from "./header.module.scss";
 const { Header } = Layout;
 
 export function MainNav() {
-  const [current, setCurrent] = useState("chat");
+  const location = useLocation();
+  const [current, setCurrent] = useState(() => {
+    const current = location.pathname.slice(1);
+    return current || "chat";
+  });
 
   // 等待样式表加载完后, 再显示
   const [show, setShow] = useState(false);
@@ -60,7 +77,6 @@ export function MainNav() {
   }, 200);
 
   const onClick: MenuProps["onClick"] = (e) => {
-    console.log("click ", e);
     setCurrent(e.key);
   };
 
@@ -82,10 +98,28 @@ export function MainNav() {
           onClick={onClick}
           selectedKeys={[current]}
           mode="horizontal"
-          items={items}
           style={{ backgroundColor: "transparent", height: "50px" }}
           className={styles["ant-menu"]}
-        />
+        >
+          {items.map((item) => {
+            if (item.disabled) {
+              return (
+                <Menu.Item key={item.key} disabled>
+                  {item.icon}
+                  {item.label}
+                </Menu.Item>
+              );
+            }
+            return (
+              <Menu.Item key={item.key}>
+                <Link to={item.url}>
+                  {item.icon}
+                  {item.label}
+                </Link>
+              </Menu.Item>
+            );
+          })}
+        </Menu>
       </div>
 
       {/* <div className={styles["login-register"]}>

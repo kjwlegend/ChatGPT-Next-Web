@@ -57,6 +57,11 @@
   :global .ant-menu-horizontal {
     border-bottom: none;
   }
+  :global .ant-menu-title-content {
+    .anticon {
+      margin-right: 10px;
+    }
+  }
 }
 
 .header-button {

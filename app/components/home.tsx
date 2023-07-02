@@ -24,6 +24,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
+import Intro from "./intro";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
@@ -134,7 +135,6 @@ function Screen() {
       ) : (
         <>
           <SideBar className={isHome ? styles["sidebar-show"] : ""} />
-
           <div className={styles["window-content"]} id={SlotID.AppBody}>
             <Routes>
               <Route path={Path.Home} element={<Chat />} />
@@ -167,7 +167,10 @@ export function Home() {
     <ErrorBoundary>
       <Router>
         <MainNav />
-        <Screen />
+        <Routes>
+          <Route path={Path.Intro} element={<Intro />} />
+          <Route path="*" element={<Screen />} />
+        </Routes>
         <Bottom />
       </Router>
     </ErrorBoundary>

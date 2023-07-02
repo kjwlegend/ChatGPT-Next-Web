@@ -1,0 +1,95 @@
+.home-page {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+
+  .section {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    
+    text-align: center;
+    color: #99aed6;
+
+
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      text-align: left;
+      margin-left: 40px;
+
+      li {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+    }
+
+    :global .ant-carousel {
+
+
+      .slick-slide {
+        text-align: left;
+        overflow: hidden;
+        position: relative;
+
+      }
+
+
+
+    }
+
+    .ant-carousel .slick-slide h2 {
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .ant-carousel .slick-slide h3 {
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .ant-carousel .slick-slide p {
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .ant-carousel .slick-dots li button {
+      width: 10px;
+      height: 10px;
+      background-color: #fff;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    .ant-carousel .slick-dots li.slick-active button {
+      opacity: 1;
+    }
+  }
+
+  .ant-card {
+    text-align: left;
+    padding: 20px;
+
+    p {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
