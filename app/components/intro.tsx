@@ -40,8 +40,8 @@ const featureContent = [
 
 const whyChooseUsContent = [
   {
-    title: "为什么小光",
-    colorText: "有点不一样",
+    title: "为什么小光有点",
+    colorText: "不一样？",
     subtitle: "由专业提示词工程师持续微调的智能助手",
     blocks: [
       {
@@ -82,7 +82,7 @@ const whyChooseUsContent = [
 const differentFromOthersContent = [
   {
     title: "为什么其他平台",
-    colorText: "不够智能?",
+    colorText: "不智能?",
     cards: [
       {
         title: "通用模型的局限",
@@ -115,7 +115,7 @@ const IconFont = createFromIconfontCN({
 });
 const whatWeCanDoContent = [
   {
-    title: "小光 AI 能够",
+    title: "小光AI 能为你",
     colorText: "做什么?",
     cards: [
       {
@@ -126,19 +126,19 @@ const whatWeCanDoContent = [
       },
       {
         icon: <IconFont type="icon-yuyin" />,
-        title: "语音交互",
+        title: "语音交互(即将上线)",
         content:
           "提供语音交互的功能，用户可以直接通过语音与小光 AI 智能助手进行交流",
       },
       {
         icon: <IconFont type="icon-linggan" />,
-        title: "图像生成",
+        title: "图像生成(即将上线)",
         content:
           "基于用户输入的文本，生成对应的图像，生成对应的海报, 产品图片等",
       },
       {
         icon: <IconFont type="icon-baogao" />,
-        title: "文件生成及文字总结",
+        title: "文件生成(即将上线)",
         content:
           "支持上传 PDF, Word, PPT 等文件，生成对应的文字总结, 支持特定领域的文件文案生成",
       },
