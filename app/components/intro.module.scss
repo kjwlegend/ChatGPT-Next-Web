@@ -4,6 +4,10 @@
   flex-direction: column;
   width: 100%;
   padding: 20px;
+  background-image: url('/bg.png');
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-attachment: fixed;
 
   .section {
     padding: 20px;
@@ -11,37 +15,9 @@
     margin: 20px auto;
     
     text-align: center;
-    color: #99aed6;
-
-
-
-    h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    ul {
-      text-align: left;
-      margin-left: 40px;
-
-      li {
-        font-size: 16px;
-        margin-bottom: 5px;
-      }
-    }
+    color: var(--gray-dark);
 
     :global .ant-carousel {
-
 
       .slick-slide {
         text-align: left;
@@ -49,47 +25,134 @@
         position: relative;
 
       }
+    }
 
 
+    h2 {
+      font-size: 36px;
+      margin-bottom: 40px;
+
+
+      span {
+        padding-left: 5px;
+        letter-spacing: 2px;
+        background-image: linear-gradient(117deg,#0547ff -84%,#d683ff 125%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+
+    :global .ant-card {
+      padding: 20px;
+
+      .ant-card-head{
+        color: #5c86fc;
+        font-size: 22px;
+        letter-spacing: 1px;
+
+      }
+      p {
+        font-size: 18px;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+      }
+    }
+    
+    &.whydifferent{
+      img {
+        max-width: 500px;
+        height: auto;
+      }
+      h3 {
+        color: #ff2b2b;
+        font-size: 32px;
+        letter-spacing: 1px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+  
+      p {
+        font-size: 20px;
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+        max-width: 520px;
+        text-align: center;
+        margin: auto;
+      }
 
     }
 
-    .ant-carousel .slick-slide h2 {
+    &.whatcanwedo {
+     :global .ant-card-head {
+        color: #5c86fc;
+      }
+      :global .ant-card-body {
+        padding-top:  0;
+      }
+     :global .anticon svg {
+        font-size: 50px;
+      }
+    }
+  }
+
+  .action {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(112.58deg,#7aa8ff -5.16%,#e9adff 105.31%);
+    width: 80%;
+    max-width: 800px;
+    height: 200px;
+    border-radius: 15px;
+    margin: 0 auto;
+
+    h3 {
       font-size: 24px;
-      color: #fff;
+      font-weight: 400;
+      color: rgb(255, 255, 255);
+      margin-top: 0;
     }
-
-    .ant-carousel .slick-slide h3 {
-      font-size: 18px;
-      color: #fff;
+    
+    button {
+      margin : 0 20px;
     }
-
-    .ant-carousel .slick-slide p {
-      font-size: 16px;
-      color: #fff;
+    .blue {
+      background-color: #0547ff;
     }
-
-    .ant-carousel .slick-dots li button {
-      width: 10px;
-      height: 10px;
-      background-color: #fff;
-      border-radius: 50%;
-      opacity: 0.5;
-    }
-
-    .ant-carousel .slick-dots li.slick-active button {
-      opacity: 1;
+    .black {
+      background-color: #000000;
+      color: #fff;;
     }
   }
 
-  .ant-card {
+  :global .ant-collapse {
+    color: rgba(0,0,0,0.65);
     text-align: left;
-    padding: 20px;
+    font-size: 16px;
+    letter-spacing: 1px;
 
-    p {
-      font-size: 16px;
-      margin-bottom: 10px;
+    .ant-collapse-item {
+      border: none;
+      border-bottom: 1px solid #e8e8e8;
+
+
+      .ant-collapse-header {
+        padding: 20px;
+        font-size: 20px;
+        letter-spacing: 1px;
+        color: rgba(0,0,0,0.65);
+      }
+      .ant-collapse-content {
+        padding: 20px;
+        font-size: 18px;
+        letter-spacing: 1px;
+        color: rgba(0,0,0,0.65);
+      }
     }
   }
+
 }
 
