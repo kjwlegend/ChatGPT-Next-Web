@@ -33,6 +33,7 @@ export const DEFAULT_CONFIG = {
   modelConfig: {
     model: "gpt-3.5-turbo-16k" as ModelType,
     temperature: 0.5,
+    top_p: 1,
     max_tokens: 3000,
     presence_penalty: 0.2,
     frequency_penalty: 0.3,
@@ -158,6 +159,9 @@ export const ModalConfigValidator = {
   temperature(x: number) {
     return limitNumber(x, 0, 1, 1);
   },
+  top_p(x: number) {
+    return limitNumber(x, 0, 1, 1);
+  },
 };
 
 export const useAppConfig = create<ChatConfigStore>()(
@@ -177,15 +181,16 @@ export const useAppConfig = create<ChatConfigStore>()(
     }),
     {
       name: StoreKey.Config,
-      version: 3.2,
+      version: 3.3,
       migrate(persistedState, version) {
-        if (version === 3.2) return persistedState as any;
+        if (version === 3.3) return persistedState as any;
 
         const state = persistedState as ChatConfig;
         state.modelConfig.sendMemory = true;
         state.modelConfig.historyMessageCount = 5;
         state.modelConfig.compressMessageLengthThreshold = 3000;
         state.modelConfig.frequency_penalty = 0;
+        state.modelConfig.top_p = 1;
         state.modelConfig.template = DEFAULT_INPUT_TEMPLATE;
         state.dontShowMaskSplashScreen = false;
 
