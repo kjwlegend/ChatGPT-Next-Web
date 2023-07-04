@@ -8,6 +8,7 @@ import {
   Collapse,
   Button,
   Divider,
+  Tabs,
 } from "antd";
 import { createFromIconfontCN } from "@ant-design/icons";
 import type { CollapseProps } from "antd";
@@ -81,8 +82,8 @@ const whyChooseUsContent = [
 
 const differentFromOthersContent = [
   {
-    title: "为什么其他平台",
-    colorText: "不智能?",
+    title: "为什么多数平台",
+    colorText: "差点意思?",
     cards: [
       {
         title: "通用模型的局限",
@@ -266,7 +267,7 @@ const WhyChooseUsSection: React.FC = () => {
 };
 const DifferentFromOthersSection: React.FC = () => {
   return (
-    <div className={styles["section"]}>
+    <div className={`${styles["section"]} ${styles["differentothers"]}`}>
       {differentFromOthersContent.map((content, index) => (
         <div key={index}>
           <Divider>
@@ -283,6 +284,148 @@ const DifferentFromOthersSection: React.FC = () => {
               </Col>
             ))}
           </Row>
+        </div>
+      ))}
+      <div className={styles["conclusion"]}>
+        现在多数的大语言模型的应用, 例如 chatGPT, Claude, Bard, 百度的文心一言,
+        讯飞星火等
+        <br />
+        在基础训练参数,信息处理能力逻辑推理能力都十分接近
+        <br /> 获得更好的结果的关键在于<h3>提示词工程</h3>
+      </div>
+    </div>
+  );
+};
+
+const tab1Content = (
+  <Row gutter={[16, 16]} align="middle">
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <p>
+        除了零样本和少样本提示词技术以外, 小光AI还使用了链式思考
+        (Chain-of-Thought Prompting) 技术,
+        链式思考（CoT）提示通过中间推理步骤实现了复杂的推理能力。您可以将其与少样本提示相结合，以获得更好的结果，以便在回答之前进行推理的更复杂的任务。
+        <a href="https://arxiv.org/abs/2201.11903"> 论文地址</a>
+      </p>
+    </Col>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <img
+        src="https://www.promptingguide.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcot.1933d9fe.png&w=1080&q=75"
+        alt="Image"
+      />
+    </Col>
+  </Row>
+);
+
+const tab2Content = (
+  <Row gutter={[16, 16]} align="middle">
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <p>
+        对于需要探索或预判战略的复杂任务来说，传统或简单的提示技巧是不够的。最近，Yao
+        et el. (2023)(opens in a new tab) 提出了思维树（Tree of
+        Thoughts，ToT）框架，该框架基于思维链提示进行了总结，引导语言模型探索把思维作为中间步骤来解决通用问题。使用这种方法，LM
+        能够自己对严谨推理过程的中间思维进行评估。
+        <a href="https://arxiv.org/abs/2305.10601"> 论文地址</a>
+      </p>
+    </Col>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <img
+        src="https://www.promptingguide.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FTOT.3b13bc5e.png&w=1200&q=75"
+        alt="Image"
+      />
+    </Col>
+  </Row>
+);
+
+const tab3Content = (
+  <Row gutter={[16, 16]} align="middle">
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <p>
+        思维链（CoT）方法依赖于一组固定的人工注释范例。问题在于，这些范例可能不是不同任务的最有效示例。为了解决这个问题，Diao等人（2023）(opens
+        in a new
+        tab)最近提出了一种新的提示方法，称为Active-Prompt，以适应LLMs到不同的任务特定示例提示（用人类设计的CoT推理进行注释）。
+        <a href="https://arxiv.org/pdf/2302.12246.pdf"> 论文地址</a>
+      </p>
+    </Col>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <img
+        src="https://www.promptingguide.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Factive-prompt.f739657b.png&w=1200&q=75"
+        alt="Image"
+      />
+    </Col>
+  </Row>
+);
+
+const tab4Content = (
+  <Row gutter={[16, 16]} align="middle">
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <p>
+        当我们将 GPT 的对话界面与编程语言的 shell
+        进行类比时，封装的提示可以被视为形成一个函数。这个函数有一个独特的名称，当我们用输入文本调用这个名称时，它根据内部设定的规则产生结果。简而言之，我们构建了一个可重用的提示，它有一个易于与
+        GPT 交互的名称。这就像有一个方便的工具，让 GPT 代表我们执行特定的任务 -
+        我们只需提供输入，就可以得到所需的输出。
+      </p>
+    </Col>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+      <img src="/techdetail-4.jpg" alt="Image" />
+    </Col>
+  </Row>
+);
+
+const technicalDetailsContent = [
+  {
+    title: "小光AI背后的",
+    colorText: "技术细节",
+    Tabs: [
+      {
+        key: "1",
+        label: "链式思考（CoT）技术",
+        content: tab1Content,
+      },
+      {
+        key: "2",
+        label: "思维树 (ToT)技术",
+        content: tab2Content,
+      },
+      {
+        key: "3",
+        label: "Active-Prompt 技术",
+        content: tab3Content,
+      },
+      {
+        key: "4",
+        label: "提示函数 技术",
+        content: tab4Content,
+      },
+    ],
+  },
+];
+
+const TechnicalDetailsSection: React.FC = () => {
+  const onChange = (key: string) => {
+    console.log(key);
+  };
+  return (
+    <div className={`${styles["section"]} ${styles["technicaldetails"]}`}>
+      {technicalDetailsContent.map((content, index) => (
+        <div key={index}>
+          <Divider>
+            <h2>
+              {content.title} <span> {content.colorText} </span>
+            </h2>
+          </Divider>
+          <Tabs
+            onChange={onChange}
+            type="card"
+            size="large"
+            centered
+            items={content.Tabs.map((tab) => {
+              return {
+                key: tab.key,
+                label: tab.label,
+                children: tab.content,
+              };
+            })}
+          />
         </div>
       ))}
     </div>
@@ -377,6 +520,7 @@ const HomePage: React.FC = () => {
         <ChatBlock />
         <WhyChooseUsSection />
         <DifferentFromOthersSection />
+        <TechnicalDetailsSection />
         <WhatWeCanDoSection />
         <ChatBlock />
         <Divider />
