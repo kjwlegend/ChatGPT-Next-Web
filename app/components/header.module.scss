@@ -11,8 +11,12 @@
   justify-content: space-between;
   align-items: center;
 
-  background-color: #fef2f2;
-  background-image: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
+  // background-color: #fef2f2;
+  background: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
+  background-image: url('/bg.png');
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-attachment: fixed;
 }
 
 .logo {
