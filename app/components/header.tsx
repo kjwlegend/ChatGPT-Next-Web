@@ -36,6 +36,12 @@ const items = [
     url: "/intro",
   },
   {
+    label: "版本日志",
+    key: "updates",
+    icon: <ContainerOutlined />,
+    url: "/updates",
+  },
+  {
     label: "助手(开发中)",
     key: "assistant",
     icon: <UsergroupAddOutlined />,

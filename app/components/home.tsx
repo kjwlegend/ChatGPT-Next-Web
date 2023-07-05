@@ -25,6 +25,7 @@ import {
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
 import Intro from "./intro";
+import Updates from "./updates";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
@@ -169,6 +170,8 @@ export function Home() {
         <MainNav />
         <Routes>
           <Route path={Path.Intro} element={<Intro />} />
+          <Route path={Path.Updates} element={<Updates />} />
+
           <Route path="*" element={<Screen />} />
         </Routes>
         <Bottom />
