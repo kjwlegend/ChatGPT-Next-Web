@@ -10,6 +10,7 @@ import { createEmptyMask, Mask } from "./mask";
 import {
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_SYSTEM_TEMPLATE,
+  getDefaultSystemTemplate,
   StoreKey,
 } from "../constant";
 import { api, RequestMessage } from "../client/api";
@@ -403,7 +404,7 @@ export const useChatStore = create<ChatStore>()(
                 role: "system",
                 content: fillTemplateWith("", {
                   ...modelConfig,
-                  template: DEFAULT_SYSTEM_TEMPLATE,
+                  template: getDefaultSystemTemplate(),
                 }),
               }),
             ]
