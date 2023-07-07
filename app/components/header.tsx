@@ -19,7 +19,10 @@ import {
 import type { MenuProps } from "antd";
 import LoadingIcon from "../icons/three-dots.svg";
 import { useAppConfig } from "../store/config";
+import { useUserStore } from "../store/user";
 import { useMobileScreen } from "../utils";
+import { Layout, Menu, Button, Form, Input } from "antd";
+import styles from "./header.module.scss";
 
 const items = [
   {
@@ -63,14 +66,12 @@ const items = [
   },
 ];
 
-import { Layout, Menu, Button } from "antd";
-
-import styles from "./header.module.scss";
-
 const { Header } = Layout;
 
 export function MainNav() {
   const location = useLocation();
+  const { updateNickname, nickname } = useUserStore();
+
   const [current, setCurrent] = useState(() => {
     const current = location.pathname.slice(1);
     return current || "chat";
@@ -89,6 +90,14 @@ export function MainNav() {
   if (!show) {
     return <LoadingIcon />;
   }
+
+  const onFinish = (values: any) => {
+    updateNickname(values.nickname);
+  };
+
+  const changeName = () => {
+    updateNickname("");
+  };
 
   return (
     <Header className={styles.header}>
@@ -128,9 +137,45 @@ export function MainNav() {
         </Menu>
       </div>
 
-      {/* <div className={styles["login-register"]}>
-          <Button type="primary">Login / Register</Button>
-        </div> */}
+      <div className={styles["login-register"]}>
+        {nickname ? (
+          <Button type="default" onClick={changeName}>
+            欢迎您, {nickname}
+          </Button>
+        ) : (
+          <Form
+            name="nickname_edit"
+            initialValues={{ nickname: nickname }}
+            layout="inline"
+            size="small"
+            onFinish={onFinish}
+            style={{ maxWidth: 200 }}
+            wrapperCol={{ span: 24 }}
+          >
+            <Form.Item
+              name="nickname"
+              rules={[
+                {
+                  required: true,
+                  message: "输入昵称",
+                },
+              ]}
+            >
+              <Input
+                size="small"
+                style={{ width: 100 }}
+                placeholder="昵称"
+                defaultValue={nickname}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="default" htmlType="submit">
+                确认
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </div>
     </Header>
   );
 }

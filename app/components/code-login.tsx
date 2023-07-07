@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Button, Checkbox, Form, Input } from "antd";
 
 import { Path } from "../constant";
-import { useAccessStore } from "../store";
+import { useAccessStore, useUserStore } from "../store";
 
 export default function CodeLogin() {
   const navigate = useNavigate();
   const access = useAccessStore();
+  const user = useUserStore();
 
   const goHome = () => navigate(Path.Home);
 
@@ -16,6 +17,7 @@ export default function CodeLogin() {
     const code = values.password;
     console.log("Received values of form: ", code);
     access.updateCode(code);
+    user.updateNickname(values.nickname);
     goHome();
   };
 
@@ -28,6 +30,19 @@ export default function CodeLogin() {
         style={{ maxWidth: 900, minWidth: 400 }}
         onFinish={onFinish}
       >
+        <Form.Item
+          name="nickname"
+          rules={[
+            {
+              required: false,
+              message: "请输入密码",
+            },
+          ]}
+          hasFeedback
+        >
+          <Input placeholder="昵称" defaultValue={user.nickname} />
+        </Form.Item>
+
         <Form.Item
           name="password"
           rules={[
