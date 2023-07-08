@@ -58,6 +58,11 @@ const items = [
     children:
       "发布 v0.3.3 版本, 增加版本更新日志页面, 主要用于记录开发里程碑, 修复介绍页面的手机端bug",
   },
+  {
+    label: "2023-07-07",
+    children:
+      "发布 v0.3.4 版本, 小光为了更好的陪伴你, 他现在已经可以识别你的名字了",
+  },
 ];
 const App: React.FC = () => (
   <div className={styles["home-page"]}>
