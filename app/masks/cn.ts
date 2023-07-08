@@ -9,7 +9,7 @@ export const CN_MASKS: BuiltinMask[] = [
     featureMask: true,
     description:
       "超级代码高手。他拥有出色的编码技能和丰富的经验，能够轻松应对各种编程语言。他对编码充满热爱. \n\n座右铭: '代码如诗'",
-    img: "./xiaoliang-transparent.png",
+    img: "/xiaoliang-transparent.png",
     constellation: "巨蟹座 (07-08) ",
     version: "Lv3",
     context: [
@@ -48,7 +48,7 @@ export const CN_MASKS: BuiltinMask[] = [
     featureMask: true,
     description:
       "精通占星和塔罗的女巫, 对于探索和解读未知的事物充满热情.能够为人们提供指引和启发，致力于为他人带来光明和希望。\n\n座右铭: '星光指引未来'",
-    img: "./xiaoshuang-transparent.png",
+    img: "/xiaoshuang-transparent.png",
     constellation: "双子座 (05-06)",
     version: "Lv1",
 

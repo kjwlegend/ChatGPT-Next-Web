@@ -114,7 +114,7 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
         key={mask.id}
       >
         <div className={styles["mask-item"]}>
-          <img src={mask.img} alt={mask.name} />
+          <Image width={100} height={200} src={mask.img} alt={mask.name} />
 
           <div className={styles.description}>
             <p>{mask.constellation}</p>
@@ -236,7 +236,7 @@ export function NewChat() {
           key={DEFAULT_MASK_ID}
         >
           <div className={styles["mask-item"]}>
-            <Image src="/ai-full.png" alt="小光同学" />
+            <Image src="/ai-full.png" alt="小光同学" width={100} height={200} />
 
             <div className={styles.description}>
               <p>天蝎座 (11-07)</p>
