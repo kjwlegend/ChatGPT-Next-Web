@@ -114,7 +114,7 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
         key={mask.id}
       >
         <div className={styles["mask-item"]}>
-          <Image width={100} height={200} src={mask.img} alt={mask.name} />
+          <img src={mask.img} alt={mask.name} />
 
           <div className={styles.description}>
             <p>{mask.constellation}</p>
