@@ -39,6 +39,15 @@ export enum StoreKey {
   Sync = "sync",
 }
 
+export enum MaskCategory {
+  Default = "通用",
+  Develop = "开发",
+  Analysis = "分析研究",
+  Magick = "魔法",
+  Creative = "创作",
+  Kind = "情绪",
+}
+
 export const MAX_SIDEBAR_WIDTH = 500;
 export const MIN_SIDEBAR_WIDTH = 230;
 export const NARROW_SIDEBAR_WIDTH = 100;

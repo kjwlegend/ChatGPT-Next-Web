@@ -129,6 +129,10 @@ const cn = {
         Confirm: "确认清除所有聊天、设置数据？",
       },
     },
+    category: {
+      Name: "通用",
+      All: "所有分类",
+    },
     Lang: {
       Name: "Language", // ATTENTION: if you wanna add a new translation, please do not translate this value, leave it as `Language`
       All: "所有语言",
@@ -292,6 +296,7 @@ const cn = {
     Config: {
       Avatar: "角色头像",
       Name: "角色名称",
+      category: "角色分类",
       Sync: {
         Title: "使用全局设置",
         SubTitle: "当前对话是否使用全局模型设置",

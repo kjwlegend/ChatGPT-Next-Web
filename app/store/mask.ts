@@ -4,13 +4,13 @@ import { BUILTIN_MASKS } from "../masks";
 import { getLang, Lang } from "../locales";
 import { DEFAULT_TOPIC, ChatMessage } from "./chat";
 import { ModelConfig, useAppConfig } from "./config";
-import { StoreKey } from "../constant";
+import { StoreKey, MaskCategory } from "../constant";
 
 export type Mask = {
   id: number;
   avatar: string;
   name: string;
-  category: string;
+  category: MaskCategory;
   hideContext?: boolean;
   context: ChatMessage[];
   syncGlobalConfig?: boolean;
@@ -18,7 +18,6 @@ export type Mask = {
   lang: Lang;
   builtin: boolean;
 };
-
 export const DEFAULT_MASK_STATE = {
   masks: {} as Record<number, Mask>,
   globalMaskId: 0,
@@ -40,6 +39,7 @@ export const createEmptyMask = () =>
   ({
     id: DEFAULT_MASK_ID,
     avatar: DEFAULT_MASK_AVATAR,
+    category: MaskCategory.Default,
     name: DEFAULT_TOPIC,
     context: [],
     syncGlobalConfig: true, // use global config as default
