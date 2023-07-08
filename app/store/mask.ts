@@ -11,7 +11,12 @@ export type Mask = {
   avatar: string;
   name: string;
   category: MaskCategory;
+  featureMask?: boolean;
+  constellation?: string;
+  img?: string;
+  description?: string;
   hideContext?: boolean;
+  version?: string;
   context: ChatMessage[];
   syncGlobalConfig?: boolean;
   modelConfig: ModelConfig;
@@ -40,6 +45,7 @@ export const createEmptyMask = () =>
     id: DEFAULT_MASK_ID,
     avatar: DEFAULT_MASK_AVATAR,
     category: MaskCategory.Default,
+    featureMask: false,
     name: DEFAULT_TOPIC,
     context: [],
     syncGlobalConfig: true, // use global config as default
