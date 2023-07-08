@@ -1,4 +1,5 @@
 import { BuiltinMask } from "./typing";
+import { MaskCategory } from "../constant";
 
 export const EN_MASKS: BuiltinMask[] = [
   {
@@ -93,6 +94,7 @@ export const EN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f60e",
     name: "Expert",
+    category: MaskCategory.Develop,
     context: [
       {
         role: "user",
