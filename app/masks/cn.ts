@@ -152,6 +152,8 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f469-200d-1f4bc",
     name: "职业顾问",
+    category: MaskCategory.Default,
+
     context: [
       {
         role: "user",
@@ -175,6 +177,7 @@ export const CN_MASKS: BuiltinMask[] = [
   },
   {
     avatar: "1f9d1-200d-1f3eb",
+    category: MaskCategory.Default,
     name: "英专写手",
     context: [
       {
@@ -200,6 +203,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f4da",
     name: "语言检测器",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -224,6 +228,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f4d5",
     name: "小红书写手",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -248,6 +253,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f4d1",
     name: "简历写手",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -277,6 +283,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f469-200d-2695-fe0f",
     name: "心理医生",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -301,6 +308,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f4b8",
     name: "创业点子王",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -331,6 +339,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "270d-fe0f",
     name: "互联网写手",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -361,6 +370,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f63e",
     name: "心灵导师",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -412,6 +422,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f513",
     name: "越狱模式 [Jailbreak]",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
