@@ -4,6 +4,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "超级代码解释器",
+    category: "开发",
     context: [
       {
         role: "system",
@@ -36,6 +37,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "mask角色生成器",
+    category: "开发",
     context: [
       {
         role: "system",

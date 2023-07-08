@@ -115,7 +115,7 @@ export function SideBar(props: { className?: string }) {
         shouldNarrow && styles["narrow-sidebar"]
       }`}
     >
-      {isMobileScreen && <MainNav />}
+      {isMobileScreen && <MainNav displayMobileVersion={true} />}
 
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
         <div className={styles["sidebar-title"]} data-tauri-drag-region>

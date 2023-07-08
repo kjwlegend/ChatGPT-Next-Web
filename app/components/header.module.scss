@@ -91,10 +91,17 @@
   .header {
     height: 40px;
     padding: 0 10px;
+
+    flex-direction: row;
+
     .logo {
       margin: auto;
+      width: auto;
       // justify-content: center;
       // align-items: center;
+      img {
+        height: 100%;
+      }
       .logo-text {
         font-size: 1rem;
         margin: auto 25px;

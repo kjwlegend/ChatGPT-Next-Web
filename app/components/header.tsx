@@ -68,7 +68,13 @@ const items = [
 
 const { Header } = Layout;
 
-export function MainNav() {
+interface Props {
+  displayMobileVersion: boolean;
+}
+
+export function MainNav(props: Props = { displayMobileVersion: false }) {
+  const { displayMobileVersion } = props;
+
   const location = useLocation();
   const { updateNickname, nickname } = useUserStore();
 
@@ -100,82 +106,144 @@ export function MainNav() {
   };
 
   return (
-    <Header className={styles.header}>
-      <div className={styles.logo}>
-        <img className={styles["logo-image"]} src="/logo-2.png" alt="Logo" />
-        <div className={styles["logo-text"]}>
-          <p className={styles["headline"]}>小光AI</p>
-          <p className={styles["subline"]}>XIAOGUANG.AI</p>
-        </div>
-      </div>
-      <div className={styles["ant-menu"]}>
-        <Menu
-          onClick={onClick}
-          selectedKeys={[current]}
-          mode="horizontal"
-          style={{ backgroundColor: "transparent", height: "50px" }}
-          className={styles["ant-menu"]}
-        >
-          {items.map((item) => {
-            if (item.disabled) {
-              return (
-                <Menu.Item key={item.key} disabled>
-                  {item.icon}
-                  {item.label}
-                </Menu.Item>
-              );
-            }
-            return (
-              <Menu.Item key={item.key}>
-                <Link to={item.url}>
-                  {item.icon}
-                  {item.label}
-                </Link>
-              </Menu.Item>
-            );
-          })}
-        </Menu>
-      </div>
+    <>
+      {displayMobileVersion ? (
+        <Header className={styles.header}>
+          <div className={styles.logo}>
+            <img
+              className={styles["logo-image"]}
+              src="/logo-2.png"
+              alt="Logo"
+            />
+            <div className={styles["logo-text"]}>
+              <p className={styles["headline"]}>小光AI</p>
+              {/* <p className={styles["subline"]}>XIAOGUANG.AI</p> */}
+            </div>
+          </div>
 
-      <div className={styles["login-register"]}>
-        {nickname ? (
-          <Button type="default" onClick={changeName}>
-            欢迎您, {nickname}
-          </Button>
-        ) : (
-          <Form
-            name="nickname_edit"
-            initialValues={{ nickname: nickname }}
-            layout="inline"
-            size="small"
-            onFinish={onFinish}
-            style={{ maxWidth: 200 }}
-            wrapperCol={{ span: 24 }}
-          >
-            <Form.Item
-              name="nickname"
-              rules={[
-                {
-                  required: true,
-                  message: "输入昵称",
-                },
-              ]}
-            >
-              <Input
-                size="small"
-                style={{ width: 100 }}
-                placeholder="昵称"
-                defaultValue={nickname}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button type="default" htmlType="submit">
-                确认
+          <div className={styles["login-register"]}>
+            {nickname ? (
+              <Button type="default" onClick={changeName}>
+                欢迎您, {nickname}
               </Button>
-            </Form.Item>
-          </Form>
-        )}
-      </div>
-    </Header>
+            ) : (
+              <Form
+                name="nickname_edit"
+                initialValues={{ nickname: nickname }}
+                layout="inline"
+                size="small"
+                onFinish={onFinish}
+                style={{ maxWidth: 200 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Form.Item
+                  name="nickname"
+                  rules={[
+                    {
+                      required: true,
+                      message: "输入昵称",
+                    },
+                  ]}
+                >
+                  <Input
+                    size="small"
+                    style={{ width: 100 }}
+                    placeholder="昵称"
+                    defaultValue={nickname}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Button type="default" htmlType="submit">
+                    确认
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
+          </div>
+        </Header>
+      ) : (
+        <Header className={styles.header}>
+          <div className={styles.logo}>
+            <img
+              className={styles["logo-image"]}
+              src="/logo-2.png"
+              alt="Logo"
+            />
+            <div className={styles["logo-text"]}>
+              <p className={styles["headline"]}>小光AI</p>
+              <p className={styles["subline"]}>XIAOGUANG.AI</p>
+            </div>
+          </div>
+          <div className={styles["ant-menu"]}>
+            <Menu
+              onClick={onClick}
+              selectedKeys={[current]}
+              mode="horizontal"
+              style={{ backgroundColor: "transparent", height: "50px" }}
+              className={styles["ant-menu"]}
+            >
+              {items.map((item) => {
+                if (item.disabled) {
+                  return (
+                    <Menu.Item key={item.key} disabled>
+                      {item.icon}
+                      {item.label}
+                    </Menu.Item>
+                  );
+                }
+                return (
+                  <Menu.Item key={item.key}>
+                    <Link to={item.url}>
+                      {item.icon}
+                      {item.label}
+                    </Link>
+                  </Menu.Item>
+                );
+              })}
+            </Menu>
+          </div>
+
+          <div className={styles["login-register"]}>
+            {nickname ? (
+              <Button type="default" onClick={changeName}>
+                欢迎您, {nickname}
+              </Button>
+            ) : (
+              <Form
+                name="nickname_edit"
+                initialValues={{ nickname: nickname }}
+                layout="inline"
+                size="small"
+                onFinish={onFinish}
+                style={{ maxWidth: 200 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Form.Item
+                  name="nickname"
+                  rules={[
+                    {
+                      required: true,
+                      message: "输入昵称",
+                    },
+                  ]}
+                >
+                  <Input
+                    size="small"
+                    style={{ width: 100 }}
+                    placeholder="昵称"
+                    defaultValue={nickname}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Button type="default" htmlType="submit">
+                    确认
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
+          </div>
+        </Header>
+      )}
+    </>
   );
 }

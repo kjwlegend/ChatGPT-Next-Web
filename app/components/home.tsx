@@ -169,7 +169,7 @@ import { Bottom } from "./footer";
 export function Home() {
   useSwitchTheme();
   useLoadData();
-
+  const isMobileScreen = useMobileScreen();
   useEffect(() => {
     console.log("[Config] got config from build time", getClientConfig());
   }, []);
@@ -181,7 +181,7 @@ export function Home() {
   return (
     <ErrorBoundary>
       <Router>
-        <MainNav />
+        <MainNav displayMobileVersion={isMobileScreen} />
         <Routes>
           <Route path={Path.Intro} element={<Intro />} />
           <Route path={Path.Updates} element={<Updates />} />

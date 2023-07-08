@@ -10,6 +10,7 @@ export type Mask = {
   id: number;
   avatar: string;
   name: string;
+  category: string;
   hideContext?: boolean;
   context: ChatMessage[];
   syncGlobalConfig?: boolean;
