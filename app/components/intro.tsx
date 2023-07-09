@@ -10,10 +10,18 @@ import {
   Divider,
   Tabs,
 } from "antd";
-import { createFromIconfontCN } from "@ant-design/icons";
+// import { createFromIconfontCN } from '@ant-design/icons';
 import type { CollapseProps } from "antd";
 import styles from "./intro.module.scss";
 import { useNavigate } from "react-router-dom";
+import Image from "next/image";
+import {
+  HomeOutlined,
+  LoadingOutlined,
+  SettingFilled,
+  SmileOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -111,34 +119,68 @@ const differentFromOthersContent = [
   // Add more differentFromOthers content objects if needed
 ];
 
-const IconFont = createFromIconfontCN({
-  scriptUrl: ["//at.alicdn.com/t/c/font_4149808_p5w7ew7ar7s.js"],
-});
 const whatWeCanDoContent = [
   {
     title: "小光AI 能为你",
     colorText: "做什么?",
     cards: [
       {
-        icon: <IconFont type="icon-wode" />,
+        icon: (
+          <span>
+            <Image
+              src="/assets/wode.png"
+              alt="feature"
+              height={50}
+              width={50}
+            />{" "}
+          </span>
+        ),
         title: "智能问答",
         content:
           "小光 AI 智能助手能够根据用户的意图和需求，提供个性化、有针对性的回答",
       },
       {
-        icon: <IconFont type="icon-yuyin" />,
+        icon: (
+          <span>
+            <Image
+              src="/assets/yuyin.png"
+              alt="feature"
+              height={50}
+              width={50}
+            />
+          </span>
+        ),
         title: "语音交互(即将上线)",
         content:
           "提供语音交互的功能，用户可以直接通过语音与小光 AI 智能助手进行交流",
       },
       {
-        icon: <IconFont type="icon-linggan" />,
+        icon: (
+          <span>
+            <Image
+              src="/assets/linggan.png"
+              alt="feature"
+              height={50}
+              width={50}
+            />
+          </span>
+        ),
+        // icon: <HomeOutlined />,
         title: "图像生成(即将上线)",
         content:
           "基于用户输入的文本，生成对应的图像，生成对应的海报, 产品图片等",
       },
       {
-        icon: <IconFont type="icon-baogao" />,
+        icon: (
+          <span>
+            <Image
+              src="/assets/baogao.png"
+              alt="feature"
+              height={50}
+              width={50}
+            />
+          </span>
+        ),
         title: "文件生成(即将上线)",
         content:
           "支持上传 PDF, Word, PPT 等文件，生成对应的文字总结, 支持特定领域的文件文案生成",

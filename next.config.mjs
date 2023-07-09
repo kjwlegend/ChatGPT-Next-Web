@@ -1,32 +1,41 @@
-import webpack from "webpack";
+import webpack from "webpack"
 
-const mode = process.env.BUILD_MODE ?? "standalone";
-console.log("[Next] build mode", mode);
+const mode = process.env.BUILD_MODE ?? "standalone"
+console.log("[Next] build mode", mode)
 
-const disableChunk = !!process.env.DISABLE_CHUNK || mode === "export";
-console.log("[Next] build with chunk: ", !disableChunk);
+const disableChunk = !!process.env.DISABLE_CHUNK || mode === "export"
+console.log("[Next] build with chunk: ", !disableChunk)
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack(config) {
+  webpack (config) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
-    });
+    })
 
     if (disableChunk) {
       config.plugins.push(
         new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
-      );
+      )
     }
 
-    return config;
+    config.resolve.fallback = {
+      child_process: false,
+    }
+
+    return config
   },
   output: mode,
   images: {
     unoptimized: mode === "export",
   },
-};
+
+  devServer: {
+    HistoryApiFallback: true,
+  },
+
+}
 
 if (mode !== "export") {
   nextConfig.headers = async () => {
@@ -50,8 +59,8 @@ if (mode !== "export") {
           },
         ],
       },
-    ];
-  };
+    ]
+  }
 
   nextConfig.rewrites = async () => {
     const ret = [
@@ -67,21 +76,21 @@ if (mode !== "export") {
         source: "/sharegpt",
         destination: "https://sharegpt.com/api/conversations",
       },
-    ];
+    ]
 
-    const apiUrl = process.env.API_URL;
+    const apiUrl = process.env.API_URL
     if (apiUrl) {
-      console.log("[Next] using api url ", apiUrl);
+      console.log("[Next] using api url ", apiUrl)
       ret.push({
         source: "/api/:path*",
         destination: `${apiUrl}/:path*`,
-      });
+      })
     }
 
     return {
       beforeFiles: ret,
-    };
-  };
+    }
+  }
 }
 
-export default nextConfig;
+export default nextConfig

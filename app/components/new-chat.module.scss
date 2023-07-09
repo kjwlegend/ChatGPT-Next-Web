@@ -74,6 +74,7 @@
     :global .ant-card {
       margin: 20px;
       animation: slide-in ease 0.5s;
+
       .ant-card-head-title {
         font-size: 18px;
         letter-spacing: 2px;
@@ -83,6 +84,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         
+
       }
         
       .label {
@@ -95,8 +97,6 @@
       &.develop {
         background-color: aquamarine;
       }
-
-
       
     }
 
@@ -104,11 +104,10 @@
       display: flex;
       align-items: flex-start;
     
-      img {
-        max-height: 200px;
-        max-width: 120px;
-        object-fit: cover;
+      .img-wrapper {
         margin-right: 16px;
+        position: relative;
+
       }
     
       .description {
