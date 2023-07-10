@@ -5,7 +5,6 @@ require("../polyfill");
 import { useState, useEffect } from "react";
 
 import styles from "./home.module.scss";
-
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 
@@ -24,8 +23,6 @@ import {
   useLocation,
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
-import Intro from "./intro";
-import Updates from "./updates";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
 import { getClientConfig } from "../config/client";
@@ -53,6 +50,14 @@ const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
 });
 
 const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
+  loading: () => <Loading noLogo />,
+});
+
+const Intro = dynamic(async () => (await import("./intro")).default, {
+  loading: () => <Loading noLogo />,
+});
+
+const Updates = dynamic(async () => (await import("./updates")).default, {
   loading: () => <Loading noLogo />,
 });
 
@@ -183,10 +188,9 @@ export function Home() {
       <Router>
         <MainNav displayMobileVersion={isMobileScreen} />
         <Routes>
+          <Route path="*" element={<Screen />} />
           <Route path={Path.Intro} element={<Intro />} />
           <Route path={Path.Updates} element={<Updates />} />
-
-          <Route path="*" element={<Screen />} />
         </Routes>
         <Bottom />
       </Router>

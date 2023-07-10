@@ -16,16 +16,18 @@
     "proxy-dev": "sh ./scripts/init-proxy.sh && proxychains -f ./scripts/proxychains.conf yarn dev"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.1.4",
     "@fortaine/fetch-event-source": "^3.0.6",
     "@hello-pangea/dnd": "^16.3.0",
     "@svgr/webpack": "^6.5.1",
+    "@types/express": "^4.17.17",
     "@vercel/analytics": "^0.1.11",
-    "antd": "^5.6.3",
+    "antd": "^5.6.4",
     "emoji-picker-react": "^4.4.7",
     "fuse.js": "^6.6.2",
     "html-to-image": "^1.11.11",
     "mermaid": "^10.2.3",
-    "next": "^13.4.6",
+    "next": "^13.4.9",
     "node-fetch": "^3.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -37,6 +39,7 @@
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "sass": "^1.59.2",
+    "sharp": "^0.32.1",
     "spark-md5": "^3.0.2",
     "use-debounce": "^9.0.4",
     "zustand": "^4.3.8"

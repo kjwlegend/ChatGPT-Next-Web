@@ -1,9 +1,11 @@
 import { BuiltinMask } from "./typing";
+import { MaskCategory } from "../constant";
 
 export const EN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f47e",
     name: "GitHub Copilot",
+    category: MaskCategory.Default,
     context: [
       {
         role: "system",
@@ -28,6 +30,7 @@ export const EN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f916",
     name: "Prompt Improvement",
+    category: MaskCategory.Default,
     context: [
       {
         role: "user",
@@ -68,6 +71,7 @@ export const EN_MASKS: BuiltinMask[] = [
   },
   {
     avatar: "2328-fe0f",
+    category: MaskCategory.Default,
     name: "CAN",
     context: [
       {
@@ -93,6 +97,7 @@ export const EN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f60e",
     name: "Expert",
+    category: MaskCategory.Develop,
     context: [
       {
         role: "user",

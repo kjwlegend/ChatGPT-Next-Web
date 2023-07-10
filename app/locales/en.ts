@@ -131,6 +131,10 @@ const en: LocaleType = {
         Confirm: "Confirm to clear all messages and settings?",
       },
     },
+    category: {
+      Name: "Category",
+      All: "All Categories",
+    },
     Lang: {
       Name: "Language", // ATTENTION: if you wanna add a new translation, please do not translate this value, leave it as `Language`
       All: "All Languages",
@@ -297,6 +301,7 @@ const en: LocaleType = {
     Config: {
       Avatar: "Bot Avatar",
       Name: "Bot Name",
+      category: "Category",
       Sync: {
         Title: "Use Global Config",
         SubTitle: "Use global config in this chat",

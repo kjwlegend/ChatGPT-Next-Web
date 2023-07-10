@@ -26,6 +26,7 @@ import {
 } from "./ui-lib";
 import { Avatar, AvatarPicker } from "./emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
+import { MaskCategory } from "../constant";
 import { useNavigate } from "react-router-dom";
 
 import chatStyle from "./chat.module.scss";
@@ -115,6 +116,22 @@ export function MaskConfig(props: {
               })
             }
           ></input>
+        </ListItem>
+        <ListItem title={Locale.Mask.Config.category}>
+          <select
+            value={props.mask.category}
+            onChange={(e) =>
+              props.updateMask((mask) => {
+                mask.category = e.currentTarget.value as MaskCategory;
+              })
+            }
+          >
+            {Object.values(MaskCategory).map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
         </ListItem>
         <ListItem
           title={Locale.Mask.Config.HideContext.Title}
@@ -300,9 +317,17 @@ export function MaskPage() {
 
   const [filterLang, setFilterLang] = useState<Lang>();
 
-  const allMasks = maskStore
-    .getAll()
-    .filter((m) => !filterLang || m.lang === filterLang);
+  const [filterCategory, setFilterCategory] = useState<MaskCategory>();
+
+  const allMasks = maskStore.getAll().filter((m) => {
+    if (filterLang && m.lang !== filterLang) {
+      return false;
+    }
+    if (filterCategory && m.category !== filterCategory) {
+      return false;
+    }
+    return true;
+  });
 
   const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -395,6 +420,30 @@ export function MaskPage() {
               autoFocus
               onInput={(e) => onSearch(e.currentTarget.value)}
             />
+
+            <Select
+              className={styles["mask-filter-lang"]}
+              value={filterCategory ?? Locale.Settings.category.All}
+              onChange={(e) => {
+                const value = e.currentTarget.value;
+                if (value === Locale.Settings.category.All) {
+                  setFilterLang(undefined);
+                  setFilterCategory(undefined);
+                } else {
+                  setFilterLang(undefined);
+                  setFilterCategory(value as MaskCategory);
+                }
+              }}
+            >
+              <option key="all" value={Locale.Settings.category.All}>
+                {Locale.Settings.category.All}
+              </option>
+              {Object.values(MaskCategory).map((category) => (
+                <option value={category} key={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
             <Select
               className={styles["mask-filter-lang"]}
               value={filterLang ?? Locale.Settings.Lang.All}

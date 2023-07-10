@@ -4,11 +4,11 @@ const cn = {
   WIP: "该功能仍在开发中……",
   Error: {
     Unauthorized:
-      "访问密码不正确或为空，请前往[登录](/#/auth)页输入正确的访问密码，或者在[设置](/#/settings)页填入你自己的 OpenAI API Key。",
+      "访问密码不正确或为空，请前往[登录](/#/auth)页输入正确的访问密码",
   },
   Auth: {
     Title: "小光助手",
-    Tips: "解锁高效工作的魔法咒语",
+    Tips: "你的每日伙伴",
     Input: "在此处填写访问码",
     Confirm: "确认",
     Later: "稍后再说",
@@ -128,6 +128,10 @@ const cn = {
         Action: "立即清除",
         Confirm: "确认清除所有聊天、设置数据？",
       },
+    },
+    category: {
+      Name: "通用",
+      All: "所有分类",
     },
     Lang: {
       Name: "Language", // ATTENTION: if you wanna add a new translation, please do not translate this value, leave it as `Language`
@@ -292,6 +296,7 @@ const cn = {
     Config: {
       Avatar: "角色头像",
       Name: "角色名称",
+      category: "角色分类",
       Sync: {
         Title: "使用全局设置",
         SubTitle: "当前对话是否使用全局模型设置",
