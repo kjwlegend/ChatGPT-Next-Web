@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-import { ClockCircleOutlined } from "@ant-design/icons";
 import {
   Card,
   Carousel,
@@ -12,10 +12,8 @@ import {
   Tabs,
   Timeline,
 } from "antd";
-import { createFromIconfontCN } from "@ant-design/icons";
 import type { CollapseProps } from "antd";
 import styles from "./updates.module.scss";
-import { useNavigate } from "react-router-dom";
 
 const { Content } = Layout;
 
@@ -92,11 +90,13 @@ const items = [
     ),
   },
 ];
-const App: React.FC = () => (
-  <div className={styles["home-page"]}>
-    <Timeline mode="left" items={items} pending="On my road.." />
-    <Content></Content>
-  </div>
-);
 
-export default App;
+const Log = () => {
+  return (
+    <div className={styles["home-page"]}>
+      <Timeline mode="left" items={items} pending="On my road.." />
+    </div>
+  );
+};
+
+export default Log;

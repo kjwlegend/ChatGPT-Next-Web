@@ -352,8 +352,11 @@ pre {
   border: var(--border-in-light);
   box-shadow: var(--card-shadow);
   border-radius: 10px;
-  
 
+  image {
+    width: inherit;
+    height: inherit;
+  }
 }
 
 .one-line {

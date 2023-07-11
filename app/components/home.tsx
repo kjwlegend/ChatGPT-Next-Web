@@ -5,8 +5,8 @@ require("../polyfill");
 import { useState, useEffect } from "react";
 
 import styles from "./home.module.scss";
-import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
+import BotIcon from "../icons/bot.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 
@@ -53,11 +53,11 @@ const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
   loading: () => <Loading noLogo />,
 });
 
-const Intro = dynamic(async () => (await import("./intro")).default, {
+const Intro = dynamic(async () => (await import("../about/intro")).default, {
   loading: () => <Loading noLogo />,
 });
 
-const Updates = dynamic(async () => (await import("./updates")).default, {
+const Updates = dynamic(async () => (await import("../updates/page")).default, {
   loading: () => <Loading noLogo />,
 });
 
@@ -169,7 +169,7 @@ export function useLoadData() {
   }, []);
 }
 
-import { MainNav } from "./header";
+import MainNav from "./header";
 import { Bottom } from "./footer";
 export function Home() {
   useSwitchTheme();
@@ -190,7 +190,6 @@ export function Home() {
         <Routes>
           <Route path="*" element={<Screen />} />
           <Route path={Path.Intro} element={<Intro />} />
-          <Route path={Path.Updates} element={<Updates />} />
         </Routes>
         <Bottom />
       </Router>

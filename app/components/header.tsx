@@ -5,8 +5,9 @@ import {
   Routes,
   Route,
   useLocation,
-  Link,
 } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -72,14 +73,18 @@ interface Props {
   displayMobileVersion: boolean;
 }
 
-export function MainNav(props: Props = { displayMobileVersion: false }) {
+export default function MainNav(
+  props: Props = { displayMobileVersion: false },
+) {
   const { displayMobileVersion } = props;
 
-  const location = useLocation();
+  const path = usePathname();
+
   const { updateNickname, nickname } = useUserStore();
 
   const [current, setCurrent] = useState(() => {
-    const current = location.pathname.slice(1);
+    const current = path;
+    console.log("current", current);
     return current || "chat";
   });
 
@@ -193,7 +198,7 @@ export function MainNav(props: Props = { displayMobileVersion: false }) {
                 }
                 return (
                   <Menu.Item key={item.key}>
-                    <Link to={item.url}>
+                    <Link href={item.url}>
                       {item.icon}
                       {item.label}
                     </Link>

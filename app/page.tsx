@@ -8,9 +8,7 @@ const serverConfig = getServerSideConfig();
 export default async function App() {
   return (
     <>
-      <div className="appcontainer">
-        <Home />
-      </div>
+      <Home />
       {serverConfig?.isVercel && <Analytics />}
     </>
   );

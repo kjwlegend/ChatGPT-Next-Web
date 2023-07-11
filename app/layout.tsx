@@ -4,6 +4,7 @@ import "./styles/markdown.scss";
 import "./styles/highlight.scss";
 import "./styles/layout.scss";
 import { getClientConfig } from "./config/client";
+import Header from "./components/header";
 
 export const metadata = {
   title: "小光AI",
@@ -39,7 +40,7 @@ export default function RootLayout({
           src="https://jic.talkingdata.com/app/h5/v1?appid=EF569EDD56B64DEEB3BF84539A707729&vn=开发版&vc=1.0"
         ></script>
       </head>
-      <body>{children}</body>
+      <body className="appcontainer">{children}</body>
     </html>
   );
 }
