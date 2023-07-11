@@ -96,7 +96,7 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
   return (
     <>
       <Card
-        style={{ maxWidth: 400 }}
+        style={{ maxWidth: 350 }}
         title={mask.name}
         extra={<span className={"label"}>{mask.category}</span>}
         hoverable
@@ -220,7 +220,7 @@ export function NewChat() {
         className={styles["feature-masks"]}
       >
         <Card
-          style={{ maxWidth: 400 }}
+          style={{ maxWidth: 350 }}
           title="小光(通用)"
           extra={<span className={"label"}>通用</span>}
           hoverable

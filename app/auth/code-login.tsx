@@ -1,17 +1,16 @@
-import { IconButton } from "./button";
 import Locale from "../locales";
-import { useNavigate } from "react-router-dom";
+import { usePathname, useRouter } from "next/navigation";
 import { Button, Checkbox, Form, Input } from "antd";
 
-import { Path } from "../constant";
 import { useAccessStore, useUserStore } from "../store";
 
 export default function CodeLogin() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const access = useAccessStore();
   const user = useUserStore();
 
-  const goHome = () => navigate(Path.Home);
+  const goHome = () => router.replace("/");
+  const path = usePathname();
 
   const onFinish = (values: any) => {
     const code = values.password;
@@ -19,6 +18,7 @@ export default function CodeLogin() {
     access.updateCode(code);
     user.updateNickname(values.nickname);
     goHome();
+    console.log(path);
   };
 
   return (
@@ -26,7 +26,10 @@ export default function CodeLogin() {
       <Form
         name="quick_login"
         className="login-form"
-        initialValues={{ password: access.accessCode }}
+        initialValues={{
+          nickname: user.nickname,
+          password: access.accessCode,
+        }}
         style={{ maxWidth: 900, minWidth: 400 }}
         onFinish={onFinish}
       >
@@ -40,7 +43,7 @@ export default function CodeLogin() {
           ]}
           hasFeedback
         >
-          <Input placeholder="昵称" defaultValue={user.nickname} />
+          <Input placeholder="昵称" />
         </Form.Item>
 
         <Form.Item

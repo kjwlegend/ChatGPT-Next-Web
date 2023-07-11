@@ -24,7 +24,7 @@ import {
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
-import { AuthPage } from "./auth";
+import AuthPage from "../auth/page";
 import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 
@@ -53,7 +53,7 @@ const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
   loading: () => <Loading noLogo />,
 });
 
-const Intro = dynamic(async () => (await import("../about/intro")).default, {
+const Intro = dynamic(async () => (await import("../about/page")).default, {
   loading: () => <Loading noLogo />,
 });
 
@@ -169,8 +169,6 @@ export function useLoadData() {
   }, []);
 }
 
-import MainNav from "./header";
-import { Bottom } from "./footer";
 export function Home() {
   useSwitchTheme();
   useLoadData();
@@ -186,12 +184,10 @@ export function Home() {
   return (
     <ErrorBoundary>
       <Router>
-        <MainNav displayMobileVersion={isMobileScreen} />
         <Routes>
           <Route path="*" element={<Screen />} />
           <Route path={Path.Intro} element={<Intro />} />
         </Routes>
-        <Bottom />
       </Router>
     </ErrorBoundary>
   );

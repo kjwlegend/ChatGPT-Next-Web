@@ -13,12 +13,12 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { AuthPage } from "./auth";
-
-export function Bottom() {
+export function PageFooter() {
   return (
     <Footer className={styles.footer}>
       <div className={styles.footerContent}>CopyRight © 2023 by 经纬咨询</div>
     </Footer>
   );
 }
+
+export default PageFooter;

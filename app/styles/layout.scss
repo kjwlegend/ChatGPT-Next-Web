@@ -8,3 +8,18 @@
     margin: auto;
     background-color: var(--background-color);
 }
+
+.main { 
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    padding: 20px;
+    background-image: url('/bg.png');
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+    background-attachment: fixed;
+    align-items: flex-start;
+  
+}

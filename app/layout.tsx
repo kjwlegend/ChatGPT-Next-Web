@@ -1,10 +1,13 @@
 /* eslint-disable @next/next/no-page-custom-font */
+"use client";
 import "./styles/globals.scss";
 import "./styles/markdown.scss";
 import "./styles/highlight.scss";
 import "./styles/layout.scss";
 import { getClientConfig } from "./config/client";
 import Header from "./components/header";
+import Footer from "./components/footer";
+import { ErrorBoundary } from "./components/error";
 
 export const metadata = {
   title: "小光AI",
@@ -40,7 +43,13 @@ export default function RootLayout({
           src="https://jic.talkingdata.com/app/h5/v1?appid=EF569EDD56B64DEEB3BF84539A707729&vn=开发版&vc=1.0"
         ></script>
       </head>
-      <body className="appcontainer">{children}</body>
+      <body>
+        <section className="appcontainer">
+          <Header displayMobileVersion={false} />
+          {children}
+          <Footer />
+        </section>
+      </body>
     </html>
   );
 }

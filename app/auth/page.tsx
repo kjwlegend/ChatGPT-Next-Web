@@ -1,5 +1,5 @@
+"use client";
 import styles from "./auth.module.scss";
-
 import Locale from "../locales";
 
 import { Tabs } from "antd";
@@ -33,9 +33,9 @@ const items: TabsProps["items"] = [
   },
 ];
 
-export function AuthPage() {
+export default function AuthPage() {
   return (
-    <div className={styles["auth-page"]}>
+    <div className={styles["auth-page"] + " main"}>
       <div className={styles["welcome-header"]}>
         <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
         <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>

@@ -3,8 +3,7 @@ import { SubmitKey } from "../store/config";
 const cn = {
   WIP: "该功能仍在开发中……",
   Error: {
-    Unauthorized:
-      "访问密码不正确或为空，请前往[登录](/#/auth)页输入正确的访问密码",
+    Unauthorized: "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
   },
   Auth: {
     Title: "小光助手",

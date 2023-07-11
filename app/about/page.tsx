@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Card,
@@ -13,7 +14,7 @@ import {
 // import { createFromIconfontCN } from '@ant-design/icons';
 import type { CollapseProps } from "antd";
 import styles from "./intro.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   HomeOutlined,
@@ -520,13 +521,13 @@ const CollapseSection: React.FC = () => {
 };
 
 const ChatBlock: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const startChat = () => {
-    navigate("/chat");
+    router.push("/#/chat");
   };
   const register = () => {
-    navigate("/auth");
+    router.push("/auth");
   };
 
   return (

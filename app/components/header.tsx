@@ -31,13 +31,13 @@ const items = [
     title: "对话",
     key: "chat",
     icon: <AliwangwangOutlined />,
-    url: "/chat",
+    url: "/",
   },
   {
     label: "介绍",
     key: "intro",
     icon: <ContainerOutlined />,
-    url: "/intro",
+    url: "/about",
   },
   {
     label: "版本日志",
@@ -90,17 +90,23 @@ export default function MainNav(
 
   // 等待样式表加载完后, 再显示
   const [show, setShow] = useState(false);
-  setTimeout(() => {
-    setShow(true);
-  }, 200);
 
-  const onClick: MenuProps["onClick"] = (e) => {
-    setCurrent(e.key);
-  };
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShow(true);
+    }, 200);
+
+    // 在组件卸载时清除定时器
+    return () => clearTimeout(timeout);
+  }, []);
 
   if (!show) {
     return <LoadingIcon />;
   }
+
+  const onClick: MenuProps["onClick"] = (e) => {
+    setCurrent(e.key);
+  };
 
   const onFinish = (values: any) => {
     updateNickname(values.nickname);
