@@ -16,12 +16,7 @@ import LightningIcon from "../icons/lightning.svg";
 import EyeIcon from "../icons/eye.svg";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Mask,
-  useMaskStore,
-  createEmptyMask,
-  DEFAULT_MASK_ID,
-} from "../store/mask";
+import { Mask, useMaskStore, createEmptyMask } from "../store/mask";
 import Locale from "../locales";
 import { useAppConfig, useChatStore } from "../store";
 import { MaskAvatar } from "./mask";
@@ -230,16 +225,12 @@ export function NewChat() {
           extra={<span className={"label"}>通用</span>}
           hoverable
           actions={[
-            <Button
-              key={DEFAULT_MASK_ID}
-              type="primary"
-              onClick={() => startChat()}
-            >
+            <Button key={10000} type="primary" onClick={() => startChat()}>
               开始聊天
             </Button>,
-            <span key={DEFAULT_MASK_ID}>角色等级: Lv2 </span>,
+            <span key={10000}>角色等级: Lv2 </span>,
           ]}
-          key={DEFAULT_MASK_ID}
+          key={10000}
         >
           <div className={styles["mask-item"]}>
             <div className={styles["img-wrapper"]}>
