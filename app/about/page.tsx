@@ -557,7 +557,7 @@ const ChatBlock: React.FC = () => {
 };
 const HomePage: React.FC = () => {
   return (
-    <div className={styles["home-page"]}>
+    <div className={styles["home-page"] + " main"}>
       <Content>
         <FeatureSection />
         <ChatBlock />

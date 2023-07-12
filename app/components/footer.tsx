@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Layout, Menu, Button } from "antd";
+import { Layout, Button } from "antd";
 
 const { Footer } = Layout;
 import styles from "./footer.module.scss";

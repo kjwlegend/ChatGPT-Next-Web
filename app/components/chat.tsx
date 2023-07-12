@@ -975,7 +975,7 @@ export function Chat() {
           const shouldShowClearContextDivider = i === clearContextIndex - 1;
 
           return (
-            <>
+            <div key={i}>
               <div
                 key={i}
                 className={
@@ -1082,7 +1082,7 @@ export function Chat() {
                 </div>
               </div>
               {shouldShowClearContextDivider && <ClearContextDivider />}
-            </>
+            </div>
           );
         })}
       </div>

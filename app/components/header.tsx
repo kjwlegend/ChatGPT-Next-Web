@@ -35,7 +35,7 @@ const items = [
   },
   {
     label: "介绍",
-    key: "intro",
+    key: "about",
     icon: <ContainerOutlined />,
     url: "/about",
   },
@@ -79,12 +79,16 @@ export default function MainNav(
   const { displayMobileVersion } = props;
 
   const path = usePathname();
+  const router = useRouter();
 
   const { updateNickname, nickname } = useUserStore();
 
   const [current, setCurrent] = useState(() => {
     const current = path;
-    console.log("current", current);
+    // console.log("current", current);
+    if (current === "/") {
+      return "chat";
+    }
     return current || "chat";
   });
 
@@ -106,6 +110,10 @@ export default function MainNav(
 
   const onClick: MenuProps["onClick"] = (e) => {
     setCurrent(e.key);
+    const item = items.find((item) => item.key === e.key);
+    if (item) {
+      router.push(item.url);
+    }
   };
 
   const onFinish = (values: any) => {
@@ -160,7 +168,6 @@ export default function MainNav(
                     size="small"
                     style={{ width: 100 }}
                     placeholder="昵称"
-                    defaultValue={nickname}
                   />
                 </Form.Item>
                 <Form.Item>
@@ -192,8 +199,9 @@ export default function MainNav(
               mode="horizontal"
               style={{ backgroundColor: "transparent", height: "50px" }}
               className={styles["ant-menu"]}
-            >
-              {items.map((item) => {
+              items={items}
+            />
+            {/* {items.map((item) => {
                 if (item.disabled) {
                   return (
                     <Menu.Item key={item.key} disabled>
@@ -211,7 +219,7 @@ export default function MainNav(
                   </Menu.Item>
                 );
               })}
-            </Menu>
+            </Menu> */}
           </div>
 
           <div className={styles["login-register"]}>
@@ -242,7 +250,6 @@ export default function MainNav(
                     size="small"
                     style={{ width: 100 }}
                     placeholder="昵称"
-                    defaultValue={nickname}
                   />
                 </Form.Item>
                 <Form.Item>

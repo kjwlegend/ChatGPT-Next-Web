@@ -83,8 +83,9 @@
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        
-
+      }
+      .ant-card-body {
+        padding: 5px 10px;
       }
         
       .label {

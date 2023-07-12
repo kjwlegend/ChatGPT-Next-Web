@@ -94,36 +94,34 @@ function featureMaskGroup(masks: Mask[]) {
 
 function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
   return (
-    <>
-      <Card
-        style={{ maxWidth: 350 }}
-        title={mask.name}
-        extra={<span className={"label"}>{mask.category}</span>}
-        hoverable
-        actions={[
-          <Button key={mask.id} type="primary" onClick={() => startChat(mask)}>
-            开始聊天
-          </Button>,
-          <span key={mask.id}>角色等级: {mask.version} </span>,
-        ]}
-        key={mask.id}
-      >
-        <div className={styles["mask-item"]}>
-          <div className={styles["img-wrapper"]}>
-            <Image
-              width={100}
-              height={200}
-              src={mask?.img || ""}
-              alt={mask?.name || ""}
-            />
-          </div>
-          <div className={styles.description}>
-            <p>{mask.constellation}</p>
-            <p style={{ whiteSpace: "pre-line" }}>{mask.description}</p>
-          </div>
+    <Card
+      style={{ maxWidth: 340 }}
+      title={mask.name}
+      extra={<span className={"label"}>{mask.category}</span>}
+      hoverable
+      actions={[
+        <Button key={mask.id} type="primary" onClick={() => startChat(mask)}>
+          开始聊天
+        </Button>,
+        <span key={mask.id}>角色等级: {mask.version} </span>,
+      ]}
+      key={mask.id}
+    >
+      <div className={styles["mask-item"]}>
+        <div className={styles["img-wrapper"]}>
+          <Image
+            width={100}
+            height={200}
+            src={mask?.img || ""}
+            alt={mask?.name || ""}
+          />
         </div>
-      </Card>
-    </>
+        <div className={styles.description}>
+          <p>{mask.constellation}</p>
+          <p style={{ whiteSpace: "pre-line" }}>{mask.description}</p>
+        </div>
+      </div>
+    </Card>
   );
 }
 
@@ -174,6 +172,7 @@ export function NewChat() {
         <div className={styles["sub-title"]}>{Locale.NewChat.SubTitle}</div>
         <div className={styles["actions"]}>
           <IconButton
+            key="return"
             icon={<LeftIcon />}
             text={Locale.NewChat.Return}
             onClick={() => navigate(Path.Home)}
@@ -181,6 +180,7 @@ export function NewChat() {
             shadow
           ></IconButton>
           <IconButton
+            key="skip"
             text={Locale.NewChat.Skip}
             onClick={() => startChat()}
             icon={<LightningIcon />}
@@ -190,6 +190,7 @@ export function NewChat() {
           />
 
           <IconButton
+            key="more"
             text={Locale.NewChat.More}
             onClick={() => navigate(Path.Masks)}
             icon={<EyeIcon />}
@@ -199,6 +200,7 @@ export function NewChat() {
 
           {!state?.fromHome && (
             <IconButton
+              key="not-show"
               text={Locale.NewChat.NotShow}
               onClick={async () => {
                 if (await showConfirm(Locale.NewChat.ConfirmNoShow)) {
@@ -220,7 +222,7 @@ export function NewChat() {
         className={styles["feature-masks"]}
       >
         <Card
-          style={{ maxWidth: 350 }}
+          style={{ maxWidth: 340 }}
           title="小光(通用)"
           extra={<span className={"label"}>通用</span>}
           hoverable

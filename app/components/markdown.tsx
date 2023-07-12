@@ -13,6 +13,7 @@ import LoadingIcon from "../icons/three-dots.svg";
 import React from "react";
 import { useDebouncedCallback, useThrottledCallback } from "use-debounce";
 import { showImageModal } from "./ui-lib";
+import Link from "next/link";
 
 export function Mermaid(props: { code: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -125,6 +126,9 @@ function _MarkDownContent(props: { content: string }) {
           const href = aProps.href || "";
           const isInternal = /^\/#/i.test(href) || href.includes("auth");
           const target = isInternal ? "_self" : aProps.target ?? "_blank";
+
+          //
+
           return <a {...aProps} target={target} />;
         },
       }}

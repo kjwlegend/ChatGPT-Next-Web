@@ -1,7 +1,6 @@
 import Locale from "../locales";
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Checkbox, Form, Input } from "antd";
-
 import { useAccessStore, useUserStore } from "../store";
 
 export default function CodeLogin() {
