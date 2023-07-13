@@ -17,6 +17,7 @@ export type Mask = {
   constellation?: string;
   img?: string;
   description?: string;
+  intro?: string;
   hideContext?: boolean;
   version?: string;
   context: ChatMessage[];
@@ -47,6 +48,7 @@ export const createEmptyMask = () =>
     category: MaskCategory.Default,
     featureMask: false,
     name: DEFAULT_TOPIC,
+    intro: "",
     context: [],
     syncGlobalConfig: true, // use global config as default
     modelConfig: { ...useAppConfig.getState().modelConfig },
@@ -54,6 +56,8 @@ export const createEmptyMask = () =>
     builtin: false,
     createdAt: Date.now(),
   } as Mask);
+
+console.log("modleconfigabc", useAppConfig.getState().modelConfig);
 
 export const useMaskStore = create<MaskStore>()(
   persist(

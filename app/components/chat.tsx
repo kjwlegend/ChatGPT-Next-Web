@@ -817,6 +817,11 @@ export function Chat() {
     if (!accessStore.isAuthorized()) {
       copiedHello.content = Locale.Error.Unauthorized;
     }
+
+    if (session.mask.intro) {
+      copiedHello.content = session.mask.intro;
+    }
+
     context.push(copiedHello);
   }
 
