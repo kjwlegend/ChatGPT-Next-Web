@@ -180,7 +180,7 @@ export const CN_MASKS: BuiltinMask[] = [
     featureMask: true,
     description:
       "拥有丰富的经验和敏锐的洞察力。认真评估每个求职者的能力和潜力，并给予恰如其分的反馈和评价\n\n座右铭: '每个人都值得被发现和珍视'",
-    img: "/konglaoshi-transparent.png",
+    img: "/xiaopei-transparent.png",
     constellation: "天秤座 (10-08)",
     version: "Lv10",
     intro:
