@@ -7,6 +7,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import { useRouter, usePathname } from "next/navigation";
+import { AuthContext } from "@/app/contexts/AuthContext";
+import { useContext } from "react";
 import Link from "next/link";
 
 import React, { useState, useEffect } from "react";
@@ -24,6 +26,7 @@ import { useUserStore } from "../store/user";
 import { useMobileScreen } from "../utils";
 import { Layout, Menu, Button, Form, Input } from "antd";
 import styles from "./header.module.scss";
+import Login from "../auth/login";
 
 const items = [
   {
@@ -73,6 +76,60 @@ interface Props {
   displayMobileVersion: boolean;
 }
 
+export function LoginButton() {
+  const { isAuthenticated, user } = useContext(AuthContext);
+
+  const { updateNickname, nickname } = useUserStore();
+
+  const onFinish = (values: any) => {
+    updateNickname(values.nickname);
+  };
+
+  const changeName = () => {
+    updateNickname("");
+  };
+
+  return (
+    <div className={styles["login-register"]}>
+      {/* {isAuthenticated ? (<span>aaa</span>)
+        : (<span>bbb</span>)} */}
+
+      {nickname ? (
+        <Button type="default" onClick={changeName}>
+          欢迎您, {nickname}
+        </Button>
+      ) : (
+        <Form
+          name="nickname_edit"
+          initialValues={{ nickname: nickname }}
+          layout="inline"
+          size="small"
+          onFinish={onFinish}
+          style={{ maxWidth: 200 }}
+          wrapperCol={{ span: 24 }}
+        >
+          <Form.Item
+            name="nickname"
+            rules={[
+              {
+                required: true,
+                message: "输入昵称",
+              },
+            ]}
+          >
+            <Input size="small" style={{ width: 100 }} placeholder="昵称" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="default" htmlType="submit">
+              确认
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
+    </div>
+  );
+}
+
 export default function MainNav(
   props: Props = { displayMobileVersion: false },
 ) {
@@ -80,8 +137,6 @@ export default function MainNav(
 
   const path = usePathname();
   const router = useRouter();
-
-  const { updateNickname, nickname } = useUserStore();
 
   const [current, setCurrent] = useState(() => {
     const current = path;
@@ -116,14 +171,6 @@ export default function MainNav(
     }
   };
 
-  const onFinish = (values: any) => {
-    updateNickname(values.nickname);
-  };
-
-  const changeName = () => {
-    updateNickname("");
-  };
-
   return (
     <>
       {displayMobileVersion ? (
@@ -140,44 +187,7 @@ export default function MainNav(
             </div>
           </div>
 
-          <div className={styles["login-register"]}>
-            {nickname ? (
-              <Button type="default" onClick={changeName}>
-                欢迎您, {nickname}
-              </Button>
-            ) : (
-              <Form
-                name="nickname_edit"
-                initialValues={{ nickname: nickname }}
-                layout="inline"
-                size="small"
-                onFinish={onFinish}
-                style={{ maxWidth: 200 }}
-                wrapperCol={{ span: 24 }}
-              >
-                <Form.Item
-                  name="nickname"
-                  rules={[
-                    {
-                      required: true,
-                      message: "输入昵称",
-                    },
-                  ]}
-                >
-                  <Input
-                    size="small"
-                    style={{ width: 100 }}
-                    placeholder="昵称"
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Button type="default" htmlType="submit">
-                    确认
-                  </Button>
-                </Form.Item>
-              </Form>
-            )}
-          </div>
+          <LoginButton />
         </Header>
       ) : (
         <Header className={styles.header}>
@@ -222,44 +232,7 @@ export default function MainNav(
             </Menu> */}
           </div>
 
-          <div className={styles["login-register"]}>
-            {nickname ? (
-              <Button type="default" onClick={changeName}>
-                欢迎您, {nickname}
-              </Button>
-            ) : (
-              <Form
-                name="nickname_edit"
-                initialValues={{ nickname: nickname }}
-                layout="inline"
-                size="small"
-                onFinish={onFinish}
-                style={{ maxWidth: 200 }}
-                wrapperCol={{ span: 24 }}
-              >
-                <Form.Item
-                  name="nickname"
-                  rules={[
-                    {
-                      required: true,
-                      message: "输入昵称",
-                    },
-                  ]}
-                >
-                  <Input
-                    size="small"
-                    style={{ width: 100 }}
-                    placeholder="昵称"
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Button type="default" htmlType="submit">
-                    确认
-                  </Button>
-                </Form.Item>
-              </Form>
-            )}
-          </div>
+          <LoginButton />
         </Header>
       )}
     </>

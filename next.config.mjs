@@ -35,9 +35,7 @@ const nextConfig = {
     unoptimized: mode === "export",
   },
 
-  devServer: {
-    HistoryApiFallback: true,
-  },
+
 
 }
 

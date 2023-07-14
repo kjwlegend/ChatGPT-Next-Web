@@ -42,7 +42,7 @@ export enum StoreKey {
 export enum MaskCategory {
   Default = "通用",
   Develop = "开发",
-  Analysis = "分析研究",
+  Job = "职业",
   Magick = "魔法",
   Creative = "创作",
   Kind = "情绪",

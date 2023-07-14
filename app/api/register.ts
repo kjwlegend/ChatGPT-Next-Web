@@ -14,5 +14,10 @@ export interface RegisterResult {
 export async function register(
   params: RegisterParams,
 ): Promise<RegisterResult> {
-  return request.post("/api/register", params).then((res) => res.data);
+  return request
+    .post("/api/register", params)
+    .then((res) => res.data)
+    .catch((err) => {
+      console.log(err);
+    });
 }
