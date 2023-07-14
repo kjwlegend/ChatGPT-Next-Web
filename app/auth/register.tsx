@@ -11,6 +11,7 @@ import {
   Select,
 } from "antd";
 import React, { useState } from "react";
+import { register, RegisterParams, RegisterResult } from "../api/register";
 
 const { Option } = Select;
 
@@ -47,8 +48,17 @@ const tailFormItemLayout = {
 const App: React.FC = () => {
   const [form] = Form.useForm();
 
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const onFinish = async (values: RegisterParams) => {
+    try {
+      const result: RegisterResult = await register(values);
+      if (result.status === "ok") {
+        // 跳转页面
+      } else {
+        // 显示错误
+      }
+    } catch (error) {
+      // 处理错误
+    }
   };
 
   const prefixSelector = (

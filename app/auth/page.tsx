@@ -23,13 +23,13 @@ const items: TabsProps["items"] = [
     key: "2",
     label: `账户登录`,
     children: <Login />,
-    disabled: true,
+    disabled: false,
   },
   {
     key: "3",
     label: `账号注册`,
     children: <Register />,
-    disabled: true,
+    disabled: false,
   },
 ];
 

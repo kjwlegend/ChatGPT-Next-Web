@@ -1,9 +1,28 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input } from "antd";
+import useAuth from "../hooks/useAuth";
+import { useRouter } from "next/router";
+import { message } from "antd";
+import { LoginResult } from "../types";
 
 export default function Login() {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const { login } = useAuth(); // 获取登录方法
+
+  const router = useRouter();
+
+  const onFinish = async (values: any) => {
+    try {
+      // 调用登录接口
+      const result: any = await login(values);
+
+      if (result) {
+        // 登录成功后跳转
+        router.push("/");
+      }
+    } catch (error) {
+      // 失败提示
+      message.error("登录失败,请重试");
+    }
   };
 
   return (

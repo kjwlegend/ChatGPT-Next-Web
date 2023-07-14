@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getServerSideConfig } from "../config/server";
 import md5 from "spark-md5";
 import { ACCESS_CODE_PREFIX } from "../constant";
+import request from "../utils/request";
 
 function getIP(req: NextRequest) {
   let ip = req.ip ?? req.headers.get("x-real-ip");
@@ -62,4 +63,17 @@ export function auth(req: NextRequest) {
   return {
     error: false,
   };
+}
+
+interface LoginParams {
+  username: string;
+  password: string;
+}
+
+export async function loginAPI(params: LoginParams) {
+  return request({
+    url: "/login",
+    method: "post",
+    data: params,
+  });
 }
