@@ -230,7 +230,7 @@ export function NewChat() {
             <Button key={10000} type="primary" onClick={() => startChat()}>
               开始聊天
             </Button>,
-            <span key={10000}>角色等级: Lv2 </span>,
+            <span key={10000}>角色等级: Lv3 </span>,
           ]}
           key={10000}
         >
