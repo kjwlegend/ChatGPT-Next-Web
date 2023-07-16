@@ -34,3 +34,20 @@
 .window-action-button:not(:first-child) {
   margin-left: 10px;
 }
+
+
+@media screen and (max-width: 768px) {
+  .window-header {
+    padding: 4px 10px;
+  }
+
+  .window-header-title {
+    .window-header-main-title {
+      font-size: 16px;
+    }
+
+    .window-header-sub-title {
+      display: none;
+    }
+  }
+}

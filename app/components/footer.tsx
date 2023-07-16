@@ -15,7 +15,7 @@ import {
 
 export function PageFooter() {
   return (
-    <Footer className={styles.footer}>
+    <Footer className={styles.footer + " desktop-only"}>
       <div className={styles.footerContent}>CopyRight © 2023 by 经纬咨询</div>
     </Footer>
   );

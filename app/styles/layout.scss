@@ -9,7 +9,7 @@
     background-color: var(--background-color);
 }
 
-.main { 
+.main {
     margin: auto;
     display: flex;
     flex-direction: column;
@@ -22,5 +22,23 @@
     background-attachment: fixed;
     // align-items: flex-start;
     box-sizing: border-box;
-  
+
+}
+
+// 建立一个 只在 PC 端显示的样式
+
+@media only screen and (min-width: 768px) {
+
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+// 建立一个 只在 移动端 显示的样式
+
+@media only screen and (max-width: 768px) {
+
+    .desktop-only {
+        display: none !important;
+    }
 }
