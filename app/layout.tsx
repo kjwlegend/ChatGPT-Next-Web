@@ -7,8 +7,9 @@ import { getClientConfig } from "./config/client";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { ErrorBoundary } from "./components/error";
+import { type Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "小光AI",
   description: "专业的超级助手.",
   viewport: {
