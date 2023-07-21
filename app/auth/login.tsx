@@ -1,12 +1,13 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input } from "antd";
 import useAuth from "../hooks/useAuth";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { message } from "antd";
 import { LoginResult } from "../types";
 
 export default function Login() {
   const { login } = useAuth(); // 获取登录方法
+  const [messageApi, contextHolder] = message.useMessage();
 
   const router = useRouter();
 
@@ -17,11 +18,19 @@ export default function Login() {
 
       if (result) {
         // 登录成功后跳转
+        messageApi.open({
+          type: "success",
+          content: "登录成功",
+        });
+
         router.push("/");
       }
     } catch (error) {
       // 失败提示
-      message.error("登录失败,请重试");
+      messageApi.open({
+        type: "error",
+        content: "登录失败,请重试",
+      });
     }
   };
 
@@ -55,7 +64,7 @@ export default function Login() {
       </Form.Item>
       <Form.Item>
         <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>5天内保持登录</Checkbox>
+          <Checkbox>2天内保持登录</Checkbox>
         </Form.Item>
       </Form.Item>
 
@@ -69,6 +78,7 @@ export default function Login() {
           登录
         </Button>
       </Form.Item>
+      {contextHolder}
     </Form>
   );
 }

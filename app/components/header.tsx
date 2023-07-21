@@ -77,9 +77,7 @@ interface Props {
 }
 
 export function LoginButton() {
-  const { isAuthenticated, user } = useContext(AuthContext);
-
-  const { updateNickname, nickname } = useUserStore();
+  const { updateNickname, user } = useUserStore();
 
   const onFinish = (values: any) => {
     updateNickname(values.nickname);
@@ -94,14 +92,14 @@ export function LoginButton() {
       {/* {isAuthenticated ? (<span>aaa</span>)
         : (<span>bbb</span>)} */}
 
-      {nickname ? (
+      {user.nickname ? (
         <Button type="default" onClick={changeName}>
-          欢迎您, {nickname}
+          欢迎您, {user.nickname}
         </Button>
       ) : (
         <Form
           name="nickname_edit"
-          initialValues={{ nickname: nickname }}
+          initialValues={{ nickname: user.nickname }}
           layout="inline"
           size="small"
           onFinish={onFinish}

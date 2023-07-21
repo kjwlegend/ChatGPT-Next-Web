@@ -72,8 +72,13 @@ interface LoginParams {
 
 export async function loginAPI(params: LoginParams) {
   return request({
-    url: "/login",
+    url: "api/gpt/login/",
     method: "post",
     data: params,
-  });
+  })
+    .then((res) => res.data)
+    .catch((err) => {
+      // console.log(err);
+      return err.response.data;
+    });
 }

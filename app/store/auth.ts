@@ -1,39 +1,43 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { useRouter } from "next/navigation";
 
-interface AuthState {
+export interface AuthState {
   isAuthenticated: boolean;
-  user: any;
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  login: (accessToken: string, refreshToken: string) => void;
+  logout: () => void;
+  getAccessToken: () => string | null;
+  getRefreshToken: () => string | null;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
-  user: null,
-  token: null,
-}));
-
-export const login = (token: string) => {
-  useAuthStore.setState({
-    isAuthenticated: true,
-    token: token,
-  });
-};
-
-export const logout = () => {
-  useAuthStore.setState({
-    isAuthenticated: false,
-    token: null,
-  });
-};
-
-export const getUser = () => {
-  return useAuthStore.getState().user;
-};
-
-export const getToken = () => {
-  return useAuthStore.getState().token;
-};
-
-export const isAuthenticated = () => {
-  return useAuthStore.getState().isAuthenticated;
-};
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      isAuthenticated: false,
+      accessToken: null,
+      refreshToken: null,
+      login: (accessToken, refreshToken) => {
+        set({
+          isAuthenticated: true,
+          accessToken,
+          refreshToken,
+        });
+      },
+      logout: () => {
+        set({ isAuthenticated: false, accessToken: null, refreshToken: null });
+      },
+      getAccessToken: () => {
+        return get().accessToken;
+      },
+      getRefreshToken: () => {
+        return get().refreshToken;
+      },
+    }),
+    {
+      name: "auth-store",
+      version: 1,
+    },
+  ),
+);

@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { loginAPI } from "../api/auth";
-
-interface User {
-  // 用户数据类型
-}
+import { useAuthStore } from "../store/auth";
+import { useUserStore, User } from "../store/user";
 
 interface LoginParams {
   username: string;
@@ -12,26 +10,37 @@ interface LoginParams {
 
 export default function useAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const authStore = useAuthStore();
+  const userStore = useUserStore();
 
-  /**
-   * 用户登录
-   * @param params - 登录参数
-   * @returns 登录结果
-   */
+  const login = async (params: LoginParams): Promise<void> => {
+    try {
+      const result = await loginAPI(params);
 
-  const login = async (params: LoginParams) => {
-    const user: User = await loginAPI(params);
-    setUser(user);
+      const authInfo = {
+        accessToken: result.data.access,
+        refreshToken: result.data.refresh,
+        user: result.data.user,
+      };
+
+      authStore.login(authInfo.accessToken, authInfo.refreshToken);
+      userStore.setUser(authInfo.user);
+
+      setUser(authInfo.user);
+    } catch (error) {
+      throw new Error("登录失败，请重试");
+    }
   };
 
   const logout = () => {
-    // 登出逻辑
+    authStore.logout();
     setUser(null);
   };
 
   useEffect(() => {
-    // 初始化当前用户状态
-  }, []);
+    const storedUser = authStore.isAuthenticated ? userStore.user : null;
+    setUser(storedUser);
+  }, [authStore, userStore]);
 
   return {
     user,

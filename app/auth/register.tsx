@@ -10,7 +10,7 @@ import {
   Row,
   Select,
 } from "antd";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { register, RegisterParams, RegisterResult } from "../api/register";
 
 const { Option } = Select;
@@ -45,19 +45,45 @@ const tailFormItemLayout = {
   },
 };
 
-const App: React.FC = () => {
+import request from "../utils/request";
+import axios from "axios";
+import { message } from "antd";
+import { useRouter } from "next/navigation";
+
+const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
+  const router = useRouter();
 
   const onFinish = async (values: RegisterParams) => {
     try {
-      const result: RegisterResult = await register(values);
-      if (result.status === "ok") {
+      const result = await register(values);
+
+      if (result.code == "201") {
         // 跳转页面
+        messageApi.open({
+          type: "success",
+          content: "注册成功,请登录",
+          style: {
+            marginTop: "10vh",
+          },
+        });
+        onRegisterSuccess();
       } else {
-        // 显示错误
+        // 采用antd的message提示
+        const errormsg = result.msg ? result.msg : result.error;
+
+        messageApi.open({
+          type: "error",
+          content: errormsg,
+          style: {
+            marginTop: "10vh",
+          },
+        });
       }
     } catch (error) {
       // 处理错误
+      console.log(error);
     }
   };
 
@@ -81,11 +107,11 @@ const App: React.FC = () => {
       labelAlign="left"
     >
       <Form.Item
-        name="nickname"
-        label="昵称"
-        tooltip="您希望别人怎么称呼您？"
+        name="username"
+        label="用户名"
+        tooltip="登录使用"
         rules={[
-          { required: true, message: "请输入你的昵称", whitespace: true },
+          { required: true, message: "请输入你的用户名", whitespace: false },
         ]}
       >
         <Input />
@@ -128,6 +154,29 @@ const App: React.FC = () => {
         <Input.Password />
       </Form.Item>
       <Form.Item
+        name="nickname"
+        label="昵称"
+        tooltip="您希望别人怎么称呼您？"
+        rules={[
+          { required: false, message: "请输入你的昵称", whitespace: true },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="gender"
+        label="性别"
+        rules={[{ required: false, message: "请选择您的性别" }]}
+      >
+        <Select>
+          <Option value="0">请选择</Option>
+          <Option value="1">男</Option>
+          <Option value="2">女</Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item
         name="email"
         label="邮箱"
         rules={[
@@ -144,7 +193,7 @@ const App: React.FC = () => {
         <Input />
       </Form.Item>
       <Form.Item
-        name="phone"
+        name="phone_number"
         label="手机号"
         rules={[{ required: true, message: "请输入手机号" }]}
       >
@@ -178,6 +227,7 @@ const App: React.FC = () => {
           立即注册
         </Button>
       </Form.Item>
+      {contextHolder}
     </Form>
   );
 };

@@ -9,31 +9,40 @@ import CodeLogin from "./code-login";
 import Register from "./register";
 import Login from "./login";
 
-const onChange = (key: string) => {
-  console.log(key);
-};
-
-const items: TabsProps["items"] = [
-  {
-    key: "1",
-    label: `快捷密码登录`,
-    children: <CodeLogin />,
-  },
-  {
-    key: "2",
-    label: `账户登录`,
-    children: <Login />,
-    disabled: true,
-  },
-  {
-    key: "3",
-    label: `账号注册`,
-    children: <Register />,
-    disabled: true,
-  },
-];
+import React, { useState, createContext } from "react";
 
 export default function AuthPage() {
+  const onChange = (key: string) => {
+    console.log(key);
+    setActiveTab(key);
+  };
+
+  const [activeTab, setActiveTab] = useState("1");
+
+  const onRegisterSuccess = () => {
+    setActiveTab("2");
+  };
+
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: `快捷密码登录`,
+      children: <CodeLogin />,
+    },
+    {
+      key: "2",
+      label: `账户登录`,
+      children: <Login />,
+      disabled: false,
+    },
+    {
+      key: "3",
+      label: `账号注册`,
+      children: <Register onRegisterSuccess={onRegisterSuccess} />,
+      disabled: false,
+    },
+  ];
+
   return (
     <div className={styles["auth-page"] + " main"}>
       <div className={styles["welcome-header"]}>
@@ -43,7 +52,7 @@ export default function AuthPage() {
 
       <div className={styles["login-container"]}>
         <Tabs
-          defaultActiveKey="1"
+          activeKey={activeTab}
           items={items}
           onChange={onChange}
           size="large"
