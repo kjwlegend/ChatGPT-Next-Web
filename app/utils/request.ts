@@ -1,8 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { useAuthStore } from "../store/auth";
+import { useRouter } from "next/navigation";
+import { server_url } from "../constant";
 
 const service: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: server_url + "/api",
   timeout: 5000,
 });
 
@@ -35,6 +37,7 @@ service.interceptors.response.use(
     const responseStatus = error.response.status;
 
     const authStore = useAuthStore();
+    const router = useRouter();
 
     // 根据返回的数据中的 "code" 字段或响应的状态码来判断令牌是否过期
     if ((responseData && responseData.code === 401) || responseStatus === 401) {
@@ -60,10 +63,13 @@ service.interceptors.response.use(
           return service(originalRequest);
         } catch (error) {
           // 处理刷新令牌失败的情况，例如跳转到登录页面
+          router.push("/auth");
+
           throw new Error("刷新令牌失败，请重新登录");
         }
       } else {
         // 处理已经重试过的请求的情况，例如跳转到登录页面
+        router.push("/auth");
         throw new Error("令牌已过期，请重新登录");
       }
     }

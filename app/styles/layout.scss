@@ -1,44 +1,43 @@
 .appcontainer {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    margin: auto;
-    background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: auto;
+  background-color: var(--background-color);
 }
 
 .main {
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    width: 100%;
-    padding: 20px;
-    background-image: url('/bg.png');
-    background-repeat: no-repeat;
-    background-position: 100% 0;
-    background-attachment: fixed;
-    // align-items: flex-start;
-    box-sizing: border-box;
-
+  margin: auto;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+  padding: 20px;
+  background-image: url("/bg.png");
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-attachment: fixed;
+  // align-items: flex-start;
+  box-sizing: border-box;
+  align-items: center;
 }
 
 // 建立一个 只在 PC 端显示的样式
 
 @media only screen and (min-width: 768px) {
-
-    .mobile-only {
-        display: none !important;
-    }
+  .mobile-only {
+    display: none !important;
+  }
 }
 
 // 建立一个 只在 移动端 显示的样式
 
 @media only screen and (max-width: 768px) {
-
-    .desktop-only {
-        display: none !important;
-    }
+  .desktop-only {
+    display: none !important;
+  }
 }

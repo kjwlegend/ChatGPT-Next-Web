@@ -8,7 +8,12 @@ export interface User {
   type: string;
   constellation: string | null;
   birthday: string | null;
-  gender: number;
+  gender: string;
+  email: string;
+  inviter: string | null;
+  member_type: string;
+  phone_number: string | null;
+  username: string;
 }
 
 interface UserStore {
@@ -27,7 +32,12 @@ export const useUserStore = create<UserStore>()(
         type: "",
         constellation: null,
         birthday: null,
-        gender: 0,
+        gender: "",
+        email: "",
+        inviter: null,
+        member_type: "",
+        phone_number: null,
+        username: "",
       },
       updateNickname: (nickname) => {
         set((state) => ({

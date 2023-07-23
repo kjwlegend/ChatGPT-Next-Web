@@ -6,7 +6,7 @@ import { useAccessStore, useUserStore } from "../store";
 export default function CodeLogin() {
   const router = useRouter();
   const access = useAccessStore();
-  const user = useUserStore();
+  const useStore = useUserStore();
 
   const goHome = () => router.replace("/");
   const path = usePathname();
@@ -15,7 +15,7 @@ export default function CodeLogin() {
     const code = values.password;
     console.log("Received values of form: ", code);
     access.updateCode(code);
-    user.updateNickname(values.nickname);
+    useStore.updateNickname(values.nickname);
     goHome();
     console.log(path);
   };
@@ -26,7 +26,7 @@ export default function CodeLogin() {
         name="quick_login"
         className="login-form"
         initialValues={{
-          nickname: user.nickname,
+          nickname: useStore.user.nickname,
           password: access.accessCode,
         }}
         style={{ maxWidth: 900, minWidth: 400 }}

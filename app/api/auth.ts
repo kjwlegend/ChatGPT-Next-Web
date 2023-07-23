@@ -65,6 +65,31 @@ export function auth(req: NextRequest) {
   };
 }
 
+// Path: app\api\auth.ts
+// @JINGWEI KONG Customized
+
+export interface RegisterParams {
+  username: string;
+  password: string;
+  email: string;
+}
+
+export interface RegisterResult {
+  token: string;
+  status: string;
+  data: object;
+}
+
+export async function register(params: any): Promise<any> {
+  return request
+    .post("/gpt/register/", params)
+    .then((res) => res.data)
+    .catch((err) => {
+      // console.log(err);
+      return err.response.data;
+    });
+}
+
 interface LoginParams {
   username: string;
   password: string;
@@ -72,9 +97,21 @@ interface LoginParams {
 
 export async function loginAPI(params: LoginParams) {
   return request({
-    url: "api/gpt/login/",
+    url: "/gpt/login/",
     method: "post",
     data: params,
+  })
+    .then((res) => res.data)
+    .catch((err) => {
+      // console.log(err);
+      return err.response.data;
+    });
+}
+
+export async function logoutAPI() {
+  return request({
+    url: "/gpt/logout/",
+    method: "post",
   })
     .then((res) => res.data)
     .catch((err) => {

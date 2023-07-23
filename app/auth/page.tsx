@@ -10,14 +10,17 @@ import Register from "./register";
 import Login from "./login";
 
 import React, { useState, createContext } from "react";
+import { useAuthStore } from "../store/auth";
+import LogoutButton from "../components/logtou";
 
 export default function AuthPage() {
+  const { isAuthenticated } = useAuthStore();
+  const [activeTab, setActiveTab] = useState("1");
+
   const onChange = (key: string) => {
     console.log(key);
     setActiveTab(key);
   };
-
-  const [activeTab, setActiveTab] = useState("1");
 
   const onRegisterSuccess = () => {
     setActiveTab("2");
@@ -49,7 +52,6 @@ export default function AuthPage() {
         <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
         <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
       </div>
-
       <div className={styles["login-container"]}>
         <Tabs
           activeKey={activeTab}
@@ -60,6 +62,7 @@ export default function AuthPage() {
           centered={true}
         />
       </div>
+      {isAuthenticated ? <LogoutButton /> : <></>}
     </div>
   );
 }

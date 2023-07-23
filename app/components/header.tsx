@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  HashRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
 import { useRouter, usePathname } from "next/navigation";
-import { AuthContext } from "@/app/contexts/AuthContext";
-import { useContext } from "react";
+
 import Link from "next/link";
 
 import React, { useState, useEffect } from "react";
