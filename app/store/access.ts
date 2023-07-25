@@ -15,8 +15,6 @@ export interface AccessControlStore {
   hideBalanceQuery: boolean;
   disableGPT4: boolean;
 
-  isAuthenticated: boolean;
-
   openaiUrl: string;
 
   updateToken: (_: string) => void;
@@ -42,7 +40,6 @@ export const useAccessStore = create<AccessControlStore>()(
       hideUserApiKey: false,
       hideBalanceQuery: false,
       disableGPT4: false,
-      isAuthenticated: useAuthStore((state) => state.isAuthenticated),
 
       openaiUrl: DEFAULT_OPENAI_URL,
 
@@ -62,13 +59,13 @@ export const useAccessStore = create<AccessControlStore>()(
       },
       isAuthorized() {
         get().fetch();
-
+        const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
         // has token or has code or disabled access control
         return (
           !!get().token ||
           !!get().accessCode ||
           !get().enabledAccessControl() ||
-          !!get().isAuthenticated
+          !!isAuthenticated
         );
       },
       fetch() {
