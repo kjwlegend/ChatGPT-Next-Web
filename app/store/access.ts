@@ -4,6 +4,7 @@ import { DEFAULT_API_HOST, DEFAULT_MODELS, StoreKey } from "../constant";
 import { getHeaders } from "../client/api";
 import { BOT_HELLO } from "./chat";
 import { getClientConfig } from "../config/client";
+import { useAuthStore } from "./auth";
 
 export interface AccessControlStore {
   accessCode: string;
@@ -13,6 +14,8 @@ export interface AccessControlStore {
   hideUserApiKey: boolean;
   hideBalanceQuery: boolean;
   disableGPT4: boolean;
+
+  isAuthenticated: boolean;
 
   openaiUrl: string;
 
@@ -39,6 +42,7 @@ export const useAccessStore = create<AccessControlStore>()(
       hideUserApiKey: false,
       hideBalanceQuery: false,
       disableGPT4: false,
+      isAuthenticated: useAuthStore((state) => state.isAuthenticated),
 
       openaiUrl: DEFAULT_OPENAI_URL,
 
@@ -61,7 +65,10 @@ export const useAccessStore = create<AccessControlStore>()(
 
         // has token or has code or disabled access control
         return (
-          !!get().token || !!get().accessCode || !get().enabledAccessControl()
+          !!get().token ||
+          !!get().accessCode ||
+          !get().enabledAccessControl() ||
+          !!get().isAuthenticated
         );
       },
       fetch() {

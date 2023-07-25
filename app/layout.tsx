@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-page-custom-font */
+
 import "./styles/globals.scss";
 import "./styles/markdown.scss";
 import "./styles/highlight.scss";
@@ -8,6 +9,7 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 import { ErrorBoundary } from "./components/error";
 import { type Metadata } from "next";
+import { useEffect } from "react";
 
 export const metadata: Metadata = {
   title: "小光AI",

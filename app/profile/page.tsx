@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/auth";
-import LogoutButton from "../components/logtou";
+import LogoutButton from "../components/logout";
 import PersonalInfoTab from "./PersonalInfoTab";
 import SecurityInfoTab from "./SecurityInfoTab";
 // import AccountInfoTab from "./AccountInfoTab";
@@ -9,6 +10,7 @@ import SecurityInfoTab from "./SecurityInfoTab";
 
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
+import { useUserStore } from "../store";
 
 const items: TabsProps["items"] = [
   {
@@ -37,6 +39,12 @@ const items: TabsProps["items"] = [
 
 const ProfilePage = () => {
   const { isAuthenticated } = useAuthStore();
+  const { user } = useUserStore();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const onChange = (key: string) => {
     console.log(key);
@@ -45,19 +53,21 @@ const ProfilePage = () => {
   return (
     <div className="main">
       <h1>用户中心</h1>
-      {isAuthenticated ? (
-        <Tabs
-          defaultActiveKey="1"
-          items={items}
-          onChange={onChange}
-          size="large"
-          tabBarGutter={50}
-          centered={true}
-        />
+      {isAuthenticated && isClient ? (
+        <div>
+          <Tabs
+            defaultActiveKey="1"
+            items={items}
+            onChange={onChange}
+            size="large"
+            tabBarGutter={50}
+            centered={true}
+          />
+          <LogoutButton />
+        </div>
       ) : (
         <div>请先登录</div>
       )}
-      {isAuthenticated && <LogoutButton />}
     </div>
   );
 };

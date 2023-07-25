@@ -9,13 +9,36 @@ import CodeLogin from "./code-login";
 import Register from "./register";
 import Login from "./login";
 
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import { useAuthStore } from "../store/auth";
-import LogoutButton from "../components/logtou";
+import LogoutButton from "../components/logout";
+import LoadingIcon from "../icons/three-dots.svg";
 
 export default function AuthPage() {
   const { isAuthenticated } = useAuthStore();
   const [activeTab, setActiveTab] = useState("1");
+  const [isClient, setIsClient] = useState(false);
+
+  // 等待样式表加载完后, 再显示
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const timeout = setTimeout(() => {
+      setShow(true);
+    }, 200);
+
+    // 在组件卸载时清除定时器
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (!show) {
+    return (
+      <div className="main">
+        <LoadingIcon />{" "}
+      </div>
+    );
+  }
 
   const onChange = (key: string) => {
     console.log(key);
@@ -62,7 +85,7 @@ export default function AuthPage() {
           centered={true}
         />
       </div>
-      {isAuthenticated ? <LogoutButton /> : <></>}
+      {isAuthenticated && isClient && <LogoutButton />}
     </div>
   );
 }

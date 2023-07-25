@@ -56,7 +56,7 @@ const App: React.FC<AppProps> = ({ avatar, onImgListChange }) => {
     setFileList(newFileList);
     const newImgList = newFileList
       .filter((file) => file.response)
-      .map((file) => file.response.data.url);
+      .map((file) => server_url + "/" + file.response.data.url);
     onImgListChange(newImgList);
   };
 

@@ -3,6 +3,8 @@ import { getServerSideConfig } from "../config/server";
 import md5 from "spark-md5";
 import { ACCESS_CODE_PREFIX } from "../constant";
 import request from "../utils/request";
+import { useAuthStore } from "../store/auth";
+import { use } from "react";
 
 function getIP(req: NextRequest) {
   let ip = req.ip ?? req.headers.get("x-real-ip");
@@ -27,6 +29,8 @@ function parseApiKey(bearToken: string) {
 
 export function auth(req: NextRequest) {
   const authToken = req.headers.get("Authorization") ?? "";
+  const isAuthenticated = useAuthStore.getState().isAuthenticated;
+  console.log("[Auth] isAuthenticated", isAuthenticated);
 
   // check if it is openai api key or user token
   const { accessCode, apiKey: token } = parseApiKey(authToken);
@@ -40,10 +44,15 @@ export function auth(req: NextRequest) {
   console.log("[User IP] ", getIP(req));
   console.log("[Time] ", new Date().toLocaleString());
 
-  if (serverConfig.needCode && !serverConfig.codes.has(hashedCode) && !token) {
+  if (
+    serverConfig.needCode &&
+    !serverConfig.codes.has(hashedCode) &&
+    !token &&
+    !isAuthenticated
+  ) {
     return {
       error: true,
-      msg: !accessCode ? "empty access code" : "wrong access code",
+      msg: !accessCode ? "未登录或授权码为空" : "未登录或授权码为空",
     };
   }
 

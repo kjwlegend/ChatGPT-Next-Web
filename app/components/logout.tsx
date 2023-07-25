@@ -19,11 +19,11 @@ const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
 
   if (isButton) {
     return (
-      <div>
-        <Button type="primary" onClick={handleLogout}>
-          注销登出
-        </Button>
-      </div>
+      // <div>
+      <Button type="primary" onClick={handleLogout}>
+        注销登出
+      </Button>
+      // </div>
     );
   }
 

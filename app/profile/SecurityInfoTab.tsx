@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { useUserStore } from "../store/user";
 import { Form, Input, Button, message, Space } from "antd";

@@ -144,7 +144,7 @@ export default function MainNav(
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShow(true);
-    }, 200);
+    }, 100);
 
     // 在组件卸载时清除定时器
     return () => clearTimeout(timeout);
