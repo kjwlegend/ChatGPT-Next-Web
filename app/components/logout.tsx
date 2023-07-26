@@ -2,6 +2,7 @@ import { Button } from "antd";
 import { useAuthStore } from "../store/auth";
 import { useRouter } from "next/navigation";
 import { logoutAPI } from "../api/auth";
+import useAuth from "../hooks/useAuth";
 
 interface LogoutButtonProps {
   isButton?: boolean;
@@ -10,10 +11,10 @@ interface LogoutButtonProps {
 const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
   const { logout } = useAuthStore();
   const router = useRouter();
+  const auth = useAuth();
 
   const handleLogout = async () => {
-    await logoutAPI();
-    logout();
+    auth.logoutHook();
     // router.push("/about");
   };
 

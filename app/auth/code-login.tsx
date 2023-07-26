@@ -29,7 +29,7 @@ export default function CodeLogin() {
           nickname: useStore.user.nickname,
           password: access.accessCode,
         }}
-        style={{ maxWidth: 900, minWidth: 400 }}
+        style={{ maxWidth: 900, minWidth: 300 }}
         onFinish={onFinish}
       >
         <Form.Item

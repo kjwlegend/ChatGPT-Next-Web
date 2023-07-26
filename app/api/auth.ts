@@ -29,7 +29,8 @@ function parseApiKey(bearToken: string) {
 
 export function auth(req: NextRequest) {
   const authToken = req.headers.get("Authorization") ?? "";
-  const isAuthenticated = useAuthStore.getState().isAuthenticated;
+  const isAuthenticated = req.cookies.get("authenticated")?.value === "true";
+
   console.log("[Auth] isAuthenticated", isAuthenticated);
 
   // check if it is openai api key or user token
@@ -52,7 +53,9 @@ export function auth(req: NextRequest) {
   ) {
     return {
       error: true,
-      msg: !accessCode ? "未登录或授权码为空" : "未登录或授权码为空",
+      msg: !accessCode
+        ? "未登录或授权码为空"
+        : "未登录或授权码为空, 如清除了cookie, 请重新登录",
     };
   }
 
@@ -110,7 +113,12 @@ export async function loginAPI(params: LoginParams) {
     method: "post",
     data: params,
   })
-    .then((res) => res.data)
+    .then((res) => {
+      const expirationDate = new Date();
+      expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
+      document.cookie = `authenticated=true; expires=${expirationDate.toUTCString()}; path=/`;
+      return res.data;
+    })
     .catch((err) => {
       // console.log(err);
       return err.response.data;
@@ -122,7 +130,11 @@ export async function logoutAPI() {
     url: "/gpt/logout/",
     method: "post",
   })
-    .then((res) => res.data)
+    .then((res) => {
+      document.cookie =
+        "authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      return res.data;
+    })
     .catch((err) => {
       // console.log(err);
       return err.response.data;

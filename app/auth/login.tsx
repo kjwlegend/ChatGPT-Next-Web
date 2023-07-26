@@ -6,7 +6,7 @@ import { message } from "antd";
 import { LoginResult } from "../types";
 
 export default function Login() {
-  const { login } = useAuth(); // 获取登录方法
+  const { loginHook } = useAuth(); // 获取登录方法
   const [messageApi, contextHolder] = message.useMessage();
 
   const router = useRouter();
@@ -14,7 +14,9 @@ export default function Login() {
   const onFinish = async (values: any) => {
     try {
       // 调用登录接口
-      const result: any = await login(values);
+      const result: any = await loginHook(values);
+      // console.log("Received values of form: ", values);
+      // console.log("Received values of result: ", result);
 
       if (result) {
         // 登录成功后跳转
@@ -39,7 +41,7 @@ export default function Login() {
       name="normal_login"
       className="login-form"
       initialValues={{ remember: true }}
-      style={{ maxWidth: 900, minWidth: 400 }}
+      style={{ maxWidth: 900, minWidth: 300 }}
       onFinish={onFinish}
       labelAlign="left"
     >

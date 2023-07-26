@@ -1,25 +1,26 @@
 "use client";
-
-import { useRouter, usePathname } from "next/navigation";
-
-import Link from "next/link";
+import styles from "./header.module.scss";
 
 import React, { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAppConfig } from "../store/config";
+import { useMobileScreen } from "../utils";
+
+import Link from "next/link";
+import Image from "next/image";
+
+import type { MenuProps } from "antd";
+
+import { useUserStore } from "../store/user";
+
+import LoadingIcon from "../icons/three-dots.svg";
 import {
   AliwangwangOutlined,
   UsergroupAddOutlined,
   HighlightOutlined,
   ContainerOutlined,
 } from "@ant-design/icons";
-
-import type { MenuProps } from "antd";
-import LoadingIcon from "../icons/three-dots.svg";
-import { useAppConfig } from "../store/config";
-import { useUserStore } from "../store/user";
-import { useMobileScreen } from "../utils";
-import { Layout, Menu, Button, Form, Input } from "antd";
-import styles from "./header.module.scss";
-import Login from "../auth/login";
+import { Layout, Menu, Button, Form, Input, Avatar, Space } from "antd";
 
 const items = [
   {
@@ -31,16 +32,25 @@ const items = [
   },
   {
     label: "介绍",
-    key: "about",
+    key: "aboutMenu",
     icon: <ContainerOutlined />,
     url: "/about",
+    children: [
+      {
+        label: "关于小光AI",
+        key: "about",
+        icon: <ContainerOutlined />,
+        url: "/about",
+      },
+      {
+        label: "版本日志",
+        key: "updates",
+        icon: <ContainerOutlined />,
+        url: "/updates",
+      },
+    ],
   },
-  {
-    label: "版本日志",
-    key: "updates",
-    icon: <ContainerOutlined />,
-    url: "/updates",
-  },
+
   {
     label: "助手(开发中)",
     key: "assistant",
@@ -49,18 +59,18 @@ const items = [
     url: "/assistant",
   },
   {
-    label: "绘画(开发中)",
+    label: "社区(开发中)",
     key: "draw",
     icon: <HighlightOutlined />,
     disabled: true,
     url: "/draw",
   },
-  {
-    label: "商城(开发中)",
-    key: "mall",
-    disabled: true,
-    url: "/mall",
-  },
+  // {
+  //   label: "商城(开发中)",
+  //   key: "mall",
+  //   disabled: true,
+  //   url: "/mall",
+  // },
 ];
 
 const { Header } = Layout;
@@ -68,54 +78,31 @@ const { Header } = Layout;
 interface Props {
   displayMobileVersion: boolean;
 }
-
 export function LoginButton() {
-  const { updateNickname, user } = useUserStore();
-
-  const onFinish = (values: any) => {
-    updateNickname(values.nickname);
-  };
-
-  const changeName = () => {
-    updateNickname("");
-  };
+  const { user } = useUserStore();
 
   return (
-    <div className={styles["login-register"]}>
-      {/* {isAuthenticated ? (<span>aaa</span>)
-        : (<span>bbb</span>)} */}
-
-      {user.nickname ? (
-        <Button type="default" onClick={changeName}>
-          欢迎您, {user.nickname}
-        </Button>
+    <div className={styles["login-wrapper"]}>
+      {user?.nickname ? (
+        <>
+          {user?.avatar && (
+            <div className={styles["avatar"]}>
+              <Image
+                fill={true}
+                objectFit="contain"
+                src={user?.avatar}
+                alt="Avatar"
+              />
+            </div>
+          )}
+          <Link href="/profile">
+            <Button>{user?.nickname}</Button>
+          </Link>
+        </>
       ) : (
-        <Form
-          name="nickname_edit"
-          initialValues={{ nickname: user.nickname }}
-          layout="inline"
-          size="small"
-          onFinish={onFinish}
-          style={{ maxWidth: 200 }}
-          wrapperCol={{ span: 24 }}
-        >
-          <Form.Item
-            name="nickname"
-            rules={[
-              {
-                required: true,
-                message: "输入昵称",
-              },
-            ]}
-          >
-            <Input size="small" style={{ width: 100 }} placeholder="昵称" />
-          </Form.Item>
-          <Form.Item>
-            <Button type="default" htmlType="submit">
-              确认
-            </Button>
-          </Form.Item>
-        </Form>
+        <Link href="/auth">
+          <Button type="default">登录</Button>
+        </Link>
       )}
     </div>
   );
@@ -156,9 +143,22 @@ export default function MainNav(
 
   const onClick: MenuProps["onClick"] = (e) => {
     setCurrent(e.key);
+    console.log("click ", e);
     const item = items.find((item) => item.key === e.key);
     if (item) {
       router.push(item.url);
+    } else {
+      const subItem = items.find((item) =>
+        item.children?.some((child) => child.key === e.key),
+      );
+      if (subItem) {
+        const subItemChild = subItem.children?.find(
+          (child) => child.key === e.key,
+        );
+        if (subItemChild) {
+          router.push(subItemChild.url);
+        }
+      }
     }
   };
 
@@ -201,6 +201,7 @@ export default function MainNav(
               style={{ backgroundColor: "transparent", height: "50px" }}
               className={styles["ant-menu"]}
               items={items}
+              overflowedIndicator={<span>abc</span>}
             />
             {/* {items.map((item) => {
                 if (item.disabled) {

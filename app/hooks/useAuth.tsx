@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { loginAPI } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 import { useUserStore, User } from "../store/user";
+import { logoutAPI } from "../api/auth";
 
 interface LoginParams {
   username: string;
@@ -13,7 +14,7 @@ export default function useAuth() {
   const authStore = useAuthStore();
   const userStore = useUserStore();
 
-  const login = async (params: LoginParams): Promise<void> => {
+  const loginHook = async (params: LoginParams): Promise<void> => {
     try {
       const result = await loginAPI(params);
 
@@ -27,14 +28,16 @@ export default function useAuth() {
       userStore.setUser(authInfo.user);
 
       setUser(authInfo.user);
+
+      return result;
     } catch (error) {
       throw new Error("登录失败，请重试");
     }
   };
-
-  const logout = () => {
+  const logoutHook = async () => {
+    await logoutAPI();
     authStore.logout();
-    setUser(null);
+    userStore.clearUser();
   };
 
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function useAuth() {
 
   return {
     user,
-    login,
-    logout,
+    loginHook,
+    logoutHook,
   };
 }

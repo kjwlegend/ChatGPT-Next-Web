@@ -5,6 +5,7 @@ import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
+import { useAuthStore } from "@/app/store/auth";
 
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 
@@ -24,6 +25,9 @@ async function handle(
   req: NextRequest,
   { params }: { params: { path: string[] } },
 ) {
+  // const allowed = useAuthStore((state) => state.isAuthenticated);
+  // console.log("[OpenAI Route] allowed", allowed);
+
   console.log("[OpenAI Route] params ", params);
 
   if (req.method === "OPTIONS") {

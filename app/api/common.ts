@@ -40,6 +40,7 @@ export async function requestOpenai(req: NextRequest) {
       ...(process.env.OPENAI_ORG_ID && {
         "OpenAI-Organization": process.env.OPENAI_ORG_ID,
       }),
+      "User-Info": "test",
     },
     method: req.method,
     body: req.body,

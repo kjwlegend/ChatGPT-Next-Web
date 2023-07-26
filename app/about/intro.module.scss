@@ -4,39 +4,47 @@
   flex-direction: column;
   width: 100%;
   padding: 20px;
-  background-image: url('/bg.png');
+  background-image: url("/bg.png");
   background-repeat: no-repeat;
   background-position: 100% 0;
   background-attachment: fixed;
+
+  :global .ant-layout-content {
+    width: 100%;
+    box-sizing: border-box;
+  }
 
   .section {
     padding: 20px;
     max-width: 1200px;
     margin: 20px auto;
-    
+    width: 100%;
+    box-sizing: border-box;
+
     text-align: center;
     color: var(--gray-dark);
 
     :global .ant-carousel {
-
       .slick-slide {
         text-align: left;
         overflow: hidden;
         position: relative;
-
       }
     }
-
+    .carousel {
+      height: auto;
+      width: 100%;
+      position: relative;
+    }
 
     h2 {
       font-size: 36px;
       margin-bottom: 40px;
 
-
       span {
         padding-left: 5px;
         letter-spacing: 2px;
-        background-image: linear-gradient(117deg,#0547ff -84%,#d683ff 125%);
+        background-image: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -46,11 +54,10 @@
     :global .ant-card {
       padding: 20px;
 
-      .ant-card-head{
+      .ant-card-head {
         color: #5c86fc;
         font-size: 22px;
         letter-spacing: 1px;
-
       }
       p {
         font-size: 18px;
@@ -59,10 +66,11 @@
         opacity: 0.8;
       }
     }
-    
-    &.whydifferent{
+
+    &.whydifferent {
       img {
         max-width: 500px;
+        width: 100%;
         height: auto;
       }
       h3 {
@@ -72,7 +80,7 @@
         text-align: center;
         margin-bottom: 20px;
       }
-  
+
       p {
         font-size: 20px;
         margin-bottom: 10px;
@@ -81,13 +89,12 @@
         text-align: center;
         margin: auto;
       }
-
     }
 
     &.differentothers {
       .conclusion {
         font-size: 20px;
-        color : rgba(0,0,0,0.55);
+        color: rgba(0, 0, 0, 0.55);
         width: 80%;
         margin: 0 auto;
 
@@ -102,13 +109,13 @@
     }
 
     &.whatcanwedo {
-     :global .ant-card-head {
+      :global .ant-card-head {
         color: #5c86fc;
       }
       :global .ant-card-body {
-        padding-top:  0;
+        padding-top: 0;
       }
-     :global .anticon svg {
+      :global .anticon svg {
         font-size: 50px;
       }
     }
@@ -117,10 +124,9 @@
       overflow: hidden;
       p {
         font-size: 16px;
-        color: rgba(0,0,0,0.55);
+        color: rgba(0, 0, 0, 0.55);
         letter-spacing: 1px;
         text-align: left;
-
       }
       a {
         color: #666;
@@ -137,7 +143,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(112.58deg,#7aa8ff -5.16%,#e9adff 105.31%);
+    background: linear-gradient(112.58deg, #7aa8ff -5.16%, #e9adff 105.31%);
     width: 80%;
     max-width: 800px;
     height: 200px;
@@ -150,21 +156,21 @@
       color: rgb(255, 255, 255);
       margin-top: 0;
     }
-    
+
     button {
-      margin : 0 20px;
+      margin: 0 20px;
     }
     .blue {
       background-color: #0547ff;
     }
     .black {
       background-color: #000000;
-      color: #fff;;
+      color: #fff;
     }
   }
 
   :global .ant-collapse {
-    color: rgba(0,0,0,0.65);
+    color: rgba(0, 0, 0, 0.65);
     text-align: left;
     font-size: 16px;
     letter-spacing: 1px;
@@ -173,24 +179,20 @@
       border: none;
       border-bottom: 1px solid #e8e8e8;
 
-
       .ant-collapse-header {
         padding: 20px;
         font-size: 20px;
         letter-spacing: 1px;
-        color: rgba(0,0,0,0.65);
+        color: rgba(0, 0, 0, 0.65);
       }
       .ant-collapse-content {
         padding: 20px;
         font-size: 18px;
         letter-spacing: 1px;
-        color: rgba(0,0,0,0.65);
+        color: rgba(0, 0, 0, 0.65);
       }
     }
   }
-
-
-
 }
 
 @media screen and (max-width: 768px) {
@@ -199,14 +201,14 @@
 
     .section {
       padding: 20px;
+      width: 100%;
 
       h2 {
         font-size: 24px;
       }
 
-
       :global .ant-col {
-        h3 { 
+        h3 {
           font-size: 22px;
         }
         p {
@@ -215,6 +217,7 @@
         img {
           width: 100%;
         }
+
         .ant-card {
           padding: 0;
           .ant-card-head {
@@ -224,11 +227,15 @@
           .ant-card-body {
             padding: 12px;
           }
+          .ant-card-cover {
+            img {
+              width: initial;
+            }
+          }
         }
       }
 
-      &.differentothers{
-
+      &.differentothers {
         .conclusion {
           margin-top: 25px;
           font-size: 16px;
@@ -238,29 +245,25 @@
       }
     }
 
-      :global .ant-collapse {
-        .ant-collapse-item {
-          .ant-collapse-header {
-            font-size: 16px;
-          }
-          .ant-collapse-content {
-            font-size: 16px;
-          }
+    :global .ant-collapse {
+      .ant-collapse-item {
+        .ant-collapse-header {
+          font-size: 16px;
+        }
+        .ant-collapse-content {
+          font-size: 16px;
         }
       }
+    }
 
-      .action {
-        width: 90%;
-        height: 160px;
+    .action {
+      width: 90%;
+      height: 160px;
 
-        h3 {
-          font-size: 20px;
-          font-weight: bold;
-        }
-        
+      h3 {
+        font-size: 20px;
+        font-weight: bold;
       }
-
+    }
   }
-
-
 }

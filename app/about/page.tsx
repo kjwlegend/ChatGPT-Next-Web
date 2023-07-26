@@ -127,7 +127,7 @@ const whatWeCanDoContent = [
     cards: [
       {
         icon: (
-          <span>
+          <span className={styles["icon"]}>
             <Image
               src="/assets/wode.png"
               alt="feature"
@@ -142,7 +142,7 @@ const whatWeCanDoContent = [
       },
       {
         icon: (
-          <span>
+          <span className={styles["icon"]}>
             <Image
               src="/assets/yuyin.png"
               alt="feature"
@@ -157,7 +157,7 @@ const whatWeCanDoContent = [
       },
       {
         icon: (
-          <span>
+          <span className={styles["icon"]}>
             <Image
               src="/assets/linggan.png"
               alt="feature"
@@ -247,17 +247,12 @@ const FeatureSection: React.FC = () => {
       <Carousel autoplay dotPosition="bottom" easing="linear" effect="fade">
         {featureContent.map((content, index) => (
           <div key={index}>
-            <div
-            // style={{ ...contentStyle, backgroundImage: `url(${content.background})` }}
-            >
+            <div>
               <img
                 src={content.background}
                 alt=""
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
               />
-              {/* <h2>{content.title}</h2>
-                            <h3>{content.subtitle}</h3>
-                            <p>{content.description}</p> */}
             </div>
           </div>
         ))}

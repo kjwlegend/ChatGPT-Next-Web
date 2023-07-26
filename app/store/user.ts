@@ -21,6 +21,7 @@ interface UserStore {
   updateNickname: (nickname: string) => void;
   updateModelPreference: (modelPreference: string) => void;
   setUser: (user: User) => void;
+  clearUser: () => void;
 }
 export const useUserStore = create<UserStore>()(
   persist(
@@ -56,6 +57,25 @@ export const useUserStore = create<UserStore>()(
         }));
       },
       setUser: (user: User) => set({ user }),
+      clearUser: () => {
+        set((state) => ({
+          user: {
+            ...state.user,
+            id: 0,
+            nickname: "",
+            avatar: null,
+            type: "",
+            constellation: null,
+            birthday: null,
+            gender: "",
+            email: "",
+            inviter: null,
+            member_type: "",
+            phone_number: null,
+            username: "",
+          },
+        }));
+      },
     }),
     {
       name: "user-store",

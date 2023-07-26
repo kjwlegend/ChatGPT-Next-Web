@@ -106,7 +106,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
       name="register"
       onFinish={onFinish}
       initialValues={{ prefix: "86" }}
-      style={{ maxWidth: 900, minWidth: 400 }}
+      style={{ maxWidth: 900, minWidth: 300 }}
       scrollToFirstError
       labelAlign="left"
     >
