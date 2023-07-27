@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/auth";
 import { useRouter } from "next/navigation";
 import { logoutAPI } from "../api/auth";
 import useAuth from "../hooks/useAuth";
+import styles from "./button.module.scss";
 
 interface LogoutButtonProps {
   isButton?: boolean;
@@ -21,7 +22,7 @@ const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
   if (isButton) {
     return (
       // <div>
-      <Button type="primary" onClick={handleLogout}>
+      <Button type="ghost" onClick={handleLogout} className={styles["logout"]}>
         注销登出
       </Button>
       // </div>
@@ -29,9 +30,9 @@ const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
   }
 
   return (
-    <span onClick={handleLogout} style={{ cursor: "pointer" }}>
-      注销登出
-    </span>
+    <div onClick={handleLogout} style={{ cursor: "pointer" }}>
+      登出
+    </div>
   );
 };
 

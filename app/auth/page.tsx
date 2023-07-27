@@ -75,7 +75,7 @@ export default function AuthPage() {
         <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
         <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
       </div>
-      <div className={styles["login-container"]}>
+      <div className="form-container">
         <Tabs
           activeKey={activeTab}
           items={items}

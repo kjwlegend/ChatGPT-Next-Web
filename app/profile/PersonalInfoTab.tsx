@@ -5,7 +5,7 @@ import { useUserStore } from "../store/user";
 import { Form, Input, Button, message, Select } from "antd";
 import Upload from "../utils/upload";
 import dayjs from "dayjs";
-
+import styles from "./profile.module.scss";
 import type { DatePickerProps } from "antd";
 import { DatePicker, Space } from "antd";
 
@@ -21,7 +21,7 @@ const formItemLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 18 },
+    sm: { span: 20 },
   },
 };
 
@@ -81,97 +81,100 @@ const PersonalInfoTab = () => {
   };
 
   return (
-    <div>
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="personal_info"
-        style={{ maxWidth: 900, minWidth: 400 }}
-        onFinish={onFinish}
-        initialValues={{
-          nickname: user.nickname,
-          avatar: user.avatar,
-          gender: user.gender,
-          birthday: "2000-10-10",
-          constellation: user.constellation ? user.constellation : "0",
+    <Form
+      {...formItemLayout}
+      form={form}
+      name="personal_info"
+      style={{ width: "100%", maxWidth: 900, minWidth: 300 }}
+      onFinish={onFinish}
+      initialValues={{
+        nickname: user.nickname,
+        avatar: user.avatar,
+        gender: user.gender,
+        birthday: "2000-10-10",
+        constellation: user.constellation ? user.constellation : "0",
+      }}
+    >
+      <Form.Item
+        name="avatar"
+        style={{ textAlign: "center", width: "100%" }}
+        wrapperCol={{ span: 28 }}
+      >
+        <Upload avatar={avatar} onImgListChange={handleImgListChange} />
+      </Form.Item>
+      <Form.Item label="昵称" name="nickname">
+        <Input />
+      </Form.Item>
+
+      {/* 性别 */}
+      <Form.Item name="gender" label="性别">
+        <Select
+          options={[
+            { value: "0", label: "请选择" },
+            { value: "1", label: "男" },
+            { value: "2", label: "女" },
+          ]}
+        />
+      </Form.Item>
+
+      <Form.Item label="生日" name="birthday">
+        <div>
+          <DatePicker
+            onChange={onChange}
+            style={{ width: "100%" }}
+            allowClear
+            size="large"
+            defaultPickerValue={dayjs(
+              user.birthday ? user.birthday : "2000-01-01",
+              "YYYY-MM-DD",
+            )}
+            defaultValue={
+              user.birthday ? dayjs(user.birthday, "YYYY-MM-DD") : undefined
+            }
+          />
+        </div>
+      </Form.Item>
+      <Form.Item label="星座" name="constellation">
+        <Select
+          onChange={handleConstellationChange}
+          options={[
+            { value: "0", label: "请选择" },
+            { value: "摩羯座", label: "摩羯座" },
+            { value: "水瓶座", label: "水瓶座" },
+            { value: "双鱼座", label: "双鱼座" },
+            { value: "白羊座", label: "白羊座" },
+            { value: "金牛座", label: "金牛座" },
+            { value: "双子座", label: "双子座" },
+            { value: "巨蟹座", label: "巨蟹座" },
+            { value: "狮子座", label: "狮子座" },
+            { value: "处女座", label: "处女座" },
+            { value: "天秤座", label: "天秤座" },
+            { value: "天蝎座", label: "天蝎座" },
+            { value: "射手座", label: "射手座" },
+          ]}
+        />
+      </Form.Item>
+      <Form.Item
+        wrapperCol={{
+          xs: { span: 24, offset: 0 },
+          sm: { span: 16, offset: 4 },
         }}
       >
-        <Form.Item name="avatar" wrapperCol={{ offset: 9 }}>
-          <Upload avatar={avatar} onImgListChange={handleImgListChange} />
-        </Form.Item>
-        <Form.Item label="昵称" name="nickname">
-          <Input />
-        </Form.Item>
+        <div style={{ textAlign: "center" }}>
+          {" "}
+          <Space direction="horizontal" size="large">
+            <Button type="primary" htmlType="submit">
+              保存
+            </Button>
+            <Link href="/chat" passHref>
+              <Button type="ghost">取消</Button>
+            </Link>
+          </Space>
+        </div>
+      </Form.Item>
 
-        {/* 性别 */}
-        <Form.Item name="gender" label="性别">
-          <Select
-            options={[
-              { value: "0", label: "请选择" },
-              { value: "1", label: "男" },
-              { value: "2", label: "女" },
-            ]}
-          />
-        </Form.Item>
-
-        <Form.Item label="生日" name="birthday">
-          <div>
-            <DatePicker
-              onChange={onChange}
-              style={{ width: "100%" }}
-              allowClear
-              size="large"
-              defaultPickerValue={dayjs(
-                user.birthday ? user.birthday : "2000-01-01",
-                "YYYY-MM-DD",
-              )}
-              defaultValue={
-                user.birthday ? dayjs(user.birthday, "YYYY-MM-DD") : undefined
-              }
-            />
-          </div>
-        </Form.Item>
-        <Form.Item label="星座" name="constellation">
-          <Select
-            onChange={handleConstellationChange}
-            options={[
-              { value: "0", label: "请选择" },
-              { value: "摩羯座", label: "摩羯座" },
-              { value: "水瓶座", label: "水瓶座" },
-              { value: "双鱼座", label: "双鱼座" },
-              { value: "白羊座", label: "白羊座" },
-              { value: "金牛座", label: "金牛座" },
-              { value: "双子座", label: "双子座" },
-              { value: "巨蟹座", label: "巨蟹座" },
-              { value: "狮子座", label: "狮子座" },
-              { value: "处女座", label: "处女座" },
-              { value: "天秤座", label: "天秤座" },
-              { value: "天蝎座", label: "天蝎座" },
-              { value: "射手座", label: "射手座" },
-            ]}
-          />
-        </Form.Item>
-        <Form.Item
-          wrapperCol={{
-            xs: { span: 24, offset: 0 },
-            sm: { span: 16, offset: 4 },
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-            {" "}
-            <Space direction="horizontal" size="large">
-              <Button type="primary" htmlType="submit">
-                保存
-              </Button>
-              <Link href="/chat" passHref>
-                <Button type="ghost">取消</Button>
-              </Link>
-            </Space>
-          </div>
-        </Form.Item>
-        {contextHolder}
-      </Form>
-    </div>
+      {contextHolder}
+    </Form>
   );
 };
 

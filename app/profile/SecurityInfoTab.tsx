@@ -60,7 +60,7 @@ const SecurityInfoTab = () => {
       name="password_edit"
       onFinish={onFinish}
       initialValues={{ username: user.username }}
-      style={{ maxWidth: 900, minWidth: 400 }}
+      style={{ maxWidth: 900, minWidth: 300 }}
       scrollToFirstError
       labelAlign="left"
     >

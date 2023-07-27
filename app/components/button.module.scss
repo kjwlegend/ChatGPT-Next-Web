@@ -57,6 +57,17 @@
   border: var(--border-in-light);
 }
 
+.logout {
+  border: var(--border-in-light);
+  margin: auto;
+  display: block;
+  
+  &:hover {
+    box-shadow: var(--card-shadow);
+    animation: 0.2s ease;
+  }
+}
+
 .icon-button-icon {
   width: 16px;
   height: 16px;

@@ -10,6 +10,16 @@ import Link from "next/link";
 import Image from "next/image";
 
 import type { MenuProps } from "antd";
+import {
+  Layout,
+  Menu,
+  Button,
+  Form,
+  Input,
+  Avatar,
+  Space,
+  Dropdown,
+} from "antd";
 
 import { useUserStore } from "../store/user";
 
@@ -20,7 +30,8 @@ import {
   HighlightOutlined,
   ContainerOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, Button, Form, Input, Avatar, Space } from "antd";
+
+import LogoutButton from "./logout";
 
 const items = [
   {
@@ -81,23 +92,37 @@ interface Props {
 export function LoginButton() {
   const { user } = useUserStore();
 
+  const items = [
+    {
+      label: <Link href="/profile/">个人中心</Link>,
+      key: "0",
+    },
+
+    {
+      type: "divider",
+    },
+    {
+      label: <LogoutButton isButton={false} />,
+      key: "3",
+    },
+  ];
+
   return (
     <div className={styles["login-wrapper"]}>
       {user?.nickname ? (
         <>
           {user?.avatar && (
             <div className={styles["avatar"]}>
-              <Image
-                fill={true}
-                objectFit="contain"
-                src={user?.avatar}
-                alt="Avatar"
-              />
+              <Avatar src={user?.avatar} />
             </div>
           )}
-          <Link href="/profile">
-            <Button>{user?.nickname}</Button>
-          </Link>
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <a onClick={(f) => f.preventDefault()}>
+              <Space>
+                <Button>{user?.nickname}</Button>
+              </Space>
+            </a>
+          </Dropdown>
         </>
       ) : (
         <Link href="/auth">

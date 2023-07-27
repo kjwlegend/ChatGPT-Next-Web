@@ -5,7 +5,7 @@ import { server_url } from "../constant";
 
 const service: AxiosInstance = axios.create({
   baseURL: server_url + "/api",
-  timeout: 5000,
+  timeout: 15000,
 });
 
 function request(config: AxiosRequestConfig) {

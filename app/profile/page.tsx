@@ -7,7 +7,7 @@ import PersonalInfoTab from "./PersonalInfoTab";
 import SecurityInfoTab from "./SecurityInfoTab";
 // import AccountInfoTab from "./AccountInfoTab";
 // import InvitationInfoTab from "./InvitationInfoTab";
-
+import styles from "./profile.module.scss";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { useUserStore } from "../store";
@@ -54,7 +54,7 @@ const ProfilePage = () => {
     <div className="main">
       <h1>用户中心</h1>
       {isAuthenticated && isClient ? (
-        <div>
+        <div className="form-container">
           <Tabs
             defaultActiveKey="1"
             items={items}
@@ -63,7 +63,9 @@ const ProfilePage = () => {
             tabBarGutter={50}
             centered={true}
           />
-          <LogoutButton />
+          <div className={styles["logout"]}>
+            <LogoutButton />
+          </div>
         </div>
       ) : (
         <div>请先登录</div>

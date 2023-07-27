@@ -1,0 +1,17 @@
+#personal_info {
+  form {
+    width: 600px;
+  }
+}
+.ant-tabs {
+  :global form#personal_info {
+    width: 500px;
+  }
+}
+
+.logout {
+  position: absolute;
+  bottom: -100px;
+  left: 0;
+  right: 0;
+}
