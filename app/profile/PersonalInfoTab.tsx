@@ -34,11 +34,19 @@ const PersonalInfoTab = () => {
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
 
+    messageApi.open({
+      type: "loading",
+      content: "新资料提交中..",
+      duration: 0,
+      key: "loading",
+    });
+
     updateUserInfo(user.id, values)
       .then((response) => {
         console.log("User info updated successfully:", response);
         // 在这里处理更新成功后的逻辑
         setUser({ ...user, ...values });
+        messageApi.destroy("loading");
         messageApi.open({
           type: "success",
           content: "小光已经记住了您的新信息",
@@ -51,6 +59,7 @@ const PersonalInfoTab = () => {
         console.error("Failed to update user info:", error);
         // 在这里处理更新失败后的逻辑
         const errormsg = error.data.msg ? error.data.msg : error;
+        messageApi.destroy("loading");
 
         messageApi.open({
           type: "error",
@@ -166,7 +175,7 @@ const PersonalInfoTab = () => {
             <Button type="primary" htmlType="submit">
               保存
             </Button>
-            <Link href="/chat" passHref>
+            <Link href="/" passHref>
               <Button type="ghost">取消</Button>
             </Link>
           </Space>

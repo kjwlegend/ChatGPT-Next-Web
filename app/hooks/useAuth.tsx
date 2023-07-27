@@ -11,11 +11,15 @@ interface LoginParams {
 
 export default function useAuth() {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const authStore = useAuthStore();
   const userStore = useUserStore();
 
   const loginHook = async (params: LoginParams): Promise<void> => {
     try {
+      setIsLoading(true);
+
       const result = await loginAPI(params);
 
       const authInfo = {
@@ -28,9 +32,11 @@ export default function useAuth() {
       userStore.setUser(authInfo.user);
 
       setUser(authInfo.user);
-
+      setIsLoading(false);
       return result;
     } catch (error) {
+      setIsLoading(false);
+
       throw new Error("登录失败，请重试");
     }
   };
@@ -49,5 +55,6 @@ export default function useAuth() {
     user,
     loginHook,
     logoutHook,
+    isLoading,
   };
 }

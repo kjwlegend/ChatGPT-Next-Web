@@ -125,7 +125,7 @@ const SecurityInfoTab = () => {
             <Button type="primary" htmlType="submit">
               保存
             </Button>
-            <Link href="/chat" passHref>
+            <Link href="/" passHref>
               <Button type="ghost">取消</Button>
             </Link>
           </Space>
