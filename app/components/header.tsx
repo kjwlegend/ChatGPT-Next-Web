@@ -92,7 +92,7 @@ interface Props {
 export function LoginButton() {
   const { user } = useUserStore();
 
-  const items = [
+  const items: MenuProps["items"] = [
     {
       label: <Link href="/profile/">个人中心</Link>,
       key: "0",

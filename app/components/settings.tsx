@@ -48,6 +48,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarPicker } from "./emoji";
 import { getClientConfig } from "../config/client";
 import { useSyncStore } from "../store/sync";
+import { useAuthStore } from "../store/auth";
 import { nanoid } from "nanoid";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
@@ -300,7 +301,8 @@ export function Settings() {
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
 
-  const showUsage = accessStore.isAuthorized();
+  const IsAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const showUsage = accessStore.isAuthorized(IsAuthenticated);
   useEffect(() => {
     // checks per minutes
     checkUpdate();

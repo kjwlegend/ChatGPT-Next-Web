@@ -277,7 +277,14 @@ const WhyChooseUsSection: React.FC = () => {
                 {blockIndex % 2 === 0 ? (
                   <>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <img src={block.image} alt="Image" />
+                      <Image
+                        // fill={true}
+                        width={500}
+                        height={500}
+                        style={{ objectFit: "contain" }}
+                        src={block.image}
+                        alt="Image"
+                      />
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                       <h3>{block.title}</h3>
@@ -291,7 +298,14 @@ const WhyChooseUsSection: React.FC = () => {
                       <p>{block.content}</p>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                      <img src={block.image} alt="Image" />
+                      <Image
+                        // fill={true}
+                        width={500}
+                        height={500}
+                        style={{ objectFit: "contain" }}
+                        src={block.image}
+                        alt="Image"
+                      />
                     </Col>
                   </>
                 )}

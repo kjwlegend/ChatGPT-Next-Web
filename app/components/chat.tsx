@@ -82,6 +82,7 @@ import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
+import { useAuthStore } from "../store/auth";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -862,12 +863,14 @@ export function Chat() {
 
   const accessStore = useAccessStore();
 
+  const IsAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   if (
     context.length === 0 &&
     session.messages.at(0)?.content !== BOT_HELLO.content
   ) {
     const copiedHello = Object.assign({}, BOT_HELLO);
-    if (!accessStore.isAuthorized()) {
+    if (!accessStore.isAuthorized(IsAuthenticated)) {
       copiedHello.content = Locale.Error.Unauthorized;
     }
 

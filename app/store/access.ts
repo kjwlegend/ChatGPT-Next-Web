@@ -21,7 +21,7 @@ export interface AccessControlStore {
   updateCode: (_: string) => void;
   updateOpenAiUrl: (_: string) => void;
   enabledAccessControl: () => boolean;
-  isAuthorized: () => boolean;
+  isAuthorized: (isAuthenticated: boolean) => boolean;
   fetch: () => void;
 }
 
@@ -30,6 +30,8 @@ let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 const DEFAULT_OPENAI_URL =
   getClientConfig()?.buildMode === "export" ? DEFAULT_API_HOST : "/api/openai/";
 console.log("[API] default openai url", DEFAULT_OPENAI_URL);
+
+// 将useAuth Store 作为函数值返回
 
 export const useAccessStore = create<AccessControlStore>()(
   persist(
@@ -57,9 +59,9 @@ export const useAccessStore = create<AccessControlStore>()(
       updateOpenAiUrl(url: string) {
         set(() => ({ openaiUrl: url?.trim() }));
       },
-      isAuthorized() {
+      isAuthorized(isAuthenticated) {
         get().fetch();
-        const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
         // has token or has code or disabled access control
         return (
           !!get().token ||
