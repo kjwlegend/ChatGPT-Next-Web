@@ -50,11 +50,11 @@ export default function AuthPage() {
   };
 
   const items: TabsProps["items"] = [
-    {
-      key: "1",
-      label: `快捷密码登录`,
-      children: <CodeLogin />,
-    },
+    // {
+    //   key: "1",
+    //   label: `快捷密码登录`,
+    //   children: <CodeLogin />,
+    // },
     {
       key: "2",
       label: `账户登录`,
