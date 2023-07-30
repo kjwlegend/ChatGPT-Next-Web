@@ -16,7 +16,7 @@ import LoadingIcon from "../icons/three-dots.svg";
 
 export default function AuthPage() {
   const { isAuthenticated } = useAuthStore();
-  const [activeTab, setActiveTab] = useState("1");
+  const [activeTab, setActiveTab] = useState("2");
   const [isClient, setIsClient] = useState(false);
 
   // 等待样式表加载完后, 再显示
