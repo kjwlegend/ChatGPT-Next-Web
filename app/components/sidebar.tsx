@@ -119,9 +119,9 @@ export function SideBar(props: { className?: string }) {
       {isMobileScreen && <MainNav displayMobileVersion={true} />}
 
       <div className={styles["sidebar-header"]} data-tauri-drag-region>
-        <div className={styles["sidebar-title"]} data-tauri-drag-region>
+        {/* <div className={styles["sidebar-title"]} data-tauri-drag-region>
           授权码请联系微信: 56349014
-        </div>
+        </div> */}
         {/* <div className={styles["sidebar-sub-title"]}>
           Build your own AI assistant.
         </div>

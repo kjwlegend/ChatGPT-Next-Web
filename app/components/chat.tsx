@@ -46,6 +46,7 @@ import {
   useAppConfig,
   DEFAULT_TOPIC,
   ModelType,
+  useUserStore,
 } from "../store";
 
 import {
@@ -76,6 +77,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { LAST_INPUT_KEY, Path, REQUEST_TIMEOUT_MS } from "../constant";
 import { Avatar } from "./emoji";
+import { Avatar as UserAvatar } from "antd";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "./mask";
 import { useMaskStore } from "../store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
@@ -90,6 +92,7 @@ const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
 
 export function SessionConfigModel(props: { onClose: () => void }) {
   const chatStore = useChatStore();
+
   const session = chatStore.currentSession();
   const maskStore = useMaskStore();
   const navigate = useNavigate();
@@ -927,6 +930,7 @@ export function Chat() {
   const autoFocus = !isMobileScreen || isChat; // only focus in chat page
   const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
 
+  const userStore = useUserStore();
   useCommand({
     fill: setUserInput,
     submit: (text) => {
@@ -1054,6 +1058,7 @@ export function Chat() {
       >
         {messages.map((message, i) => {
           const isUser = message.role === "user";
+
           const isContext = i < context.length;
           const showActions =
             i > 0 &&
@@ -1094,7 +1099,21 @@ export function Chat() {
                         ></IconButton>
                       </div>
                       {isUser ? (
-                        <Avatar avatar={config.avatar} />
+                        userStore.user.avatar ? ( // show user avatar
+                          <>
+                            <UserAvatar
+                              size="large"
+                              src={userStore.user.avatar}
+                            />
+                          </>
+                        ) : (
+                          <UserAvatar
+                            style={{ backgroundColor: "rgb(91, 105, 230)" }}
+                            size="large"
+                          >
+                            {userStore.user.nickname}{" "}
+                          </UserAvatar>
+                        )
                       ) : (
                         <MaskAvatar mask={session.mask} />
                       )}

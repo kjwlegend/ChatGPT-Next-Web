@@ -31,20 +31,20 @@ const featureContent = [
     // title: '我们的特点',
     // subtitle: '由专业提示词工程师持续微调的智能助手',
     // description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-    background: "carousel-1.png",
+    background: "assets/carousel-1.png",
   },
   // Add more feature content objects if needed
   {
     // title: '我们的特点22',
     // subtitle: '由专业提示词工程师持续微调的智能助手',
     // description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-    background: "carousel-2.png",
+    background: "assets/carousel-2.png",
   },
   {
     // title: '我们的特点22',
     // subtitle: '由专业提示词工程师持续微调的智能助手',
     // description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-    background: "carousel-3.png",
+    background: "assets/carousel-3.png",
   },
 ];
 
@@ -55,31 +55,31 @@ const whyChooseUsContent = [
     subtitle: "由专业提示词工程师持续微调的智能助手",
     blocks: [
       {
-        image: "/personal-01.jpg",
+        image: "/assets/personal-01.jpg",
         title: "人格赋予",
         content:
           "相比传统聊天机器人，小光提供更有温度, 情感的回答. 让你面对的不再是冰冷的机器, 而是可以信赖的伙伴",
       },
       {
-        image: "/personal-02.jpg",
+        image: "/assets/personal-02.jpg",
         title: "深度模型调教",
         content:
           "并不是简单的市场上prompts加载, 小光AI的内置预设由专业提示词工程师持续调教，小光 AI 智能助手能够根据用户的意图和需求，提供个性化、有针对性的回答",
       },
       {
-        image: "/personal-03.jpg",
+        image: "/assets/personal-03.jpg",
         title: "广泛应用场景",
         content:
           "我们的团队持续改进和优化小光 AI 智能助手，适用于各种应用场景，包括但不限于教育、金融、医疗等领域，为不同行业和个人提供智能支持",
       },
       {
-        image: "/personal-04.jpg",
+        image: "/assets/personal-04.jpg",
         title: "专业个性化输出",
         content:
           "专业行业咨询团队，针对不同行业设定特定角色，加强特定输出，为用户提供与其领域相关的专业建议和信息",
       },
       {
-        image: "/personal-05.jpg",
+        image: "/assets/personal-05.jpg",
         title: "以你为中心的迭代",
         content:
           "时刻关注用户的反馈和需求，持续改进和优化底层模型和提示词，为用户提供更好的体验和服务",

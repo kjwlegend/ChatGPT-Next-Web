@@ -50,9 +50,12 @@ const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
   loading: () => <Loading noLogo />,
 });
 
-const MaskPage = dynamic(async () => (await import("./mask")).MaskPage, {
-  loading: () => <Loading noLogo />,
-});
+const MaskPage = dynamic(
+  async () => (await import("../masklist/mask")).MaskPage,
+  {
+    loading: () => <Loading noLogo />,
+  },
+);
 
 const Intro = dynamic(async () => (await import("../about/page")).default, {
   loading: () => <Loading noLogo />,

@@ -40,7 +40,7 @@
 
   --theme-color: var(--gray);
 
-  div:not(.no-dark)>svg {
+  div:not(.no-dark) > svg {
     filter: invert(0.5);
   }
 }
@@ -95,7 +95,9 @@ html {
 
   -webkit-font-smoothing: antialiased;
 
-  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", "Helvetica", "Arial", sans-serif, "Noto Sans SC", "SF Pro SC", "SF Pro Text", "SF Pro Icons";
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", "Helvetica",
+    "Arial", sans-serif, "Noto Sans SC", "SF Pro SC", "SF Pro Text",
+    "SF Pro Icons";
 }
 
 body {
@@ -345,14 +347,14 @@ pre {
 }
 
 .user-avatar {
-  height: 35px;
-  max-height: 35px;
-  width: 35px;
-  max-width: 35px;
+  height: 40px;
+  max-height: 40px;
+  width: 40px;
+  max-width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--border-in-light);
+  // border: var(--border-in-light);
   box-shadow: var(--card-shadow);
   border-radius: 10px;
 
