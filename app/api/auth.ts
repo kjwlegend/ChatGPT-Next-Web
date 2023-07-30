@@ -97,7 +97,7 @@ export async function register(params: any): Promise<any> {
     .post("/gpt/register/", params)
     .then((res) => res.data)
     .catch((err) => {
-      // console.log(err);
+      // console.log("error", err);
       return err.response.data;
     });
 }
