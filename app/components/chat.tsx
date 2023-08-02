@@ -1030,7 +1030,7 @@ export function Chat() {
                 bordered
                 onClick={() => {
                   config.update(
-                    (config) => (config.tightBorder = !config.tightBorder),
+                    (config) => (config.showHeader = !config.showHeader),
                   );
                 }}
               />

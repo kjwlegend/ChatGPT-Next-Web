@@ -26,6 +26,7 @@ export const DEFAULT_CONFIG = {
   fontSize: 14,
   theme: Theme.Auto as Theme,
   tightBorder: !!getClientConfig()?.isApp,
+  showHeader: true,
   sendPreviewBubble: true,
   sidebarWidth: 300,
 
@@ -59,6 +60,7 @@ export type ChatConfigStore = ChatConfig & {
   update: (updater: (config: ChatConfig) => void) => void;
   mergeModels: (newModels: LLMModel[]) => void;
   allModels: () => LLMModel[];
+  showHeader: boolean;
 };
 
 export type ModelConfig = ChatConfig["modelConfig"];

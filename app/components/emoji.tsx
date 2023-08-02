@@ -47,6 +47,7 @@ export function Avatar(props: { model?: Mask; avatar?: string }) {
       {props.avatar && props.avatar.startsWith("a-") ? (
         <>
           <CustomAvatar src={`/avatars/${props.avatar}.png`} />
+          {/* <i className="icon-weixin" /> */}
         </>
       ) : (
         <EmojiAvatar avatar={props.avatar || ""} />

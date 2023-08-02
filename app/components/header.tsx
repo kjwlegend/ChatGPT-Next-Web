@@ -140,7 +140,7 @@ export default function MainNav(
 
   const path = usePathname();
   const router = useRouter();
-
+  const { showHeader } = useAppConfig();
   const [current, setCurrent] = useState(() => {
     const current = path;
     // console.log("current", current);
@@ -206,7 +206,10 @@ export default function MainNav(
           <LoginButton />
         </Header>
       ) : (
-        <Header className={styles.header}>
+        <Header
+          className={styles.header}
+          style={{ display: !showHeader ? "none" : "" }}
+        >
           <div className={styles.logo}>
             <img
               className={styles["logo-image"]}
@@ -226,27 +229,8 @@ export default function MainNav(
               style={{ backgroundColor: "transparent", height: "50px" }}
               className={styles["ant-menu"]}
               items={items}
-              overflowedIndicator={<span>abc</span>}
+              overflowedIndicator={<span>...</span>}
             />
-            {/* {items.map((item) => {
-                if (item.disabled) {
-                  return (
-                    <Menu.Item key={item.key} disabled>
-                      {item.icon}
-                      {item.label}
-                    </Menu.Item>
-                  );
-                }
-                return (
-                  <Menu.Item key={item.key}>
-                    <Link href={item.url}>
-                      {item.icon}
-                      {item.label}
-                    </Link>
-                  </Menu.Item>
-                );
-              })}
-            </Menu> */}
           </div>
 
           <LoginButton />

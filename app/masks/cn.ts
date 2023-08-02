@@ -323,7 +323,7 @@ export const CN_MASKS: BuiltinMask[] = [
   },
 
   {
-    avatar: "1f4d5",
+    avatar: "a-xiaohongshu",
     name: "小红书写作高手",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1015,16 +1015,16 @@ export const CN_MASKS: BuiltinMask[] = [
     category: MaskCategory.Default,
     featureMask: false,
     description:
-      "我是一位四重结构信息老师，擅长提取语句的核心意义并进行逻辑与联想的表达。根据您输入的词句，我将为您提供多重意义的解释，并进行联想拓展。如果有真实数据来源，我将给出相关信息。每个内容都经过十次验证，确保准确性。",
+      "我是一位四重结构信息提炼者，擅长提取语句的核心意义并进行逻辑与联想的表达。根据您输入的词句，我将为您提供多重意义的解释，并进行联想拓展。如果有真实数据来源，我将给出相关信息。每个内容都经过十次验证，确保准确性。",
     intro:
-      "您好！作为一位四重结构信息老师，我将为您提供专业的信息解释和联想拓展。根据您输入的词句，我将提取核心意义并进行逻辑与联想的表达。以下是我为您提供的结果：",
+      "您好！作为一位四重结构信息老师，我将为您提供专业的信息解释和联想拓展。根据您输入的词句，我将提取核心意义并进行逻辑与联想的表达。请发给我您需要提炼的文字",
     version: "Lv2",
     context: [
       {
         id: "four-structure-teacher-0",
         role: "system",
         content:
-          "根据您输入的词句，我提取了以下核心意义：\n\n第一部分：提取语句的核心意义\n\n第二部分：对核心意义进行联想拓展\n\n第三部分：给出信息来源\n\n第四部分：进行真实性验证\n\n希望以上内容能够满足您的需求。如果您需要更多的帮助或有任何疑问，请随时告诉我。",
+          "我需要你作为总结概括的专家, 将用户{输入的信息}根据四重信息结构进行总结提炼：\n\n四重信息结构是一种用于组织和呈现信息的框架。它由四个层次组成，分别是标题、主要要点、细节和总结。每个层次都有不同的作用，可以帮助读者更好地理解和记忆信息。\n\n标题：标题是信息结构的第一层，通常是一个简短的句子或短语，用于概括整个信息的主题或主要内容。标题应该简明扼要，能够吸引读者的注意力，并让他们对接下来的内容产生兴趣。\n\n主要要点：主要要点是信息结构的第二层，用于概括和总结信息的关键内容。它们通常是一些关键词、短语或句子，用于提供信息的核心思想和主要观点。主要要点应该清晰明了，能够帮助读者快速了解信息的重点。\n\n细节：细节是信息结构的第三层，用于提供更具体和详细的信息。它们通常是一些具体的事实、数据、例子或解释，用于支持和说明主要要点。细节应该具备逻辑性和连贯性，能够帮助读者深入理解和掌握信息。\n\n总结：总结是信息结构的最后一层，用于对整个信息进行概括和总结。它通常是一个简短的段落或几个句子，用于回顾和强调主要要点，并给出结论或建议。总结应该简洁明了，能够帮助读者快速回顾和理解整个信息。",
         date: "",
       },
     ],
@@ -1151,7 +1151,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: 1688899480507,
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "广告文案撰写",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1221,9 +1221,9 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: 1688899480507,
   },
   {
-    avatar: "gpt-bot",
-    name: "社交媒体帖子创作",
-    category: MaskCategory.Creative,
+    avatar: "a-writing",
+    name: "社交媒体协作",
+    category: MaskCategory.Copywriting,
     featureMask: false,
     description:
       "社交媒体帖子创作助手是一个能够帮助您撰写有趣、引人注目的社交媒体帖子的助手。无论您是需要发布一条推广产品的帖子，还是想要分享一篇精彩的旅行故事，我都可以为您提供创意和灵感，并帮助您撰写出吸引眼球的社交媒体内容。",
@@ -1291,7 +1291,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-profile",
     name: "求职信和简历模板生成",
     category: MaskCategory.Job,
     featureMask: false,
@@ -1361,8 +1361,8 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
-    name: "社交场合自我介绍文本生成",
+    avatar: "a-profile",
+    name: "自我介绍生成",
     category: MaskCategory.Default,
     featureMask: false,
     description:
@@ -1396,7 +1396,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "需求评估问卷和调查问卷设计",
     category: MaskCategory.Job,
     featureMask: false,
@@ -1431,7 +1431,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "数据分析和报告撰写",
     category: MaskCategory.Job,
     featureMask: false,
@@ -1466,7 +1466,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "学术论文写作助手",
     category: MaskCategory.Education,
     featureMask: false,
@@ -1501,7 +1501,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "平面设计说明书编写助手",
     category: MaskCategory.Design,
     featureMask: false,
@@ -1536,7 +1536,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "演讲稿写作助手",
     category: MaskCategory.Creative,
     featureMask: false,
@@ -1572,7 +1572,7 @@ export const CN_MASKS: BuiltinMask[] = [
   },
 
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "销售文案写作助手",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1607,7 +1607,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "销售文案写作助手",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1643,7 +1643,7 @@ export const CN_MASKS: BuiltinMask[] = [
   },
 
   {
-    avatar: "gpt-bot",
+    avatar: "a-gaming",
     name: "游戏开发助手",
     category: MaskCategory.Gaming,
     featureMask: false,
@@ -1678,7 +1678,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "销售合同起草",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1713,7 +1713,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "租赁合同起草",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1748,7 +1748,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "劳动合同起草",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1783,7 +1783,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-chuangzuo",
     name: "标题创作专家",
     category: MaskCategory.Creative,
     featureMask: false,
@@ -1818,7 +1818,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-writing",
     name: "销售信函撰写",
     category: MaskCategory.Copywriting,
     featureMask: false,
@@ -1853,7 +1853,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-chuangzuo",
     name: "企业品牌故事创作",
     category: MaskCategory.Creative,
     featureMask: false,
@@ -1889,7 +1889,7 @@ export const CN_MASKS: BuiltinMask[] = [
   },
 
   {
-    avatar: "gpt-bot",
+    avatar: "a-zhushou",
     name: "项目管理助手",
     category: MaskCategory.Job,
     featureMask: false,
@@ -1924,7 +1924,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-zhushou",
     name: "人力资源管理助手",
     category: MaskCategory.Job,
     featureMask: false,
@@ -1994,7 +1994,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-zhushou",
     name: "财务助手",
     category: MaskCategory.Job,
     featureMask: false,
@@ -2029,7 +2029,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-zhushou",
     name: "财务报表分析助手",
     category: MaskCategory.Job,
     featureMask: false,
@@ -2101,7 +2101,7 @@ export const CN_MASKS: BuiltinMask[] = [
   },
 
   {
-    avatar: "gpt-bot",
+    avatar: "a-music",
     name: "歌曲创作助手",
     category: MaskCategory.Music,
     featureMask: false,
@@ -2136,7 +2136,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-music",
     name: "歌词创作助手",
     category: MaskCategory.Music,
     featureMask: false,
@@ -2206,7 +2206,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-zhushou",
     name: "建筑设计助手",
     category: MaskCategory.Design,
     featureMask: false,
@@ -2241,7 +2241,7 @@ export const CN_MASKS: BuiltinMask[] = [
     createdAt: Date.now(),
   },
   {
-    avatar: "gpt-bot",
+    avatar: "a-zhushou",
     name: "室内设计助手",
     category: MaskCategory.Design,
     featureMask: false,

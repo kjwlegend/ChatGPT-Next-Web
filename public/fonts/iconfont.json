@@ -1,0 +1,135 @@
+{
+  "id": "4149808",
+  "name": "小光ai",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "15559721",
+      "name": "知乎",
+      "font_class": "shejiaotubiao-46",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "15933094",
+      "name": "微信",
+      "font_class": "weixin",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "22411148",
+      "name": "bilibili",
+      "font_class": "bilibili",
+      "unicode": "e844",
+      "unicode_decimal": 59460
+    },
+    {
+      "icon_id": "32601837",
+      "name": "小红书",
+      "font_class": "xiaohongshu",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "36469069",
+      "name": "宠物之家",
+      "font_class": "chongwuzhijia",
+      "unicode": "1012e",
+      "unicode_decimal": 65838
+    },
+    {
+      "icon_id": "36469073",
+      "name": "求助问答",
+      "font_class": "qiuzhuwenda",
+      "unicode": "10130",
+      "unicode_decimal": 65840
+    },
+    {
+      "icon_id": "36469086",
+      "name": "宣传推广",
+      "font_class": "xuanchuantuiguang",
+      "unicode": "10133",
+      "unicode_decimal": 65843
+    },
+    {
+      "icon_id": "36243280",
+      "name": "009_我的团队",
+      "font_class": "a-009_wodetuandui",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "36000129",
+      "name": "吉他",
+      "font_class": "jita",
+      "unicode": "e6ed",
+      "unicode_decimal": 59117
+    },
+    {
+      "icon_id": "36243259",
+      "name": "009_流程审批",
+      "font_class": "a-009_liuchengshenpi",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "36409823",
+      "name": "日常记录",
+      "font_class": "richangjilu",
+      "unicode": "10127",
+      "unicode_decimal": 65831
+    },
+    {
+      "icon_id": "36469070",
+      "name": "宠物世界",
+      "font_class": "chongwushijie",
+      "unicode": "1012b",
+      "unicode_decimal": 65835
+    },
+    {
+      "icon_id": "36469075",
+      "name": "求职简历",
+      "font_class": "qiuzhijianli",
+      "unicode": "1012c",
+      "unicode_decimal": 65836
+    },
+    {
+      "icon_id": "36469078",
+      "name": "休闲下午茶",
+      "font_class": "xiuxianxiawucha",
+      "unicode": "1012d",
+      "unicode_decimal": 65837
+    },
+    {
+      "icon_id": "35543501",
+      "name": "报告",
+      "font_class": "baogao",
+      "unicode": "e8ca",
+      "unicode_decimal": 59594
+    },
+    {
+      "icon_id": "35543509",
+      "name": "灵感",
+      "font_class": "linggan",
+      "unicode": "e8cb",
+      "unicode_decimal": 59595
+    },
+    {
+      "icon_id": "35543513",
+      "name": "语音",
+      "font_class": "yuyin",
+      "unicode": "e8cc",
+      "unicode_decimal": 59596
+    },
+    {
+      "icon_id": "35543516",
+      "name": "我的",
+      "font_class": "wode",
+      "unicode": "e8cd",
+      "unicode_decimal": 59597
+    }
+  ]
+}
