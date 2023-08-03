@@ -109,7 +109,7 @@ export function LoginButton() {
 
   return (
     <div className={styles["login-wrapper"]}>
-      {user?.nickname ? (
+      {user?.username ? (
         <>
           {user?.avatar && (
             <div className={styles["avatar"]}>
@@ -119,7 +119,7 @@ export function LoginButton() {
           <Dropdown menu={{ items }} trigger={["click"]}>
             <a onClick={(f) => f.preventDefault()}>
               <Space>
-                <Button>{user?.nickname}</Button>
+                <Button>{user.nickname ? user.nickname : "未命名用户"}</Button>
               </Space>
             </a>
           </Dropdown>
