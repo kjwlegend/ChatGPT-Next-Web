@@ -34,8 +34,7 @@ const DrawerMenu = () => {
   const onClick: MenuProps["onClick"] = (e) => {
     setCurrent(e.key);
     console.log("click ", e);
-    if (items) {
-    }
+
     const item = items.find((item: any) => item.key === e.key);
     if (item) {
       router.push(item.url);
@@ -52,6 +51,7 @@ const DrawerMenu = () => {
         }
       }
     }
+    setVisible(false);
   };
 
   return (
