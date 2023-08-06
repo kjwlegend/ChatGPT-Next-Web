@@ -75,7 +75,13 @@ import {
   showToast,
 } from "./ui-lib";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LAST_INPUT_KEY, Path, REQUEST_TIMEOUT_MS } from "../constant";
+import {
+  CHAT_PAGE_SIZE,
+  LAST_INPUT_KEY,
+  MAX_RENDER_MSG_COUNT,
+  Path,
+  REQUEST_TIMEOUT_MS,
+} from "../constant";
 import { Avatar } from "./emoji";
 import { Avatar as UserAvatar } from "antd";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "./mask";
@@ -378,23 +384,29 @@ function useScrollToBottom() {
   // for auto-scroll
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
-  const scrollToBottom = useCallback(() => {
+
+  function scrollDomToBottom() {
     const dom = scrollRef.current;
     if (dom) {
-      requestAnimationFrame(() => dom.scrollTo(0, dom.scrollHeight));
+      requestAnimationFrame(() => {
+        setAutoScroll(true);
+        dom.scrollTo(0, dom.scrollHeight);
+      });
     }
-  }, []);
+  }
 
   // auto scroll
   useEffect(() => {
-    autoScroll && scrollToBottom();
+    if (autoScroll) {
+      scrollDomToBottom();
+    }
   });
 
   return {
     scrollRef,
     autoScroll,
     setAutoScroll,
-    scrollToBottom,
+    scrollDomToBottom,
   };
 }
 
@@ -511,6 +523,7 @@ export function ChatActions(props: {
 
       {showModelSelector && (
         <Selector
+          defaultSelectedValue={currentModel}
           items={models.map((m) => ({
             title: m,
             value: m,
@@ -538,7 +551,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
   return (
     <div className="modal-mask">
       <Modal
-        title={Locale.UI.Edit}
+        title={Locale.Chat.EditMessage.Title}
         onClose={props.onClose}
         actions={[
           <IconButton
@@ -592,14 +605,11 @@ export function EditMessageModal(props: { onClose: () => void }) {
   );
 }
 
-export function Chat() {
+function _Chat() {
   type RenderMessage = ChatMessage & { preview?: boolean };
 
   const chatStore = useChatStore();
-  const [session, sessionIndex] = useChatStore((state) => [
-    state.currentSession(),
-    state.currentSessionIndex,
-  ]);
+  const session = chatStore.currentSession();
   const config = useAppConfig();
   const fontSize = config.fontSize;
 
@@ -609,15 +619,10 @@ export function Chat() {
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { submitKey, shouldSubmit } = useSubmitHandler();
-  const { scrollRef, setAutoScroll, scrollToBottom } = useScrollToBottom();
+  const { scrollRef, setAutoScroll, scrollDomToBottom } = useScrollToBottom();
   const [hitBottom, setHitBottom] = useState(true);
   const isMobileScreen = useMobileScreen();
   const navigate = useNavigate();
-
-  const onChatBodyScroll = (e: HTMLElement) => {
-    const isTouchBottom = e.scrollTop + e.clientHeight >= e.scrollHeight - 10;
-    setHitBottom(isTouchBottom);
-  };
 
   // prompt hints
   const promptStore = usePromptStore();
@@ -860,10 +865,9 @@ export function Chat() {
     });
   };
 
-  const context: RenderMessage[] = session.mask.hideContext
-    ? []
-    : session.mask.context.slice();
-
+  const context: RenderMessage[] = useMemo(() => {
+    return session.mask.hideContext ? [] : session.mask.context.slice();
+  }, [session.mask.context, session.mask.hideContext]);
   const accessStore = useAccessStore();
 
   const IsAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -884,50 +888,98 @@ export function Chat() {
     context.push(copiedHello);
   }
 
+  // preview messages
+  const renderMessages = useMemo(() => {
+    return context
+      .concat(session.messages as RenderMessage[])
+      .concat(
+        isLoading
+          ? [
+              {
+                ...createMessage({
+                  role: "assistant",
+                  content: "……",
+                }),
+                preview: true,
+              },
+            ]
+          : [],
+      )
+      .concat(
+        userInput.length > 0 && config.sendPreviewBubble
+          ? [
+              {
+                ...createMessage({
+                  role: "user",
+                  content: userInput,
+                }),
+                preview: true,
+              },
+            ]
+          : [],
+      );
+  }, [
+    config.sendPreviewBubble,
+    context,
+    isLoading,
+    session.messages,
+    userInput,
+  ]);
+
+  const [msgRenderIndex, _setMsgRenderIndex] = useState(
+    Math.max(0, renderMessages.length - CHAT_PAGE_SIZE),
+  );
+  function setMsgRenderIndex(newIndex: number) {
+    newIndex = Math.min(renderMessages.length - CHAT_PAGE_SIZE, newIndex);
+    newIndex = Math.max(0, newIndex);
+    _setMsgRenderIndex(newIndex);
+  }
+
+  const messages = useMemo(() => {
+    const endRenderIndex = Math.min(
+      msgRenderIndex + 3 * CHAT_PAGE_SIZE,
+      renderMessages.length,
+    );
+    return renderMessages.slice(msgRenderIndex, endRenderIndex);
+  }, [msgRenderIndex, renderMessages]);
+
+  const onChatBodyScroll = (e: HTMLElement) => {
+    const bottomHeight = e.scrollTop + e.clientHeight;
+    const edgeThreshold = e.clientHeight;
+
+    const isTouchTopEdge = e.scrollTop <= edgeThreshold;
+    const isTouchBottomEdge = bottomHeight >= e.scrollHeight - edgeThreshold;
+    const isHitBottom = bottomHeight >= e.scrollHeight - 10;
+
+    const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
+    const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;
+
+    if (isTouchTopEdge) {
+      setMsgRenderIndex(prevPageMsgIndex);
+    } else if (isTouchBottomEdge) {
+      setMsgRenderIndex(nextPageMsgIndex);
+    }
+
+    setHitBottom(isHitBottom);
+    setAutoScroll(isHitBottom);
+  };
+
+  function scrollToBottom() {
+    setMsgRenderIndex(renderMessages.length - CHAT_PAGE_SIZE);
+    scrollDomToBottom();
+  }
+
   // clear context index = context length + index in messages
   const clearContextIndex =
     (session.clearContextIndex ?? -1) >= 0
-      ? session.clearContextIndex! + context.length
+      ? session.clearContextIndex! + context.length - msgRenderIndex
       : -1;
-
-  // preview messages
-  const messages = context
-    .concat(session.messages as RenderMessage[])
-    .concat(
-      isLoading
-        ? [
-            {
-              ...createMessage({
-                role: "assistant",
-                content: "……",
-              }),
-              preview: true,
-            },
-          ]
-        : [],
-    )
-    .concat(
-      userInput.length > 0 && config.sendPreviewBubble
-        ? [
-            {
-              ...createMessage({
-                role: "user",
-                content: userInput,
-              }),
-              preview: true,
-            },
-          ]
-        : [],
-    );
 
   const [showPromptModal, setShowPromptModal] = useState(false);
 
   const clientConfig = useMemo(() => getClientConfig(), []);
 
-  const location = useLocation();
-  const isChat = location.pathname === Path.Chat;
-
-  const autoFocus = !isMobileScreen || isChat; // only focus in chat page
+  const autoFocus = !isMobileScreen; // wont auto focus on mobile screen
   const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
 
   const userStore = useUserStore();
@@ -1050,7 +1102,6 @@ export function Chat() {
         ref={scrollRef}
         onScroll={(e) => onChatBodyScroll(e.currentTarget)}
         onMouseDown={() => inputRef.current?.blur()}
-        onWheel={(e) => setAutoScroll(hitBottom && e.deltaY > 0)}
         onTouchStart={() => {
           inputRef.current?.blur();
           setAutoScroll(false);
@@ -1069,7 +1120,7 @@ export function Chat() {
           const shouldShowClearContextDivider = i === clearContextIndex - 1;
 
           return (
-            <Fragment key={i}>
+            <Fragment key={message.id}>
               <div
                 className={
                   isUser ? styles["chat-message-user"] : styles["chat-message"]
@@ -1167,7 +1218,8 @@ export function Chat() {
                     <Markdown
                       content={message.content}
                       loading={
-                        (message.preview || message.content.length === 0) &&
+                        (message.preview || message.streaming) &&
+                        message.content.length === 0 &&
                         !isUser
                       }
                       onContextMenu={(e) => onRightClick(e, message)}
@@ -1177,7 +1229,7 @@ export function Chat() {
                       }}
                       fontSize={fontSize}
                       parentRef={scrollRef}
-                      defaultShow={i >= messages.length - 10}
+                      defaultShow={i >= messages.length - 6}
                     />
                   </div>
 
@@ -1221,8 +1273,8 @@ export function Chat() {
             onInput={(e) => onInput(e.currentTarget.value)}
             value={userInput}
             onKeyDown={onInputKeyDown}
-            onFocus={() => setAutoScroll(true)}
-            onBlur={() => setAutoScroll(false)}
+            onFocus={scrollToBottom}
+            onClick={scrollToBottom}
             rows={inputRows}
             autoFocus={autoFocus}
             style={{
@@ -1252,4 +1304,10 @@ export function Chat() {
       )}
     </div>
   );
+}
+
+export function Chat() {
+  const chatStore = useChatStore();
+  const sessionIndex = chatStore.currentSessionIndex;
+  return <_Chat key={sessionIndex}></_Chat>;
 }
