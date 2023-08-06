@@ -11,6 +11,8 @@ export interface User {
   gender: string;
   email: string;
   inviter: string | null;
+  invite_code: string | null;
+  invite_count: number;
   member_type: string;
   phone_number: string | null;
   username: string;
@@ -36,6 +38,8 @@ export const useUserStore = create<UserStore>()(
         gender: "",
         email: "",
         inviter: null,
+        invite_code: null,
+        invite_count: 0,
         member_type: "",
         phone_number: null,
         username: "",
@@ -70,6 +74,8 @@ export const useUserStore = create<UserStore>()(
             gender: "",
             email: "",
             inviter: null,
+            invite_code: null,
+            invite_count: 0,
             member_type: "",
             phone_number: null,
             username: "",

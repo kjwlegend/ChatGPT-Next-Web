@@ -3,6 +3,7 @@ import { loginAPI } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 import { useUserStore, User } from "../store/user";
 import { logoutAPI } from "../api/auth";
+import { Result } from "antd";
 
 interface LoginParams {
   username: string;
@@ -36,8 +37,9 @@ export default function useAuth() {
       return result;
     } catch (error) {
       setIsLoading(false);
+      const result = await loginAPI(params);
 
-      throw new Error("登录失败，请重试");
+      throw new Error(result.msg);
     }
   };
   const logoutHook = async () => {

@@ -41,3 +41,21 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
+
+type InviteCodeStore = {
+  inviteCode: string | null;
+  setInviteCode: (code: string | null) => void;
+};
+
+export const useInviteCodeStore = create<InviteCodeStore>()(
+  persist(
+    (set, get) => ({
+      inviteCode: null,
+      setInviteCode: (code) => set({ inviteCode: code }),
+    }),
+    {
+      name: "invite-code-store",
+      version: 1,
+    },
+  ),
+);
