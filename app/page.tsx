@@ -5,15 +5,14 @@ import { getServerSideConfig } from "./config/server";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useInviteCodeStore } from "./store/auth";
-import { NULL } from "sass";
 
 const serverConfig = getServerSideConfig();
 
-export default async function App() {
+export default function App() {
   const query = useSearchParams();
 
   const inviteCode = query.get("i");
-  console.log("inviteCode", inviteCode);
+  // console.log("inviteCode", inviteCode);
   const inviteCodeStore = useInviteCodeStore();
 
   useEffect(() => {

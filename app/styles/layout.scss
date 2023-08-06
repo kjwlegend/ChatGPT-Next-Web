@@ -35,6 +35,15 @@
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+  margin: 10px 0;
+
+  &.column {
+    flex-direction: column;
+  }
+  &.row {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 .form-container {
@@ -42,6 +51,13 @@
   width: 100%;
   margin: 0 auto;
   position: relative;
+}
+
+.m-b-10 {
+  margin-bottom: 10px;
+}
+.m-b-20 {
+  margin-bottom: 20px;
 }
 // 建立一个 只在 PC 端显示的样式
 

@@ -6,7 +6,7 @@ const cn = {
     Unauthorized: "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
   },
   Auth: {
-    Title: "小光助手",
+    Title: "小光AI助手",
     Tips: "你的每日伙伴",
     Input: "在此处填写访问码",
     Confirm: "确认",
