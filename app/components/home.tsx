@@ -72,11 +72,11 @@ export function useSwitchTheme() {
     document.body.classList.remove("light");
     document.body.classList.remove("dark");
 
-    if (config.theme === "dark") {
-      document.body.classList.add("dark");
-    } else if (config.theme === "light") {
-      document.body.classList.add("light");
-    }
+    // if (config.theme === "dark") {
+    //   document.body.classList.add("dark");
+    // } else if (config.theme === "light") {
+    //   document.body.classList.add("light");
+    // }
 
     const metaDescriptionDark = document.querySelector(
       'meta[name="theme-color"][media*="dark"]',
@@ -85,14 +85,14 @@ export function useSwitchTheme() {
       'meta[name="theme-color"][media*="light"]',
     );
 
-    if (config.theme === "auto") {
-      metaDescriptionDark?.setAttribute("content", "#151515");
-      metaDescriptionLight?.setAttribute("content", "#fafafa");
-    } else {
-      const themeColor = getCSSVar("--theme-color");
-      metaDescriptionDark?.setAttribute("content", themeColor);
-      metaDescriptionLight?.setAttribute("content", themeColor);
-    }
+    // if (config.theme === "auto") {
+    //   metaDescriptionDark?.setAttribute("content", "#151515");
+    //   metaDescriptionLight?.setAttribute("content", "#fafafa");
+    // } else {
+    //   const themeColor = getCSSVar("--theme-color");
+    //   metaDescriptionDark?.setAttribute("content", themeColor);
+    //   metaDescriptionLight?.setAttribute("content", themeColor);
+    // }
   }, [config.theme]);
 }
 
@@ -176,7 +176,6 @@ export function useLoadData() {
 export function Home() {
   useSwitchTheme();
   useLoadData();
-  const isMobileScreen = useMobileScreen();
   useEffect(() => {
     console.log("[Config] got config from build time", getClientConfig());
     useAccessStore.getState().fetch();
@@ -191,7 +190,6 @@ export function Home() {
       <Router>
         <Routes>
           <Route path="*" element={<Screen />} />
-          <Route path={Path.Intro} element={<Intro />} />
         </Routes>
       </Router>
     </ErrorBoundary>

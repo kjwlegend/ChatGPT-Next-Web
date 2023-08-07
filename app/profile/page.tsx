@@ -6,7 +6,7 @@ import LogoutButton from "../components/logout";
 import PersonalInfoTab from "./PersonalInfoTab";
 import SecurityInfoTab from "./SecurityInfoTab";
 // import AccountInfoTab from "./AccountInfoTab";
-// import InvitationInfoTab from "./InvitationInfoTab";
+import InvitationInfoTab from "./InvitationInfoTab";
 import styles from "./profile.module.scss";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
@@ -29,12 +29,11 @@ const items: TabsProps["items"] = [
   //     component: <AccountInfoTab />,
   //     disabled: true,
   //   },
-  //   {
-  //     key: "4",
-  //     tab: "邀请信息",
-  //     component: <InvitationInfoTab />,
-  //     disabled: true,
-  //   },
+  {
+    key: "4",
+    label: "邀请信息",
+    children: <InvitationInfoTab />,
+  },
 ];
 
 const ProfilePage = () => {

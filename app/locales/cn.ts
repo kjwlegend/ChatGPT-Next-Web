@@ -6,7 +6,7 @@ const cn = {
     Unauthorized: "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
   },
   Auth: {
-    Title: "小光助手",
+    Title: "小光AI助手",
     Tips: "你的每日伙伴",
     Input: "在此处填写访问码",
     Confirm: "确认",
@@ -18,6 +18,7 @@ const cn = {
   Chat: {
     SubTitle: (count: number) => `共 ${count} 条对话`,
     EditMessage: {
+      Title: "编辑消息记录",
       Topic: {
         Title: "聊天主题",
         SubTitle: "更改当前聊天主题",
@@ -277,7 +278,7 @@ const cn = {
   Context: {
     Toast: (x: any) => `包含 ${x} 条预设提示词`,
     Edit: "当前对话设置",
-    Add: "新增预设对话",
+    Add: "新增一条对话",
     Clear: "上下文已清除",
     Revert: "恢复上下文",
   },

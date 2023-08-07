@@ -15,8 +15,8 @@ export enum SubmitKey {
 }
 
 export enum Theme {
-  Auto = "auto",
-  Dark = "dark",
+  Auto = "light",
+  Dark = "light",
   Light = "light",
 }
 
@@ -24,7 +24,7 @@ export const DEFAULT_CONFIG = {
   submitKey: SubmitKey.CtrlEnter as SubmitKey,
   avatar: "1f603",
   fontSize: 14,
-  theme: Theme.Auto as Theme,
+  theme: Theme.Light as Theme,
   tightBorder: !!getClientConfig()?.isApp,
   showHeader: true,
   sendPreviewBubble: true,
@@ -83,7 +83,7 @@ export const ModalConfigValidator = {
     return x as ModelType;
   },
   max_tokens(x: number) {
-    return limitNumber(x, 0, 32000, 2000);
+    return limitNumber(x, 0, 100000, 2000);
   },
   presence_penalty(x: number) {
     return limitNumber(x, -2, 2, 0);

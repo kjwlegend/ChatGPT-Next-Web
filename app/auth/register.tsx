@@ -17,6 +17,7 @@ import request from "../utils/request";
 import axios from "axios";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
+import { useInviteCodeStore } from "../store/auth";
 
 const { Option } = Select;
 
@@ -55,6 +56,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const inviteCodeStore = useInviteCodeStore();
 
   const onFinish = async (values: RegisterParams) => {
     try {
@@ -105,7 +107,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
       form={form}
       name="register"
       onFinish={onFinish}
-      initialValues={{ prefix: "86" }}
+      initialValues={{ prefix: "86", invite_code: inviteCodeStore.inviteCode }}
       style={{ maxWidth: 900, minWidth: 300 }}
       scrollToFirstError
       labelAlign="left"
@@ -202,6 +204,14 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         rules={[{ required: true, message: "请输入手机号" }]}
       >
         <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+      </Form.Item>
+
+      <Form.Item
+        name="invite_code"
+        label="邀请码"
+        rules={[{ required: false, message: "邀请双方都会获得奖励!" }]}
+      >
+        <Input placeholder="邀请双方都会获得奖励!" />
       </Form.Item>
 
       <Form.Item

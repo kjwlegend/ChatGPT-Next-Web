@@ -176,7 +176,7 @@ const PersonalInfoTab = () => {
               保存
             </Button>
             <Link href="/" passHref>
-              <Button type="ghost">取消</Button>
+              <Button type="default">取消</Button>
             </Link>
           </Space>
         </div>

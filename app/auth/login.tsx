@@ -38,10 +38,11 @@ export default function Login() {
       }
     } catch (error) {
       // 失败提示
+      console.log("Received values of error: ", error);
       messageApi.destroy("loading");
       messageApi.open({
         type: "error",
-        content: "登录失败,请重试",
+        content: `登录失败: ${error}`,
       });
     }
   };
