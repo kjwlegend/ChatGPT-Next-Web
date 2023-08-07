@@ -22,7 +22,7 @@ const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
   if (isButton) {
     return (
       // <div>
-      <Button type="ghost" onClick={handleLogout} className={styles["logout"]}>
+      <Button onClick={handleLogout} className={styles["logout"]}>
         注销登出
       </Button>
       // </div>
