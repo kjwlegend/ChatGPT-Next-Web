@@ -91,6 +91,7 @@ import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
 import { useAuthStore } from "../store/auth";
+import { createChat, CreateChatData } from "../api/chat";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -612,6 +613,7 @@ function _Chat() {
   const session = chatStore.currentSession();
   const config = useAppConfig();
   const fontSize = config.fontSize;
+  const userStore = useUserStore();
 
   const [showExport, setShowExport] = useState(false);
 
@@ -700,7 +702,38 @@ function _Chat() {
       return;
     }
     setIsLoading(true);
-    chatStore.onUserInput(userInput).then(() => setIsLoading(false));
+    const recentMessages = chatStore.getMessagesWithMemory();
+
+    chatStore
+      .onUserInput(userInput)
+      .then(() => {
+        setIsLoading(false);
+
+        // 构建 createChat 接口的请求参数
+
+        const createChatData: CreateChatData = {
+          user: userStore.user.id, // 替换为实际的用户 ID
+          chat_session: session.id, // 替换为实际的聊天会话 ID
+          message: userInput, // 使用用户输入作为 message 参数
+          memory: recentMessages,
+        };
+
+        // 调用 createChat 接口
+        createChat(createChatData)
+          .then((response) => {
+            // 处理 createChat 接口的响应
+            console.log("createChat success:", response);
+          })
+          .catch((error) => {
+            // 处理 createChat 接口的错误
+            console.error("createChat error:", error);
+          });
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        // 处理 chatStore.onUserInput 的错误
+        console.error("chatStore.onUserInput error:", error);
+      });
     localStorage.setItem(LAST_INPUT_KEY, userInput);
     setUserInput("");
     setPromptHints([]);
@@ -982,7 +1015,6 @@ function _Chat() {
   const autoFocus = !isMobileScreen; // wont auto focus on mobile screen
   const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
 
-  const userStore = useUserStore();
   useCommand({
     fill: setUserInput,
     submit: (text) => {

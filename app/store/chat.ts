@@ -18,6 +18,8 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
+import { createChatSession } from "../api/chat";
+import { UserStore, useUserStore } from "./user";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -87,8 +89,8 @@ interface ChatStore {
   clearSessions: () => void;
   moveSession: (from: number, to: number) => void;
   selectSession: (index: number) => void;
-  newSession: (mask?: Mask) => void;
-  deleteSession: (index: number) => void;
+  newSession: (mask?: Mask, useUserStore?: UserStore) => void;
+  deleteSession: (index: number, useUserStore?: UserStore) => void;
   currentSession: () => ChatSession;
   nextSession: (delta: number) => void;
   onNewMessage: (message: ChatMessage) => void;
@@ -179,12 +181,15 @@ export const useChatStore = create<ChatStore>()(
         });
       },
 
-      newSession(mask) {
+      newSession(mask, userStore) {
+        const config = useAppConfig.getState();
         const session = createEmptySession();
 
+        let model = config.modelConfig.model;
+
         if (mask) {
-          const config = useAppConfig.getState();
           const globalModelConfig = config.modelConfig;
+          model = mask.modelConfig.model;
 
           session.mask = {
             ...mask,
@@ -194,6 +199,25 @@ export const useChatStore = create<ChatStore>()(
             },
           };
           session.topic = mask.name;
+        }
+
+        if (userStore) {
+          const user = userStore.user; // 从 userStore 中获取 user 对象
+          const userId = user.id; // 从 user 对象中获取 id 字段
+
+          const data = {
+            user: userId,
+            prompt_id: mask?.id || "",
+            model: model,
+          };
+          createChatSession(data)
+            .then((res) => {
+              console.log(res);
+              session.id = res.data.session_id;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         }
 
         set((state) => ({
@@ -209,7 +233,7 @@ export const useChatStore = create<ChatStore>()(
         get().selectSession(limit(i + delta));
       },
 
-      deleteSession(index) {
+      deleteSession(index, userStore) {
         const deletingLastSession = get().sessions.length === 1;
         const deletedSession = get().sessions.at(index);
 
@@ -227,6 +251,26 @@ export const useChatStore = create<ChatStore>()(
         if (deletingLastSession) {
           nextIndex = 0;
           sessions.push(createEmptySession());
+
+          // session id  设置为空
+          if (userStore) {
+            const user = userStore.user; // 从 userStore 中获取 user 对象
+            const userId = user.id; // 从 user 对象中获取 id 字段
+            const session = sessions.at(0);
+            if (!session) return;
+
+            const data = {
+              user: userId,
+            };
+            createChatSession(data)
+              .then((res) => {
+                console.log(res);
+                session.id = res.data.session_id || nanoid();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
         }
 
         // for undo delete action

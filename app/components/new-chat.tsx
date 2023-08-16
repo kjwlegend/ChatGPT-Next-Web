@@ -17,6 +17,7 @@ import EyeIcon from "../icons/eye.svg";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { Mask, useMaskStore, createEmptyMask } from "../store/mask";
+import { useUserStore } from "../store";
 import Locale from "../locales";
 import { useAppConfig, useChatStore } from "../store";
 import { MaskAvatar } from "./mask";
@@ -128,6 +129,7 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
 export function NewChat() {
   const chatStore = useChatStore();
   const maskStore = useMaskStore();
+  const userStore = useUserStore();
 
   const masks = maskStore.getAll();
   const groups = useMaskGroup(masks);
@@ -142,7 +144,7 @@ export function NewChat() {
 
   const startChat = (mask?: Mask) => {
     setTimeout(() => {
-      chatStore.newSession(mask);
+      chatStore.newSession(mask, userStore);
       navigate(Path.Chat);
     }, 10);
   };

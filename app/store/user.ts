@@ -18,7 +18,7 @@ export interface User {
   username: string;
 }
 
-interface UserStore {
+export interface UserStore {
   user: User;
   updateNickname: (nickname: string) => void;
   updateModelPreference: (modelPreference: string) => void;

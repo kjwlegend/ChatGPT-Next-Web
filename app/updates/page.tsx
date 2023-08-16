@@ -216,6 +216,10 @@ const items = [
     label: "2023-08-06",
     children: "发布 v0.6.4 版本: 优化手机版菜单展示, 修复对话窗口bug",
   },
+  {
+    label: "2023-08-16",
+    children: "发布 v0.6.5 版本: 增加token统计功能",
+  },
 ];
 
 const Log = () => {

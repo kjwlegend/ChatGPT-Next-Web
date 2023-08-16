@@ -18,6 +18,7 @@ import { MaskAvatar } from "./mask";
 import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
+import { useUserStore } from "../store";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -101,6 +102,7 @@ export function ChatList(props: { narrow?: boolean }) {
   );
   const chatStore = useChatStore();
   const navigate = useNavigate();
+  const userStore = useUserStore();
 
   const onDragEnd: OnDragEndResponder = (result) => {
     const { destination, source } = result;
@@ -145,7 +147,7 @@ export function ChatList(props: { narrow?: boolean }) {
                     !props.narrow ||
                     (await showConfirm(Locale.Home.DeleteChat))
                   ) {
-                    chatStore.deleteSession(i);
+                    chatStore.deleteSession(i, userStore);
                   }
                 }}
                 narrow={props.narrow}
