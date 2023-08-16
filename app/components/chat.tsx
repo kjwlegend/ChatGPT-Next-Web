@@ -723,6 +723,13 @@ function _Chat() {
           .then((response) => {
             // 处理 createChat 接口的响应
             console.log("createChat success:", response);
+            const newSessionId = response.data.chat_session;
+
+            if (session.id !== newSessionId) {
+              chatStore.updateCurrentSession((session) => {
+                session.id = newSessionId;
+              });
+            }
           })
           .catch((error) => {
             // 处理 createChat 接口的错误
