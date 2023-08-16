@@ -1,9 +1,14 @@
+import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
+
+const isApp = !!getClientConfig()?.isApp;
 
 const cn = {
   WIP: "该功能仍在开发中……",
   Error: {
-    Unauthorized: "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
+    Unauthorized: isApp
+      ? "检测到无效 API Key，请前往[设置](/#/settings)页检查 API Key 是否配置正确。"
+      : "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
   },
   Auth: {
     Title: "小光AI助手",
@@ -172,6 +177,10 @@ const cn = {
     SendPreviewBubble: {
       Title: "预览气泡",
       SubTitle: "在预览气泡中预览 Markdown 内容",
+    },
+    AutoGenerateTitle: {
+      Title: "自动生成标题",
+      SubTitle: "根据对话内容生成合适的标题",
     },
     Mask: {
       Splash: {
