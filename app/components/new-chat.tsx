@@ -78,10 +78,10 @@ function useMaskGroup(masks: Mask[]) {
       setGroups(newGroups);
     };
 
-    computeGroup();
+    // computeGroup();
 
-    window.addEventListener("resize", computeGroup);
-    return () => window.removeEventListener("resize", computeGroup);
+    // window.addEventListener("resize", computeGroup);
+    // return () => window.removeEventListener("resize", computeGroup);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -223,39 +223,6 @@ export function NewChat() {
         justify="center"
         className={styles["feature-masks"]}
       >
-        <Card
-          style={{ maxWidth: 340 }}
-          title="小光(通用)"
-          extra={<span className={"label"}>通用</span>}
-          hoverable
-          actions={[
-            <Button key={10000} type="primary" onClick={() => startChat()}>
-              开始聊天
-            </Button>,
-            <span key={10000}>角色等级: Lv3 </span>,
-          ]}
-          key={10000}
-        >
-          <div className={styles["mask-item"]}>
-            <div className={styles["img-wrapper"]}>
-              <Image
-                src="/ai-full.png"
-                alt="小光同学"
-                width={100}
-                height={200}
-              />
-            </div>
-            <div className={styles.description}>
-              <p>天蝎座 (11-07)</p>
-              <p style={{ whiteSpace: "pre-line" }}>
-                一个乐观向上的朋友,善于倾听并提供支持和鼓励,具有多才多艺的能力,无论你需要什么帮助，小光都会陪伴在你身边。
-                <br />
-                <br />
-                座右铭: &quot;你要相信光&quot;
-              </p>
-            </div>
-          </div>
-        </Card>
         {featureGroup.map((mask) => FeatureMaskItem(mask, startChat))}
       </Row>
     </div>

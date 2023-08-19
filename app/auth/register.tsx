@@ -18,6 +18,7 @@ import axios from "axios";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
 import { useInviteCodeStore } from "../store/auth";
+import style from "../components/welcome.module.scss";
 
 const { Option } = Select;
 
@@ -54,12 +55,14 @@ const tailFormItemLayout = {
 const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const inviteCodeStore = useInviteCodeStore();
 
   const onFinish = async (values: RegisterParams) => {
     try {
+      setIsSubmitting(true);
       const result = await register(values);
 
       if (result.code == "201") {
@@ -91,6 +94,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
       // 处理错误
       console.log(error);
     }
+    setIsSubmitting(false);
   };
 
   const prefixSelector = (
@@ -120,7 +124,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
           { required: true, message: "请输入你的用户名", whitespace: false },
         ]}
       >
-        <Input />
+        <Input placeholder="请输入小写英文, 不要带有空格和特殊符号" />
       </Form.Item>
 
       <Form.Item
@@ -167,7 +171,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
           { required: false, message: "请输入你的昵称", whitespace: true },
         ]}
       >
-        <Input />
+        <Input placeholder="希望AI 怎么称呼您?" />
       </Form.Item>
 
       <Form.Item
@@ -211,7 +215,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         label="邀请码"
         rules={[{ required: false, message: "邀请双方都会获得奖励!" }]}
       >
-        <Input placeholder="邀请双方都会获得奖励!" />
+        <Input placeholder="邀请双方都会获得奖励! " />
       </Form.Item>
 
       <Form.Item
@@ -234,17 +238,19 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
           </a>
         </Checkbox>
       </Form.Item>
+
       <Form.Item
         wrapperCol={{
           xs: { span: 24, offset: 0 },
           sm: { span: 16, offset: 4 },
         }}
       >
-        <Button block type="primary" htmlType="submit">
+        <Button block type="primary" htmlType="submit" disabled={isSubmitting}>
           立即注册
         </Button>
       </Form.Item>
       {contextHolder}
+
       <Modal
         title="小光AI（测试版）个人信息保护规则"
         centered
@@ -252,6 +258,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
         width={1000}
+        bodyStyle={{ height: 500, overflow: "scroll" }}
       >
         <p>更新时间：2023-07-15</p>
         <p>

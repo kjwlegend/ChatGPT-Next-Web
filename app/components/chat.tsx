@@ -92,6 +92,8 @@ import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
 import { useAuthStore } from "../store/auth";
 import { createChat, CreateChatData } from "../api/chat";
+import useAuth from "../hooks/useAuth";
+import { message } from "antd";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -614,7 +616,7 @@ function _Chat() {
   const config = useAppConfig();
   const fontSize = config.fontSize;
   const userStore = useUserStore();
-
+  const authHook = useAuth();
   const [showExport, setShowExport] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -692,8 +694,11 @@ function _Chat() {
     }
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   const doSubmit = (userInput: string) => {
     if (userInput.trim() === "") return;
+
     const matchCommand = chatCommands.match(userInput);
     if (matchCommand.matched) {
       setUserInput("");
@@ -730,9 +735,18 @@ function _Chat() {
                 session.id = newSessionId;
               });
             }
+
+            // 检查reponse.code 是否为 4000, 是的话则提示用户登录已过期
+            if (response.code === 401) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            }
           })
           .catch((error) => {
             // 处理 createChat 接口的错误
+            // 出现一个提示窗 (Toast) 来提示用户 登录已过期
+            messageApi.error("当前对话出现错误, 请新建对话");
+
             console.error("createChat error:", error);
           });
       })
@@ -748,6 +762,9 @@ function _Chat() {
     setAutoScroll(true);
   };
 
+  {
+    contextHolder;
+  }
   const onPromptSelect = (prompt: RenderPompt) => {
     setTimeout(() => {
       setPromptHints([]);
@@ -1341,6 +1358,7 @@ function _Chat() {
           }}
         />
       )}
+      {contextHolder}
     </div>
   );
 }

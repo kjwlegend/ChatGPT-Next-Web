@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
@@ -110,7 +111,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
               <IconButton
                 icon={<EyeIcon />}
                 key="view"
-                text={"热度: 0"}
+                text={`热度: ${mask.hotness ? mask.hotness : "0"}`}
                 // onClick={() => setEditingMaskId(mask.id)}
               />
             ) : (

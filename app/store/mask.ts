@@ -25,6 +25,7 @@ export type Mask = {
   modelConfig: ModelConfig;
   lang: Lang;
   builtin: boolean;
+  hotness?: number;
 };
 export const DEFAULT_MASK_STATE = {
   masks: {} as Record<string, Mask>,
@@ -97,9 +98,11 @@ export const useMaskStore = create<MaskStore>()(
         return get().masks[id ?? 1145141919810];
       },
       getAll() {
-        const userMasks = Object.values(get().masks).sort(
-          (a, b) => b.createdAt - a.createdAt,
-        );
+        const userMasks = Object.values(get().masks).sort((a, b) => {
+          // 将hotness属性转换为数字进行比较
+          return b.createdAt - a.createdAt;
+        });
+        console.log("userMasks after sorting:", userMasks);
         const config = useAppConfig.getState();
         if (config.hideBuiltinMasks) return userMasks;
         const buildinMasks = BUILTIN_MASKS.map(
@@ -112,6 +115,19 @@ export const useMaskStore = create<MaskStore>()(
               },
             } as Mask),
         );
+        buildinMasks.sort((a, b) => {
+          const hotnessA = isNaN(Number(a.hotness)) ? 0 : Number(a.hotness);
+          const hotnessB = isNaN(Number(b.hotness)) ? 0 : Number(b.hotness);
+
+          // 根据hotness属性的值进行排序
+          if (hotnessA > hotnessB) {
+            return -1; // a排在b之前
+          } else if (hotnessA < hotnessB) {
+            return 1; // a排在b之后
+          } else {
+            return b.createdAt - a.createdAt; // 如果hotness相等，则根据createdAt排序
+          }
+        });
         return userMasks.concat(buildinMasks);
       },
       search(text) {

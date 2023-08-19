@@ -20,6 +20,8 @@ import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createChatSession } from "../api/chat";
 import { UserStore, useUserStore } from "./user";
+import { BUILTIN_MASKS } from "../masks";
+import type { BuiltinMask } from "../masks";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -199,6 +201,22 @@ export const useChatStore = create<ChatStore>()(
             },
           };
           session.topic = mask.name;
+        } else {
+          // 如果没有传入mask，则使用默认的mask
+          const defaultMask = BUILTIN_MASKS.find(
+            (m: BuiltinMask) => m.name === "小光(通用)",
+          );
+          if (defaultMask) {
+            session.mask = {
+              id: "100000",
+              ...defaultMask,
+              modelConfig: {
+                ...config.modelConfig,
+                ...defaultMask.modelConfig,
+              },
+            };
+            session.topic = defaultMask.name;
+          }
         }
 
         if (userStore) {
@@ -207,7 +225,7 @@ export const useChatStore = create<ChatStore>()(
 
           const data = {
             user: userId,
-            prompt_id: mask?.id || "",
+            prompt_id: mask?.id || "100000",
             model: model,
           };
           createChatSession(data)

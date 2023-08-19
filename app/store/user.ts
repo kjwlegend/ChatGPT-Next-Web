@@ -44,6 +44,7 @@ export const useUserStore = create<UserStore>()(
         phone_number: null,
         username: "",
       },
+
       updateNickname: (nickname) => {
         set((state) => ({
           user: {

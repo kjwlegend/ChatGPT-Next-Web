@@ -5,7 +5,7 @@ import { ChatMessage } from "../store/chat";
 
 export interface CreateChatSessionData {
   user: number;
-  prompt_id?: string;
+  prompt?: string;
   model?: ModelType;
 }
 
@@ -35,6 +35,19 @@ export async function createChat(data: CreateChatData) {
     url: `/gpt/chats/`,
     method: "post",
     data,
+  })
+    .then((res) => res.data)
+    .catch((err) => {
+      // console.log(err);
+      return err.response.data;
+    });
+}
+
+// get prompthotness
+export async function getPromptHotness() {
+  return request({
+    url: `/gpt/prompt-hotness/`,
+    method: "get",
   })
     .then((res) => res.data)
     .catch((err) => {

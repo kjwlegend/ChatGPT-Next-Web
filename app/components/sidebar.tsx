@@ -138,7 +138,7 @@ export function SideBar(props: { className?: string }) {
         <div className="flex-container row m-b-20">
           {isMobileScreen && <DrawerMenu />}
 
-          <LoginButton />
+          {!shouldNarrow && <LoginButton />}
         </div>
 
         <div className={styles["sidebar-header-bar"]}>

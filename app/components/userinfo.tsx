@@ -15,9 +15,25 @@ import {
 } from "antd";
 import type { MenuProps } from "antd";
 import styles from "./header.module.scss";
+import { IconButton } from "./button";
+import LightningIcon from "../icons/lightning.svg";
+import { Modal } from "antd";
+import style from "./welcome.module.scss";
 
 export default function LoginButton() {
   const { user } = useUserStore();
+  const [visible, setVisible] = useState(false);
+
+  const handleButtonClick = () => {
+    setVisible(true);
+  };
+  const handleOk = () => {
+    setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
 
   const items: MenuProps["items"] = [
     {
@@ -52,12 +68,39 @@ export default function LoginButton() {
               </Space>
             </a>
           </Dropdown>
+
+          <Button onClick={handleButtonClick}>
+            <LightningIcon /> 进群领福利
+          </Button>
         </>
       ) : (
-        <Link href="/auth">
-          <Button type="default">登录</Button>
-        </Link>
+        <>
+          <Link href="/auth">
+            <Button type="default">登录</Button>
+          </Link>
+          <Button onClick={handleButtonClick}>
+            <LightningIcon /> 进群领福利
+          </Button>
+        </>
       )}
+      <Modal
+        centered
+        open={visible}
+        onCancel={handleCancel}
+        onOk={handleOk}
+        width={800}
+      >
+        <div className={style.content}>
+          <img
+            src="assets/carousel-2.png"
+            alt="二维码"
+            className={style.banner}
+          />
+
+          <img src="assets/wechat-qr.png" alt="Logo" className={style.qrcode} />
+          <p className={style.title}> 进群可领取邀请码, 领取2个月免费福利</p>
+        </div>
+      </Modal>
     </div>
   );
 }

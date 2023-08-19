@@ -58,6 +58,9 @@
       justify-content: space-around;
       row-gap: 10px;
       align-items: stretch;
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
+        "Helvetica", "Arial", sans-serif, "Noto Sans", "SF Pro SC",
+        "SF Pro Text", "SF Pro Icons";
 
       .mask-item {
         padding: 10px;
@@ -73,8 +76,9 @@
           align-items: center;
           justify-content: flex-start;
           column-gap: 1rem;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           font-weight: 400;
+          letter-spacing: 2px;
         }
 
         :global .ant-card-actions > li {
@@ -88,9 +92,12 @@
 
         :global .ant-card-meta-description {
           height: 90px;
-          overflow: scroll; /* 隐藏溢出的内容 */
+          // overflow: scroll; /* 隐藏溢出的内容 */
+
           text-overflow: ellipsis; /* 显示省略号 */
-          // white-space: nowrap; /* 防止文字换行 */
+          display: -webkit-box; /* 将元素设置为弹性盒子 */
+          -webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
+          -webkit-line-clamp: 4; /* 设置文本显示的最大行数为3行 */
         }
 
         // 屏幕小于 1024
