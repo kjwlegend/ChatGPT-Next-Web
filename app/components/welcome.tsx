@@ -43,32 +43,35 @@ const ModalPopup = () => {
       footer={null}
     >
       <div className={styles.content}>
-        <img
-          src="assets/carousel-2.png"
-          alt="二维码"
-          className={styles.banner}
-        />
+        <img src="assets/banner1.png" alt="二维码" className={styles.banner} />
 
         <img src="assets/wechat-qr.png" alt="Logo" className={styles.qrcode} />
         <p className={styles.title}> 进群可领取邀请码, 领取2个月免费福利</p>
         {/* subtitle */}
         <p className={styles.subtitle}>为什么使用小光AI?</p>
+        {/* 基于工作 , 生活, 娱乐 3大块, 以flex组件帮我生成带有 小标题, 描述的代码 */}
         <div className={styles.description}>
-          <ul>
-            <li>
-              小光
-              AI是一个基于人工智能的提示词训练平台，它可以帮助您快速训练模型，生成优质的提示词。
-            </li>
-            <li>
-              比国内多数chat平台, 例如百度文心一言,讯飞等, 提供更多的功能,
-              更好的体验
-            </li>
-            <li>
-              除了基础对话以外, 即将上线超级自动化对话, multi-agents chat等功能
-            </li>
-          </ul>
+          <div className={styles["description-item"]}>
+            <p className={styles["description-title"]}>工作</p>
+            <p className={styles["description-content"]}>
+              产品文案, 社交媒体协作, 合同起草, 法律文书, 专业术语翻译 ...
+            </p>
+          </div>
+          <div className={styles["description-item"]}>
+            <p className={styles["description-title"]}>生活</p>
+            <p className={styles["description-content"]}>
+              百科学习,旅游指南, 餐厅推荐, 电影推荐, 电视剧推荐, 书籍推荐 ...
+            </p>
+          </div>
+          <div className={styles["description-item"]}>
+            <p className={styles["description-title"]}>娱乐</p>
+            <p className={styles["description-content"]}>
+              角色陪伴, 起名算命, 角色扮演游戏, 文字冒险, 星座占卜 ...
+            </p>
+          </div>
         </div>
-        <p className={styles.description}>
+
+        <p className={styles.button}>
           {/* 插入四个Button , 立即注册, 查看介绍 立即登录 */}
           <Button type="primary" href="/auth#tab2">
             立即注册
