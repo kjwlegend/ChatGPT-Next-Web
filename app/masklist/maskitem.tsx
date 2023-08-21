@@ -31,6 +31,7 @@ import {
   ModelConfig,
   useAppConfig,
   useChatStore,
+  useUserStore,
 } from "../store";
 import { FileName, Path } from "../constant";
 
@@ -61,9 +62,13 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 
   const maskStore = useMaskStore();
   const chatStore = useChatStore();
+  const userStore = useUserStore();
 
   const onChat = () => {
-    console.log("onChat");
+    setTimeout(() => {
+      chatStore.newSession(mask, userStore);
+      navigate(Path.Chat);
+    }, 10);
     chatStore.newSession(mask);
     navigate(Path.Chat);
   };

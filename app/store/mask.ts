@@ -99,10 +99,8 @@ export const useMaskStore = create<MaskStore>()(
       },
       getAll() {
         const userMasks = Object.values(get().masks).sort((a, b) => {
-          // 将hotness属性转换为数字进行比较
           return b.createdAt - a.createdAt;
         });
-        console.log("userMasks after sorting:", userMasks);
         const config = useAppConfig.getState();
         if (config.hideBuiltinMasks) return userMasks;
         const buildinMasks = BUILTIN_MASKS.map(
@@ -119,14 +117,12 @@ export const useMaskStore = create<MaskStore>()(
           const hotnessA = isNaN(Number(a.hotness)) ? 0 : Number(a.hotness);
           const hotnessB = isNaN(Number(b.hotness)) ? 0 : Number(b.hotness);
 
-          // 根据hotness属性的值进行排序
-          if (hotnessA > hotnessB) {
-            return -1; // a排在b之前
-          } else if (hotnessA < hotnessB) {
-            return 1; // a排在b之后
-          } else {
-            return b.createdAt - a.createdAt; // 如果hotness相等，则根据createdAt排序
-          }
+          // 3层排序逻辑: featureMask > hotness > createdAt
+          if (a.featureMask && !b.featureMask) return -1;
+          if (!a.featureMask && b.featureMask) return 1;
+          if (hotnessA > hotnessB) return -1;
+          if (hotnessA < hotnessB) return 1;
+          return b.createdAt - a.createdAt;
         });
         return userMasks.concat(buildinMasks);
       },
