@@ -11,11 +11,12 @@
   width: 90%;
   margin-bottom: 20px;
   position: absolute;
+  height: 304px;
   top: -250px;
 
   @media screen and (max-width: 768px) {
     position: absolute;
-    top: -160px;
+    top: -250px;
     width: 100%;
   }
 }
@@ -25,6 +26,7 @@
   height: 150px;
   margin-bottom: 10px;
   z-index: 1;
+  position: relative;
 }
 
 .title {

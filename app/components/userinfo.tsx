@@ -19,6 +19,7 @@ import { IconButton } from "./button";
 import LightningIcon from "../icons/lightning.svg";
 import { Modal } from "antd";
 import style from "./welcome.module.scss";
+import Image from "next/image";
 
 export default function LoginButton() {
   const { user } = useUserStore();
@@ -70,7 +71,7 @@ export default function LoginButton() {
           </Dropdown>
 
           <Button onClick={handleButtonClick}>
-            <LightningIcon /> 进群领福利
+            <LightningIcon /> 领福利
           </Button>
         </>
       ) : (
@@ -79,7 +80,7 @@ export default function LoginButton() {
             <Button type="default">登录</Button>
           </Link>
           <Button onClick={handleButtonClick}>
-            <LightningIcon /> 进群领福利
+            <LightningIcon /> 领福利
           </Button>
         </>
       )}
@@ -91,13 +92,24 @@ export default function LoginButton() {
         width={800}
       >
         <div className={style.content}>
-          <img
-            src="assets/carousel-2.png"
-            alt="二维码"
-            className={style.banner}
-          />
+          <div className={style.banner}>
+            <Image
+              src="/assets/banner-1.png"
+              alt="banner"
+              fill={true}
+              style={{ objectFit: "contain" }}
+            />
+          </div>
+          <div className={style.qrcode}>
+            <Image
+              src="/assets/wechat-qr.png"
+              alt="Logo"
+              className={style.qrcode}
+              fill={true}
+              style={{ objectFit: "contain" }}
+            />
+          </div>
 
-          <img src="assets/wechat-qr.png" alt="Logo" className={style.qrcode} />
           <p className={style.title}> 进群可领取邀请码, 领取2个月免费福利</p>
         </div>
       </Modal>

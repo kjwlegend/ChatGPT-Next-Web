@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Modal } from "antd";
 import styles from "./welcome.module.scss";
 import { Button } from "antd";
+import Image from "next/image";
 
 const ModalPopup = () => {
   const [visible, setVisible] = useState(false);
@@ -43,9 +44,23 @@ const ModalPopup = () => {
       footer={null}
     >
       <div className={styles.content}>
-        <img src="assets/banner1.png" alt="二维码" className={styles.banner} />
-
-        <img src="assets/wechat-qr.png" alt="Logo" className={styles.qrcode} />
+        <div className={styles.banner}>
+          <Image
+            src="/assets/banner-1.png"
+            alt="banner"
+            fill={true}
+            style={{ objectFit: "contain" }}
+          />
+        </div>
+        <div className={styles.qrcode}>
+          <Image
+            src="/assets/wechat-qr.png"
+            alt="Logo"
+            className={styles.qrcode}
+            fill={true}
+            style={{ objectFit: "contain" }}
+          />
+        </div>
         <p className={styles.title}> 进群可领取邀请码, 领取2个月免费福利</p>
         {/* subtitle */}
         <p className={styles.subtitle}>为什么使用小光AI?</p>
