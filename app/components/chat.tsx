@@ -745,6 +745,10 @@ function _Chat() {
           .catch((error) => {
             // 处理 createChat 接口的错误
             // 出现一个提示窗 (Toast) 来提示用户 登录已过期
+            if (error.code === 401) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            }
             messageApi.error("当前对话出现错误, 请新建对话");
 
             console.error("createChat error:", error);
