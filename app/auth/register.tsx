@@ -11,6 +11,7 @@ import {
   Select,
   Modal,
 } from "antd";
+import Image from "next/image";
 import React, { useState, useContext } from "react";
 import { register, RegisterParams, RegisterResult } from "../api/auth";
 import request from "../utils/request";
@@ -59,10 +60,32 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const inviteCodeStore = useInviteCodeStore();
+  const [visible, setVisible] = useState(false);
+
+  const handleButtonClick = () => {
+    setVisible(true);
+  };
+  const handleOk = () => {
+    setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+  const selectChange = (value: string) => {
+    console.log(`selected ${value}`);
+    // 将form gender 的值 设置为value
+
+    form.setFieldsValue({
+      gender: value,
+    });
+  };
 
   const onFinish = async (values: RegisterParams) => {
     try {
       setIsSubmitting(true);
+      // 获取表单 select 的值 并补充到  values 中
+
       const result = await register(values);
 
       if (result.code == "201") {
@@ -174,16 +197,18 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         <Input placeholder="希望AI 怎么称呼您?" />
       </Form.Item>
 
-      <Form.Item
-        name="gender"
-        label="性别"
-        rules={[{ required: false, message: "请选择您的性别" }]}
-      >
-        <Select>
-          <Option value="0">请选择</Option>
-          <Option value="1">男</Option>
-          <Option value="2">女</Option>
-        </Select>
+      <Form.Item name="gender" label="性别">
+        <Select
+          defaultValue="0"
+          style={{ width: 375 }}
+          onChange={selectChange}
+          options={[
+            { value: "0", label: "选择" },
+            { value: "1", label: "男" },
+            { value: "2", label: "女" },
+          ]}
+        />
+        <p>性别选择会影响小光的回答风格</p>
       </Form.Item>
 
       <Form.Item
@@ -216,6 +241,18 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         rules={[{ required: false, message: "邀请双方都会获得奖励!" }]}
       >
         <Input placeholder="邀请双方都会获得奖励! " />
+        <p>
+          {" "}
+          若无邀请码, 可
+          <a
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
+            加群获取
+          </a>
+          , 不填也可完成注册, 只是无奖励
+        </p>
       </Form.Item>
 
       <Form.Item
@@ -250,6 +287,35 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         </Button>
       </Form.Item>
       {contextHolder}
+      <Modal
+        centered
+        open={visible}
+        onCancel={handleCancel}
+        onOk={handleOk}
+        width={800}
+      >
+        <div className={style.content}>
+          <div className={style.banner}>
+            <Image
+              src="/assets/banner-1.png"
+              alt="banner"
+              fill={true}
+              style={{ objectFit: "contain" }}
+            />
+          </div>
+          <div className={style.qrcode}>
+            <Image
+              src="/assets/wechat-qr.png"
+              alt="Logo"
+              className={style.qrcode}
+              fill={true}
+              style={{ objectFit: "contain" }}
+            />
+          </div>
+
+          <p className={style.title}> 进群可领取邀请码, 领取2个月免费福利</p>
+        </div>
+      </Modal>
 
       <Modal
         title="小光AI（测试版）个人信息保护规则"

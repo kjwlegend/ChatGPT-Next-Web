@@ -230,6 +230,11 @@ const items = [
     label: "2023-08-21",
     children: "发布 v0.7.1 版本: 侧边栏展示修复, 系统bug修复",
   },
+  {
+    label: "2023-08-23",
+    children:
+      "发布 v0.7.2 版本: 修复注册页性别的bug, 修复对话session容易过期的bug",
+  },
 ];
 
 const Log = () => {
