@@ -223,11 +223,25 @@ export const useChatStore = create<ChatStore>()(
           const user = userStore.user; // 从 userStore 中获取 user 对象
           const userId = user.id; // 从 user 对象中获取 id 字段
 
+          // 判断mask.id 是否为数字, 如果不是数字, 则说明是自定义的 mask, prompt_id 设置为 100000
+          // 如果是数字, 则说明是内置的 mask, prompt_id 设置为 mask.id
+
+          if (!session.mask.id || isNaN(Number(session.mask.id))) {
+            console.log("original mask id ", session.mask.id);
+            session.mask.id = "100000";
+            console.log("new mask id ", session.mask.id);
+          }
+
+          const promptId = isNaN(Number(session.mask.id))
+            ? "100000"
+            : session.mask.id;
+
           const data = {
             user: userId,
-            prompt_id: mask?.id || "100000",
+            prompt_id: promptId,
             model: model,
           };
+          console.log("createChatSession data ", data);
           createChatSession(data)
             .then((res) => {
               console.log(res);

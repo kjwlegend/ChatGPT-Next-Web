@@ -67,7 +67,6 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
   const onChat = () => {
     setTimeout(() => {
       chatStore.newSession(mask, userStore);
-      navigate(Path.Chat);
     }, 10);
     navigate(Path.Chat);
   };

@@ -5,7 +5,7 @@ import { ChatMessage } from "../store/chat";
 
 export interface CreateChatSessionData {
   user: number;
-  prompt?: string;
+  prompt_id?: string;
   model?: ModelType;
 }
 
