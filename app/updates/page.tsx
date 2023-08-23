@@ -235,6 +235,11 @@ const items = [
     children:
       "发布 v0.7.2 版本: 修复注册页性别的bug, 修复对话session容易过期的bug",
   },
+  {
+    label: "2023-08-24",
+    children:
+      "发布 v0.7.3 版本: 修复小红书特殊emoji 字符会导致报错的错误, 修复一旦出现会话问题会导致无法登录的错误",
+  },
 ];
 
 const Log = () => {

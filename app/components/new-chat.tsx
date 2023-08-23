@@ -89,7 +89,10 @@ function useMaskGroup(masks: Mask[]) {
 }
 
 function featureMaskGroup(masks: Mask[]) {
-  const featureMasks = masks.filter((mask) => mask.featureMask);
+  // 2个filter , build-in mask 和 feature mask
+  const featureMasks = masks.filter(
+    (mask) => mask.featureMask === true && mask.builtin === true,
+  );
   return [...featureMasks];
 }
 

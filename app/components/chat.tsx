@@ -724,34 +724,36 @@ function _Chat() {
         };
 
         // 调用 createChat 接口
-        createChat(createChatData)
-          .then((response) => {
-            // 处理 createChat 接口的响应
+        createChat(createChatData).then((response) => {
+          // 处理 createChat 接口的响应
+          console.log("createChat response:", response);
+          const data = response.data;
+
+          if (data) {
             console.log("createChat success:", response);
-            const newSessionId = response.data.chat_session;
+            const newSessionId = data.chat_session;
 
             if (session.id !== newSessionId) {
               chatStore.updateCurrentSession((session) => {
                 session.id = newSessionId;
               });
             }
-
+          } else {
             // 检查reponse.code 是否为 4000, 是的话则提示用户登录已过期
             if (response.code === 401) {
               messageApi.error("登录已过期(令牌无效)，请重新登录");
               authHook.logoutHook();
+            } else if (response.code === 4001) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            } else if (response.code === 4000) {
+              messageApi.error(
+                "当前对话出现错误, 请重新新建对话",
+                response.msg,
+              );
             }
-          })
-          .catch((error) => {
-            // 处理 createChat 接口的错误
-            // 出现一个提示窗 (Toast) 来提示用户 登录已过期
-            authHook.logoutHook();
-            messageApi.error(
-              "当前对话出现错误或登录已过期, 请重新登录或新建对话",
-            );
-
-            console.error("createChat error:", error);
-          });
+          }
+        });
       })
       .catch((error) => {
         setIsLoading(false);
