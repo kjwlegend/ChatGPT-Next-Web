@@ -270,7 +270,8 @@ const cn = {
   },
   Store: {
     DefaultTopic: "新的聊天",
-    BotHello: "你好!我是小光, 我是你的超级助手, 请告诉我你的需求！",
+    BotHello:
+      "你好!我是小光, 我是你的超级助手, 请问有什么可以帮你? 如果有碰到我不会的能力, 也可以去角色页面问问我的其他伙伴",
     Error: "出错了，稍后重试吧",
     Prompt: {
       History: (content: string) => "这是历史聊天总结作为前情提要：" + content,

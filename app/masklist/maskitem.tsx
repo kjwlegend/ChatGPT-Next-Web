@@ -69,7 +69,6 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
       chatStore.newSession(mask, userStore);
       navigate(Path.Chat);
     }, 10);
-    chatStore.newSession(mask);
     navigate(Path.Chat);
   };
 
