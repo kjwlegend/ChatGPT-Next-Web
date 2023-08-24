@@ -487,13 +487,13 @@ export function MaskPage() {
           </div>
 
           <div className="window-actions">
-            <div className="window-action-button">
+            {/* <div className="window-action-button">
               <IconButton
                 icon={<DownloadIcon />}
                 bordered
                 onClick={downloadAll}
               />
-            </div>
+            </div> */}
             <div className="window-action-button">
               <IconButton
                 icon={<UploadIcon />}
