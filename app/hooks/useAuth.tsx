@@ -28,6 +28,21 @@ export default function useAuth() {
         refreshToken: result.data.refresh,
         user: result.data.user,
       };
+      let gender = authInfo.user.gender;
+
+      // 对 user 中的 gender 属性判断保存, 1 为男, 2 为女 0 为未知
+      if (authInfo.user) {
+        if (gender == 1) {
+          gender = "1";
+          // 处理男性的逻辑
+        } else if (gender == 2) {
+          gender = "2";
+          // 处理女性的逻辑
+        } else {
+          gender = "0";
+        }
+      }
+      authInfo.user.gender = gender;
 
       authStore.login(authInfo.accessToken, authInfo.refreshToken);
       userStore.setUser(authInfo.user);
