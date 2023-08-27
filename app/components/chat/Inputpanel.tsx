@@ -86,7 +86,7 @@ import {
   ClearContextDivider,
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
-import { ChatContext } from "./page";
+import { ChatContext } from "./main";
 
 export function PromptHints(props: {
   prompts: RenderPompt[];

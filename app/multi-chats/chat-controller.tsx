@@ -117,14 +117,16 @@ export function useSubmitHandler() {
   };
 }
 
-export function ClearContextDivider() {
+export function ClearContextDivider(props: { index: number }) {
   const chatStore = useChatStore();
+  const index = props.index;
 
   return (
     <div
       className={styles["clear-context"]}
       onClick={() =>
-        chatStore.updateCurrentSession(
+        chatStore.updateSession(
+          index,
           (session) => (session.clearContextIndex = undefined),
         )
       }

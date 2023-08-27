@@ -25,6 +25,13 @@ export const menuItems: MenuItem[] = [
     url: "/",
   },
   {
+    label: "超级工作流",
+    key: "multi-chats",
+    icon: <UsergroupAddOutlined />,
+    disabled: false,
+    url: "/multi-chats",
+  },
+  {
     label: "介绍",
     key: "aboutMenu",
     icon: <ContainerOutlined />,
@@ -44,13 +51,6 @@ export const menuItems: MenuItem[] = [
       },
     ],
   },
-  {
-    label: "超级对话",
-    key: "multi-chats",
-    icon: <UsergroupAddOutlined />,
-    disabled: false,
-    url: "/multi-chats",
-  },
 
   {
     label: "助手(开发中)",
@@ -63,7 +63,7 @@ export const menuItems: MenuItem[] = [
     label: "社区(开发中)",
     key: "draw",
     icon: <HighlightOutlined />,
-    // disabled: true,
+    disabled: true,
     url: "/draw",
   },
   // {

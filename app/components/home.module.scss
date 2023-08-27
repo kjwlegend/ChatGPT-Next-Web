@@ -183,6 +183,17 @@
   border: 2px solid transparent;
   position: relative;
   content-visibility: auto;
+
+  &.multi-chat {
+    margin-bottom: 0;
+    width: 180px;
+    margin: 0 10px 0 10px;
+
+    .chat-item-title {
+      text-overflow: unset;
+      white-space: unset;
+    }
+  }
 }
 
 .chat-item:hover {
@@ -301,7 +312,7 @@
     width: 100%;
     height: 100%;
 
-    .chat-item-avatar { 
+    .chat-item-avatar {
       display: flex;
       justify-content: center;
       opacity: 0.6;

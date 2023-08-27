@@ -234,21 +234,94 @@
     }
   }
 }
+
+//================= session list =======================
+.session-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+  justify-content: flex-start;
+  background: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
+  background-image: url("/bg.png");
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-attachment: fixed;
+
+  .plus {
+    height: 43px;
+  }
+}
+.session-list {
+  display: flex;
+  flex-direction: row;
+  //   overflow: auto;
+  padding: 10px;
+  padding-top: 0;
+  box-sizing: border-box;
+  position: relative;
+  height: 100%;
+
+  .session-item {
+    margin: 0 50px;
+  }
+}
+//================= welcome =======================
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(var(--window-height) - 90px);
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+  position: relative;
+  flex: 1;
+  text-align: center;
+  background: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
+  background-image: url("/bg.png");
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  background-attachment: fixed;
+
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background-image: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    button {
+      margin: 20px;
+      -webkit-text-fill-color: #000;
+    }
+  }
+  .sub-title {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+}
+
 //================= Chatbody =======================
 .chats-container {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   width: 100%;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: flex-start;
   flex-grow: 1;
-  height: calc(var(--window-height) - 20px);
+  height: calc(var(--window-height) - 90px);
+  overflow: scroll;
 }
 .chat {
-  width: 40%;
+  min-width: 30%;
+  width: 50%;
   display: flex;
-  flex-grow: 1;
   flex-direction: column;
   position: relative;
   height: 100%;

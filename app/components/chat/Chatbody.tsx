@@ -65,7 +65,7 @@ import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/components/mask";
 
 import { useAuthStore } from "@/app/store/auth";
 
-import { ChatContext } from "./page";
+import { ChatContext } from "./main";
 
 import { ChatActions, ChatAction } from "./Inputpanel";
 import {

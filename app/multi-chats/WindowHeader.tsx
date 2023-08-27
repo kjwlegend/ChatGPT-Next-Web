@@ -20,6 +20,7 @@ import {
   createMessage,
   useAppConfig,
   DEFAULT_TOPIC,
+  ChatSession,
 } from "../store";
 
 import {
@@ -57,11 +58,17 @@ import { message } from "antd";
 
 import { SessionConfigModel } from "./common";
 
-import { ChatContext } from "./page";
+import { ChatContext } from "./context";
 
-export function EditMessageModal(props: { onClose: () => void }) {
+export function EditMessageModal(props: {
+  onClose: () => void;
+  index: number;
+  session: ChatSession;
+}) {
+  const index = props.index;
+  const session = props.session;
+
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
   const [messages, setMessages] = useState(session.messages.slice());
 
   return (
@@ -84,7 +91,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
             icon={<ConfirmIcon />}
             key="ok"
             onClick={() => {
-              chatStore.updateCurrentSession((session) => {
+              chatStore.updateSession(index, (session) => {
                 session.messages = messages;
               });
               props.onClose();
@@ -101,7 +108,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
               type="text"
               value={session.topic}
               onInput={(e) =>
-                chatStore.updateCurrentSession((session) => {
+                chatStore.updateSession(index, (session) => {
                   session.topic = e.currentTarget.value;
                 })
               }
@@ -121,9 +128,14 @@ export function EditMessageModal(props: { onClose: () => void }) {
   );
 }
 
-export default function WindowHeader() {
+export default function WindowHeader(props: {
+  session: ChatSession;
+  index: number;
+}) {
+  const session = props.session;
+  const index = props.index;
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  // const session = chatStore.currentSession();
   const config = useAppConfig();
   const [showExport, setShowExport] = useState(false);
 
@@ -171,7 +183,7 @@ export default function WindowHeader() {
             />
           </div>
         )}
-        <div className="window-action-button">
+        {/* <div className="window-action-button">
           <IconButton
             icon={<ExportIcon />}
             bordered
@@ -193,19 +205,23 @@ export default function WindowHeader() {
               }}
             />
           </div>
-        )}
+        )} */}
       </div>
       {isEditingMessage && (
         <EditMessageModal
           onClose={() => {
             setIsEditingMessage(false);
           }}
+          index={index}
+          session={session}
         />
       )}
       <PromptToast
         showToast={!hitBottom}
         showModal={showPromptModal}
         setShowModal={setShowPromptModal}
+        session={session}
+        index={index}
       />
       {showExport && (
         <ExportMessageModal onClose={() => setShowExport(false)} />
@@ -218,9 +234,13 @@ export function PromptToast(props: {
   showToast?: boolean;
   showModal?: boolean;
   setShowModal: (_: boolean) => void;
+
+  index: number;
+  session: ChatSession;
 }) {
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = props.session;
+  const index = props.index;
   const context = session.mask.context;
 
   return (
@@ -241,7 +261,11 @@ export function PromptToast(props: {
         </div>
       )}
       {props.showModal && (
-        <SessionConfigModel onClose={() => props.setShowModal(false)} />
+        <SessionConfigModel
+          onClose={() => props.setShowModal(false)}
+          session={session}
+          index={index}
+        />
       )}
     </div>
   );

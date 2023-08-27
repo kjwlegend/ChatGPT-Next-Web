@@ -77,6 +77,15 @@ import {
 import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 
+interface ChatContextType {
+  hitBottom: boolean;
+  setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
+  showPromptModal: boolean;
+  setShowPromptModal: React.Dispatch<React.SetStateAction<boolean>>;
+  userInput: string;
+  setUserInput: React.Dispatch<React.SetStateAction<string>>;
+}
+
 // 创建 ChatContext 上下文对象
 export const ChatContext = React.createContext<ChatContextType>({
   hitBottom: true,
@@ -86,15 +95,6 @@ export const ChatContext = React.createContext<ChatContextType>({
   userInput: "",
   setUserInput: () => void 0,
 });
-
-interface ChatContextType {
-  hitBottom: boolean;
-  setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
-  showPromptModal: boolean;
-  setShowPromptModal: React.Dispatch<React.SetStateAction<boolean>>;
-  userInput: string;
-  setUserInput: React.Dispatch<React.SetStateAction<string>>;
-}
 
 export function Loading(props: { noLogo?: boolean }) {
   return (

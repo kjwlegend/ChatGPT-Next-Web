@@ -7,7 +7,7 @@ import React, {
   Fragment,
   useContext,
 } from "react";
-
+import { ChatSession } from "../store";
 import { getISOLang, getLang } from "../locales";
 
 import SendWhiteIcon from "../icons/send-white.svg";
@@ -86,7 +86,7 @@ import {
   ClearContextDivider,
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
-import { ChatContext } from "./page";
+import { ChatContext } from "./context";
 
 export function PromptHints(props: {
   prompts: RenderPompt[];
@@ -213,10 +213,14 @@ export function ChatActions(props: {
   scrollToBottom: () => void;
   showPromptHints: () => void;
   hitBottom: boolean;
+  session: ChatSession;
+  index: number;
 }) {
   const config = useAppConfig();
   const chatStore = useChatStore();
 
+  const session = props.session;
+  const index = props.index;
   // switch themes
   const theme = config.theme;
   function nextTheme() {
@@ -232,7 +236,7 @@ export function ChatActions(props: {
   const stopAll = () => ChatControllerPool.stopAll();
 
   // switch model
-  const currentModel = chatStore.currentSession().mask.modelConfig.model;
+  const currentModel = session.mask.modelConfig.model;
   const models = useMemo(
     () =>
       config
@@ -266,7 +270,7 @@ export function ChatActions(props: {
           icon={<SettingsIcon />}
         />
       )}
-
+      {/* 
       <ChatAction
         onClick={nextTheme}
         text={Locale.Chat.InputActions.Theme[theme]}
@@ -281,7 +285,7 @@ export function ChatActions(props: {
             ) : null}
           </>
         }
-      />
+      /> */}
 
       <ChatAction
         onClick={props.showPromptHints}
@@ -293,13 +297,14 @@ export function ChatActions(props: {
         text={Locale.Chat.InputActions.Clear}
         icon={<BreakIcon />}
         onClick={() => {
-          chatStore.updateCurrentSession(
+          chatStore.updateSession(
+            index,
             (session) => (session.clearContextIndex = session.messages.length),
           );
         }}
       />
 
-      <ChatAction
+      {/* <ChatAction
         onClick={() => setShowModelSelector(true)}
         text={currentModel}
         icon={<RobotIcon />}
@@ -315,22 +320,24 @@ export function ChatActions(props: {
           onClose={() => setShowModelSelector(false)}
           onSelection={(s) => {
             if (s.length === 0) return;
-            chatStore.updateCurrentSession((session) => {
+            chatStore.updateSession(index, (session) => {
               session.mask.modelConfig.model = s[0] as ModelType;
               session.mask.syncGlobalConfig = false;
             });
             showToast(s[0]);
           }}
         />
-      )}
+      )} */}
     </div>
   );
 }
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
-export function Inputpanel() {
+export function Inputpanel(props: { session: ChatSession; index: number }) {
   const chatStore = useChatStore();
-  const session = chatStore.currentSession();
+  const session = props.session;
+  const index = props.index;
+  // const session = chatStore.currentSession();
   const config = useAppConfig();
   const userStore = useUserStore();
   const authHook = useAuth();
@@ -368,7 +375,8 @@ export function Inputpanel() {
     prev: () => chatStore.nextSession(-1),
     next: () => chatStore.nextSession(1),
     clear: () =>
-      chatStore.updateCurrentSession(
+      chatStore.updateSession(
+        index,
         (session) => (session.clearContextIndex = session.messages.length),
       ),
     del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
@@ -406,7 +414,7 @@ export function Inputpanel() {
     const recentMessages = chatStore.getMessagesWithMemory();
 
     chatStore
-      .onUserInput(userInput)
+      .onUserInput(userInput, index)
       .then(() => {
         setIsLoading(false);
 
@@ -426,7 +434,7 @@ export function Inputpanel() {
             const newSessionId = data.chat_session;
 
             if (session.id !== newSessionId) {
-              chatStore.updateCurrentSession((session) => {
+              chatStore.updateSession(index, (session) => {
                 session.id = newSessionId;
               });
             }
@@ -586,6 +594,8 @@ export function Inputpanel() {
           setUserInput("/");
           onSearch("");
         }}
+        session={session}
+        index={index}
       />
       <div className={styles["chat-input-panel-inner"]}>
         <textarea

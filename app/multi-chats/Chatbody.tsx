@@ -30,6 +30,7 @@ import {
   DEFAULT_TOPIC,
   ModelType,
   useUserStore,
+  ChatSession,
 } from "../store";
 
 import { copyToClipboard, selectOrCopy, useMobileScreen } from "../utils";
@@ -65,7 +66,7 @@ import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
 
 import { useAuthStore } from "../store/auth";
 
-import { ChatContext } from "./page";
+import { ChatContext } from "./context";
 
 import { ChatActions, ChatAction } from "./Inputpanel";
 import {
@@ -83,10 +84,12 @@ const Markdown = dynamic(
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
-export function Chatbody() {
+export function Chatbody(props: { session: ChatSession; index: number }) {
+  const session = props.session;
+  const index = props.index;
   const chatStore = useChatStore();
   const userStore = useUserStore();
-  const session = chatStore.currentSession();
+  //   const session = chatStore.currentSession();
 
   const config = useAppConfig();
   const fontSize = config.fontSize;
@@ -219,8 +222,14 @@ export function Chatbody() {
   };
 
   const onResend = (message: ChatMessage) => {
+    // when it is resending a message
+    // 1. for a user's message, find the next bot response
+    // 2. for a bot's message, find the last user's input
+    // 3. delete original user input and bot's message
+    // 4. resend the user's input
+
     const resendingIndex = session.messages.findIndex(
-      (m) => m.id === message.id,
+      (m: any) => m.id === message.id,
     );
 
     if (resendingIndex <= 0 || resendingIndex >= session.messages.length) {
@@ -263,7 +272,8 @@ export function Chatbody() {
   };
 
   const deleteMessage = (msgId?: string) => {
-    chatStore.updateCurrentSession(
+    chatStore.updateSession(
+      index,
       (session) =>
         (session.messages = session.messages.filter((m) => m.id !== msgId)),
     );
@@ -274,7 +284,7 @@ export function Chatbody() {
   };
 
   const onPinMessage = (message: ChatMessage) => {
-    chatStore.updateCurrentSession((session) =>
+    chatStore.updateSession(index, (session) =>
       session.mask.context.push(message),
     );
 
@@ -338,7 +348,7 @@ export function Chatbody() {
                             message.content,
                             10,
                           );
-                          chatStore.updateCurrentSession((session) => {
+                          chatStore.updateSession(index, (session) => {
                             const m = session.mask.context
                               .concat(session.messages)
                               .find((m) => m.id === message.id);
@@ -440,7 +450,9 @@ export function Chatbody() {
                 </div>
               </div>
             </div>
-            {shouldShowClearContextDivider && <ClearContextDivider />}
+            {shouldShowClearContextDivider && (
+              <ClearContextDivider index={index} />
+            )}
           </Fragment>
         );
       })}

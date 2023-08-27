@@ -91,15 +91,16 @@ interface ChatStore {
   clearSessions: () => void;
   moveSession: (from: number, to: number) => void;
   selectSession: (index: number) => void;
-  newSession: (mask?: Mask, useUserStore?: UserStore) => void;
+  newSession: (mask?: Mask, useUserStore?: UserStore) => ChatSession;
   deleteSession: (index: number, useUserStore?: UserStore) => void;
   currentSession: () => ChatSession;
   nextSession: (delta: number) => void;
   onNewMessage: (message: ChatMessage) => void;
-  onUserInput: (content: string) => Promise<void>;
+  onUserInput: (content: string, index?: number) => Promise<void>;
   summarizeSession: () => void;
   updateStat: (message: ChatMessage) => void;
   updateCurrentSession: (updater: (session: ChatSession) => void) => void;
+  updateSession(index: number, updater: (session: ChatSession) => void): void;
   updateMessage: (
     sessionIndex: number,
     messageIndex: number,
@@ -256,6 +257,7 @@ export const useChatStore = create<ChatStore>()(
           currentSessionIndex: 0,
           sessions: [session].concat(state.sessions),
         }));
+        return session;
       },
 
       nextSession(delta) {
@@ -351,7 +353,7 @@ export const useChatStore = create<ChatStore>()(
         get().summarizeSession();
       },
 
-      async onUserInput(content) {
+      async onUserInput(content, index) {
         const session = get().currentSession();
         const modelConfig = session.mask.modelConfig;
 
@@ -374,17 +376,30 @@ export const useChatStore = create<ChatStore>()(
         const sendMessages = recentMessages.concat(userMessage);
         const messageIndex = get().currentSession().messages.length + 1;
 
-        // save user's and bot's message
-        get().updateCurrentSession((session) => {
-          const savedUserMessage = {
-            ...userMessage,
-            content,
-          };
-          session.messages = session.messages.concat([
-            savedUserMessage,
-            botMessage,
-          ]);
-        });
+        if (!index) {
+          // save user's and bot's message
+          get().updateCurrentSession((session) => {
+            const savedUserMessage = {
+              ...userMessage,
+              content,
+            };
+            session.messages = session.messages.concat([
+              savedUserMessage,
+              botMessage,
+            ]);
+          });
+        } else {
+          get().updateSession(index, (session) => {
+            const savedUserMessage = {
+              ...userMessage,
+              content,
+            };
+            session.messages = session.messages.concat([
+              savedUserMessage,
+              botMessage,
+            ]);
+          });
+        }
 
         // make request
         api.llm.chat({
@@ -658,6 +673,12 @@ export const useChatStore = create<ChatStore>()(
         const sessions = get().sessions;
         const index = get().currentSessionIndex;
         updater(sessions[index]);
+        set(() => ({ sessions }));
+      },
+      updateSession(index, updater) {
+        const sessions = get().sessions;
+        const sessionToUpdate = sessions[index];
+        updater(sessionToUpdate);
         set(() => ({ sessions }));
       },
 

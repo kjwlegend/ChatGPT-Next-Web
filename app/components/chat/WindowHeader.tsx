@@ -57,7 +57,7 @@ import { message } from "antd";
 
 import { SessionConfigModel } from "./common";
 
-import { ChatContext } from "./page";
+import { ChatContext } from "./main";
 
 export function EditMessageModal(props: { onClose: () => void }) {
   const chatStore = useChatStore();

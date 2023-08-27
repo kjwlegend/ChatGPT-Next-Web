@@ -38,6 +38,7 @@ import {
   DEFAULT_TOPIC,
   ModelType,
   useUserStore,
+  ChatSession,
 } from "../store";
 
 import {
@@ -79,10 +80,15 @@ import { Avatar as UserAvatar } from "antd";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
 import { useMaskStore } from "../store/mask";
 
-export function SessionConfigModel(props: { onClose: () => void }) {
+export function SessionConfigModel(props: {
+  onClose: () => void;
+  index: number;
+  session: ChatSession;
+}) {
   const chatStore = useChatStore();
 
-  const session = chatStore.currentSession();
+  const session = props.session;
+  const index = props.index;
   const maskStore = useMaskStore();
 
   return (
@@ -98,7 +104,8 @@ export function SessionConfigModel(props: { onClose: () => void }) {
             text={Locale.Chat.Config.Reset}
             onClick={async () => {
               if (await showConfirm(Locale.Memory.ResetConfirm)) {
-                chatStore.updateCurrentSession(
+                chatStore.updateSession(
+                  index,
                   (session) => (session.memoryPrompt = ""),
                 );
               }
@@ -122,7 +129,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
           updateMask={(updater) => {
             const mask = { ...session.mask };
             updater(mask);
-            chatStore.updateCurrentSession((session) => (session.mask = mask));
+            chatStore.updateSession(index, (session) => (session.mask = mask));
           }}
           shouldSyncFromGlobal
           extraListItems={
