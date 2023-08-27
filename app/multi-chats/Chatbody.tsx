@@ -76,7 +76,7 @@ import {
 } from "./chat-controller";
 
 const Markdown = dynamic(
-  async () => (await import("../components/markdown")).Markdown,
+  async () => (await import("@/app/components/markdown")).Markdown,
   {
     loading: () => <LoadingIcon />,
   },

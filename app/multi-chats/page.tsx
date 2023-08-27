@@ -195,6 +195,11 @@ const GenerateMenuItems = () => {
     },
   }));
 
+  const handleMaskClick = (mask: any) => {
+    const newsession: ChatSession = chatStore.newSession(mask, userStore);
+    setSessions(newsession);
+  };
+
   const maskItems = Object.values(maskStore).reduce((result, mask) => {
     const category = mask.category;
     const categoryItem = result.find((item) => item.label === category);
@@ -203,6 +208,9 @@ const GenerateMenuItems = () => {
       categoryItem.children.push({
         key: mask.id,
         label: mask.name,
+        onClick: () => {
+          handleMaskClick(mask);
+        },
       });
     } else {
       result.push({
@@ -213,14 +221,7 @@ const GenerateMenuItems = () => {
             key: mask.id,
             label: mask.name,
             onClick: () => {
-              const newsession: ChatSession = chatStore.newSession(
-                mask,
-                userStore,
-              );
-
-              // console.log("create new session with mask", newsession);
-
-              setSessions(newsession);
+              handleMaskClick(mask);
             },
           },
         ],
@@ -374,7 +375,11 @@ export default function Chat() {
             </div>
             <div className={styles["title"]}>
               点击
-              <Dropdown menu={{ items }}>
+              <Dropdown
+                menu={{ items }}
+                autoAdjustOverflow={true}
+                autoFocus={true}
+              >
                 <a onClick={(e) => e.preventDefault()}>
                   <Button
                     type="dashed"

@@ -74,12 +74,9 @@ import {
   ClearContextDivider,
 } from "./chat-controller";
 
-const Markdown = dynamic(
-  async () => (await import("@/app/components/markdown")).Markdown,
-  {
-    loading: () => <LoadingIcon />,
-  },
-);
+const Markdown = dynamic(async () => (await import("../markdown")).Markdown, {
+  loading: () => <LoadingIcon />,
+});
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 

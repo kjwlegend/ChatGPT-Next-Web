@@ -50,7 +50,6 @@ export const useWorkflowStore = create<State>()(
     }),
     {
       name: "workflow-store", // 存储名称
-      getStorage: () => localStorage, // 存储引擎，默认为 `localStorage`
     },
   ),
 );
