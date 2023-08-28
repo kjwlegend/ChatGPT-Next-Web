@@ -10,6 +10,7 @@ type State = {
   selectSession: (index: number) => void;
   sessionClickHandler: (index: number) => void;
   sessionDeleteHandler: (index: number) => void;
+  deleteSession: (sessionId: string) => void;
 };
 
 export const useWorkflowStore = create<State>()(
@@ -43,6 +44,17 @@ export const useWorkflowStore = create<State>()(
         console.log("sessionDeleteHandler", index);
         set((state) => {
           const newSessions = [...state.sessions];
+          newSessions.splice(index, 1);
+          return { sessions: newSessions };
+        });
+      },
+      // delete session by session id
+      deleteSession: (sessionId) => {
+        set((state) => {
+          const newSessions = [...state.sessions];
+          const index = newSessions.findIndex(
+            (session) => session.id === sessionId,
+          );
           newSessions.splice(index, 1);
           return { sessions: newSessions };
         });

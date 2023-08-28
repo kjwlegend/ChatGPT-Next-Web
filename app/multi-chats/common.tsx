@@ -87,6 +87,7 @@ export function SessionConfigModel(props: {
 }) {
   const chatStore = useChatStore();
 
+  const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
   const maskStore = useMaskStore();
@@ -105,7 +106,7 @@ export function SessionConfigModel(props: {
             onClick={async () => {
               if (await showConfirm(Locale.Memory.ResetConfirm)) {
                 chatStore.updateSession(
-                  index,
+                  sessionId,
                   (session) => (session.memoryPrompt = ""),
                 );
               }
@@ -129,7 +130,10 @@ export function SessionConfigModel(props: {
           updateMask={(updater) => {
             const mask = { ...session.mask };
             updater(mask);
-            chatStore.updateSession(index, (session) => (session.mask = mask));
+            chatStore.updateSession(
+              sessionId,
+              (session) => (session.mask = mask),
+            );
           }}
           shouldSyncFromGlobal
           extraListItems={

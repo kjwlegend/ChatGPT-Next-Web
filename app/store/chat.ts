@@ -96,18 +96,21 @@ interface ChatStore {
   currentSession: () => ChatSession;
   nextSession: (delta: number) => void;
   onNewMessage: (message: ChatMessage) => void;
-  onUserInput: (content: string, index?: number) => Promise<void>;
+  onUserInput: (content: string, sessionId?: string) => Promise<void>;
   summarizeSession: () => void;
   updateStat: (message: ChatMessage) => void;
   updateCurrentSession: (updater: (session: ChatSession) => void) => void;
-  updateSession(index: number, updater: (session: ChatSession) => void): void;
+  updateSession(
+    sessionId: string,
+    updater: (session: ChatSession) => void,
+  ): void;
   updateMessage: (
     sessionIndex: number,
     messageIndex: number,
     updater: (message?: ChatMessage) => void,
   ) => void;
   resetSession: () => void;
-  getMessagesWithMemory: () => ChatMessage[];
+  getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
   getMemoryPrompt: () => ChatMessage;
 
   clearAllData: () => void;
@@ -353,8 +356,25 @@ export const useChatStore = create<ChatStore>()(
         get().summarizeSession();
       },
 
-      async onUserInput(content, index) {
-        const session = get().currentSession();
+      async onUserInput(content, sessionId) {
+        // if sessionID is not provided, use current session, else use the session with the provided ID
+        let session: ChatSession;
+
+        if (sessionId) {
+          const sessions = get().sessions;
+          const index = sessions.findIndex(
+            (session) => session.id === sessionId,
+          );
+          if (index === -1) {
+            console.error("Session ID not found");
+            return;
+          }
+          session = sessions[index];
+          // console.log("[User Input] session: ", index, session);
+        } else {
+          session = get().currentSession();
+        }
+
         const modelConfig = session.mask.modelConfig;
 
         const userContent = fillTemplateWith(content, modelConfig);
@@ -372,11 +392,11 @@ export const useChatStore = create<ChatStore>()(
         });
 
         // get recent messages
-        const recentMessages = get().getMessagesWithMemory();
+        const recentMessages = get().getMessagesWithMemory(session);
         const sendMessages = recentMessages.concat(userMessage);
-        const messageIndex = get().currentSession().messages.length + 1;
+        const messageIndex = session.messages.length + 1;
 
-        if (!index) {
+        if (!sessionId) {
           // save user's and bot's message
           get().updateCurrentSession((session) => {
             const savedUserMessage = {
@@ -389,7 +409,7 @@ export const useChatStore = create<ChatStore>()(
             ]);
           });
         } else {
-          get().updateSession(index, (session) => {
+          get().updateSession(sessionId, (session) => {
             const savedUserMessage = {
               ...userMessage,
               content,
@@ -467,8 +487,15 @@ export const useChatStore = create<ChatStore>()(
         } as ChatMessage;
       },
 
-      getMessagesWithMemory() {
-        const session = get().currentSession();
+      getMessagesWithMemory(_session?: ChatSession) {
+        let session: ChatSession;
+        // 定义一个session
+        if (_session) {
+          session = _session;
+        } else {
+          session = get().currentSession();
+        }
+
         const modelConfig = session.mask.modelConfig;
         const clearContextIndex = session.clearContextIndex ?? 0;
         const messages = session.messages.slice();
@@ -675,11 +702,15 @@ export const useChatStore = create<ChatStore>()(
         updater(sessions[index]);
         set(() => ({ sessions }));
       },
-      updateSession(index, updater) {
+      updateSession(sessionId, updater) {
         const sessions = get().sessions;
-        const sessionToUpdate = sessions[index];
-        updater(sessionToUpdate);
-        set(() => ({ sessions }));
+        const sessionToUpdate = sessions.find(
+          (session) => session.id === sessionId,
+        );
+        if (sessionToUpdate) {
+          updater(sessionToUpdate);
+          set(() => ({ sessions }));
+        }
       },
 
       clearAllData() {

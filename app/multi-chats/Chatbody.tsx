@@ -85,6 +85,7 @@ const Markdown = dynamic(
 type RenderMessage = ChatMessage & { preview?: boolean };
 
 export function Chatbody(props: { session: ChatSession; index: number }) {
+  const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
   const chatStore = useChatStore();
@@ -273,7 +274,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
   const deleteMessage = (msgId?: string) => {
     chatStore.updateSession(
-      index,
+      sessionId,
       (session) =>
         (session.messages = session.messages.filter((m) => m.id !== msgId)),
     );
@@ -284,7 +285,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
   };
 
   const onPinMessage = (message: ChatMessage) => {
-    chatStore.updateSession(index, (session) =>
+    chatStore.updateSession(sessionId, (session) =>
       session.mask.context.push(message),
     );
 
@@ -348,7 +349,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
                             message.content,
                             10,
                           );
-                          chatStore.updateSession(index, (session) => {
+                          chatStore.updateSession(sessionId, (session) => {
                             const m = session.mask.context
                               .concat(session.messages)
                               .find((m) => m.id === message.id);
@@ -451,7 +452,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
               </div>
             </div>
             {shouldShowClearContextDivider && (
-              <ClearContextDivider index={index} />
+              <ClearContextDivider sessionId={sessionId} />
             )}
           </Fragment>
         );

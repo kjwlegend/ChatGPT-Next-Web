@@ -87,6 +87,7 @@ export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 function _Chat(props: { _session: ChatSession; index: number }) {
   const { _session, index } = props;
+  const sessionId = _session.id;
 
   const chatStore = useChatStore();
   const session = _session;
@@ -103,7 +104,7 @@ function _Chat(props: { _session: ChatSession; index: number }) {
   const isMobileScreen = useMobileScreen();
 
   useEffect(() => {
-    chatStore.updateSession(index, (session) => {
+    chatStore.updateSession(sessionId, (session) => {
       const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
       session.messages.forEach((m) => {
         // check if should stop all stale messages

@@ -219,6 +219,7 @@ export function ChatActions(props: {
   const config = useAppConfig();
   const chatStore = useChatStore();
 
+  const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
   // switch themes
@@ -298,7 +299,7 @@ export function ChatActions(props: {
         icon={<BreakIcon />}
         onClick={() => {
           chatStore.updateSession(
-            index,
+            sessionId,
             (session) => (session.clearContextIndex = session.messages.length),
           );
         }}
@@ -320,7 +321,7 @@ export function ChatActions(props: {
           onClose={() => setShowModelSelector(false)}
           onSelection={(s) => {
             if (s.length === 0) return;
-            chatStore.updateSession(index, (session) => {
+            chatStore.updateSession(sessionId, (session) => {
               session.mask.modelConfig.model = s[0] as ModelType;
               session.mask.syncGlobalConfig = false;
             });
@@ -335,6 +336,7 @@ export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 export function Inputpanel(props: { session: ChatSession; index: number }) {
   const chatStore = useChatStore();
+  const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
   // const session = chatStore.currentSession();
@@ -376,7 +378,7 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
     next: () => chatStore.nextSession(1),
     clear: () =>
       chatStore.updateSession(
-        index,
+        sessionId,
         (session) => (session.clearContextIndex = session.messages.length),
       ),
     del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
@@ -414,7 +416,7 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
     const recentMessages = chatStore.getMessagesWithMemory();
 
     chatStore
-      .onUserInput(userInput, index)
+      .onUserInput(userInput, sessionId)
       .then(() => {
         setIsLoading(false);
 
@@ -434,7 +436,7 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
             const newSessionId = data.chat_session;
 
             if (session.id !== newSessionId) {
-              chatStore.updateSession(index, (session) => {
+              chatStore.updateSession(sessionId, (session) => {
                 session.id = newSessionId;
               });
             }

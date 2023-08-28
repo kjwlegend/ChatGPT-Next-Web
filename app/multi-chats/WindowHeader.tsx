@@ -66,6 +66,7 @@ export function EditMessageModal(props: {
   session: ChatSession;
 }) {
   const index = props.index;
+  const sessionId = props.session.id;
   const session = props.session;
 
   const chatStore = useChatStore();
@@ -91,7 +92,7 @@ export function EditMessageModal(props: {
             icon={<ConfirmIcon />}
             key="ok"
             onClick={() => {
-              chatStore.updateSession(index, (session) => {
+              chatStore.updateSession(sessionId, (session) => {
                 session.messages = messages;
               });
               props.onClose();
@@ -108,7 +109,7 @@ export function EditMessageModal(props: {
               type="text"
               value={session.topic}
               onInput={(e) =>
-                chatStore.updateSession(index, (session) => {
+                chatStore.updateSession(sessionId, (session) => {
                   session.topic = e.currentTarget.value;
                 })
               }
@@ -132,6 +133,7 @@ export default function WindowHeader(props: {
   session: ChatSession;
   index: number;
 }) {
+  const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
   const chatStore = useChatStore();
@@ -239,6 +241,7 @@ export function PromptToast(props: {
   session: ChatSession;
 }) {
   const chatStore = useChatStore();
+  const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
   const context = session.mask.context;

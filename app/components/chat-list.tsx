@@ -19,6 +19,7 @@ import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
 import { useUserStore } from "../store";
+import { useWorkflowStore } from "../store/workflow";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -152,6 +153,7 @@ export function ChatList(props: { narrow?: boolean }) {
     ],
   );
   const chatStore = useChatStore();
+  const workflowStore = useWorkflowStore();
   const navigate = useNavigate();
   const userStore = useUserStore();
 
@@ -199,6 +201,7 @@ export function ChatList(props: { narrow?: boolean }) {
                     (await showConfirm(Locale.Home.DeleteChat))
                   ) {
                     chatStore.deleteSession(i, userStore);
+                    workflowStore.deleteSession(item.id);
                   }
                 }}
                 narrow={props.narrow}
