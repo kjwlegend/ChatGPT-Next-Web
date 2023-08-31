@@ -18,6 +18,8 @@ import { MaskAvatar } from "./mask";
 import { Mask } from "../store/mask";
 import { useRef, useEffect } from "react";
 import { showConfirm } from "./ui-lib";
+import { useUserStore } from "../store";
+import { useWorkflowStore } from "../store/workflow";
 
 export function ChatItem(props: {
   onClick?: () => void;
@@ -62,9 +64,6 @@ export function ChatItem(props: {
               <div className={styles["chat-item-avatar"] + " no-dark"}>
                 <MaskAvatar mask={props.mask} />
               </div>
-              <div className={styles["chat-item-narrow-count"]}>
-                {props.count}
-              </div>
             </div>
           ) : (
             <>
@@ -90,6 +89,60 @@ export function ChatItem(props: {
   );
 }
 
+export function ChatItemShort(props: {
+  onClick?: () => void;
+  onDelete?: () => void;
+  title: string;
+  count: number;
+  time: string;
+  selected: boolean;
+  id: string;
+  index: number;
+  narrow?: boolean;
+  mask: Mask;
+}) {
+  const draggableRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (props.selected && draggableRef.current) {
+      draggableRef.current?.scrollIntoView({
+        block: "center",
+      });
+    }
+  }, [props.selected]);
+  return (
+    <Draggable draggableId={`${props.id}`} index={props.index}>
+      {(provided) => (
+        <div
+          className={`${styles["chat-item"]} ${styles["multi-chat"]} ${
+            props.selected && styles["chat-item-selected"]
+          }`}
+          onClick={props.onClick}
+          ref={(ele) => {
+            draggableRef.current = ele;
+            provided.innerRef(ele);
+          }}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          title={`${props.title}\n${Locale.ChatItem.ChatItemCount(
+            props.count,
+          )}`}
+        >
+          <>
+            <div className={styles["chat-item-title"]}>{props.title}</div>
+          </>
+
+          <div
+            className={styles["chat-item-delete"]}
+            onClickCapture={props.onDelete}
+          >
+            <DeleteIcon />
+          </div>
+        </div>
+      )}
+    </Draggable>
+  );
+}
+
 export function ChatList(props: { narrow?: boolean }) {
   const [sessions, selectedIndex, selectSession, moveSession] = useChatStore(
     (state) => [
@@ -100,7 +153,9 @@ export function ChatList(props: { narrow?: boolean }) {
     ],
   );
   const chatStore = useChatStore();
+  const workflowStore = useWorkflowStore();
   const navigate = useNavigate();
+  const userStore = useUserStore();
 
   const onDragEnd: OnDragEndResponder = (result) => {
     const { destination, source } = result;
@@ -145,7 +200,8 @@ export function ChatList(props: { narrow?: boolean }) {
                     !props.narrow ||
                     (await showConfirm(Locale.Home.DeleteChat))
                   ) {
-                    chatStore.deleteSession(i);
+                    chatStore.deleteSession(i, userStore);
+                    workflowStore.deleteSession(item.id);
                   }
                 }}
                 narrow={props.narrow}

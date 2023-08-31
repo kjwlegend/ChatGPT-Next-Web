@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
@@ -30,6 +31,7 @@ import {
   ModelConfig,
   useAppConfig,
   useChatStore,
+  useUserStore,
 } from "../store";
 import { FileName, Path } from "../constant";
 
@@ -60,10 +62,12 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 
   const maskStore = useMaskStore();
   const chatStore = useChatStore();
+  const userStore = useUserStore();
 
   const onChat = () => {
-    console.log("onChat");
-    chatStore.newSession(mask);
+    setTimeout(() => {
+      chatStore.newSession(mask, userStore);
+    }, 10);
     navigate(Path.Chat);
   };
 
@@ -110,7 +114,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
               <IconButton
                 icon={<EyeIcon />}
                 key="view"
-                text={"热度: 0"}
+                text={`热度: ${mask.hotness ? mask.hotness : "0"}`}
                 // onClick={() => setEditingMaskId(mask.id)}
               />
             ) : (

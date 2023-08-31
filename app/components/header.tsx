@@ -119,11 +119,14 @@ export default function MainNav(
               src="/logo-2.png"
               alt="Logo"
             />
-            <div className={styles["logo-text"]}>
-              <p className={styles["headline"]}>小光AI</p>
-              <p className={styles["subline"]}>XiaoGuang.chat</p>
-            </div>
+            <Link href="/">
+              <div className={styles["logo-text"]}>
+                <p className={styles["headline"]}>小光AI</p>
+                <p className={styles["subline"]}>XiaoGuang.chat</p>
+              </div>
+            </Link>
           </div>
+
           <div className={styles["ant-menu"]}>
             <Menu
               onClick={onClick}

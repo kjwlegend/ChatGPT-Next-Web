@@ -1,9 +1,14 @@
+import { getClientConfig } from "../config/client";
 import { SubmitKey } from "../store/config";
+
+const isApp = !!getClientConfig()?.isApp;
 
 const cn = {
   WIP: "该功能仍在开发中……",
   Error: {
-    Unauthorized: "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
+    Unauthorized: isApp
+      ? "检测到无效 API Key，请前往[设置](/#/settings)页检查 API Key 是否配置正确。"
+      : "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
   },
   Auth: {
     Title: "小光AI助手",
@@ -173,6 +178,10 @@ const cn = {
       Title: "预览气泡",
       SubTitle: "在预览气泡中预览 Markdown 内容",
     },
+    AutoGenerateTitle: {
+      Title: "自动生成标题",
+      SubTitle: "根据对话内容生成合适的标题",
+    },
     Mask: {
       Splash: {
         Title: "面具启动页",
@@ -261,7 +270,8 @@ const cn = {
   },
   Store: {
     DefaultTopic: "新的聊天",
-    BotHello: "你好!我是小光, 我是你的超级助手, 请告诉我你的需求！",
+    BotHello:
+      "你好!我是小光, 我是你的超级助手, 我能解决您绝大多数的问题, 但如果碰到专业性或特殊任务需求, 可以去[角色](/#/new-chat)页面挑选专业伙伴获得更好质量回答, 也可以去角色页面问问我的其他伙伴",
     Error: "出错了，稍后重试吧",
     Prompt: {
       History: (content: string) => "这是历史聊天总结作为前情提要：" + content,

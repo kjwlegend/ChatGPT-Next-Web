@@ -54,7 +54,7 @@ export function auth(req: NextRequest) {
     return {
       error: true,
       msg: !accessCode
-        ? "未登录或授权码为空"
+        ? "未登录或登录已过期, 请重新登录"
         : "未登录或授权码为空, 如清除了cookie, 请重新登录",
     };
   }
@@ -83,6 +83,8 @@ export function auth(req: NextRequest) {
 export interface RegisterParams {
   username: string;
   password: string;
+  nickname?: string;
+  gender?: number;
   email: string;
 }
 

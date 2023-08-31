@@ -18,7 +18,7 @@ export interface User {
   username: string;
 }
 
-interface UserStore {
+export interface UserStore {
   user: User;
   updateNickname: (nickname: string) => void;
   updateModelPreference: (modelPreference: string) => void;
@@ -44,6 +44,7 @@ export const useUserStore = create<UserStore>()(
         phone_number: null,
         username: "",
       },
+
       updateNickname: (nickname) => {
         set((state) => ({
           user: {

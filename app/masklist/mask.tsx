@@ -1,3 +1,4 @@
+"use client";
 import { IconButton } from "../components/button";
 import { ErrorBoundary } from "../components/error";
 

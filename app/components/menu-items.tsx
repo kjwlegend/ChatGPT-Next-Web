@@ -25,6 +25,13 @@ export const menuItems: MenuItem[] = [
     url: "/",
   },
   {
+    label: "超级工作流",
+    key: "multi-chats",
+    icon: <UsergroupAddOutlined />,
+    disabled: false,
+    url: "/multi-chats",
+  },
+  {
     label: "介绍",
     key: "aboutMenu",
     icon: <ContainerOutlined />,

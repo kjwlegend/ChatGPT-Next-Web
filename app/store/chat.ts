@@ -18,6 +18,10 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
+import { createChatSession } from "../api/chat";
+import { UserStore, useUserStore } from "./user";
+import { BUILTIN_MASKS } from "../masks";
+import type { BuiltinMask } from "../masks";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -87,22 +91,26 @@ interface ChatStore {
   clearSessions: () => void;
   moveSession: (from: number, to: number) => void;
   selectSession: (index: number) => void;
-  newSession: (mask?: Mask) => void;
-  deleteSession: (index: number) => void;
+  newSession: (mask?: Mask, useUserStore?: UserStore) => ChatSession;
+  deleteSession: (index: number, useUserStore?: UserStore) => void;
   currentSession: () => ChatSession;
   nextSession: (delta: number) => void;
   onNewMessage: (message: ChatMessage) => void;
-  onUserInput: (content: string) => Promise<void>;
+  onUserInput: (content: string, sessionId?: string) => Promise<void>;
   summarizeSession: () => void;
   updateStat: (message: ChatMessage) => void;
   updateCurrentSession: (updater: (session: ChatSession) => void) => void;
+  updateSession(
+    sessionId: string,
+    updater: (session: ChatSession) => void,
+  ): void;
   updateMessage: (
     sessionIndex: number,
     messageIndex: number,
     updater: (message?: ChatMessage) => void,
   ) => void;
   resetSession: () => void;
-  getMessagesWithMemory: () => ChatMessage[];
+  getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
   getMemoryPrompt: () => ChatMessage;
 
   clearAllData: () => void;
@@ -179,12 +187,15 @@ export const useChatStore = create<ChatStore>()(
         });
       },
 
-      newSession(mask) {
+      newSession(mask, userStore) {
+        const config = useAppConfig.getState();
         const session = createEmptySession();
 
+        let model = config.modelConfig.model;
+
         if (mask) {
-          const config = useAppConfig.getState();
           const globalModelConfig = config.modelConfig;
+          model = mask.modelConfig.model;
 
           session.mask = {
             ...mask,
@@ -194,12 +205,62 @@ export const useChatStore = create<ChatStore>()(
             },
           };
           session.topic = mask.name;
+        } else {
+          // 如果没有传入mask，则使用默认的mask
+          const defaultMask = BUILTIN_MASKS.find(
+            (m: BuiltinMask) => m.name === "小光(通用)",
+          );
+          if (defaultMask) {
+            session.mask = {
+              id: "100000",
+              ...defaultMask,
+              modelConfig: {
+                ...config.modelConfig,
+                ...defaultMask.modelConfig,
+              },
+            };
+            session.topic = defaultMask.name;
+          }
+        }
+
+        if (userStore) {
+          const user = userStore.user; // 从 userStore 中获取 user 对象
+          const userId = user.id; // 从 user 对象中获取 id 字段
+
+          // 判断mask.id 是否为数字, 如果不是数字, 则说明是自定义的 mask, prompt_id 设置为 100000
+          // 如果是数字, 则说明是内置的 mask, prompt_id 设置为 mask.id
+
+          if (!session.mask.id || isNaN(Number(session.mask.id))) {
+            console.log("original mask id ", session.mask.id);
+            session.mask.id = "100000";
+            console.log("new mask id ", session.mask.id);
+          }
+
+          const promptId = isNaN(Number(session.mask.id))
+            ? "100000"
+            : session.mask.id;
+
+          const data = {
+            user: userId,
+            prompt_id: promptId,
+            model: model,
+          };
+          console.log("createChatSession data ", data);
+          createChatSession(data)
+            .then((res) => {
+              console.log(res);
+              session.id = res.data.session_id;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         }
 
         set((state) => ({
           currentSessionIndex: 0,
           sessions: [session].concat(state.sessions),
         }));
+        return session;
       },
 
       nextSession(delta) {
@@ -209,7 +270,7 @@ export const useChatStore = create<ChatStore>()(
         get().selectSession(limit(i + delta));
       },
 
-      deleteSession(index) {
+      deleteSession(index, userStore) {
         const deletingLastSession = get().sessions.length === 1;
         const deletedSession = get().sessions.at(index);
 
@@ -227,6 +288,26 @@ export const useChatStore = create<ChatStore>()(
         if (deletingLastSession) {
           nextIndex = 0;
           sessions.push(createEmptySession());
+
+          // session id  设置为空
+          if (userStore) {
+            const user = userStore.user; // 从 userStore 中获取 user 对象
+            const userId = user.id; // 从 user 对象中获取 id 字段
+            const session = sessions.at(0);
+            if (!session) return;
+
+            const data = {
+              user: userId,
+            };
+            createChatSession(data)
+              .then((res) => {
+                console.log(res);
+                session.id = res.data.session_id || nanoid();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
         }
 
         // for undo delete action
@@ -275,8 +356,25 @@ export const useChatStore = create<ChatStore>()(
         get().summarizeSession();
       },
 
-      async onUserInput(content) {
-        const session = get().currentSession();
+      async onUserInput(content, sessionId) {
+        // if sessionID is not provided, use current session, else use the session with the provided ID
+        let session: ChatSession;
+
+        if (sessionId) {
+          const sessions = get().sessions;
+          const index = sessions.findIndex(
+            (session) => session.id === sessionId,
+          );
+          if (index === -1) {
+            console.error("Session ID not found");
+            return;
+          }
+          session = sessions[index];
+          // console.log("[User Input] session: ", index, session);
+        } else {
+          session = get().currentSession();
+        }
+
         const modelConfig = session.mask.modelConfig;
 
         const userContent = fillTemplateWith(content, modelConfig);
@@ -294,21 +392,34 @@ export const useChatStore = create<ChatStore>()(
         });
 
         // get recent messages
-        const recentMessages = get().getMessagesWithMemory();
+        const recentMessages = get().getMessagesWithMemory(session);
         const sendMessages = recentMessages.concat(userMessage);
-        const messageIndex = get().currentSession().messages.length + 1;
+        const messageIndex = session.messages.length + 1;
 
-        // save user's and bot's message
-        get().updateCurrentSession((session) => {
-          const savedUserMessage = {
-            ...userMessage,
-            content,
-          };
-          session.messages = session.messages.concat([
-            savedUserMessage,
-            botMessage,
-          ]);
-        });
+        if (!sessionId) {
+          // save user's and bot's message
+          get().updateCurrentSession((session) => {
+            const savedUserMessage = {
+              ...userMessage,
+              content,
+            };
+            session.messages = session.messages.concat([
+              savedUserMessage,
+              botMessage,
+            ]);
+          });
+        } else {
+          get().updateSession(sessionId, (session) => {
+            const savedUserMessage = {
+              ...userMessage,
+              content,
+            };
+            session.messages = session.messages.concat([
+              savedUserMessage,
+              botMessage,
+            ]);
+          });
+        }
 
         // make request
         api.llm.chat({
@@ -333,7 +444,7 @@ export const useChatStore = create<ChatStore>()(
           },
           onError(error) {
             const isAborted = error.message.includes("aborted");
-            botMessage.content =
+            botMessage.content +=
               "\n\n" +
               prettyObject({
                 error: true,
@@ -376,8 +487,15 @@ export const useChatStore = create<ChatStore>()(
         } as ChatMessage;
       },
 
-      getMessagesWithMemory() {
-        const session = get().currentSession();
+      getMessagesWithMemory(_session?: ChatSession) {
+        let session: ChatSession;
+        // 定义一个session
+        if (_session) {
+          session = _session;
+        } else {
+          session = get().currentSession();
+        }
+
         const modelConfig = session.mask.modelConfig;
         const clearContextIndex = session.clearContextIndex ?? 0;
         const messages = session.messages.slice();
@@ -480,6 +598,7 @@ export const useChatStore = create<ChatStore>()(
       },
 
       summarizeSession() {
+        const config = useAppConfig.getState();
         const session = get().currentSession();
 
         // remove error messages if any
@@ -488,6 +607,7 @@ export const useChatStore = create<ChatStore>()(
         // should summarize topic after chating more than 50 words
         const SUMMARIZE_MIN_LEN = 50;
         if (
+          config.enableAutoGenerateTitle &&
           session.topic === DEFAULT_TOPIC &&
           countMessages(messages) >= SUMMARIZE_MIN_LEN
         ) {
@@ -554,7 +674,7 @@ export const useChatStore = create<ChatStore>()(
                 date: "",
               }),
             ),
-            config: { ...modelConfig, stream: true },
+            config: { ...modelConfig, stream: true, model: "gpt-3.5-turbo" },
             onUpdate(message) {
               session.memoryPrompt = message;
             },
@@ -581,6 +701,16 @@ export const useChatStore = create<ChatStore>()(
         const index = get().currentSessionIndex;
         updater(sessions[index]);
         set(() => ({ sessions }));
+      },
+      updateSession(sessionId, updater) {
+        const sessions = get().sessions;
+        const sessionToUpdate = sessions.find(
+          (session) => session.id === sessionId,
+        );
+        if (sessionToUpdate) {
+          updater(sessionToUpdate);
+          set(() => ({ sessions }));
+        }
       },
 
       clearAllData() {

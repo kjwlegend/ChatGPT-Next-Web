@@ -91,6 +91,9 @@ import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
 import { useAuthStore } from "../store/auth";
+import { createChat, CreateChatData } from "../api/chat";
+import useAuth from "../hooks/useAuth";
+import { message } from "antd";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -612,7 +615,8 @@ function _Chat() {
   const session = chatStore.currentSession();
   const config = useAppConfig();
   const fontSize = config.fontSize;
-
+  const userStore = useUserStore();
+  const authHook = useAuth();
   const [showExport, setShowExport] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -690,8 +694,11 @@ function _Chat() {
     }
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   const doSubmit = (userInput: string) => {
     if (userInput.trim() === "") return;
+
     const matchCommand = chatCommands.match(userInput);
     if (matchCommand.matched) {
       setUserInput("");
@@ -700,7 +707,59 @@ function _Chat() {
       return;
     }
     setIsLoading(true);
-    chatStore.onUserInput(userInput).then(() => setIsLoading(false));
+    const recentMessages = chatStore.getMessagesWithMemory();
+
+    chatStore
+      .onUserInput(userInput)
+      .then(() => {
+        setIsLoading(false);
+
+        // 构建 createChat 接口的请求参数
+
+        const createChatData: CreateChatData = {
+          user: userStore.user.id, // 替换为实际的用户 ID
+          chat_session: session.id, // 替换为实际的聊天会话 ID
+          message: userInput, // 使用用户输入作为 message 参数
+          memory: recentMessages,
+        };
+
+        // 调用 createChat 接口
+        createChat(createChatData).then((response) => {
+          // 处理 createChat 接口的响应
+          console.log("createChat response:", response);
+          const data = response.data;
+
+          if (data) {
+            console.log("createChat success:", response);
+            const newSessionId = data.chat_session;
+
+            if (session.id !== newSessionId) {
+              chatStore.updateCurrentSession((session) => {
+                session.id = newSessionId;
+              });
+            }
+          } else {
+            // 检查reponse.code 是否为 4000, 是的话则提示用户登录已过期
+            if (response.code === 401) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            } else if (response.code === 4001) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            } else if (response.code === 4000) {
+              messageApi.error(
+                "当前对话出现错误, 请重新新建对话",
+                response.msg,
+              );
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        // 处理 chatStore.onUserInput 的错误
+        console.error("chatStore.onUserInput error:", error);
+      });
     localStorage.setItem(LAST_INPUT_KEY, userInput);
     setUserInput("");
     setPromptHints([]);
@@ -708,6 +767,9 @@ function _Chat() {
     setAutoScroll(true);
   };
 
+  {
+    contextHolder;
+  }
   const onPromptSelect = (prompt: RenderPompt) => {
     setTimeout(() => {
       setPromptHints([]);
@@ -954,7 +1016,7 @@ function _Chat() {
     const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
     const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;
 
-    if (isTouchTopEdge) {
+    if (isTouchTopEdge && !isTouchBottomEdge) {
       setMsgRenderIndex(prevPageMsgIndex);
     } else if (isTouchBottomEdge) {
       setMsgRenderIndex(nextPageMsgIndex);
@@ -982,7 +1044,6 @@ function _Chat() {
   const autoFocus = !isMobileScreen; // wont auto focus on mobile screen
   const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
 
-  const userStore = useUserStore();
   useCommand({
     fill: setUserInput,
     submit: (text) => {
@@ -1139,9 +1200,9 @@ function _Chat() {
                               10,
                             );
                             chatStore.updateCurrentSession((session) => {
-                              const m = session.messages.find(
-                                (m) => m.id === message.id,
-                              );
+                              const m = session.mask.context
+                                .concat(session.messages)
+                                .find((m) => m.id === message.id);
                               if (m) {
                                 m.content = newMessage;
                               }
@@ -1302,6 +1363,7 @@ function _Chat() {
           }}
         />
       )}
+      {contextHolder}
     </div>
   );
 }
