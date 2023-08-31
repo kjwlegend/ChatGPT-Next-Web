@@ -12,6 +12,7 @@ import {
   DEFAULT_SYSTEM_TEMPLATE,
   getDefaultSystemTemplate,
   StoreKey,
+  SUMMARIZE_MODEL,
 } from "../constant";
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
@@ -83,6 +84,11 @@ function createEmptySession(): ChatSession {
 
     mask: createEmptyMask(),
   };
+}
+
+function getSummarizeModel(currentModel: string) {
+  // if it is using gpt-* models, force to use 3.5 to summarize
+  return currentModel.startsWith("gpt") ? SUMMARIZE_MODEL : currentModel;
 }
 
 interface ChatStore {
@@ -620,7 +626,7 @@ export const useChatStore = create<ChatStore>()(
           api.llm.chat({
             messages: topicMessages,
             config: {
-              model: "gpt-3.5-turbo",
+              model: getSummarizeModel(session.mask.modelConfig.model),
             },
             onFinish(message) {
               get().updateCurrentSession(
@@ -674,7 +680,11 @@ export const useChatStore = create<ChatStore>()(
                 date: "",
               }),
             ),
-            config: { ...modelConfig, stream: true, model: "gpt-3.5-turbo" },
+            config: {
+              ...modelConfig,
+              stream: true,
+              model: getSummarizeModel(session.mask.modelConfig.model),
+            },
             onUpdate(message) {
               session.memoryPrompt = message;
             },
