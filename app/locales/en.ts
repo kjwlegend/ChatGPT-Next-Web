@@ -299,6 +299,9 @@ const en: LocaleType = {
   Plugin: {
     Name: "Plugin",
   },
+  FineTuned: {
+    Sysmessage: "You are an assistant that",
+  },
   Mask: {
     Name: "Mask",
     Page: {
