@@ -19,6 +19,7 @@ import DeleteIcon from "../icons/clear.svg";
 import PinIcon from "../icons/pin.svg";
 import EditIcon from "../icons/rename.svg";
 import StopIcon from "../icons/pause.svg";
+import NextIcon from "../icons/next.svg";
 
 import {
   ChatMessage,
@@ -33,6 +34,7 @@ import {
   ChatSession,
 } from "../store";
 
+import { useWorkflowStore } from "../store/workflow";
 import { copyToClipboard, selectOrCopy, useMobileScreen } from "../utils";
 
 import dynamic from "next/dynamic";
@@ -67,6 +69,9 @@ import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
 import { useAuthStore } from "../store/auth";
 
 import { ChatContext } from "./context";
+import { CreateChatData, createChat } from "../api/chat";
+import { message } from "antd";
+import useAuth from "../hooks/useAuth";
 
 import { ChatActions, ChatAction } from "./Inputpanel";
 import {
@@ -88,6 +93,9 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
   const sessionId = props.session.id;
   const session = props.session;
   const index = props.index;
+  const workflowStore = useWorkflowStore();
+  const authHook = useAuth();
+
   const chatStore = useChatStore();
   const userStore = useUserStore();
   //   const session = chatStore.currentSession();
@@ -297,6 +305,71 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
     });
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const onNextworkflow = (message: string) => {
+    // 点击后将该条 message 传递到下一个 session
+    const sessions = workflowStore.sessions;
+    const nextSession = sessions.at(index + 1);
+
+    if (!nextSession) {
+      return;
+    }
+
+    const nextSessionId = nextSession.id;
+
+    // 获取所点击的 message
+    // console.log("nextSession", nextSession, message);
+    const recentMessages = chatStore.getMessagesWithMemory(nextSession);
+
+    chatStore
+      .onUserInput(message, nextSessionId)
+      .then(() => {
+        setIsLoading(false);
+
+        const createChatData: CreateChatData = {
+          user: userStore.user.id,
+          chat_session: session.id,
+          message: message,
+          memory: recentMessages,
+        };
+
+        createChat(createChatData).then((response) => {
+          console.log("createChat response:", response);
+          const data = response.data;
+
+          if (data) {
+            console.log("createChat success:", response);
+            const newSessionId = data.chat_session;
+
+            if (session.id !== newSessionId) {
+              chatStore.updateSession(sessionId, (session) => {
+                session.id = newSessionId;
+              });
+            }
+          } else {
+            if (response.code === 401) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            } else if (response.code === 4001) {
+              messageApi.error("登录已过期(令牌无效)，请重新登录");
+              authHook.logoutHook();
+            } else if (response.code === 4000) {
+              messageApi.error(
+                "当前对话出现错误, 请重新新建对话",
+                response.msg,
+              );
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.error("chatStore.onUserInput error:", error);
+      });
+    localStorage.setItem(LAST_INPUT_KEY, userInput);
+  };
+
   const onRightClick = (e: any, message: ChatMessage) => {
     if (selectOrCopy(e.currentTarget, message.content)) {
       if (userInput.length === 0) {
@@ -318,6 +391,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
         setAutoScroll(false);
       }}
     >
+      {contextHolder}
       {messages.map((message, i) => {
         const isUser = message.role === "user";
 
@@ -413,6 +487,12 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
                               text={Locale.Chat.Actions.Copy}
                               icon={<CopyIcon />}
                               onClick={() => copyToClipboard(message.content)}
+                            />
+                            {/* next icon */}
+                            <ChatAction
+                              text={Locale.Chat.Actions.Next}
+                              icon={<NextIcon />}
+                              onClick={() => onNextworkflow(message.content)}
                             />
                           </>
                         )}

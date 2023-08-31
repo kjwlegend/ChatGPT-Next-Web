@@ -41,6 +41,7 @@ const cn = {
       PinToastAction: "查看",
       Delete: "删除",
       Edit: "编辑",
+      Next: "下一步",
     },
     Commands: {
       new: "新建聊天",
