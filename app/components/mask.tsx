@@ -260,7 +260,7 @@ function ContextPromptItem(props: {
         value={props.prompt.content}
         type="text"
         className={chatStyle["context-content"]}
-        rows={focusingInput ? 5 : 1}
+        rows={focusingInput ? 10 : 2}
         onFocus={() => setFocusingInput(true)}
         onBlur={() => {
           setFocusingInput(false);

@@ -252,6 +252,35 @@
   overscroll-behavior: none;
 }
 
+.play {
+  width: 30px;
+  height: 30px;
+
+  button {
+    height: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+}
+.user {
+  position: absolute;
+  left: -40px;
+  svg {
+    height: 100%;
+    width: 100%;
+    fill: #4573f3;
+  }
+}
+.bot {
+  position: absolute;
+  right: -40px;
+  svg {
+    height: 100%;
+    width: 100%;
+    fill: #7149e9;
+  }
+}
 .chat-body-main-title {
   cursor: pointer;
 
@@ -263,6 +292,13 @@
 @media only screen and (max-width: 600px) {
   .chat-body-title {
     text-align: center;
+  }
+
+  .user,
+  .bot {
+    position: relative;
+    left: 0;
+    right: 0;
   }
 }
 
@@ -497,6 +533,14 @@
 
   position: absolute;
   right: 30px;
+  bottom: 32px;
+}
+.chat-input-voice {
+  background-color: var(--primary);
+  color: white;
+
+  position: absolute;
+  right: 100px;
   bottom: 32px;
 }
 

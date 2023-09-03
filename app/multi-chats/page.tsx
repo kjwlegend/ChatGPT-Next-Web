@@ -64,7 +64,7 @@ import {
   showToast,
 } from "../components/ui-lib";
 import { Avatar } from "../components/emoji";
-import { Avatar as UserAvatar, Button, Menu, Dropdown } from "antd";
+import { Avatar as UserAvatar, Button, Menu, Dropdown, Switch } from "antd";
 import type { MenuProps } from "antd";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
 import { ExportMessageModal } from "../components/exporter";
@@ -96,6 +96,7 @@ function _Chat(props: { _session: ChatSession; index: number }) {
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [autoScroll, setAutoScroll] = useState(true);
+  const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 
   const config = useAppConfig();
 
@@ -146,6 +147,8 @@ function _Chat(props: { _session: ChatSession; index: number }) {
             setShowPromptModal,
             userInput,
             setUserInput,
+            enableAutoFlow,
+            setEnableAutoFlow,
           }}
         >
           <WindowHeaer session={_session} index={index} />
@@ -201,36 +204,43 @@ const GenerateMenuItems = () => {
     setSessions(newsession);
   };
 
-  const maskItems = Object.values(maskStore).reduce((result, mask) => {
-    const category = mask.category;
-    const categoryItem = result.find((item) => item.label === category);
+  const maskItems = Object.values(maskStore).reduce(
+    (result, mask) => {
+      const category = mask.category;
+      const categoryItem = result.find((item) => item.label === category);
 
-    if (categoryItem) {
-      categoryItem.children.push({
-        key: mask.id,
-        label: mask.name,
-        onClick: () => {
-          handleMaskClick(mask);
-        },
-      });
-    } else {
-      result.push({
-        key: category,
-        label: category,
-        children: [
-          {
-            key: mask.id,
-            label: mask.name,
-            onClick: () => {
-              handleMaskClick(mask);
-            },
+      if (categoryItem) {
+        categoryItem.children.push({
+          key: mask.id,
+          label: mask.name,
+          onClick: () => {
+            handleMaskClick(mask);
           },
-        ],
-      });
-    }
+        });
+      } else {
+        result.push({
+          key: category,
+          label: category,
+          children: [
+            {
+              key: mask.id,
+              label: mask.name,
+              onClick: () => {
+                handleMaskClick(mask);
+              },
+            },
+          ],
+        });
+      }
 
-    return result;
-  }, [] as { key: string; label: string; children: { key: string; label: string; onClick?: () => void }[] }[]);
+      return result;
+    },
+    [] as {
+      key: string;
+      label: string;
+      children: { key: string; label: string; onClick?: () => void }[];
+    }[],
+  );
 
   return [
     {

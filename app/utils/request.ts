@@ -16,7 +16,7 @@ service.interceptors.request.use(
   (config) => {
     // 获取token
     const accessToken = useAuthStore.getState().accessToken;
-    console.log("accessToken", accessToken);
+    // console.log("accessToken", accessToken);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

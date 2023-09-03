@@ -19,6 +19,7 @@ import DeleteIcon from "@/app/icons/clear.svg";
 import PinIcon from "@/app/icons/pin.svg";
 import EditIcon from "@/app/icons/rename.svg";
 import StopIcon from "@/app/icons/pause.svg";
+import PlayIcon from "@/app/icons/play.svg";
 
 import {
   ChatMessage,
@@ -74,6 +75,9 @@ import {
   ClearContextDivider,
 } from "./chat-controller";
 
+import { convertTextToSpeech } from "@/app/utils/voicetotext";
+import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
+
 const Markdown = dynamic(async () => (await import("../markdown")).Markdown, {
   loading: () => <LoadingIcon />,
 });
@@ -93,6 +97,29 @@ export function Chatbody() {
   const [isLoading, setIsLoading] = useState(false);
   const { scrollRef, setAutoScroll, scrollDomToBottom } = useScrollToBottom();
   const isMobileScreen = useMobileScreen();
+
+  // const playAudio = (message: ChatMessage) => {
+  //   convertTextToSpeech(message.content)
+  //     .then(() => {
+  //       console.log("Text converted to speech successfully");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error converting text to speech:", error);
+  //     });
+  // };
+
+  const [synthesizer, setSynthesizer] = useState<any | null>(null);
+
+  const playAudio = async (message: ChatMessage) => {
+    console.log("synthesizer", synthesizer);
+    if (synthesizer) {
+      synthesizer.close();
+    }
+
+    const newSynthesizer = await convertTextToSpeech(message.content);
+    console.log("newSynthesizer", newSynthesizer);
+    setSynthesizer(newSynthesizer);
+  };
 
   const {
     hitBottom,
@@ -412,6 +439,17 @@ export function Chatbody() {
                   </div>
                 )}
                 <div className={styles["chat-message-item"]}>
+                  <div
+                    className={`${
+                      isUser
+                        ? styles["user"] + " " + styles["play"]
+                        : styles["bot"] + " " + styles["play"]
+                    }`}
+                  >
+                    <button onClick={() => playAudio(message)}>
+                      <PlayIcon />
+                    </button>
+                  </div>
                   <Markdown
                     content={message.content}
                     loading={

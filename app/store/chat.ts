@@ -60,6 +60,7 @@ export interface ChatSession {
   clearContextIndex?: number;
 
   mask: Mask;
+  responseStatus?: boolean;
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
@@ -377,9 +378,15 @@ export const useChatStore = create<ChatStore>()(
           }
           session = sessions[index];
           // console.log("[User Input] session: ", index, session);
+          this.updateSession(sessionId, (sessionToUpdate) => {
+            sessionToUpdate.responseStatus = false;
+          });
         } else {
           session = get().currentSession();
         }
+        let responseStatus = session.responseStatus;
+
+        console.log("click send: ", session.topic, responseStatus);
 
         const modelConfig = session.mask.modelConfig;
 
@@ -445,6 +452,8 @@ export const useChatStore = create<ChatStore>()(
             if (message) {
               botMessage.content = message;
               get().onNewMessage(botMessage);
+              responseStatus = session.responseStatus = true;
+              console.log("responseStatus: ", responseStatus, session);
             }
             ChatControllerPool.remove(session.id, botMessage.id);
           },
@@ -524,10 +533,11 @@ export const useChatStore = create<ChatStore>()(
             ]
           : [];
         if (shouldInjectSystemPrompts) {
-          console.log(
-            "[Global System Prompt] ",
-            systemPrompts.at(0)?.content ?? "empty",
-          );
+          // console.log(
+          //   "[Global System Prompt] ",
+          //   systemPrompts.at(0)?.content ?? "empty",
+          // );
+          console.log("[Global System Prompt] : true");
         }
 
         // long term memory
