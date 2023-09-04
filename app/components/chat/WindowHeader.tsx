@@ -22,12 +22,15 @@ import {
   DEFAULT_TOPIC,
 } from "@/app/store";
 
+import { useNavigate } from "react-router-dom";
 import {
   copyToClipboard,
   selectOrCopy,
   autoGrowTextArea,
   useMobileScreen,
 } from "@/app/utils";
+
+import { Path } from "@/app/constant";
 
 import { api } from "@/app/client/api";
 
@@ -126,6 +129,7 @@ export default function WindowHeader() {
   const session = chatStore.currentSession();
   const config = useAppConfig();
   const [showExport, setShowExport] = useState(false);
+  const navigate = useNavigate();
 
   const { showPromptModal, setShowPromptModal, hitBottom, setHitBottom } =
     useContext(ChatContext);
@@ -145,6 +149,7 @@ export default function WindowHeader() {
               icon={<ReturnIcon />}
               bordered
               title={Locale.Chat.Actions.ChatList}
+              onClick={() => navigate(Path.Home)}
             />
           </div>
         </div>

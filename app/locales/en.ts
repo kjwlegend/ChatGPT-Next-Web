@@ -43,6 +43,7 @@ const en: LocaleType = {
       PinToastAction: "View",
       Delete: "Delete",
       Edit: "Edit",
+      Next: "Next",
     },
     Commands: {
       new: "Start a new chat",

@@ -20,6 +20,7 @@ import PinIcon from "../icons/pin.svg";
 import EditIcon from "../icons/rename.svg";
 import StopIcon from "../icons/pause.svg";
 import NextIcon from "../icons/next.svg";
+import PlayIcon from "../icons/play.svg";
 
 import {
   ChatMessage,
@@ -91,16 +92,19 @@ type RenderMessage = ChatMessage & { preview?: boolean };
 
 export function Chatbody(props: { session: ChatSession; index: number }) {
   const sessionId = props.session.id;
-  const session = props.session;
   const index = props.index;
-  const workflowStore = useWorkflowStore();
   const authHook = useAuth();
 
-  const chatStore = useChatStore();
-  const userStore = useUserStore();
-  //   const session = chatStore.currentSession();
-
   const config = useAppConfig();
+  const chatStore = useChatStore();
+  const workflowStore = useWorkflowStore();
+  const userStore = useUserStore();
+
+  const allSessions = chatStore.sessions;
+  // 通过sessionID 去allSessions中找到对应的session
+
+  const session = allSessions.find((s) => s.id === sessionId)!;
+
   const fontSize = config.fontSize;
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -116,30 +120,18 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
     setShowPromptModal,
     userInput,
     setUserInput,
+    enableAutoFlow,
+    setEnableAutoFlow,
   } = useContext(ChatContext);
 
   const context: RenderMessage[] = useMemo(() => {
     return session.mask.hideContext ? [] : session.mask.context.slice();
   }, [session.mask.context, session.mask.hideContext]);
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   const accessStore = useAccessStore();
   const IsAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  if (
-    context.length === 0 &&
-    session.messages.at(0)?.content !== BOT_HELLO.content
-  ) {
-    const copiedHello = Object.assign({}, BOT_HELLO);
-    if (!accessStore.isAuthorized(IsAuthenticated)) {
-      copiedHello.content = Locale.Error.Unauthorized;
-    }
-
-    if (session.mask.intro) {
-      copiedHello.content = session.mask.intro;
-    }
-
-    context.push(copiedHello);
-  }
 
   const renderMessages = useMemo(() => {
     return context
@@ -194,6 +186,49 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
     );
     return renderMessages.slice(msgRenderIndex, endRenderIndex);
   }, [msgRenderIndex, renderMessages]);
+
+  // 采用store 的方式来获取 responseState
+  let responseState = useChatStore(
+    (state) => state.sessions.find((s) => s.id === sessionId)?.responseStatus,
+  );
+  // console.log("response checkkkkkk", responseState);
+  // 在responseState 为 true 时 执行 onNextworkflow
+  useEffect(() => {
+    const lastMessage = session.messages.at(-1)?.content ?? "";
+    console.log("responseState old", responseState);
+    // console.log("lastMessage", lastMessage);
+    if (responseState && enableAutoFlow) {
+      onNextworkflow(lastMessage);
+      // 将session 的 responseState 转为false
+      chatStore.updateSession(sessionId, (session) => {
+        session.responseStatus = false;
+      });
+      responseState = chatStore.sessions.find((s) => s.id === sessionId)
+        ?.responseStatus;
+      console.log("responseState new", responseState);
+    }
+  }, [responseState]);
+
+  if (!session) {
+    console.error("[Chat] failed to find session", sessionId);
+    return null;
+  }
+
+  if (
+    context.length === 0 &&
+    session.messages.at(0)?.content !== BOT_HELLO.content
+  ) {
+    const copiedHello = Object.assign({}, BOT_HELLO);
+    if (!accessStore.isAuthorized(IsAuthenticated)) {
+      copiedHello.content = Locale.Error.Unauthorized;
+    }
+
+    if (session.mask.intro) {
+      copiedHello.content = session.mask.intro;
+    }
+
+    context.push(copiedHello);
+  }
 
   function scrollToBottom() {
     setMsgRenderIndex(renderMessages.length - CHAT_PAGE_SIZE);
@@ -304,8 +339,6 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
       },
     });
   };
-
-  const [messageApi, contextHolder] = message.useMessage();
 
   const onNextworkflow = (message: string) => {
     // 点击后将该条 message 传递到下一个 session

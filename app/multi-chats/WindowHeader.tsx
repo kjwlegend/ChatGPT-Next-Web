@@ -54,7 +54,7 @@ import { ExportMessageModal } from "../components/exporter";
 import { getClientConfig } from "../config/client";
 
 import useAuth from "../hooks/useAuth";
-import { message } from "antd";
+import { message, Switch } from "antd";
 
 import { SessionConfigModel } from "./common";
 
@@ -69,7 +69,9 @@ export function EditMessageModal(props: {
   const sessionId = props.session.id;
   const session = props.session;
 
+  const config = useAppConfig();
   const chatStore = useChatStore();
+
   const [messages, setMessages] = useState(session.messages.slice());
 
   return (
@@ -141,8 +143,17 @@ export default function WindowHeader(props: {
   const config = useAppConfig();
   const [showExport, setShowExport] = useState(false);
 
-  const { showPromptModal, setShowPromptModal, hitBottom, setHitBottom } =
-    useContext(ChatContext);
+  const {
+    hitBottom,
+    setHitBottom,
+
+    showPromptModal,
+    setShowPromptModal,
+    userInput,
+    setUserInput,
+    enableAutoFlow,
+    setEnableAutoFlow,
+  } = useContext(ChatContext);
 
   const isMobileScreen = useMobileScreen();
   const clientConfig = useMemo(() => getClientConfig(), []);
@@ -177,11 +188,25 @@ export default function WindowHeader(props: {
       </div>
       <div className="window-actions">
         {!isMobileScreen && (
-          <div className="window-action-button">
-            <IconButton
-              icon={<RenameIcon />}
-              bordered
-              onClick={() => setIsEditingMessage(true)}
+          // <div className="window-action-button">
+          //   <IconButton
+          //     icon={<RenameIcon />}
+          //     bordered
+          //     onClick={() => setIsEditingMessage(true)}
+          //   />
+          // </div>
+          <div>
+            <span style={{ marginRight: "10px", fontSize: "12px" }}>
+              自动流
+            </span>
+            <Switch
+              checkedChildren="开启"
+              unCheckedChildren="人工"
+              defaultChecked
+              onChange={(checked) => {
+                console.log(checked, index);
+                setEnableAutoFlow(checked);
+              }}
             />
           </div>
         )}

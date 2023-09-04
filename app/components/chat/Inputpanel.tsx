@@ -22,6 +22,7 @@ import AutoIcon from "@/app/icons/auto.svg";
 import BottomIcon from "@/app/icons/bottom.svg";
 import StopIcon from "@/app/icons/pause.svg";
 import RobotIcon from "@/app/icons/robot.svg";
+import Record from "@/app/icons/record.svg";
 
 import {
   ChatMessage,
@@ -87,6 +88,10 @@ import {
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
 import { ChatContext } from "./main";
+import {
+  startSpeechToText,
+  convertTextToSpeech,
+} from "@/app/utils/voicetotext";
 
 export function PromptHints(props: {
   prompts: RenderPompt[];
@@ -327,6 +332,7 @@ export function ChatActions(props: {
   );
 }
 export type RenderPompt = Pick<Prompt, "title" | "content">;
+let voicetext: string[] = [];
 
 export function Inputpanel() {
   const chatStore = useChatStore();
@@ -453,6 +459,7 @@ export function Inputpanel() {
       });
     localStorage.setItem(LAST_INPUT_KEY, userInput);
     setUserInput("");
+    voicetext = [];
     setPromptHints([]);
     if (!isMobileScreen) inputRef.current?.focus();
     setAutoScroll(true);
@@ -571,6 +578,17 @@ export function Inputpanel() {
 
   const autoFocus = !isMobileScreen;
 
+  const handleSpeechRecognition = async (): Promise<void> => {
+    console.log(voicetext);
+    const text = await startSpeechToText();
+    voicetext.push(text);
+    console.log("after push", voicetext);
+
+    console.log("voice text:", voicetext.join(" "));
+    const fulltext = voicetext.join(" ");
+    setUserInput(fulltext);
+  };
+
   return (
     <div className={styles["chat-input-panel"]}>
       {contextHolder}
@@ -613,6 +631,13 @@ export function Inputpanel() {
           className={styles["chat-input-send"]}
           type="primary"
           onClick={() => doSubmit(userInput)}
+        />
+        <IconButton
+          icon={<Record />}
+          text="语音"
+          className={styles["chat-input-voice"]}
+          type="primary"
+          onClick={() => handleSpeechRecognition()}
         />
       </div>
     </div>

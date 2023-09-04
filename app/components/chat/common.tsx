@@ -67,6 +67,9 @@ import {
   showPrompt,
   showToast,
 } from "@/app/components/ui-lib";
+
+import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   CHAT_PAGE_SIZE,
   LAST_INPUT_KEY,
@@ -84,6 +87,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
 
   const session = chatStore.currentSession();
   const maskStore = useMaskStore();
+  const navigate = useNavigate();
 
   return (
     <div className="modal-mask">

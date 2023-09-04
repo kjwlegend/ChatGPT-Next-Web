@@ -22,6 +22,7 @@ import AutoIcon from "../icons/auto.svg";
 import BottomIcon from "../icons/bottom.svg";
 import StopIcon from "../icons/pause.svg";
 import RobotIcon from "../icons/robot.svg";
+import playIcon from "../icons/play.svg";
 
 import {
   ChatMessage,
@@ -87,6 +88,7 @@ import {
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
 import { ChatContext } from "./context";
+import { useWorkflowStore } from "../store/workflow";
 
 export function PromptHints(props: {
   prompts: RenderPompt[];
@@ -335,14 +337,20 @@ export function ChatActions(props: {
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 export function Inputpanel(props: { session: ChatSession; index: number }) {
+  const config = useAppConfig();
   const chatStore = useChatStore();
+  const workflowStore = useWorkflowStore();
+  const userStore = useUserStore();
+
+  const authHook = useAuth();
+
   const sessionId = props.session.id;
   const session = props.session;
+
   const index = props.index;
-  // const session = chatStore.currentSession();
-  const config = useAppConfig();
-  const userStore = useUserStore();
-  const authHook = useAuth();
+
+  const sessions = workflowStore.sessions;
+  const nextSession = sessions.at(index + 1);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -354,6 +362,8 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
     setShowPromptModal,
     userInput,
     setUserInput,
+    enableAutoFlow,
+    setEnableAutoFlow,
   } = useContext(ChatContext);
 
   const { submitKey, shouldSubmit } = useSubmitHandler();
@@ -415,6 +425,8 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
     setIsLoading(true);
     const recentMessages = chatStore.getMessagesWithMemory();
 
+    // console.log("current session id:", session);
+    // console.log("next session:", nextSession ?? "null");
     chatStore
       .onUserInput(userInput, sessionId)
       .then(() => {
