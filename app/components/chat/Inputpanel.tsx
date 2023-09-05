@@ -634,7 +634,7 @@ export function Inputpanel() {
         />
         <IconButton
           icon={<Record />}
-          text="语音"
+          text=""
           className={styles["chat-input-voice"]}
           type="primary"
           onClick={() => handleSpeechRecognition()}

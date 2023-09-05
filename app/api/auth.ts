@@ -86,6 +86,7 @@ export interface RegisterParams {
   nickname?: string;
   gender?: number;
   email: string;
+  invite_code?: string;
 }
 
 export interface RegisterResult {

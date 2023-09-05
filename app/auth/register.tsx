@@ -84,6 +84,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
   const onFinish = async (values: RegisterParams) => {
     try {
       setIsSubmitting(true);
+      console.log(values);
       // 获取表单 select 的值 并补充到  values 中
 
       const result = await register(values);
@@ -241,19 +242,20 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
         rules={[{ required: false, message: "邀请双方都会获得奖励!" }]}
       >
         <Input placeholder="邀请双方都会获得奖励! " />
-        <p>
-          {" "}
-          若无邀请码, 可
-          <a
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            加群获取
-          </a>
-          , 不填也可完成注册, 只是无奖励
-        </p>
       </Form.Item>
+
+      <p>
+        {" "}
+        若无邀请码, 可
+        <a
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          加群获取
+        </a>
+        , 不填也可完成注册, 只是无奖励
+      </p>
 
       <Form.Item
         name="agreement"
