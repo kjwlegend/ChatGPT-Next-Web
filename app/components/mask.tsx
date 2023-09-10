@@ -147,6 +147,7 @@ export function MaskConfig(props: {
                 mask.category = e.currentTarget.value as MaskCategory;
               })
             }
+            disabled
           >
             {Object.values(MaskCategory).map((category) => (
               <option key={category} value={category}>

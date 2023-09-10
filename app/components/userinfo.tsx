@@ -94,19 +94,10 @@ export default function LoginButton() {
         <div className={style.content}>
           <div className={style.banner}>
             <Image
-              src="/assets/banner-1.png"
+              src="/assets/banner-2.png"
               alt="banner"
-              fill={true}
-              style={{ objectFit: "contain" }}
-            />
-          </div>
-          <div className={style.qrcode}>
-            <Image
-              src="/assets/wechat-qr.png"
-              alt="Logo"
-              className={style.qrcode}
-              fill={true}
-              style={{ objectFit: "contain" }}
+              width={700}
+              height={275}
             />
           </div>
 

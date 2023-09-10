@@ -8,11 +8,9 @@
 }
 
 .banner {
-  width: 90%;
-  margin-bottom: 20px;
-  position: absolute;
+  width: 100%;
+  // margin-bottom: 20px;
   height: 304px;
-  top: -250px;
 
   @media screen and (max-width: 768px) {
     position: absolute;

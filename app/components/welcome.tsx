@@ -46,21 +46,13 @@ const ModalPopup = () => {
       <div className={styles.content}>
         <div className={styles.banner}>
           <Image
-            src="/assets/banner-1.png"
+            src="/assets/banner-2.png"
             alt="banner"
-            fill={true}
-            style={{ objectFit: "contain" }}
+            width={700}
+            height={275}
           />
         </div>
-        <div className={styles.qrcode}>
-          <Image
-            src="/assets/wechat-qr.png"
-            alt="Logo"
-            className={styles.qrcode}
-            fill={true}
-            style={{ objectFit: "contain" }}
-          />
-        </div>
+
         <p className={styles.title}> 进群可领取邀请码, 领取2个月免费福利</p>
         {/* subtitle */}
         <p className={styles.subtitle}>为什么使用小光AI?</p>
