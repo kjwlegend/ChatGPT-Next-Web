@@ -202,7 +202,7 @@ export default function WindowHeader(props: {
             <Switch
               checkedChildren="开启"
               unCheckedChildren="人工"
-              defaultChecked
+              defaultChecked={enableAutoFlow}
               onChange={(checked) => {
                 console.log(checked, index);
                 setEnableAutoFlow(checked);
