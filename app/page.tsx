@@ -12,7 +12,7 @@ export default function App() {
   const query = useSearchParams();
 
   const inviteCode = query.get("i");
-  // console.log("inviteCode", inviteCode);
+  console.log("inviteCode", inviteCode);
   const inviteCodeStore = useInviteCodeStore();
 
   useEffect(() => {
