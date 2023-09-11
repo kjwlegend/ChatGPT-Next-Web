@@ -11,16 +11,29 @@ import Login from "./login";
 
 import React, { useState, createContext, useEffect } from "react";
 import { useAuthStore } from "../store/auth";
+import { useSearchParams } from "next/navigation";
+import { useInviteCodeStore } from "../store/auth";
 import LogoutButton from "../components/logout";
 import LoadingIcon from "../icons/three-dots.svg";
 
 export default function AuthPage() {
   const { isAuthenticated } = useAuthStore();
+  const query = useSearchParams();
+  const inviteCodeStore = useInviteCodeStore();
+
   const [activeTab, setActiveTab] = useState("2");
   const [isClient, setIsClient] = useState(false);
 
   // 等待样式表加载完后, 再显示
   const [show, setShow] = useState(false);
+
+  const inviteCode = query.get("i");
+  console.log("inviteCode", inviteCode);
+
+  useEffect(() => {
+    // 在这里可以使用inviteCode进行相应的处理
+    inviteCodeStore.setInviteCode(inviteCode);
+  }, [inviteCode]);
 
   useEffect(() => {
     setIsClient(true);
