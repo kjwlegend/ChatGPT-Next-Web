@@ -77,8 +77,8 @@ export default function MainNav(
     if (item) {
       router.push(item.url);
     } else {
-      const subItem = items.find((item: any) =>
-        item.children?.some((child: any) => child.key === e.key),
+      const subItem = items.find(
+        (item: any) => item.children?.some((child: any) => child.key === e.key),
       );
       if (subItem) {
         const subItemChild = subItem.children?.find(
@@ -132,7 +132,7 @@ export default function MainNav(
               onClick={onClick}
               selectedKeys={[current]}
               mode="horizontal"
-              style={{ backgroundColor: "transparent", height: "50px" }}
+              style={{ backgroundColor: "transparent" }}
               className={styles["ant-menu" + " desktop-only"]}
               items={items}
               overflowedIndicator={<span>...</span>}

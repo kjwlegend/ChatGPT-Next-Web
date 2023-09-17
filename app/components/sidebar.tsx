@@ -33,7 +33,7 @@ import { useAuthStore } from "../store/auth";
 
 import AuthPage from "../auth/page";
 import DrawerMenu from "./drawer-menu";
-import LoginButton from "./userinfo";
+import UserInfo from "./userinfo";
 import { Divider } from "antd";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
@@ -138,11 +138,11 @@ export function SideBar(props: { className?: string }) {
         <div className="flex-container row m-b-20">
           {isMobileScreen && <DrawerMenu />}
 
-          {!shouldNarrow && <LoginButton />}
+          {!shouldNarrow && <UserInfo />}
         </div>
 
         <div className={styles["sidebar-header-bar"]}>
-          <IconButton
+          {/* <IconButton
             icon={<MaskIcon />}
             text={shouldNarrow ? undefined : Locale.Mask.Name}
             className={styles["sidebar-bar-button"]}
@@ -157,7 +157,7 @@ export function SideBar(props: { className?: string }) {
             className={styles["sidebar-bar-button"]}
             onClick={() => showToast(Locale.WIP)}
             shadow
-          />
+          /> */}
         </div>
 
         <div

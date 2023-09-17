@@ -21,7 +21,7 @@ import { Modal } from "antd";
 import style from "./welcome.module.scss";
 import Image from "next/image";
 
-export default function LoginButton() {
+export default function UserInfo() {
   const { user } = useUserStore();
   const [visible, setVisible] = useState(false);
 
@@ -55,16 +55,16 @@ export default function LoginButton() {
     <div className={styles["login-wrapper"]}>
       {user?.username ? (
         <>
-          {user?.avatar && (
-            <div className={styles["avatar"]}>
-              <Avatar src={user?.avatar} />
-            </div>
-          )}
           <Dropdown menu={{ items }} trigger={["click"]}>
             <a onClick={(f) => f.preventDefault()}>
+              {user?.avatar && (
+                <div className={styles["avatar"]}>
+                  <Avatar src={user?.avatar} />
+                </div>
+              )}
               <Space>
                 <Button>
-                  欢迎您, {user.nickname ? user.nickname : "未命名用户"}
+                  欢迎您, {user.nickname ? user.nickname : "神秘人"}
                 </Button>
               </Space>
             </a>
@@ -96,8 +96,9 @@ export default function LoginButton() {
             <Image
               src="/assets/banner-2.png"
               alt="banner"
-              width={700}
-              height={275}
+              fill={true}
+              objectFit="contain"
+              // style={{ objectFit: "contain" }}
             />
           </div>
 

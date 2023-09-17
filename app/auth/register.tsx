@@ -301,8 +301,9 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
             <Image
               src="/assets/banner-2.png"
               alt="banner"
-              width={700}
-              height={275}
+              fill={true}
+              objectFit="contain"
+              style={{ objectFit: "contain" }}
             />
           </div>
 
