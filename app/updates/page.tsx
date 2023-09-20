@@ -172,7 +172,7 @@ const items = [
   },
   {
     label: "2023-07-28",
-    children: "发布 v0.5.2 版本: 公测版正式上线, 启用 https://xiaoguang.chat",
+    children: "发布 v0.5.2 版本: 公测版正式上线, 启用 https://xiaoguang.online",
     color: "red",
   },
   {
@@ -267,6 +267,10 @@ const items = [
   {
     label: "2023-09-06",
     children: "发布 v0.8.5 版本: 修复注册性别无法识别的bug, 优化图片",
+  },
+  {
+    label: "2023-09-15",
+    children: "发布 v0.8.6 版本: 样式优化, 侧边栏优化, 手机端导航栏优化",
   },
 ];
 

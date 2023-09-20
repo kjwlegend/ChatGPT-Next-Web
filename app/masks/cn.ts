@@ -47,7 +47,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "小光(青年版)",
-    category: MaskCategory.Develop,
+    category: MaskCategory.Default,
     featureMask: true,
     description:
       "乐观且积极的助手, 除了日常的活跃, 还多了一丝沉稳, 能够给你带来更具备专业性的回答. \n\n座右铭: '永远相信光'",

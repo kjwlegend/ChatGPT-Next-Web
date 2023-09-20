@@ -39,8 +39,8 @@ const DrawerMenu = () => {
     if (item) {
       router.push(item.url);
     } else {
-      const subItem = items.find((item: any) =>
-        item.children?.some((child: any) => child.key === e.key),
+      const subItem = items.find(
+        (item: any) => item.children?.some((child: any) => child.key === e.key),
       );
       if (subItem) {
         const subItemChild = subItem.children?.find(
@@ -72,7 +72,7 @@ const DrawerMenu = () => {
           <div className={styles["logo-text"]}>
             <p className={styles["headline"]}>小光AI</p>
             <p className={styles["subline"] + " desktop-only"}>
-              xiaoguang.chat
+              xiaoguang.online
             </p>
           </div>
         </div>
