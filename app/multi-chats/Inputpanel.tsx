@@ -71,6 +71,7 @@ import {
   MAX_RENDER_MSG_COUNT,
   Path,
   REQUEST_TIMEOUT_MS,
+  UNFINISHED_INPUT,
 } from "../constant";
 
 import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
@@ -586,6 +587,22 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
     },
   );
   useEffect(measure, [userInput]);
+
+  useEffect(() => {
+    // try to load from local storage
+    const key = UNFINISHED_INPUT(session.id);
+    const mayBeUnfinishedInput = localStorage.getItem(key);
+    if (mayBeUnfinishedInput && userInput.length === 0) {
+      setUserInput(mayBeUnfinishedInput);
+      localStorage.removeItem(key);
+    }
+
+    const dom = inputRef.current;
+    return () => {
+      localStorage.setItem(key, dom?.value ?? "");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const autoFocus = !isMobileScreen;
 

@@ -17,6 +17,7 @@ import type { MenuProps } from "antd";
 import styles from "./header.module.scss";
 import { IconButton } from "./button";
 import LightningIcon from "../icons/lightning.svg";
+import EditIcon from "../icons/menu.svg";
 import { Modal } from "antd";
 import style from "./welcome.module.scss";
 import Image from "next/image";
@@ -64,14 +65,28 @@ export default function UserInfo() {
               )}
               <Space>
                 <Button>
-                  欢迎您, {user.nickname ? user.nickname : "神秘人"}
+                  <EditIcon
+                    style={{
+                      marginRight: "4px",
+                      position: "relative",
+                      top: "5px",
+                    }}
+                  />{" "}
+                  {user.nickname ? user.nickname : "神秘人"}{" "}
                 </Button>
               </Space>
             </a>
           </Dropdown>
 
           <Button onClick={handleButtonClick}>
-            <LightningIcon /> 领福利
+            <LightningIcon
+              style={{
+                marginRight: "4px",
+                position: "relative",
+                top: "5px",
+              }}
+            />{" "}
+            领福利
           </Button>
         </>
       ) : (

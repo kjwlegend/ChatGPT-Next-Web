@@ -137,18 +137,20 @@ export function ClearContextDivider() {
   );
 }
 
-export function useScrollToBottom() {
+export function useScrollToBottom(scrollRef: any) {
   // for auto-scroll
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
   function scrollDomToBottom() {
     const dom = scrollRef.current;
     if (dom) {
-      requestAnimationFrame(() => {
-        setAutoScroll(true);
-        dom.scrollTo(0, dom.scrollHeight);
-      });
+      // requestAnimationFrame(() => {
+      //   setAutoScroll(true);
+      //   dom.scrollTo(0, dom.scrollHeight);
+      // });
+      setAutoScroll(true);
+      dom.scrollTo(0, dom.scrollHeight);
     }
   }
 

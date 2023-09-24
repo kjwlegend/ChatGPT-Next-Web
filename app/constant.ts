@@ -7,7 +7,9 @@ export const RELEASE_URL = `${REPO_URL}/releases`;
 export const FETCH_COMMIT_URL = `https://api.github.com/repos/${OWNER}/${REPO}/commits?per_page=1`;
 export const FETCH_TAG_URL = `https://api.github.com/repos/${OWNER}/${REPO}/tags?per_page=1`;
 export const RUNTIME_CONFIG_DOM = "danger-runtime-config";
-export const DEFAULT_API_HOST = "https://chatgpt1.nextweb.fun/api/proxy";
+
+export const DEFAULT_CORS_HOST = "https://nb.nextweb.fun";
+export const DEFAULT_API_HOST = `${DEFAULT_CORS_HOST}/api/proxy`;
 
 export enum Path {
   Home = "/",
@@ -18,6 +20,10 @@ export enum Path {
   Auth = "/auth",
   Intro = "/intro",
   Updates = "/updates",
+}
+
+export enum ApiPath {
+  Cors = "/api/cors",
 }
 
 export enum SlotID {
@@ -77,6 +83,7 @@ export const maskCategories = [
   MaskCategory.Travel,
 ];
 
+export const DEFAULT_SIDEBAR_WIDTH = 300;
 export const MAX_SIDEBAR_WIDTH = 500;
 export const MIN_SIDEBAR_WIDTH = 230;
 export const NARROW_SIDEBAR_WIDTH = 100;
@@ -84,6 +91,9 @@ export const NARROW_SIDEBAR_WIDTH = 100;
 export const ACCESS_CODE_PREFIX = "nk-";
 
 export const LAST_INPUT_KEY = "last-input";
+export const UNFINISHED_INPUT = (id: string) => "unfinished-input-" + id;
+
+export const STORAGE_KEY = "chatgpt-next-web";
 
 export const REQUEST_TIMEOUT_MS = 60000;
 
@@ -145,46 +155,62 @@ export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
 export const DEFAULT_MODELS = [
   {
     name: "gpt-4",
-    available: true,
+    displayName: "小光-4.0",
+    available: false,
   },
-  {
-    name: "gpt-4-0314",
-    available: true,
-  },
-  {
-    name: "gpt-4-0613",
-    available: true,
-  },
-  {
-    name: "gpt-4-32k",
-    available: true,
-  },
-  {
-    name: "gpt-4-32k-0314",
-    available: true,
-  },
-  {
-    name: "gpt-4-32k-0613",
-    available: true,
-  },
+  // {
+  //   name: "gpt-4-0314",
+  //   displayName: "小光-4.0-0314",
+
+  //   available: false,
+  // },
+  // {
+  //   name: "gpt-4-0613",
+  //   displayName: "小光-4.0-0613",
+
+  //   available: false,
+  // },
+  // {
+  //   name: "gpt-4-32k",
+  //   displayName: "小光-4.0-32k",
+
+  //   available: false,
+  // },
+  // {
+  //   name: "gpt-4-32k-0314",
+  //   displayName: "小光-4.0-32k-0314",
+
+  //   available: false,
+  // },
+  // {
+  //   name: "gpt-4-32k-0613",
+  //   displayName: "小光-4.0-32k-0613",
+
+  //   available: false,
+  // },
   {
     name: "gpt-3.5-turbo",
+    displayName: "小光-3.5-0613",
     available: true,
   },
-  {
-    name: "gpt-3.5-turbo-0301",
-    available: true,
-  },
+  // {
+  //   name: "gpt-3.5-turbo-0301",
+  //   displayName: "小光-3.5-0301",
+  //   available: false,
+  // },
   {
     name: "gpt-3.5-turbo-0613",
+    displayName: "小光-3.5-0613",
     available: true,
   },
   {
     name: "gpt-3.5-turbo-16k",
+    displayName: "小光-3.5-16k",
     available: true,
   },
   {
     name: "gpt-3.5-turbo-16k-0613",
+    displayName: "小光-3.5-16k-0613",
     available: true,
   },
 ] as const;

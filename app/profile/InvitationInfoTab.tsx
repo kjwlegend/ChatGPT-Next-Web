@@ -60,7 +60,7 @@ const InvitePage = () => {
             <QRCode
               errorLevel="H"
               value={inviteLink}
-              icon="https://xiaoguang.chat/bot.png"
+              icon="https://xiaoguang.online/bot.png"
             />
           </Col>
         </Row>

@@ -95,7 +95,6 @@ export function Chatbody() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const { scrollRef, setAutoScroll, scrollDomToBottom } = useScrollToBottom();
   const isMobileScreen = useMobileScreen();
 
   // const playAudio = (message: ChatMessage) => {
@@ -128,7 +127,10 @@ export function Chatbody() {
     setShowPromptModal,
     userInput,
     setUserInput,
+    scrollRef,
   } = useContext(ChatContext);
+
+  const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
 
   const context: RenderMessage[] = useMemo(() => {
     return session.mask.hideContext ? [] : session.mask.context.slice();
@@ -223,7 +225,8 @@ export function Chatbody() {
 
     const isTouchTopEdge = e.scrollTop <= edgeThreshold;
     const isTouchBottomEdge = bottomHeight >= e.scrollHeight - edgeThreshold;
-    const isHitBottom = bottomHeight >= e.scrollHeight - 10;
+    const isHitBottom =
+      bottomHeight >= e.scrollHeight - (isMobileScreen ? 4 : 0);
 
     const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
     const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;

@@ -230,11 +230,6 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
     context.push(copiedHello);
   }
 
-  function scrollToBottom() {
-    setMsgRenderIndex(renderMessages.length - CHAT_PAGE_SIZE);
-    scrollDomToBottom();
-  }
-
   const clearContextIndex =
     (session.clearContextIndex ?? -1) >= 0
       ? session.clearContextIndex! + context.length - msgRenderIndex
@@ -246,7 +241,8 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
     const isTouchTopEdge = e.scrollTop <= edgeThreshold;
     const isTouchBottomEdge = bottomHeight >= e.scrollHeight - edgeThreshold;
-    const isHitBottom = bottomHeight >= e.scrollHeight - 10;
+    const isHitBottom =
+      bottomHeight >= e.scrollHeight - (isMobileScreen ? 4 : 10);
 
     const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
     const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;
@@ -260,6 +256,11 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
     setHitBottom(isHitBottom);
     setAutoScroll(isHitBottom);
   };
+
+  function scrollToBottom() {
+    setMsgRenderIndex(renderMessages.length - CHAT_PAGE_SIZE);
+    scrollDomToBottom();
+  }
 
   const onUserStop = (messageId: string) => {
     ChatControllerPool.stop(session.id, messageId);
