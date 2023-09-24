@@ -1,10 +1,8 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { DEFAULT_API_HOST, DEFAULT_MODELS, StoreKey } from "../constant";
 import { getHeaders } from "../client/api";
-import { BOT_HELLO } from "./chat";
 import { getClientConfig } from "../config/client";
 import { useAuthStore } from "./auth";
+import { createPersistStore } from "../utils/store";
 
 export interface AccessControlStore {
   accessCode: string;
@@ -33,75 +31,79 @@ console.log("[API] default openai url", DEFAULT_OPENAI_URL);
 
 // 将useAuth Store 作为函数值返回
 
-export const useAccessStore = create<AccessControlStore>()(
-  persist(
-    (set, get) => ({
-      token: "",
-      accessCode: "",
-      needCode: true,
-      hideUserApiKey: false,
-      hideBalanceQuery: false,
-      disableGPT4: false,
+// 将useAuth Store 作为函数值返回
 
-      openaiUrl: DEFAULT_OPENAI_URL,
+const DEFAULT_ACCESS_STATE = {
+  token: "",
+  accessCode: "",
+  needCode: true,
+  hideUserApiKey: false,
+  hideBalanceQuery: false,
+  disableGPT4: false,
 
-      enabledAccessControl() {
-        get().fetch();
+  openaiUrl: DEFAULT_OPENAI_URL,
+};
 
-        return get().needCode;
-      },
-      updateCode(code: string) {
-        set(() => ({ accessCode: code?.trim() }));
-      },
-      updateToken(token: string) {
-        set(() => ({ token: token?.trim() }));
-      },
-      updateOpenAiUrl(url: string) {
-        set(() => ({ openaiUrl: url?.trim() }));
-      },
-      isAuthorized(isAuthenticated) {
-        get().fetch();
+export const useAccessStore = createPersistStore(
+  { ...DEFAULT_ACCESS_STATE },
 
-        // has token or has code or disabled access control
-        return (
-          !!get().token ||
-          !!get().accessCode ||
-          !get().enabledAccessControl() ||
-          !!isAuthenticated
-        );
-      },
-      fetch() {
-        if (fetchState > 0 || getClientConfig()?.buildMode === "export") return;
-        fetchState = 1;
-        fetch("/api/config", {
-          method: "post",
-          body: null,
-          headers: {
-            ...getHeaders(),
-          },
-        })
-          .then((res) => res.json())
-          .then((res: DangerConfig) => {
-            console.log("[Config] got config from server", res);
-            set(() => ({ ...res }));
+  (set, get) => ({
+    enabledAccessControl() {
+      this.fetch();
 
-            if (res.disableGPT4) {
-              DEFAULT_MODELS.forEach(
-                (m: any) => (m.available = !m.name.startsWith("gpt-4")),
-              );
-            }
-          })
-          .catch(() => {
-            console.error("[Config] failed to fetch config");
-          })
-          .finally(() => {
-            fetchState = 2;
-          });
-      },
-    }),
-    {
-      name: StoreKey.Access,
-      version: 1,
+      return get().needCode;
     },
-  ),
+    updateCode(code: string) {
+      set(() => ({ accessCode: code?.trim() }));
+    },
+    updateToken(token: string) {
+      set(() => ({ token: token?.trim() }));
+    },
+    updateOpenAiUrl(url: string) {
+      set(() => ({ openaiUrl: url?.trim() }));
+    },
+    isAuthorized(isAuthenticated: boolean) {
+      this.fetch();
+
+      // has token or has code or disabled access control
+      return (
+        !!get().token ||
+        !!get().accessCode ||
+        !this.enabledAccessControl() ||
+        !!isAuthenticated
+      );
+    },
+    fetch() {
+      if (fetchState > 0 || getClientConfig()?.buildMode === "export") return;
+      fetchState = 1;
+      fetch("/api/config", {
+        method: "post",
+        body: null,
+        headers: {
+          ...getHeaders(),
+        },
+      })
+        .then((res) => res.json())
+        .then((res: DangerConfig) => {
+          console.log("[Config] got config from server", res);
+          set(() => ({ ...res }));
+
+          if (res.disableGPT4) {
+            DEFAULT_MODELS.forEach(
+              (m: any) => (m.available = !m.name.startsWith("gpt-4")),
+            );
+          }
+        })
+        .catch(() => {
+          console.error("[Config] failed to fetch config");
+        })
+        .finally(() => {
+          fetchState = 2;
+        });
+    },
+  }),
+  {
+    name: StoreKey.Access,
+    version: 1,
+  },
 );

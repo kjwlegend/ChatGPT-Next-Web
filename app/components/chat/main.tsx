@@ -84,6 +84,7 @@ interface ChatContextType {
   setShowPromptModal: React.Dispatch<React.SetStateAction<boolean>>;
   userInput: string;
   setUserInput: React.Dispatch<React.SetStateAction<string>>;
+  scrollRef: React.RefObject<HTMLDivElement>;
 }
 
 // 创建 ChatContext 上下文对象
@@ -94,6 +95,7 @@ export const ChatContext = React.createContext<ChatContextType>({
   setShowPromptModal: () => void 0,
   userInput: "",
   setUserInput: () => void 0,
+  scrollRef: React.createRef<HTMLDivElement>(),
 });
 
 export function Loading(props: { noLogo?: boolean }) {
@@ -114,6 +116,7 @@ function _Chat() {
   const [hitBottom, setHitBottom] = useState(true);
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [userInput, setUserInput] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const config = useAppConfig();
 
@@ -161,6 +164,7 @@ function _Chat() {
           setShowPromptModal,
           userInput,
           setUserInput,
+          scrollRef,
         }}
       >
         <WindowHeaer />

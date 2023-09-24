@@ -71,6 +71,7 @@ import {
   MAX_RENDER_MSG_COUNT,
   Path,
   REQUEST_TIMEOUT_MS,
+  UNFINISHED_INPUT,
 } from "@/app/constant";
 
 import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/components/mask";
@@ -243,7 +244,10 @@ export function ChatActions(props: {
       config
         .allModels()
         .filter((m) => m.available)
-        .map((m) => m.name),
+        .map((m) => ({
+          title: m.displayName,
+          value: m.name,
+        })),
     [config],
   );
   const [showModelSelector, setShowModelSelector] = useState(false);
@@ -314,8 +318,8 @@ export function ChatActions(props: {
         <Selector
           defaultSelectedValue={currentModel}
           items={models.map((m) => ({
-            title: m,
-            value: m,
+            title: m.title,
+            value: m.value,
           }))}
           onClose={() => setShowModelSelector(false)}
           onSelection={(s) => {
@@ -352,10 +356,11 @@ export function Inputpanel() {
     setShowPromptModal,
     userInput,
     setUserInput,
+    scrollRef,
   } = useContext(ChatContext);
 
   const { submitKey, shouldSubmit } = useSubmitHandler();
-  const { scrollRef, setAutoScroll, scrollDomToBottom } = useScrollToBottom();
+  const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
   const isMobileScreen = useMobileScreen();
 
   const promptStore = usePromptStore();
@@ -462,7 +467,7 @@ export function Inputpanel() {
     voicetext = [];
     setPromptHints([]);
     if (!isMobileScreen) inputRef.current?.focus();
-    setAutoScroll(true);
+    setAutoScroll(false);
   };
 
   type RenderMessage = ChatMessage & { preview?: boolean };
@@ -519,6 +524,7 @@ export function Inputpanel() {
 
   function scrollToBottom() {
     setMsgRenderIndex(renderMessages.length - CHAT_PAGE_SIZE);
+    // console.log(scrollRef.current);
     scrollDomToBottom();
   }
 
@@ -575,6 +581,23 @@ export function Inputpanel() {
     },
   );
   useEffect(measure, [userInput]);
+
+  // remember unfinished input
+  useEffect(() => {
+    // try to load from local storage
+    const key = UNFINISHED_INPUT(session.id);
+    const mayBeUnfinishedInput = localStorage.getItem(key);
+    if (mayBeUnfinishedInput && userInput.length === 0) {
+      setUserInput(mayBeUnfinishedInput);
+      localStorage.removeItem(key);
+    }
+
+    const dom = inputRef.current;
+    return () => {
+      localStorage.setItem(key, dom?.value ?? "");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const autoFocus = !isMobileScreen;
 

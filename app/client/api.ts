@@ -41,6 +41,7 @@ export interface LLMUsage {
 export interface LLMModel {
   name: string;
   available: boolean;
+  // displayName: string;
 }
 
 export abstract class LLMApi {
