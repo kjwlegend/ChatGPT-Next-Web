@@ -15,7 +15,7 @@
 
   @media screen and (max-width: 768px) {
     position: absolute;
-    top: -250px;
+    top: -200px;
     width: 100%;
   }
 }
@@ -85,5 +85,19 @@
   a {
     margin-left: 10px;
     margin-right: 10px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .title,
+  .subtitle,
+  .description-title,
+  .description-content {
+    // font-size scale
+    transform: scale(0.8);
+    margin: 0;
+  }
+  .button {
+    display: flex;
   }
 }

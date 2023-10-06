@@ -60,6 +60,7 @@
 }
 .ant-menu {
   flex-grow: 1;
+  flex-basis: 100%;
   font-size: 15px;
 
   :global .ant-menu-horizontal {
@@ -92,7 +93,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
 
   .avatar {
@@ -102,6 +103,10 @@
     margin: 10px;
     position: relative;
     display: inline;
+  }
+  // 在该clas是下所有的子元素 margin 都为 0 10px
+  > * {
+    margin: 0 10px;
   }
 }
 
@@ -129,6 +134,7 @@
         font-size: 1rem;
         margin: auto 25px;
         line-height: 0.5rem;
+        height: 100%;
 
         display: flex;
         align-items: center;

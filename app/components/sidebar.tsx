@@ -161,9 +161,13 @@ export function SideBar(props: { className?: string }) {
        ${props.className} ${shouldNarrow && styles["narrow-sidebar"]}`}
     >
       <div className="flex-container row m-b-20">
-        {isMobileScreen && <DrawerMenu />}
+        {isMobileScreen && (
+          <>
+            <DrawerMenu /> <UserInfo />
+          </>
+        )}
 
-        {!shouldNarrow && <UserInfo />}
+        {/* {!shouldNarrow && <UserInfo />} */}
       </div>
 
       <div className={styles["sidebar-header-bar"]}>

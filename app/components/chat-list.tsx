@@ -67,13 +67,18 @@ export function ChatItem(props: {
             </div>
           ) : (
             <>
-              <div className={styles["chat-item-title"]}>{props.title}</div>
-              <div className={styles["chat-item-info"]}>
+              <div className={styles["chat-item-title"]}>
+                {props.title}
+                <span className={styles["chat-item-info"]}>
+                  {Locale.ChatItem.ChatItemCount(props.count)}
+                </span>
+              </div>
+              {/* <div className={styles["chat-item-info"]}>
                 <div className={styles["chat-item-count"]}>
                   {Locale.ChatItem.ChatItemCount(props.count)}
                 </div>
                 <div className={styles["chat-item-date"]}>{props.time}</div>
-              </div>
+              </div> */}
             </>
           )}
 

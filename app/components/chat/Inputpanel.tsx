@@ -650,7 +650,7 @@ export function Inputpanel() {
         />
         <IconButton
           icon={<SendWhiteIcon />}
-          text={Locale.Chat.Send}
+          text=""
           className={styles["chat-input-send"]}
           type="primary"
           onClick={() => doSubmit(userInput)}

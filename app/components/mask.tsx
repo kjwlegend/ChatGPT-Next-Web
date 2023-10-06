@@ -35,6 +35,7 @@ import { Avatar, AvatarPicker } from "./emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
 import { MaskCategory } from "../constant";
 import { useNavigate } from "react-router-dom";
+import { Row, Col } from "antd";
 
 import chatStyle from "./chat.module.scss";
 import { useEffect, useState } from "react";
@@ -97,129 +98,135 @@ export function MaskConfig(props: {
 
   return (
     <>
-      <ContextPrompts
-        context={props.mask.context}
-        updateContext={(updater) => {
-          const context = props.mask.context.slice();
-          updater(context);
-          props.updateMask((mask) => (mask.context = context));
-        }}
-      />
-
-      <List>
-        <ListItem title={Locale.Mask.Config.Avatar}>
-          <Popover
-            content={
-              <AvatarPicker
-                onEmojiClick={(emoji) => {
-                  props.updateMask((mask) => (mask.avatar = emoji));
-                  setShowPicker(false);
-                }}
-              ></AvatarPicker>
-            }
-            open={showPicker}
-            onClose={() => setShowPicker(false)}
-          >
-            <div
-              onClick={() => setShowPicker(true)}
-              style={{ cursor: "pointer" }}
-            >
-              <MaskAvatar mask={props.mask} />
-            </div>
-          </Popover>
-        </ListItem>
-        <ListItem title={Locale.Mask.Config.Name}>
-          <input
-            type="text"
-            value={props.mask.name}
-            onInput={(e) =>
-              props.updateMask((mask) => {
-                mask.name = e.currentTarget.value;
-              })
-            }
-          ></input>
-        </ListItem>
-        <ListItem title={Locale.Mask.Config.category}>
-          <select
-            value={props.mask.category}
-            onChange={(e) =>
-              props.updateMask((mask) => {
-                mask.category = e.currentTarget.value as MaskCategory;
-              })
-            }
-            disabled
-          >
-            {Object.values(MaskCategory).map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </ListItem>
-        <ListItem
-          title={Locale.Mask.Config.HideContext.Title}
-          subTitle={Locale.Mask.Config.HideContext.SubTitle}
-        >
-          <input
-            type="checkbox"
-            checked={props.mask.hideContext}
-            onChange={(e) => {
-              props.updateMask((mask) => {
-                mask.hideContext = e.currentTarget.checked;
-              });
+      {/* 1 row 2 col layout */}
+      <Row gutter={16}>
+        <Col xs={24} sm={14}>
+          <ContextPrompts
+            context={props.mask.context}
+            updateContext={(updater) => {
+              const context = props.mask.context.slice();
+              updater(context);
+              props.updateMask((mask) => (mask.context = context));
             }}
-          ></input>
-        </ListItem>
-
-        {!props.shouldSyncFromGlobal ? (
-          <ListItem
-            title={Locale.Mask.Config.Share.Title}
-            subTitle={Locale.Mask.Config.Share.SubTitle}
-          >
-            <IconButton
-              icon={<CopyIcon />}
-              text={Locale.Mask.Config.Share.Action}
-              onClick={copyMaskLink}
-            />
-          </ListItem>
-        ) : null}
-
-        {props.shouldSyncFromGlobal ? (
-          <ListItem
-            title={Locale.Mask.Config.Sync.Title}
-            subTitle={Locale.Mask.Config.Sync.SubTitle}
-          >
-            <input
-              type="checkbox"
-              checked={props.mask.syncGlobalConfig}
-              onChange={async (e) => {
-                const checked = e.currentTarget.checked;
-                if (
-                  checked &&
-                  (await showConfirm(Locale.Mask.Config.Sync.Confirm))
-                ) {
-                  props.updateMask((mask) => {
-                    mask.syncGlobalConfig = checked;
-                    mask.modelConfig = { ...globalConfig.modelConfig };
-                  });
-                } else if (!checked) {
-                  props.updateMask((mask) => {
-                    mask.syncGlobalConfig = checked;
-                  });
+          />
+        </Col>
+        <Col xs={24} sm={10}>
+          <List>
+            <ListItem title={Locale.Mask.Config.Avatar}>
+              <Popover
+                content={
+                  <AvatarPicker
+                    onEmojiClick={(emoji) => {
+                      props.updateMask((mask) => (mask.avatar = emoji));
+                      setShowPicker(false);
+                    }}
+                  ></AvatarPicker>
                 }
-              }}
-            ></input>
-          </ListItem>
-        ) : null}
-      </List>
+                open={showPicker}
+                onClose={() => setShowPicker(false)}
+              >
+                <div
+                  onClick={() => setShowPicker(true)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <MaskAvatar mask={props.mask} />
+                </div>
+              </Popover>
+            </ListItem>
+            <ListItem title={Locale.Mask.Config.Name}>
+              <input
+                type="text"
+                value={props.mask.name}
+                onInput={(e) =>
+                  props.updateMask((mask) => {
+                    mask.name = e.currentTarget.value;
+                  })
+                }
+              ></input>
+            </ListItem>
+            <ListItem title={Locale.Mask.Config.category}>
+              <select
+                value={props.mask.category}
+                onChange={(e) =>
+                  props.updateMask((mask) => {
+                    mask.category = e.currentTarget.value as MaskCategory;
+                  })
+                }
+                disabled
+              >
+                {Object.values(MaskCategory).map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </ListItem>
+            <ListItem
+              title={Locale.Mask.Config.HideContext.Title}
+              subTitle={Locale.Mask.Config.HideContext.SubTitle}
+            >
+              <input
+                type="checkbox"
+                checked={props.mask.hideContext}
+                onChange={(e) => {
+                  props.updateMask((mask) => {
+                    mask.hideContext = e.currentTarget.checked;
+                  });
+                }}
+              ></input>
+            </ListItem>
 
-      <List>
-        <ModelConfigList
-          modelConfig={{ ...props.mask.modelConfig }}
-          updateConfig={updateConfig}
-        />
-        {props.extraListItems}
-      </List>
+            {!props.shouldSyncFromGlobal ? (
+              <ListItem
+                title={Locale.Mask.Config.Share.Title}
+                subTitle={Locale.Mask.Config.Share.SubTitle}
+              >
+                <IconButton
+                  icon={<CopyIcon />}
+                  text={Locale.Mask.Config.Share.Action}
+                  onClick={copyMaskLink}
+                />
+              </ListItem>
+            ) : null}
+
+            {props.shouldSyncFromGlobal ? (
+              <ListItem
+                title={Locale.Mask.Config.Sync.Title}
+                subTitle={Locale.Mask.Config.Sync.SubTitle}
+              >
+                <input
+                  type="checkbox"
+                  checked={props.mask.syncGlobalConfig}
+                  onChange={async (e) => {
+                    const checked = e.currentTarget.checked;
+                    if (
+                      checked &&
+                      (await showConfirm(Locale.Mask.Config.Sync.Confirm))
+                    ) {
+                      props.updateMask((mask) => {
+                        mask.syncGlobalConfig = checked;
+                        mask.modelConfig = { ...globalConfig.modelConfig };
+                      });
+                    } else if (!checked) {
+                      props.updateMask((mask) => {
+                        mask.syncGlobalConfig = checked;
+                      });
+                    }
+                  }}
+                ></input>
+              </ListItem>
+            ) : null}
+          </List>
+
+          <List>
+            <ModelConfigList
+              modelConfig={{ ...props.mask.modelConfig }}
+              updateConfig={updateConfig}
+            />
+            {props.extraListItems}
+          </List>
+        </Col>
+      </Row>
     </>
   );
 }
@@ -261,7 +268,7 @@ function ContextPromptItem(props: {
         value={props.prompt.content}
         type="text"
         className={chatStyle["context-content"]}
-        rows={focusingInput ? 10 : 2}
+        rows={focusingInput ? 12 : 3}
         onFocus={() => setFocusingInput(true)}
         onBlur={() => {
           setFocusingInput(false);

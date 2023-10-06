@@ -28,21 +28,40 @@ export default function useAuth() {
         refreshToken: result.data.refresh,
         user: result.data.user,
       };
-      let gender = authInfo.user.gender;
 
-      // 对 user 中的 gender 属性判断保存, 1 为男, 2 为女 0 为未知
       if (authInfo.user) {
-        if (gender == 1) {
-          gender = "1";
-          // 处理男性的逻辑
-        } else if (gender == 2) {
-          gender = "2";
-          // 处理女性的逻辑
-        } else {
-          gender = "0";
+        // 对 user 中的 gender 属性判断保存, 1 为男, 2 为女 0 为未知
+        // if (gender == 1) {
+        //   gender = "1";
+        //   // 处理男性的逻辑
+        // } else if (gender == 2) {
+        //   gender = "2";
+        //   // 处理女性的逻辑
+        // } else {
+        //   gender = "0";
+        // }
+        // 处理会员类型 , 如果是 normal 则为普通会员, 如果是 monthly 黄金会员, quartly 为白金会员, yearly 为钻石会员
+        // switch 语法
+        switch (authInfo.user.member_type) {
+          case "normal":
+            authInfo.user.member_type = "普通会员";
+            break;
+          case "monthly":
+            authInfo.user.member_type = "黄金会员";
+            break;
+          case "quartly":
+            authInfo.user.member_type = "白金会员";
+            break;
+          case "yearly":
+            authInfo.user.member_type = "钻石会员";
+            break;
+          default:
+            authInfo.user.member_type = "普通会员";
         }
+        // 处理 member_expire_date 会员过期时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
+        authInfo.user.member_expire_date =
+          authInfo.user.member_expire_date.slice(0, 10);
       }
-      authInfo.user.gender = gender;
 
       authStore.login(authInfo.accessToken, authInfo.refreshToken);
       userStore.setUser(authInfo.user);

@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-page-custom-font */
-
 import "./styles/globals.scss";
 import "./styles/markdown.scss";
 import "./styles/highlight.scss";
@@ -7,9 +6,7 @@ import "./styles/layout.scss";
 import { getClientConfig } from "./config/client";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import { ErrorBoundary } from "./components/error";
 import { type Metadata } from "next";
-import { useEffect } from "react";
 
 export const metadata: Metadata = {
   title: "小光AI",
@@ -48,7 +45,7 @@ export default function RootLayout({
       </head>
       <body>
         <section className="appcontainer">
-          <Header displayMobileVersion={false} />
+          <Header />
           {children}
           <Footer />
         </section>

@@ -26,6 +26,7 @@ import { menuItems } from "./menu-items";
 
 import DrawerMenu from "./drawer-menu";
 import LoginButton from "./userinfo";
+import UserInfo from "./userinfo";
 
 const items: any = menuItems;
 
@@ -35,10 +36,8 @@ interface Props {
   displayMobileVersion: boolean;
 }
 
-export default function MainNav(
-  props: Props = { displayMobileVersion: false },
-) {
-  const { displayMobileVersion } = props;
+export default function MainNav() {
+  const isMobileScreen = useMobileScreen();
 
   const path = usePathname();
   const router = useRouter();
@@ -93,7 +92,7 @@ export default function MainNav(
 
   return (
     <>
-      {displayMobileVersion ? (
+      {isMobileScreen ? (
         <Header className={styles.header}>
           <div className={styles.logo}>
             <img
@@ -101,12 +100,12 @@ export default function MainNav(
               src="/logo-2.png"
               alt="Logo"
             />
-            <div className={styles["logo-text"]}>
-              <p className={styles["headline"]}>小光AI</p>
-            </div>
+            <Link href="/">
+              <div className={styles["logo-text"]}>
+                <p className={styles["headline"]}>小光AI</p>
+              </div>
+            </Link>
           </div>
-
-          <LoginButton />
         </Header>
       ) : (
         <Header
@@ -138,8 +137,7 @@ export default function MainNav(
               overflowedIndicator={<span>...</span>}
             />
           </div>
-
-          {/* <LoginButton /> */}
+          <UserInfo />
         </Header>
       )}
     </>

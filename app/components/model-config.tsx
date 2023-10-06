@@ -1,14 +1,38 @@
+"use client";
 import { ModalConfigValidator, ModelConfig, useAppConfig } from "../store";
 
 import Locale from "../locales";
 import { InputRange } from "./input-range";
 import { ListItem, Select } from "./ui-lib";
+import { useUserStore } from "../store";
 
 export function ModelConfigList(props: {
   modelConfig: ModelConfig;
   updateConfig: (updater: (config: ModelConfig) => void) => void;
 }) {
   const config = useAppConfig();
+
+  const user = useUserStore();
+  // 根据不同的用户会员等级设置不同的 maxtoken limit
+  const member_type = user.user?.member_type;
+  // 设置一个maxtoken的limit变量
+  let maxtoken_limit = 1000;
+  switch (member_type) {
+    case "普通会员":
+      maxtoken_limit = 4000;
+      break;
+    case "黄金会员":
+      maxtoken_limit = 6000;
+      break;
+    case "白金会员":
+      maxtoken_limit = 8000;
+      break;
+    case "钻石会员":
+      maxtoken_limit = 10000;
+      break;
+    default:
+      maxtoken_limit = 4000;
+  }
 
   return (
     <>
@@ -69,26 +93,27 @@ export function ModelConfigList(props: {
           }}
         ></InputRange>
       </ListItem>
-      {/* <ListItem
+      <ListItem
         title={Locale.Settings.MaxTokens.Title}
         subTitle={Locale.Settings.MaxTokens.SubTitle}
       >
-        <input
-          type="number"
-          min={100}
-          max={100000}
+        <InputRange
+          min="100"
+          max={maxtoken_limit}
+          step="1m00"
           value={props.modelConfig.max_tokens}
           onChange={(e) =>
             props.updateConfig(
               (config) =>
                 (config.max_tokens = ModalConfigValidator.max_tokens(
                   e.currentTarget.valueAsNumber,
+                  // maxtoken_limit,
                 )),
             )
           }
-          disabled
-        ></input>
-      </ListItem> */}
+          // disabled
+        ></InputRange>
+      </ListItem>
       <ListItem
         title={Locale.Settings.PresencePenalty.Title}
         subTitle={Locale.Settings.PresencePenalty.SubTitle}

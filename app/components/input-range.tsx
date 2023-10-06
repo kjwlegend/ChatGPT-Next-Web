@@ -6,9 +6,9 @@ interface InputRangeProps {
   title?: string;
   value: number | string;
   className?: string;
-  min: string;
-  max: string;
-  step: string;
+  min: number | string;
+  max: number | string;
+  step: number | string;
 }
 
 export function InputRange({

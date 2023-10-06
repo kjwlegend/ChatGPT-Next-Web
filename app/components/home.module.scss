@@ -198,6 +198,7 @@
 
 .chat-item:hover {
   background-color: var(--hover-color);
+  // box-shadow: var(--hover-shadow);
 }
 
 .chat-item-selected {
@@ -234,11 +235,13 @@
 }
 
 .chat-item-info {
-  display: flex;
+  // display: flex;
   justify-content: space-between;
+  position: absolute;
+  right: 15px;
   color: rgb(166, 166, 166);
   font-size: 12px;
-  margin-top: 8px;
+  // margin-top: 8px;
   animation: slide-in ease 0.3s;
 }
 

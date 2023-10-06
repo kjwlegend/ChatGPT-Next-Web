@@ -16,6 +16,9 @@ export interface User {
   member_type: string;
   phone_number: string | null;
   username: string;
+  member_expire_date: string;
+  chat_balance: number;
+  draw_balance: number;
 }
 
 export interface UserStore {
@@ -43,6 +46,9 @@ export const useUserStore = create<UserStore>()(
         member_type: "",
         phone_number: null,
         username: "",
+        member_expire_date: "",
+        chat_balance: 0,
+        draw_balance: 0,
       },
 
       updateNickname: (nickname) => {

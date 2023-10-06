@@ -42,13 +42,37 @@ export default function UserInfo() {
       label: <Link href="/profile/">个人中心</Link>,
       key: "0",
     },
+    {
+      // 展示会员类型, 不可点击
+      label: <Link href="/profile#2">会员类型: {user?.member_type}</Link>,
+      key: "1",
+    },
+
+    // 展示到期时间
+    {
+      label: `到期时间: ${user?.member_expire_date} `,
+      key: "2",
+    },
+    // 对话次数
+    {
+      label: `对话剩余: ${user?.chat_balance}`,
+      key: "3",
+    },
+    {
+      label: `绘画剩余: ${user?.draw_balance} `,
+      key: "4",
+    },
+    {
+      label: <Link href="/profile#4">邀请得礼</Link>,
+      key: "5",
+    },
 
     {
       type: "divider",
     },
     {
       label: <LogoutButton isButton={false} />,
-      key: "3",
+      key: "6",
     },
   ];
 
