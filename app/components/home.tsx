@@ -150,7 +150,7 @@ function Screen() {
     <div
       className={
         styles.container +
-        ` ${styles["tight-container"]} ${
+        ` ${shouldTightBorder ? styles["tight-container"] : styles.container} ${
           getLang() === "ar" ? styles["rtl-screen"] : ""
         }`
       }

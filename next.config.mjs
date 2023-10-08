@@ -63,7 +63,7 @@ const CorsHeaders = [
     key: "Access-Control-Max-Age",
     value: "86400",
   },
-]
+];
 
 if (mode !== "export") {
   nextConfig.headers = async () => {
@@ -89,16 +89,7 @@ if (mode !== "export") {
         source: "/sharegpt",
         destination: "https://sharegpt.com/api/conversations",
       },
-    ]
-
-    const apiUrl = process.env.API_URL
-    if (apiUrl) {
-      console.log("[Next] using api url ", apiUrl)
-      ret.push({
-        source: "/api/:path*",
-        destination: `${apiUrl}/:path*`,
-      })
-    }
+    ];
 
     return {
       beforeFiles: ret,

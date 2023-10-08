@@ -961,8 +961,6 @@ export function Settings() {
           </ListItem>
         </List> */}
 
-        <SyncItems />
-
         <List>
           <ModelConfigList
             modelConfig={config.modelConfig}
