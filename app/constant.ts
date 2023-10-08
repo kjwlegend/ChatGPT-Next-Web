@@ -26,6 +26,10 @@ export enum ApiPath {
   Cors = "/api/cors",
 }
 
+export enum ApiPath {
+  Cors = "/api/cors",
+}
+
 export enum SlotID {
   AppBody = "app-body",
 }

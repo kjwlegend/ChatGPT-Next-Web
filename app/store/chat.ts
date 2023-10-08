@@ -24,7 +24,6 @@ import { UserStore, useUserStore } from "./user";
 import { BUILTIN_MASKS } from "../masks";
 import type { BuiltinMask } from "../masks";
 import { createPersistStore } from "../utils/store";
-import { Session } from "inspector";
 
 export type ChatMessage = RequestMessage & {
   date: string;

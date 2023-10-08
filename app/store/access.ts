@@ -29,10 +29,6 @@ const DEFAULT_OPENAI_URL =
   getClientConfig()?.buildMode === "export" ? DEFAULT_API_HOST : "/api/openai/";
 console.log("[API] default openai url", DEFAULT_OPENAI_URL);
 
-// 将useAuth Store 作为函数值返回
-
-// 将useAuth Store 作为函数值返回
-
 const DEFAULT_ACCESS_STATE = {
   token: "",
   accessCode: "",

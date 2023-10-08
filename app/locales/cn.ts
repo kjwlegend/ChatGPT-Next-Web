@@ -13,6 +13,7 @@ const cn = {
   Auth: {
     Title: "小光AI助手",
     Tips: "你的每日伙伴",
+    SubTips: "或者输入你的 OpenAI API 密钥",
     Input: "在此处填写访问码",
     Confirm: "确认",
     Later: "稍后再说",
@@ -328,6 +329,10 @@ const cn = {
   Copy: {
     Success: "已写入剪切板",
     Failed: "复制失败，请赋予剪切板权限",
+  },
+  Download: {
+    Success: "内容已下载到您的目录。",
+    Failed: "下载失败。",
   },
   Context: {
     Toast: (x: any) => `包含 ${x} 条预设提示词`,
