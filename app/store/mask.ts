@@ -2,7 +2,7 @@ import { BUILTIN_MASKS } from "../masks";
 import { getLang, Lang } from "../locales";
 import { DEFAULT_TOPIC, ChatMessage } from "./chat";
 import { ModelConfig, useAppConfig } from "./config";
-import { StoreKey, MaskCategory } from "../constant";
+import { StoreKey, MaskCategory, MaskCategoryType } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
 
@@ -11,7 +11,7 @@ export type Mask = {
   createdAt: number;
   avatar: string;
   name: string;
-  category: MaskCategory;
+  category: string;
   featureMask?: boolean;
   constellation?: string;
   img?: string;
@@ -37,7 +37,7 @@ export const createEmptyMask = () =>
   ({
     id: nanoid(),
     avatar: DEFAULT_MASK_AVATAR,
-    category: MaskCategory.Default,
+    category: "default",
     featureMask: false,
     name: DEFAULT_TOPIC,
     intro: "",

@@ -149,14 +149,14 @@ export function MaskConfig(props: {
                 value={props.mask.category}
                 onChange={(e) =>
                   props.updateMask((mask) => {
-                    mask.category = e.currentTarget.value as MaskCategory;
+                    mask.category = e.currentTarget.value;
                   })
                 }
                 disabled
               >
                 {Object.values(MaskCategory).map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                  <option key={category.key} value={category.value}>
+                    {category.value}
                   </option>
                 ))}
               </select>
@@ -410,7 +410,7 @@ export function MaskPage() {
 
   const [filterLang, setFilterLang] = useState<Lang>();
 
-  const [filterCategory, setFilterCategory] = useState<MaskCategory>();
+  const [filterCategory, setFilterCategory] = useState<any>();
 
   const allMasks = maskStore.getAll().filter((m) => {
     if (filterLang && m.lang !== filterLang) {
@@ -526,7 +526,7 @@ export function MaskPage() {
                   setFilterCategory(undefined);
                 } else {
                   setFilterLang(undefined);
-                  setFilterCategory(value as MaskCategory);
+                  setFilterCategory(MaskCategory);
                 }
               }}
             >
@@ -534,8 +534,8 @@ export function MaskPage() {
                 {Locale.Settings.category.All}
               </option>
               {Object.values(MaskCategory).map((category) => (
-                <option value={category} key={category}>
-                  {category}
+                <option value={category.key} key={category.value}>
+                  {category.value}
                 </option>
               ))}
             </Select>

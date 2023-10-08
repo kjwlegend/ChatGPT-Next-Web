@@ -4,7 +4,7 @@ import { EN_MASKS } from "./en";
 
 import { type BuiltinMask } from "./typing";
 export { type BuiltinMask } from "./typing";
-import { getPromptHotness } from "../api/chat";
+import { getPromptHotness, getPromptCategory } from "../api/prompts";
 
 export const BUILTIN_MASK_ID = 100000;
 
@@ -40,6 +40,38 @@ async function fetchHotnessData() {
   }
 }
 
+// use api to get prompt category
+//
+import { MaskCategory, MaskCategoryType, maskCategories } from "../constant";
+
+// export let MaskCategory: MaskCategoryType[] = [];
+
+async function fetchPromptCategory() {
+  try {
+    const response = await getPromptCategory();
+    const categoryData = response.data;
+
+    categoryData.forEach((item: any) => {
+      const category = { key: item.key, value: item.value };
+      const existingCategory = MaskCategory.find((c) => c.key === item.key);
+      if (existingCategory) {
+        if (existingCategory.value !== item.value) {
+          existingCategory.value = item.value;
+        }
+      } else {
+        MaskCategory.push(category);
+      }
+    });
+
+    // 输出添加完成后的MaskCategory枚举
+    console.log(MaskCategory);
+  } catch (error) {
+    console.error("Failed to fetch prompt category:", error);
+  }
+}
+
+// 将接口所获得的分类数据 添加到 export enum MaskCategory
+
 // async function buildBuiltinMasks() {
 //   BUILTIN_MASKS.forEach((m) => BUILTIN_MASK_STORE.add(m));
 // }
@@ -49,3 +81,4 @@ export const BUILTIN_MASKS: BuiltinMask[] = [...CN_MASKS, ...EN_MASKS].map(
 );
 
 fetchHotnessData(); // 在最开始调用fetchHotnessData来获取hotness数据
+fetchPromptCategory();

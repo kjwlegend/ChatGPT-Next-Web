@@ -44,43 +44,29 @@ export enum StoreKey {
   Update = "chat-update",
   Sync = "sync",
 }
+export type MaskCategoryType = {
+  key: string;
+  value: string;
+};
 
-export enum MaskCategory {
-  All = "全部",
-  Default = "通用",
-  Develop = "开发",
-  Job = "职业",
-  Magick = "魔法",
-  Creative = "创作",
-  Kind = "情绪",
-  Emotion = "情感",
-  RolePlay = "角色扮演",
-  Copywriting = "文案",
-  Design = "设计",
-  Education = "教育",
-  Gaming = "游戏",
-  Fitness = "健身",
-  Music = "音乐",
-  Travel = "旅行",
-}
-
-export const maskCategories = [
-  MaskCategory.All,
-  MaskCategory.Default,
-  MaskCategory.Develop,
-  MaskCategory.Job,
-  MaskCategory.Magick,
-  MaskCategory.Creative,
-  MaskCategory.Kind,
-  MaskCategory.Emotion,
-  MaskCategory.RolePlay,
-  MaskCategory.Copywriting,
-  MaskCategory.Design,
-  MaskCategory.Education,
-  MaskCategory.Gaming,
-  MaskCategory.Fitness,
-  MaskCategory.Music,
-  MaskCategory.Travel,
+export const MaskCategory: MaskCategoryType[] = [];
+export let maskCategories = [
+  // MaskCategory.All,
+  // "通用",
+  // "开发",
+  // "职业",
+  // "魔法",
+  // "创作",
+  // MaskCategory.Kind,
+  // MaskCategory.Emotion,
+  // MaskCategory.RolePlay,
+  // "文案",
+  // "设计",
+  // "教育",
+  // "游戏",
+  // "健身",
+  // "音乐",
+  // "旅行",
 ];
 
 export const DEFAULT_SIDEBAR_WIDTH = 300;

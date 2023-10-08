@@ -4,7 +4,7 @@ import { MaskCategory, maskCategories } from "../constant";
 export const featureMask: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: true,
     name: "小光(通用)",
     intro:
@@ -47,7 +47,7 @@ export const featureMask: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "小光(青年版)",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: true,
     description:
       "乐观且积极的助手, 除了日常的活跃, 还多了一丝沉稳, 能够给你带来更具备专业性的回答. \n\n座右铭: '永远相信光'",
@@ -84,7 +84,7 @@ export const featureMask: BuiltinMask[] = [
   {
     avatar: "a-xiaoliang",
     name: "小亮(开发者)",
-    category: MaskCategory.Develop,
+    category: "开发",
     featureMask: true,
     description:
       "超级代码高手。他拥有出色的编码技能和丰富的经验，能够轻松应对各种编程语言。他对编码充满热爱. \n\n座右铭: '代码如诗'",
@@ -121,7 +121,7 @@ export const featureMask: BuiltinMask[] = [
   {
     avatar: "a-xiaoshuang",
     name: "小双(女巫)",
-    category: MaskCategory.Magick,
+    category: "魔法",
     featureMask: true,
     description:
       "精通占星和塔罗的女巫, 对于探索和解读未知的事物充满热情.能够为人们提供指引和启发，致力于为他人带来光明和希望。\n\n座右铭: '星光指引未来'",
@@ -157,7 +157,7 @@ export const featureMask: BuiltinMask[] = [
 
   {
     avatar: "a-konglaoshi",
-    category: MaskCategory.Default,
+    category: "通用",
     name: "孔老师(教育家)",
     featureMask: true,
     description:
@@ -197,7 +197,7 @@ export const featureMask: BuiltinMask[] = [
   },
   {
     avatar: "a-xiaopei",
-    category: MaskCategory.Job,
+    category: "职业",
     name: "小佩(面试官)",
     featureMask: true,
     description:

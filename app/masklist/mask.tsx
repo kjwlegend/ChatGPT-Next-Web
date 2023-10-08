@@ -34,7 +34,7 @@ import {
 } from "../components/ui-lib";
 import { Avatar, AvatarPicker } from "../components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
-import { MaskCategory, maskCategories } from "../constant";
+import { MaskCategory, maskCategories, MaskCategoryType } from "../constant";
 
 import { useNavigate } from "react-router-dom";
 
@@ -153,13 +153,13 @@ export function MaskConfig(props: {
             value={props.mask.category}
             onChange={(e) =>
               props.updateMask((mask) => {
-                mask.category = e.currentTarget.value as MaskCategory;
+                mask.category = e.currentTarget.value;
               })
             }
           >
             {Object.values(MaskCategory).map((category) => (
-              <option key={category} value={category}>
-                {category}
+              <option key={category.key} value={category.value}>
+                {category.value}
               </option>
             ))}
           </select>
@@ -417,7 +417,7 @@ export function MaskPage() {
 
   const [filterLang, setFilterLang] = useState<Lang>();
 
-  const [filterCategory, setFilterCategory] = useState<MaskCategory>();
+  const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
 
   const allMasks = maskStore.getAll().filter((m) => {
     if (filterLang && m.lang !== filterLang) {
@@ -516,7 +516,7 @@ export function MaskPage() {
         <div className={styles["mask-page-body"]}>
           <div className={styles["mask-category"]}>
             <MultipleTag
-              tagsData={maskCategories}
+              tagsData={MaskCategory.map((v) => v.value)}
               onTagsChange={handleTagsChange}
             />
           </div>

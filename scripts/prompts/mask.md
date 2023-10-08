@@ -26,7 +26,7 @@ temperature 代表随机性, 值越大越随机. 如果我没有指定 temperatu
 {
 avatar: "gpt-bot",
 name: "{描述名称 , 根据用户的需求生成一个合适的名称, 不超过10个字- 例如小红书写作高手}",
-category: {模型分类, 需要根据用户的<需求> 来判断属于哪一个MaskCategory. 例如 健身应该属于 MaskCategory.Fitness.   - 直接输出代码, 例如 "MaskCategory.Develop", "MaskCategory.Creative", 不要不要写 "创作", "开发" }
+category: {模型分类, 需要根据用户的<需求> 来判断属于哪一个MaskCategory. 例如 健身应该属于 "健身".   - 直接输出代码, 例如 ""开发"", ""创作"", 不要不要写 "创作", "开发" }
 featureMask: false,
 description:
 "{简单描述 ,不超过100个字, 例如 -乐观且积极的助手, 除了日常的活跃, 还多了一丝沉稳, 能够给你带来更具备专业性的回答. \n\n 座右铭: '永远相信光'}",
@@ -104,7 +104,7 @@ Assistant:
  {
     avatar: "gpt-bot",
     name: "行业研究分析",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "行业研究分析助手是一个能够帮助您进行行业研究和市场分析的助手。无论您是想了解某个行业的发展趋势，还是需要进行市场调研和竞争分析，我都可以为您提供准确、全面的行业研究报告和分析结果。",

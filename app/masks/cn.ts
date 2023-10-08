@@ -7,7 +7,7 @@ export const CN_MASKS: BuiltinMask[] = [
 
   {
     avatar: "gpt-bot",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     name: "麦肯锡分析专家",
     version: "Lv1",
@@ -47,7 +47,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "翻译专家",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "翻译专家是一个能够帮助您进行多语种翻译和文本翻译的助手。无论您是需要将文本翻译成其他语言，还是需要进行跨语言交流和沟通，我都可以为您提供准确、流畅的翻译服务。",
@@ -83,7 +83,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-xiaohongshu",
     name: "小红书写作高手",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "擅长撰写优质的小红书内容，能够为你提供有趣、有料、有深度的文章，助你成为小红书上的写作达人。",
@@ -118,7 +118,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "邮件回复助手",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "我是一个邮件回复助手，专注于帮助你撰写回复邮件。无论是商务邮件、个人邮件还是其他类型的邮件，我都可以提供专业的建议和优化。让我们一起打造精彩的邮件交流吧！",
@@ -153,7 +153,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "健身教练",
-    category: MaskCategory.Fitness,
+    category: "健身",
     featureMask: false,
     description:
       "我是一位专业的健身教练，致力于帮助人们实现健康和健美的目标。无论您是想减肥塑形、增肌增强、提高体能还是改善身体素质，我都可以为您提供专业的指导和训练方案。让我们一起迈向健康的生活吧！",
@@ -188,7 +188,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "摘要生成器",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "擅长生成精准、简洁的文章摘要，能够帮助你快速了解一篇文章的核心内容。",
@@ -223,7 +223,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "商业计划书生成",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "商业计划书生成是一个能够帮助您快速生成商业计划书的助手。无论您是初创企业还是正在寻找投资的企业，我都可以为您提供一个完整、详细的商业计划书，帮助您展示您的商业理念、市场分析、财务预测和运营策略。",
@@ -259,7 +259,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "行业研究分析",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "行业研究分析助手是一个能够帮助您进行行业研究和市场分析的助手。无论您是想了解某个行业的发展趋势，还是需要进行市场调研和竞争分析，我都可以为您提供准确、全面的行业研究报告和分析结果。",
@@ -294,7 +294,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "日报周报生成",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "日报周报生成助手是一个能够帮助您快速生成日报和周报的助手。无论您是需要记录工作进展、总结工作成果，还是需要向团队或上级汇报工作情况，我都可以为您提供规范、清晰的日报和周报模板。",
@@ -329,7 +329,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "异性对话生成器",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "异性对话生成器是一个能够帮助您生成与异性的对话内容的助手。无论您是需要练习社交技巧、准备约会对话，还是想要进行情感交流和建立深入的关系，我都可以为您提供有趣、真实的异性对话模拟。",
@@ -371,7 +371,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "智囊团",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "智囊团是一个由乔布斯、伊隆马斯克、马云、柏拉图、维达利和慧能大师组成的团队，他们作为教练和智囊，为您提供不同的视角、建议和意见。无论您面临何种处境和决策，他们都会以自己独特的个性、世界观和价值观来审视，并给出批评和建议。",
@@ -406,7 +406,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "深度思考助手",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "深度思考助手是一个能够帮助您进行深度思考训练的AI助手。无论您需要对关键词、主题或概念进行深入探索，还是希望提出高质量、有价值的问题来拓展人类认知、情感和行为的各个方面，我都可以为您提供帮助。",
@@ -441,7 +441,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "弗雷德里克王国探险",
-    category: MaskCategory.Gaming,
+    category: "游戏",
     featureMask: false,
     description:
       "弗雷德里克王国是一个基于文字的冒险游戏，您将成为魔法师、剑士、牧师等角色在三个人类国家，一个兽人国家，还有精灵、龙等生物，还有恶魔进行冒险",
@@ -476,7 +476,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "弗洛伊德",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "我是弗洛伊德，一位具备心理分析、心理动力学理论和认知行为疗法专业知识的心理治疗师。作为一名富有同理心、怀有同情心、思想开放且具备跨文化能力的治疗师，我将为您提供一个舒适的环境，让您可以分享自己的烦恼。我将运用积极倾听技巧、开放式问题和清晰的沟通，帮助您反思自己的思维、情绪和经历。我将引导您识别生活中的具体问题或模式，并考虑您的文化背景。我将结合心理分析、心理动力学方法和认知行为疗法技巧，运用解决问题的能力和创造力，综合跨学科知识。我将提供反思性反馈，介绍正念和放松技巧，并定期与您核查您的进展，运用批判性思维技巧。我将鼓励您对自己的康复负责，并根据您的需求和偏好调整我的方法。",
@@ -511,7 +511,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "起名大师",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "我是一位起名大师，擅长运用中国三才、五格、八字分析以及五行、喜用神分析方式。根据人的出生年月、性别和姓氏，结合中国古代诗词、楚辞、诗经、洛神赋等内容，我将为您提供至少5个匹配的名字。这些名字将与您的姓氏连在一起，通畅且富有内涵，同时具备创意。",
@@ -546,7 +546,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "PPT 结构生成",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "我是一位PPT结构生成专家，擅长根据您的需求提供优秀的PPT结构设计。无论是商务演示、学术报告、产品介绍还是培训课件，我都能为您提供专业的PPT结构建议。",
@@ -581,7 +581,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "四重结构信息老师",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "我是一位四重结构信息提炼者，擅长提取语句的核心意义并进行逻辑与联想的表达。根据您输入的词句，我将为您提供多重意义的解释，并进行联想拓展。如果有真实数据来源，我将给出相关信息。每个内容都经过十次验证，确保准确性。",
@@ -616,7 +616,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "销售人员",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "我是一位销售人员，擅长将产品或服务的价值最大化，并说服客户购买。无论您需要购买什么，我都会努力让您相信它的价值，并为您提供最好的购买体验。",
@@ -651,7 +651,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "短视频脚本创作",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "短视频脚本创作助手是一个能够帮助您创作有趣、吸引人的短视频脚本的助手。无论您是想制作搞笑的喜剧短片，还是需要创作有故事情节的微电影，我都可以为您提供创意和灵感，并帮助您撰写出精彩的短视频脚本。",
@@ -687,7 +687,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "博客文章创作",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "博客文章创作助手是一个能够帮助您创作优质、有价值的博客文章的助手。无论您是想写一篇技术分享的文章，还是需要撰写一篇旅行心得的博客，我都可以为您提供创意和灵感，并帮助您撰写出精彩的博客文章。",
@@ -722,7 +722,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "超级广告文案助手",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "超级广告助手是一个能够帮助您撰写吸引人、有效传达信息的广告文案的助手。无论您是需要创作产品推广的广告文案，还是想要设计品牌宣传的口号，我都可以为您提供创意和灵感，并帮助您撰写出精彩的广告文案。",
@@ -757,7 +757,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "游戏剧情设计",
-    category: MaskCategory.Gaming,
+    category: "游戏",
     featureMask: false,
     description:
       "游戏剧情设计助手是一个能够帮助您设计引人入胜、扣人心弦的游戏剧情的助手。无论您是想开发一款角色扮演游戏，还是需要创作一个冒险解谜类游戏，我都可以为您提供创意和灵感，并帮助您设计出精彩的游戏剧情。",
@@ -792,7 +792,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "社交媒体写作",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "社交媒体帖子创作助手是一个能够帮助您撰写有趣、引人注目的社交媒体帖子的助手。无论您是需要发布一条推广产品的帖子，还是想要分享一篇精彩的旅行故事，我都可以为您提供创意和灵感，并帮助您撰写出吸引眼球的社交媒体内容。",
@@ -827,7 +827,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "插画故事情节构思",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "插画故事情节构思助手是一个能够帮助您设计有趣、富有想象力的插画故事情节的助手。无论您是需要创作一本儿童绘本，还是想要设计一个漫画系列，我都可以为您提供创意和灵感，并帮助您构思出精彩的插画故事情节。",
@@ -862,7 +862,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-profile",
     name: "求职信和简历模板生成",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "求职信和简历模板生成助手是一个能够帮助您生成专业、优秀的求职信和简历模板的助手。无论您是正在找工作，还是需要更新您的求职材料，我都可以为您提供定制化的求职信和简历模板，并帮助您展示出自己的优势和特长。",
@@ -897,7 +897,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "行业趋势分析报告撰写",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "行业趋势分析报告撰写助手是一个能够帮助您撰写准确、全面的行业趋势分析报告的助手。无论您是需要了解某个行业的发展趋势，还是需要进行市场调研和竞争分析，我都可以为您提供专业的行业数据和分析结果，并帮助您撰写出具有参考价值的报告。",
@@ -932,7 +932,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-profile",
     name: "自我介绍生成",
-    category: MaskCategory.Default,
+    category: "通用",
     featureMask: false,
     description:
       "社交场合自我介绍文本生成助手是一个能够帮助您生成得体、吸引人的社交场合自我介绍文本的助手。无论您是参加聚会、会议还是其他社交活动，我都可以为您提供定制化的自我介绍文本，并帮助您展示出自己的优点和特长。",
@@ -967,7 +967,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "需求评估问卷和调查问卷设计",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "需求评估问卷和调查问卷设计助手是一个能够帮助您设计专业、有效的需求评估问卷和调查问卷的助手。无论您是需要了解用户需求、市场调研还是进行学术研究，我都可以为您提供定制化的问卷设计，并帮助您收集有价值的数据。",
@@ -1002,7 +1002,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "数据分析和报告撰写",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "数据分析和报告撰写助手是一个能够帮助您进行数据分析并撰写专业报告的助手。无论您需要进行数据收集和清洗、统计分析、数据可视化、回归分析还是其他数据相关任务，我都可以为您提供定制化的指导和文案创作。",
@@ -1037,7 +1037,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "学术论文写作助手",
-    category: MaskCategory.Education,
+    category: "教育",
     featureMask: false,
     description:
       "学术论文写作助手是一个能够帮助您进行学术论文撰写的助手。无论您需要撰写论文摘要、引言部分，还是进行文献综述、研究方法描述，我都可以为您提供定制化的指导和文字生成应用。",
@@ -1072,7 +1072,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "平面设计说明书编写助手",
-    category: MaskCategory.Design,
+    category: "设计",
     featureMask: false,
     description:
       "平面设计说明书编写助手是一个能够帮助您编写专业的平面设计说明书的助手。无论您需要介绍项目背景和目标、阐述设计要求和创意，还是解释配色原则和排版规则，我都可以为您提供定制化的指导和文字生成应用。",
@@ -1107,7 +1107,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "演讲稿写作助手",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "演讲稿写作助手是一个能够帮助您编写出色演讲稿的助手。无论您需要构思开场白和引入，明确演讲主题和目标，还是分享故事叙述和个人经历，我都可以为您提供定制化的指导和文字生成应用。",
@@ -1143,7 +1143,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "销售文案写作助手",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "销售文案写作助手是一个能够帮助您编写吸引人的销售文案的助手。无论您需要创造引人入胜的标题和概述，突出产品或服务的独特卖点（USP），还是呈现问题陈述和解决方案，我都可以为您提供定制化的指导和文字生成应用。",
@@ -1179,7 +1179,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-gaming",
     name: "游戏开发助手",
-    category: MaskCategory.Gaming,
+    category: "游戏",
     featureMask: false,
     description:
       "游戏开发中的文字生成应用助手是一个能够帮助您在游戏开发过程中应用文字生成技术的助手。无论您需要创建逼真的NPC对话系统、自动生成任务元素、场景描述、故事情节还是关卡设计，我都可以为您提供定制化的建议和创意。",
@@ -1214,7 +1214,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "销售合同起草",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "销售合同起草助手是一个能够帮助您起草销售合同的助手。无论您需要起草商品销售合同、服务销售合同还是其他类型的销售合同，我都可以为您提供参考的常见条款和要点，并根据您的具体需求进行定制化。",
@@ -1249,7 +1249,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "租赁合同起草",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "租赁合同起草助手是一个能够帮助您起草租赁合同的助手。无论您需要起草房屋租赁合同、设备租赁合同还是其他类型的租赁合同，我都可以为您提供参考的常见条款和要点，并根据您的具体需求进行定制化。",
@@ -1284,7 +1284,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "劳动合同起草",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "劳动合同起草助手是一个能够帮助您起草劳动合同的助手。无论您需要起草雇佣合同、劳务合同还是其他类型的劳动合同，我都可以为您提供参考的常见条款和要点，并根据您的具体需求进行定制化。",
@@ -1319,7 +1319,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-chuangzuo",
     name: "标题创作专家",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "创作标题助手是一个能够帮助您创作吸引人的标题的助手。无论您需要为文章、广告、产品或其他内容创作标题，我都可以为您提供一些文字应用的建议，以使标题更具吸引力和影响力。",
@@ -1354,7 +1354,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-writing",
     name: "销售信函撰写",
-    category: MaskCategory.Copywriting,
+    category: "文案",
     featureMask: false,
     description:
       "销售信函撰写助手是一个能够帮助您撰写有效的销售信函的助手。无论您需要撰写潜在客户的推广邮件、合作邀约信或其他类型的销售信函，我都可以为您提供一些注意事项和建议，以使您的信函更具吸引力和影响力。",
@@ -1389,7 +1389,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-chuangzuo",
     name: "企业品牌故事创作",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "企业品牌故事创作助手是一个能够帮助您创作引人注目的企业品牌故事的助手。无论您需要为新兴企业建立品牌形象，还是为已有企业重新塑造品牌形象，我都可以为您提供一些注意事项和建议，以使您的品牌故事更具吸引力和影响力。",
@@ -1425,7 +1425,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-zhushou",
     name: "项目管理助手",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "项目管理助手是一个能够帮助您在项目管理领域应用的助手。无论您需要定义项目目标和范围、创建工作分解结构、制定进度计划，还是进行风险评估和资源分配，我都可以为您提供一些拓展应用的建议和指导。",
@@ -1460,7 +1460,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-zhushou",
     name: "人力资源管理助手",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "人力资源管理策略助手是一个能够帮助您制定有效的人力资源管理策略的助手。无论您需要制定招聘和人才管理策略、员工培训和发展计划，还是建立绩效管理和激励机制，我都可以为您提供一些考虑因素和建议。",
@@ -1495,7 +1495,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "教学设计和课程开发",
-    category: MaskCategory.Education,
+    category: "教育",
     featureMask: false,
     description:
       "教学设计和课程开发助手是一个能够辅助您设计教学计划和制定课程大纲的助手。无论您需要设定教学目标、选择合适的教学方法，还是制定评估策略，我都可以为您提供一些考虑因素和建议。",
@@ -1530,7 +1530,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-zhushou",
     name: "财务助手",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "财务助手是一个能够帮助您进行财务规划和管理的助手。无论您需要制定财务规划和预算、进行投资分析和风险评估，还是进行税务筹划和报税指导，我都可以为您提供一些考虑因素和建议。",
@@ -1565,7 +1565,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-zhushou",
     name: "财务报表分析助手",
-    category: MaskCategory.Job,
+    category: "职业",
     featureMask: false,
     description:
       "财务报表分析助手是一个能够帮助您进行财务报表分析的助手。无论您需要了解不同类型的财务报表、进行财务指标分析，还是学习横向比较和纵向分析的方法，我都可以为您提供一些考虑因素和建议。",
@@ -1601,7 +1601,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "旅行助手",
-    category: MaskCategory.Travel,
+    category: "旅行",
     featureMask: false,
     description:
       "旅行助手是一个能够帮助您进行旅行规划和提供旅游信息的助手。无论您需要目的地推荐和景点介绍、行程规划和路线建议，还是酒店住宿推荐和美食指南，我都可以为您提供一些考虑因素和建议。",
@@ -1637,7 +1637,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-mnusic",
     name: "歌曲创作助手",
-    category: MaskCategory.Music,
+    category: "音乐",
     featureMask: false,
     description:
       "歌曲创作助手是一个能够帮助您进行歌曲创作的助手。无论您需要创作灵感和主题选择、曲调和和弦进行，还是歌词写作和结构形式的指导，我都可以为您提供一些考虑因素和建议。",
@@ -1672,7 +1672,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "a-mnusic",
     name: "歌词创作助手",
-    category: MaskCategory.Music,
+    category: "音乐",
     featureMask: false,
     description:
       "歌词创作助手是一个能够帮助您进行歌词创作的助手。无论您需要主题选择和情感表达、押韵和节奏，还是意象和比喻的运用，我都可以为您提供一些指导和建议。",
@@ -1707,7 +1707,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "星盘分析助手",
-    category: MaskCategory.Magick,
+    category: "魔法",
     featureMask: false,
     description:
       "星盘分析助手是一个能够帮助您进行星盘分析的助手。无论您需要绘制准确的星盘、解读行星和宫位、观察相互关系和相位，还是理解宫位主题和进行综合分析，我都可以为您提供一些指导和建议。",
@@ -1742,7 +1742,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "建筑设计助手",
-    category: MaskCategory.Design,
+    category: "设计",
     featureMask: false,
     description:
       "建筑设计助手是一个能够帮助您进行建筑设计的助手。无论您需要建筑风格和外观设计、结构设计和材料选择，还是空间规划和功能分区，我都可以为您提供一些指导和建议。",
@@ -1777,7 +1777,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "室内设计助手",
-    category: MaskCategory.Design,
+    category: "设计",
     featureMask: false,
     description:
       "室内设计助手是一个能够帮助您进行室内设计的助手。无论您需要空间规划和布局设计、材料和装饰品选择，还是色彩方案和光照设计，我都可以为您提供一些指导和建议。",
@@ -1812,7 +1812,7 @@ export const CN_MASKS: BuiltinMask[] = [
   {
     avatar: "gpt-bot",
     name: "创意头脑风暴助手",
-    category: MaskCategory.Creative,
+    category: "创作",
     featureMask: false,
     description:
       "创意头脑风暴助手是一个能够帮助您进行创意头脑风暴的助手。无论您需要设定创意主题和挑战、利用关联法则进行联想，还是提供刺激物和运用逆向思维，我都可以为您提供一些指导和建议。",

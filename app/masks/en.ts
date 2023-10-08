@@ -5,7 +5,7 @@ export const EN_MASKS: BuiltinMask[] = [
   {
     avatar: "1f60e",
     name: "Prompt Engineer",
-    category: MaskCategory.Develop,
+    category: "开发",
     context: [
       {
         id: "expert-0",
