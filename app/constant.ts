@@ -204,6 +204,7 @@ export const DEFAULT_MODELS = [
 import { getServerSideConfig } from "@/app/config/server";
 
 export const server_url = "http://localhost:8000";
+// export const server_url = "https://admin.xiaoguang.online";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
