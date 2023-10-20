@@ -12,61 +12,64 @@ export const DEFAULT_CORS_HOST = "https://ab.nextweb.fun";
 export const DEFAULT_API_HOST = `${DEFAULT_CORS_HOST}/api/proxy`;
 
 export enum Path {
-  Home = "/",
-  Chat = "/chat",
-  Settings = "/settings",
-  NewChat = "/new-chat",
-  Masks = "/masks",
-  Auth = "/auth",
-  Intro = "/intro",
-  Updates = "/updates",
+	Home = "/",
+	Chat = "/chat",
+	Settings = "/settings",
+	NewChat = "/new-chat",
+	Masks = "/masks",
+	Plugins = "/plugins",
+	Auth = "/auth",
+	Intro = "/intro",
+	Updates = "/updates",
 }
 
 export enum ApiPath {
-  Cors = "/api/cors",
+	Cors = "/api/cors",
 }
 
 export enum SlotID {
-  AppBody = "app-body",
+	AppBody = "app-body",
 }
 
 export enum FileName {
-  Masks = "masks.json",
-  Prompts = "prompts.json",
+	Masks = "masks.json",
+	Plugins = "plugins.json",
+	Prompts = "prompts.json",
 }
 
 export enum StoreKey {
-  Chat = "chat-next-web-store",
-  Access = "access-control",
-  Config = "app-config",
-  Mask = "mask-store",
-  Prompt = "prompt-store",
-  Update = "chat-update",
-  Sync = "sync",
+	Chat = "chat-next-web-store",
+	Access = "access-control",
+	Config = "app-config",
+	Mask = "mask-store",
+	Plugin = "plugin-store",
+	Prompt = "prompt-store",
+	Update = "chat-update",
+	Sync = "sync",
 }
 export type MaskCategoryType = {
-  key: string;
-  value: string;
+	key: string;
+	value: string;
 };
 
 export const MaskCategory: MaskCategoryType[] = [];
 export let maskCategories = [
-  // MaskCategory.All,
-  // "通用",
-  // "开发",
-  // "职业",
-  // "魔法",
-  // "创作",
-  // MaskCategory.Kind,
-  // MaskCategory.Emotion,
-  // MaskCategory.RolePlay,
-  // "文案",
-  // "设计",
-  // "教育",
-  // "游戏",
-  // "健身",
-  // "音乐",
-  // "旅行",
+	// MaskCategory.All,
+	// "通用",
+	// "开发",
+	// "职业",
+	// "魔法",
+	// "创作",
+	// MaskCategory.Kind,
+	// MaskCategory.Emotion,
+	// MaskCategory.RolePlay,
+	// "文案",
+	// "设计",
+	// "教育",
+	// "游戏",
+	// "健身",
+	// "音乐",
+	// "旅行",
 ];
 
 export const DEFAULT_SIDEBAR_WIDTH = 300;
@@ -86,17 +89,17 @@ export const REQUEST_TIMEOUT_MS = 60000;
 export const EXPORT_MESSAGE_CLASS_NAME = "export-markdown";
 
 export const OpenaiPath = {
-  ChatPath: "v1/chat/completions",
-  UsagePath: "dashboard/billing/usage",
-  SubsPath: "dashboard/billing/subscription",
-  ListModelPath: "v1/models",
+	ChatPath: "v1/chat/completions",
+	UsagePath: "dashboard/billing/usage",
+	SubsPath: "dashboard/billing/subscription",
+	ListModelPath: "v1/models",
 };
 
 import { useUserStore } from "@/app/store/user";
 
 export function getUserInfo() {
-  const user = useUserStore.getState().user;
-  return user;
+	const user = useUserStore.getState().user;
+	return user;
 }
 
 const user = getUserInfo();
@@ -114,9 +117,9 @@ Current model: {{model}}
 Current time: {{time}}`;
 
 export function getDefaultSystemTemplate() {
-  const user = getUserInfo();
+	const user = getUserInfo();
 
-  return `
+	return `
   
   # User Info
   - 用户的名字是: ${user.nickname}
@@ -139,66 +142,66 @@ Current time: {{time}}`;
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
 
 export const DEFAULT_MODELS = [
-  {
-    name: "gpt-4",
-    displayName: "小光-4.0",
-    available: false,
-  },
-  // {
-  //   name: "gpt-4-0314",
-  //   displayName: "小光-4.0-0314",
+	{
+		name: "gpt-4",
+		displayName: "小光-4.0",
+		available: true,
+	},
+	// {
+	//   name: "gpt-4-0314",
+	//   displayName: "小光-4.0-0314",
 
-  //   available: false,
-  // },
-  // {
-  //   name: "gpt-4-0613",
-  //   displayName: "小光-4.0-0613",
+	//   available: false,
+	// },
+	// {
+	//   name: "gpt-4-0613",
+	//   displayName: "小光-4.0-0613",
 
-  //   available: false,
-  // },
-  // {
-  //   name: "gpt-4-32k",
-  //   displayName: "小光-4.0-32k",
+	//   available: false,
+	// },
+	// {
+	//   name: "gpt-4-32k",
+	//   displayName: "小光-4.0-32k",
 
-  //   available: false,
-  // },
-  // {
-  //   name: "gpt-4-32k-0314",
-  //   displayName: "小光-4.0-32k-0314",
+	//   available: false,
+	// },
+	// {
+	//   name: "gpt-4-32k-0314",
+	//   displayName: "小光-4.0-32k-0314",
 
-  //   available: false,
-  // },
-  // {
-  //   name: "gpt-4-32k-0613",
-  //   displayName: "小光-4.0-32k-0613",
+	//   available: false,
+	// },
+	// {
+	//   name: "gpt-4-32k-0613",
+	//   displayName: "小光-4.0-32k-0613",
 
-  //   available: false,
-  // },
-  {
-    name: "gpt-3.5-turbo",
-    displayName: "小光-3.5-0613",
-    available: true,
-  },
-  // {
-  //   name: "gpt-3.5-turbo-0301",
-  //   displayName: "小光-3.5-0301",
-  //   available: false,
-  // },
-  {
-    name: "gpt-3.5-turbo-0613",
-    displayName: "小光-3.5-0613",
-    available: true,
-  },
-  {
-    name: "gpt-3.5-turbo-16k",
-    displayName: "小光-3.5-16k",
-    available: true,
-  },
-  {
-    name: "gpt-3.5-turbo-16k-0613",
-    displayName: "小光-3.5-16k-0613",
-    available: true,
-  },
+	//   available: false,
+	// },
+	{
+		name: "gpt-3.5-turbo",
+		displayName: "小光-3.5-0613",
+		available: true,
+	},
+	// {
+	//   name: "gpt-3.5-turbo-0301",
+	//   displayName: "小光-3.5-0301",
+	//   available: false,
+	// },
+	{
+		name: "gpt-3.5-turbo-0613",
+		displayName: "小光-3.5-0613",
+		available: true,
+	},
+	{
+		name: "gpt-3.5-turbo-16k",
+		displayName: "小光-3.5-16k",
+		available: true,
+	},
+	{
+		name: "gpt-3.5-turbo-16k-0613",
+		displayName: "小光-3.5-16k-0613",
+		available: true,
+	},
 ] as const;
 
 import { getServerSideConfig } from "@/app/config/server";

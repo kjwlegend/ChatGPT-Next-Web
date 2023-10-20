@@ -7,141 +7,149 @@ import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
 
 export type Mask = {
-  id: string;
-  createdAt: number;
-  avatar: string;
-  name: string;
-  category: string;
-  featureMask?: boolean;
-  constellation?: string;
-  img?: string;
-  description?: string;
-  intro?: string;
-  hideContext?: boolean;
-  version?: string;
-  context: ChatMessage[];
-  syncGlobalConfig?: boolean;
-  modelConfig: ModelConfig;
-  lang: Lang;
-  builtin: boolean;
-  hotness?: number;
+	id: string;
+	createdAt: number;
+	avatar: string;
+	name: string;
+	category: string;
+	featureMask?: boolean;
+	constellation?: string;
+	img?: string;
+	description?: string;
+	intro?: string;
+	hideContext?: boolean;
+	version?: string;
+	context: ChatMessage[];
+	syncGlobalConfig?: boolean;
+	modelConfig: ModelConfig;
+	lang: Lang;
+	builtin: boolean;
+	usePlugins?: boolean;
+	hotness?: number;
 };
 export const DEFAULT_MASK_STATE = {
-  masks: {} as Record<string, Mask>,
+	masks: {} as Record<string, Mask>,
 };
 
 export type MaskState = typeof DEFAULT_MASK_STATE;
 
 export const DEFAULT_MASK_AVATAR = "gpt-bot";
 export const createEmptyMask = () =>
-  ({
-    id: nanoid(),
-    avatar: DEFAULT_MASK_AVATAR,
-    category: "default",
-    featureMask: false,
-    name: DEFAULT_TOPIC,
-    intro: "",
-    context: [],
-    syncGlobalConfig: true, // use global config as default
-    modelConfig: { ...useAppConfig.getState().modelConfig },
-    lang: getLang(),
-    builtin: false,
-    createdAt: Date.now(),
-  }) as Mask;
+	({
+		id: nanoid(),
+		avatar: DEFAULT_MASK_AVATAR,
+		category: "default",
+		featureMask: false,
+		name: DEFAULT_TOPIC,
+		intro: "",
+		context: [],
+		syncGlobalConfig: true, // use global config as default
+		modelConfig: { ...useAppConfig.getState().modelConfig },
+		lang: getLang(),
+		builtin: false,
+		createdAt: Date.now(),
+		usePlugins: /^gpt(?!.*03\d{2}$).*$/.test(
+			useAppConfig.getState().modelConfig.model,
+		),
+	}) as Mask;
 
 export const useMaskStore = createPersistStore(
-  { ...DEFAULT_MASK_STATE },
+	{ ...DEFAULT_MASK_STATE },
 
-  (set, get) => ({
-    create(mask?: Partial<Mask>) {
-      const masks = get().masks;
-      const id = nanoid();
-      masks[id] = {
-        ...createEmptyMask(),
-        ...mask,
-        id,
-        builtin: false,
-      };
+	(set, get) => ({
+		create(mask?: Partial<Mask>) {
+			const masks = get().masks;
+			const id = nanoid();
+			masks[id] = {
+				...createEmptyMask(),
+				...mask,
+				id,
+				builtin: false,
+			};
 
-      set(() => ({ masks }));
-      get().markUpdate();
+			set(() => ({ masks }));
+			get().markUpdate();
 
-      return masks[id];
-    },
-    updateMask(id: string, updater: (mask: Mask) => void) {
-      const masks = get().masks;
-      const mask = masks[id];
-      if (!mask) return;
-      const updateMask = { ...mask };
-      updater(updateMask);
-      masks[id] = updateMask;
-      set(() => ({ masks }));
-      get().markUpdate();
-    },
-    delete(id: string) {
-      const masks = get().masks;
-      delete masks[id];
-      set(() => ({ masks }));
-      get().markUpdate();
-    },
+			return masks[id];
+		},
+		updateMask(id: string, updater: (mask: Mask) => void) {
+			const masks = get().masks;
+			const mask = masks[id];
+			if (!mask) return;
+			const updateMask = { ...mask };
+			updater(updateMask);
+			masks[id] = updateMask;
+			set(() => ({ masks }));
+			get().markUpdate();
+		},
+		delete(id: string) {
+			const masks = get().masks;
+			delete masks[id];
+			set(() => ({ masks }));
+			get().markUpdate();
+		},
 
-    get(id?: string) {
-      return get().masks[id ?? 1145141919810];
-    },
-    getAll() {
-      const userMasks = Object.values(get().masks).sort((a, b) => {
-        return b.createdAt - a.createdAt;
-      });
-      const config = useAppConfig.getState();
-      if (config.hideBuiltinMasks) return userMasks;
-      const buildinMasks = BUILTIN_MASKS.map(
-        (m) =>
-          ({
-            ...m,
-            modelConfig: {
-              ...config.modelConfig,
-              ...m.modelConfig,
-            },
-          }) as Mask,
-      );
-      buildinMasks.sort((a, b) => {
-        const hotnessA = isNaN(Number(a.hotness)) ? 0 : Number(a.hotness);
-        const hotnessB = isNaN(Number(b.hotness)) ? 0 : Number(b.hotness);
+		get(id?: string) {
+			return get().masks[id ?? 1145141919810];
+		},
+		getAll() {
+			const userMasks = Object.values(get().masks).sort((a, b) => {
+				return b.createdAt - a.createdAt;
+			});
+			const config = useAppConfig.getState();
+			if (config.hideBuiltinMasks) return userMasks;
+			const buildinMasks = BUILTIN_MASKS.map(
+				(m) =>
+					({
+						...m,
+						modelConfig: {
+							...config.modelConfig,
+							...m.modelConfig,
+						},
+					}) as Mask,
+			);
+			buildinMasks.sort((a, b) => {
+				const hotnessA = isNaN(Number(a.hotness))
+					? 0
+					: Number(a.hotness);
+				const hotnessB = isNaN(Number(b.hotness))
+					? 0
+					: Number(b.hotness);
 
-        // 3层排序逻辑: featureMask > hotness > createdAt
-        if (a.featureMask && !b.featureMask) return -1;
-        if (!a.featureMask && b.featureMask) return 1;
-        if (hotnessA > hotnessB) return -1;
-        if (hotnessA < hotnessB) return 1;
-        return b.createdAt - a.createdAt;
-      });
-      return userMasks.concat(buildinMasks);
-    },
-    search(text: string) {
-      return Object.values(get().masks);
-    },
-  }),
-  {
-    name: StoreKey.Mask,
-    version: 3.1,
+				// 3层排序逻辑: featureMask > hotness > createdAt
+				if (a.featureMask && !b.featureMask) return -1;
+				if (!a.featureMask && b.featureMask) return 1;
+				if (hotnessA > hotnessB) return -1;
+				if (hotnessA < hotnessB) return 1;
+				return b.createdAt - a.createdAt;
+			});
+			return userMasks.concat(buildinMasks);
+		},
+		search(text: string) {
+			return Object.values(get().masks);
+		},
+	}),
+	{
+		name: StoreKey.Mask,
+		version: 3.1,
 
-    migrate(state, version) {
-      const newState = JSON.parse(JSON.stringify(state)) as MaskState;
+		migrate(state, version) {
+			const newState = JSON.parse(JSON.stringify(state)) as MaskState;
 
-      // migrate mask id to nanoid
-      if (version < 3) {
-        Object.values(newState.masks).forEach((m) => (m.id = nanoid()));
-      }
+			// migrate mask id to nanoid
+			if (version < 3) {
+				Object.values(newState.masks).forEach((m) => (m.id = nanoid()));
+			}
 
-      if (version < 3.1) {
-        const updatedMasks: Record<string, Mask> = {};
-        Object.values(newState.masks).forEach((m) => {
-          updatedMasks[m.id] = m;
-        });
-        newState.masks = updatedMasks;
-      }
+			if (version < 3.1) {
+				const updatedMasks: Record<string, Mask> = {};
+				Object.values(newState.masks).forEach((m) => {
+					updatedMasks[m.id] = m;
+				});
+				newState.masks = updatedMasks;
+			}
 
-      return newState as any;
-    },
-  },
+			return newState as any;
+		},
+	},
 );
