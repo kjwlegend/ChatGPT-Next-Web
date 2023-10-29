@@ -1,92 +1,92 @@
 .home-page {
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  width: 100%;
-  padding: 20px;
-  background-image: url("/bg.png");
-  background-repeat: no-repeat;
-  background-position: 100% 0;
-  background-attachment: fixed;
-  align-items: flex-start;
-  box-sizing: border-box;
+	margin: auto;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	width: 100%;
+	padding: 20px;
+	background-image: url("/bg.png");
+	background-repeat: no-repeat;
+	background-position: 100% 0;
+	background-attachment: fixed;
+	align-items: flex-start;
+	box-sizing: border-box;
 
-  :global .ant-timeline {
-    width: 100%;
-    margin-left: -20%;
-    position: relative;
-    margin-top: 50px;
+	:global .ant-timeline {
+		width: 100%;
+		margin-left: -20%;
+		position: relative;
+		margin-top: 50px;
 
-    .ant-timeline-item {
-      font-size: 16px;
-      margin: 15px;
-    }
-  }
+		.ant-timeline-item {
+			font-size: 16px;
+			margin: 15px;
+		}
+	}
 }
 
 @media screen and (max-width: 768px) {
-  .home-page {
-    padding: 0;
+	.home-page {
+		padding: 0;
 
-    .section {
-      padding: 20px;
+		.section {
+			padding: 20px;
 
-      h2 {
-        font-size: 24px;
-      }
+			h2 {
+				font-size: 24px;
+			}
 
-      :global .ant-col {
-        h3 {
-          font-size: 22px;
-        }
-        p {
-          font-size: 16px;
-        }
-        img {
-          width: 100%;
-        }
-        .ant-card {
-          padding: 0;
-          .ant-card-head {
-            padding: 12px;
-            font-size: 18px;
-          }
-          .ant-card-body {
-            padding: 12px;
-          }
-        }
-      }
+			:global .ant-col {
+				h3 {
+					font-size: 22px;
+				}
+				p {
+					font-size: 16px;
+				}
+				img {
+					width: 100%;
+				}
+				.ant-card {
+					padding: 0;
+					.ant-card-head {
+						padding: 12px;
+						font-size: 18px;
+					}
+					.ant-card-body {
+						padding: 12px;
+					}
+				}
+			}
 
-      &.differentothers {
-        .conclusion {
-          margin-top: 25px;
-          font-size: 16px;
-          text-align: center;
-          width: 100%;
-        }
-      }
-    }
+			&.differentothers {
+				.conclusion {
+					margin-top: 25px;
+					font-size: 16px;
+					text-align: center;
+					width: 100%;
+				}
+			}
+		}
 
-    :global .ant-collapse {
-      .ant-collapse-item {
-        .ant-collapse-header {
-          font-size: 16px;
-        }
-        .ant-collapse-content {
-          font-size: 16px;
-        }
-      }
-    }
+		:global .ant-collapse {
+			.ant-collapse-item {
+				.ant-collapse-header {
+					font-size: 16px;
+				}
+				.ant-collapse-content {
+					font-size: 16px;
+				}
+			}
+		}
 
-    .action {
-      width: 90%;
-      height: 160px;
+		.action {
+			width: 90%;
+			height: 160px;
 
-      h3 {
-        font-size: 20px;
-        font-weight: bold;
-      }
-    }
-  }
+			h3 {
+				font-size: 20px;
+				font-weight: bold;
+			}
+		}
+	}
 }

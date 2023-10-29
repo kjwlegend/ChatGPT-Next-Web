@@ -10,69 +10,70 @@ import { useAuthStore } from "@/app/store/auth";
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 
 function getModels(remoteModelRes: OpenAIListModelResponse) {
-  const config = getServerSideConfig();
+	const config = getServerSideConfig();
 
-  if (config.disableGPT4) {
-    remoteModelRes.data = remoteModelRes.data.filter(
-      (m) => !m.id.startsWith("gpt-4"),
-    );
-  }
+	if (config.disableGPT4) {
+		remoteModelRes.data = remoteModelRes.data.filter(
+			(m) => !m.id.startsWith("gpt-4"),
+		);
+	}
 
-  return remoteModelRes;
+	return remoteModelRes;
 }
 
 async function handle(
-  req: NextRequest,
-  { params }: { params: { path: string[] } },
+	req: NextRequest,
+	{ params }: { params: { path: string[] } },
 ) {
-  // const allowed = useAuthStore((state) => state.isAuthenticated);
-  // console.log("[OpenAI Route] allowed", allowed);
+	// const allowed = useAuthStore((state) => state.isAuthenticated);
+	// console.log("[OpenAI Route] allowed", allowed);
 
-  console.log("[OpenAI Route] params ", params);
+	console.log("[OpenAI Route] params ", params);
 
-  if (req.method === "OPTIONS") {
-    return NextResponse.json({ body: "OK" }, { status: 200 });
-  }
+	if (req.method === "OPTIONS") {
+		return NextResponse.json({ body: "OK" }, { status: 200 });
+	}
 
-  const subpath = params.path.join("/");
+	const subpath = params.path.join("/");
 
-  if (!ALLOWD_PATH.has(subpath)) {
-    console.log("[OpenAI Route] forbidden path ", subpath);
-    return NextResponse.json(
-      {
-        error: true,
-        msg: "you are not allowed to request " + subpath,
-      },
-      {
-        status: 403,
-      },
-    );
-  }
+	if (!ALLOWD_PATH.has(subpath)) {
+		console.log("[OpenAI Route] forbidden path ", subpath);
+		return NextResponse.json(
+			{
+				error: true,
+				msg: "you are not allowed to request " + subpath,
+			},
+			{
+				status: 403,
+			},
+		);
+	}
 
-  const authResult = auth(req);
-  if (authResult.error) {
-    return NextResponse.json(authResult, {
-      status: 401,
-    });
-  }
+	const authResult = auth(req);
+	if (authResult.error) {
+		// console.log("[OpenAI Route] auth error ", authResult.error);
+		return NextResponse.json(authResult, {
+			status: 401,
+		});
+	}
 
-  try {
-    const response = await requestOpenai(req);
+	try {
+		const response = await requestOpenai(req);
 
-    // list models
-    if (subpath === OpenaiPath.ListModelPath && response.status === 200) {
-      const resJson = (await response.json()) as OpenAIListModelResponse;
-      const availableModels = getModels(resJson);
-      return NextResponse.json(availableModels, {
-        status: response.status,
-      });
-    }
+		// list models
+		if (subpath === OpenaiPath.ListModelPath && response.status === 200) {
+			const resJson = (await response.json()) as OpenAIListModelResponse;
+			const availableModels = getModels(resJson);
+			return NextResponse.json(availableModels, {
+				status: response.status,
+			});
+		}
 
-    return response;
-  } catch (e) {
-    console.error("[OpenAI] ", e);
-    return NextResponse.json(prettyObject(e));
-  }
+		return response;
+	} catch (e) {
+		console.error("[OpenAI] ", e);
+		return NextResponse.json(prettyObject(e));
+	}
 }
 
 export const GET = handle;

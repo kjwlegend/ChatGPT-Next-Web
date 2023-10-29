@@ -19,8 +19,13 @@ import { WebBrowser } from "langchain/tools/webbrowser";
 import { Calculator } from "langchain/tools/calculator";
 import { DynamicTool, Tool } from "langchain/tools";
 import { DallEAPIWrapper } from "@/app/api/langchain-tools/dalle_image_generator";
-import { BaiduSearch } from "@/app/api/langchain-tools/baidu_search";
-import { GoogleSearch } from "@/app/api/langchain-tools/google_search";
+// import { BaiduSearch } from "@/app/api/langchain-tools/baidu_search";
+// import { GoogleSearch } from "@/app/api/langchain-tools/google_search";
+import {
+	AllSearch,
+	BaiduSearch,
+	GoogleSearch,
+} from "@/app/api/langchain-tools/all_search";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 
 const serverConfig = getServerSideConfig();
@@ -183,6 +188,9 @@ async function handle(req: NextRequest) {
 					break;
 				case "baidu":
 					searchTool = new BaiduSearch();
+					break;
+				case "all":
+					searchTool = new AllSearch();
 					break;
 			}
 		}
