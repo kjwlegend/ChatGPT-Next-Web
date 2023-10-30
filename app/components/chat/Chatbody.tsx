@@ -43,7 +43,7 @@ import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "./multi-chats.module.scss";
+import styles from "@/app/components/chat/multi-chats.module.scss";
 
 import {
 	List,
@@ -225,8 +225,7 @@ export function Chatbody() {
 		const edgeThreshold = e.clientHeight;
 
 		const isTouchTopEdge = e.scrollTop <= edgeThreshold;
-		const isTouchBottomEdge =
-			bottomHeight >= e.scrollHeight - edgeThreshold;
+		const isTouchBottomEdge = bottomHeight >= e.scrollHeight - edgeThreshold;
 		const isHitBottom =
 			bottomHeight >= e.scrollHeight - (isMobileScreen ? 5 : 10);
 
@@ -287,18 +286,14 @@ export function Chatbody() {
 		deleteMessage(botMessage?.id);
 
 		setIsLoading(true);
-		chatStore
-			.onUserInput(userMessage.content)
-			.then(() => setIsLoading(false));
+		chatStore.onUserInput(userMessage.content).then(() => setIsLoading(false));
 		inputRef.current?.focus();
 	};
 
 	const deleteMessage = (msgId?: string) => {
 		chatStore.updateCurrentSession(
 			(session) =>
-				(session.messages = session.messages.filter(
-					(m) => m.id !== msgId,
-				)),
+				(session.messages = session.messages.filter((m) => m.id !== msgId)),
 		);
 	};
 
@@ -350,58 +345,35 @@ export function Chatbody() {
 					!isContext;
 				const showTyping = message.preview || message.streaming;
 
-				const shouldShowClearContextDivider =
-					i === clearContextIndex - 1;
+				const shouldShowClearContextDivider = i === clearContextIndex - 1;
 
 				return (
 					<Fragment key={message.id}>
 						<div
 							className={
-								isUser
-									? styles["chat-message-user"]
-									: styles["chat-message"]
+								isUser ? styles["chat-message-user"] : styles["chat-message"]
 							}
 						>
 							<div className={styles["chat-message-container"]}>
 								<div className={styles["chat-message-header"]}>
-									<div
-										className={
-											styles["chat-message-avatar"]
-										}
-									>
-										<div
-											className={
-												styles["chat-message-edit"]
-											}
-										>
+									<div className={styles["chat-message-avatar"]}>
+										<div className={styles["chat-message-edit"]}>
 											<IconButton
 												icon={<EditIcon />}
 												onClick={async () => {
-													const newMessage =
-														await showPrompt(
-															Locale.Chat.Actions
-																.Edit,
-															message.content,
-															10,
-														);
-													chatStore.updateCurrentSession(
-														(session) => {
-															const m =
-																session.mask.context
-																	.concat(
-																		session.messages,
-																	)
-																	.find(
-																		(m) =>
-																			m.id ===
-																			message.id,
-																	);
-															if (m) {
-																m.content =
-																	newMessage;
-															}
-														},
+													const newMessage = await showPrompt(
+														Locale.Chat.Actions.Edit,
+														message.content,
+														10,
 													);
+													chatStore.updateCurrentSession((session) => {
+														const m = session.mask.context
+															.concat(session.messages)
+															.find((m) => m.id === message.id);
+														if (m) {
+															m.content = newMessage;
+														}
+													});
 												}}
 											></IconButton>
 										</div>
@@ -410,17 +382,13 @@ export function Chatbody() {
 												<>
 													<UserAvatar
 														size="large"
-														src={
-															userStore.user
-																.avatar
-														}
+														src={userStore.user.avatar}
 													/>
 												</>
 											) : (
 												<UserAvatar
 													style={{
-														backgroundColor:
-															"rgb(91, 105, 230)",
+														backgroundColor: "rgb(91, 105, 230)",
 													}}
 													size="large"
 												>
@@ -433,86 +401,37 @@ export function Chatbody() {
 									</div>
 
 									{showActions && (
-										<div
-											className={
-												styles["chat-message-actions"]
-											}
-										>
-											<div
-												className={
-													styles["chat-input-actions"]
-												}
-											>
+										<div className={styles["chat-message-actions"]}>
+											<div className={styles["chat-input-actions"]}>
 												{message.streaming ? (
 													<ChatAction
-														text={
-															Locale.Chat.Actions
-																.Stop
-														}
+														text={Locale.Chat.Actions.Stop}
 														icon={<StopIcon />}
-														onClick={() =>
-															onUserStop(
-																message.id ?? i,
-															)
-														}
+														onClick={() => onUserStop(message.id ?? i)}
 													/>
 												) : (
 													<>
 														<ChatAction
-															text={
-																Locale.Chat
-																	.Actions
-																	.Retry
-															}
+															text={Locale.Chat.Actions.Retry}
 															icon={<ResetIcon />}
-															onClick={() =>
-																onResend(
-																	message,
-																)
-															}
+															onClick={() => onResend(message)}
 														/>
 
 														<ChatAction
-															text={
-																Locale.Chat
-																	.Actions
-																	.Delete
-															}
-															icon={
-																<DeleteIcon />
-															}
-															onClick={() =>
-																onDelete(
-																	message.id ??
-																		i,
-																)
-															}
+															text={Locale.Chat.Actions.Delete}
+															icon={<DeleteIcon />}
+															onClick={() => onDelete(message.id ?? i)}
 														/>
 
 														<ChatAction
-															text={
-																Locale.Chat
-																	.Actions.Pin
-															}
+															text={Locale.Chat.Actions.Pin}
 															icon={<PinIcon />}
-															onClick={() =>
-																onPinMessage(
-																	message,
-																)
-															}
+															onClick={() => onPinMessage(message)}
 														/>
 														<ChatAction
-															text={
-																Locale.Chat
-																	.Actions
-																	.Copy
-															}
+															text={Locale.Chat.Actions.Copy}
 															icon={<CopyIcon />}
-															onClick={() =>
-																copyToClipboard(
-																	message.content,
-																)
-															}
+															onClick={() => copyToClipboard(message.content)}
 														/>
 													</>
 												)}
@@ -524,35 +443,15 @@ export function Chatbody() {
 									message.toolMessages &&
 									message.toolMessages.map((tool, index) => (
 										<div
-											className={
-												styles[
-													"chat-message-tools-status"
-												]
-											}
+											className={styles["chat-message-tools-status"]}
 											key={index}
 										>
-											<div
-												className={
-													styles[
-														"chat-message-tools-name"
-													]
-												}
-											>
+											<div className={styles["chat-message-tools-name"]}>
 												<CheckmarkIcon
-													className={
-														styles[
-															"chat-message-checkmark"
-														]
-													}
+													className={styles["chat-message-checkmark"]}
 												/>
 												{tool.toolName}:
-												<code
-													className={
-														styles[
-															"chat-message-tools-details"
-														]
-													}
-												>
+												<code className={styles["chat-message-tools-details"]}>
 													{tool.toolInput}
 												</code>
 											</div>
@@ -560,11 +459,7 @@ export function Chatbody() {
 									))}
 
 								{showTyping && (
-									<div
-										className={
-											styles["chat-message-status"]
-										}
-									>
+									<div className={styles["chat-message-status"]}>
 										{Locale.Chat.Typing}
 									</div>
 								)}
@@ -572,31 +467,22 @@ export function Chatbody() {
 									<div
 										className={`${
 											isUser
-												? styles["user"] +
-												  " " +
-												  styles["play"]
-												: styles["bot"] +
-												  " " +
-												  styles["play"]
+												? styles["user"] + " " + styles["play"]
+												: styles["bot"] + " " + styles["play"]
 										}`}
 									>
-										<button
-											onClick={() => playAudio(message)}
-										>
+										<button onClick={() => playAudio(message)}>
 											<PlayIcon />
 										</button>
 									</div>
 									<Markdown
 										content={message.content}
 										loading={
-											(message.preview ||
-												message.streaming) &&
+											(message.preview || message.streaming) &&
 											message.content.length === 0 &&
 											!isUser
 										}
-										onContextMenu={(e) =>
-											onRightClick(e, message)
-										}
+										onContextMenu={(e) => onRightClick(e, message)}
 										onDoubleClickCapture={() => {
 											if (!isMobileScreen) return;
 											setUserInput(message.content);
@@ -607,20 +493,14 @@ export function Chatbody() {
 									/>
 								</div>
 
-								<div
-									className={
-										styles["chat-message-action-date"]
-									}
-								>
+								<div className={styles["chat-message-action-date"]}>
 									{isContext
 										? Locale.Chat.IsContext
 										: message.date.toLocaleString()}
 								</div>
 							</div>
 						</div>
-						{shouldShowClearContextDivider && (
-							<ClearContextDivider />
-						)}
+						{shouldShowClearContextDivider && <ClearContextDivider />}
 					</Fragment>
 				);
 			})}

@@ -58,7 +58,7 @@ import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "./multi-chats.module.scss";
+import styles from "@/app/components/chat/multi-chats.module.scss";
 
 import {
 	List,
@@ -155,20 +155,14 @@ export function PromptHints(props: {
 					ref={i === selectIndex ? selectedRef : null}
 					className={
 						styles["prompt-hint"] +
-						` ${
-							i === selectIndex
-								? styles["prompt-hint-selected"]
-								: ""
-						}`
+						` ${i === selectIndex ? styles["prompt-hint-selected"] : ""}`
 					}
 					key={prompt.title + i.toString()}
 					onClick={() => props.onPromptSelect(prompt)}
 					onMouseEnter={() => setSelectIndex(i)}
 				>
 					<div className={styles["hint-title"]}>{prompt.title}</div>
-					<div className={styles["hint-content"]}>
-						{prompt.content}
-					</div>
+					<div className={styles["hint-content"]}>{prompt.content}</div>
 				</div>
 			))}
 		</div>
@@ -189,8 +183,7 @@ export function ChatAction(props: {
 
 	function updateWidth() {
 		if (!iconRef.current || !textRef.current) return;
-		const getWidth = (dom: HTMLDivElement) =>
-			dom.getBoundingClientRect().width;
+		const getWidth = (dom: HTMLDivElement) => dom.getBoundingClientRect().width;
 		const textWidth = getWidth(textRef.current);
 		const iconWidth = getWidth(iconRef.current);
 		setWidth({
@@ -323,8 +316,7 @@ export function ChatActions(props: {
 					onClick={() => {
 						chatStore.updateCurrentSession(
 							(session) =>
-								(session.clearContextIndex =
-									session.messages.length),
+								(session.clearContextIndex = session.messages.length),
 						);
 					}}
 				/>
@@ -343,13 +335,7 @@ export function ChatActions(props: {
 									? Locale.Chat.InputActions.DisablePlugins
 									: Locale.Chat.InputActions.EnablePlugins
 							}
-							icon={
-								usePlugins ? (
-									<EnablePluginIcon />
-								) : (
-									<DisablePluginIcon />
-								)
-							}
+							icon={usePlugins ? <EnablePluginIcon /> : <DisablePluginIcon />}
 						/>
 					)}
 				{showModelSelector && (
@@ -363,13 +349,11 @@ export function ChatActions(props: {
 						onSelection={(s) => {
 							if (s.length === 0) return;
 							chatStore.updateCurrentSession((session) => {
-								session.mask.modelConfig.model =
-									s[0] as ModelType;
+								session.mask.modelConfig.model = s[0] as ModelType;
 								session.mask.syncGlobalConfig = false;
-								session.mask.usePlugins =
-									/^gpt(?!.*03\d{2}$).*$/.test(
-										session.mask.modelConfig.model,
-									);
+								session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
+									session.mask.modelConfig.model,
+								);
 							});
 							showToast(s[0]);
 						}}
@@ -382,14 +366,10 @@ export function ChatActions(props: {
 					icon={<BreakIcon />}
 					onClick={() => {
 						chatStore.updateCurrentSession((session) => {
-							if (
-								session.clearContextIndex ===
-								session.messages.length
-							) {
+							if (session.clearContextIndex === session.messages.length) {
 								session.clearContextIndex = undefined;
 							} else {
-								session.clearContextIndex =
-									session.messages.length;
+								session.clearContextIndex = session.messages.length;
 								session.memoryPrompt = ""; // will clear memory
 							}
 						});
@@ -445,8 +425,7 @@ export function Inputpanel() {
 		next: () => chatStore.nextSession(1),
 		clear: () =>
 			chatStore.updateCurrentSession(
-				(session) =>
-					(session.clearContextIndex = session.messages.length),
+				(session) => (session.clearContextIndex = session.messages.length),
 			),
 		del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
 	});
@@ -509,14 +488,10 @@ export function Inputpanel() {
 						}
 					} else {
 						if (response.code === 401) {
-							messageApi.error(
-								"登录已过期(令牌无效)，请重新登录",
-							);
+							messageApi.error("登录已过期(令牌无效)，请重新登录");
 							authHook.logoutHook();
 						} else if (response.code === 4001) {
-							messageApi.error(
-								"登录已过期(令牌无效)，请重新登录",
-							);
+							messageApi.error("登录已过期(令牌无效)，请重新登录");
 							authHook.logoutHook();
 						} else if (response.code === 4000) {
 							messageApi.error(
@@ -636,9 +611,7 @@ export function Inputpanel() {
 	const [inputRows, setInputRows] = useState(2);
 	const measure = useDebouncedCallback(
 		() => {
-			const rows = inputRef.current
-				? autoGrowTextArea(inputRef.current)
-				: 1;
+			const rows = inputRef.current ? autoGrowTextArea(inputRef.current) : 1;
 			const inputRows = Math.min(
 				20,
 				Math.max(2 + Number(!isMobileScreen), rows),
@@ -686,10 +659,7 @@ export function Inputpanel() {
 	return (
 		<div className={styles["chat-input-panel"]}>
 			{contextHolder}
-			<PromptHints
-				prompts={promptHints}
-				onPromptSelect={onPromptSelect}
-			/>
+			<PromptHints prompts={promptHints} onPromptSelect={onPromptSelect} />
 
 			<ChatActions
 				showPromptModal={() => setShowPromptModal(true)}
