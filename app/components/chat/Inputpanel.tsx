@@ -7,7 +7,6 @@ import React, {
 	Fragment,
 	useContext,
 } from "react";
-
 import { getISOLang, getLang } from "@/app/locales";
 
 import SendWhiteIcon from "@/app/icons/send-white.svg";

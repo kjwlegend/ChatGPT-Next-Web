@@ -37,6 +37,7 @@ import AuthPage from "../auth/page";
 import DrawerMenu from "./drawer-menu";
 import UserInfo from "./userinfo";
 import { Divider } from "antd";
+import Upload from "@/app/components/upload";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
 	loading: () => null,
@@ -126,10 +127,7 @@ function useDragSideBar() {
 			? NARROW_SIDEBAR_WIDTH
 			: limit(config.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH);
 		const sideBarWidth = isMobileScreen ? "100vw" : `${barWidth}px`;
-		document.documentElement.style.setProperty(
-			"--sidebar-width",
-			sideBarWidth,
-		);
+		document.documentElement.style.setProperty("--sidebar-width", sideBarWidth);
 	}, [config.sidebarWidth, isMobileScreen, shouldNarrow]);
 
 	return {
@@ -196,9 +194,7 @@ export function SideBar(props: { className?: string }) {
 					icon={<PluginIcon />}
 					text={shouldNarrow ? undefined : Locale.Plugin.Name}
 					className={styles["sidebar-bar-button"]}
-					onClick={() =>
-						navigate(Path.Plugins, { state: { fromHome: true } })
-					}
+					onClick={() => navigate(Path.Plugins, { state: { fromHome: true } })}
 					shadow
 				/>
 			</div>
@@ -213,21 +209,18 @@ export function SideBar(props: { className?: string }) {
 			>
 				<ChatList narrow={shouldNarrow} />
 			</div>
+			<div className={styles["sidebar-upload"]}>
+				<Upload />
+			</div>
 
 			<div className={styles["sidebar-tail"]}>
 				<div className={styles["sidebar-actions"]}>
-					<div
-						className={
-							styles["sidebar-action"] + " " + styles.mobile
-						}
-					>
+					<div className={styles["sidebar-action"] + " " + styles.mobile}>
 						<IconButton
 							icon={<CloseIcon />}
 							onClick={async () => {
 								if (await showConfirm(Locale.Home.DeleteChat)) {
-									chatStore.deleteSession(
-										chatStore.currentSessionIndex,
-									);
+									chatStore.deleteSession(chatStore.currentSessionIndex);
 								}
 							}}
 						/>

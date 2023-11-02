@@ -76,6 +76,7 @@ import {
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
+import Upload from "@/app/components/upload";
 
 interface ChatContextType {
 	hitBottom: boolean;
