@@ -51,7 +51,7 @@ import BrainIcon from "../icons/brain.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
-import styles from "@/app/components/chat/multi-chats.module.scss";
+import styles from "@/app/multi-chats/multi-chats.module.scss";
 
 import { IconButton } from "../components/button";
 import {

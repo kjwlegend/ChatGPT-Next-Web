@@ -103,8 +103,7 @@ const jp: PartialLocaleType = {
 			IsLatest: "最新バージョンです",
 			CheckUpdate: "アップデートを確認",
 			IsChecking: "アップデートを確認しています...",
-			FoundUpdate: (x: string) =>
-				`新しいバージョンが見つかりました：${x}`,
+			FoundUpdate: (x: string) => `新しいバージョンが見つかりました：${x}`,
 			GoToUpdate: "更新する",
 		},
 		SendKey: "送信キー",
@@ -162,11 +161,14 @@ const jp: PartialLocaleType = {
 			Check: "再確認",
 			NoAccess: "APIキーまたはアクセスパスワードを入力して残高を表示",
 		},
-		AccessCode: {
-			Title: "アクセスパスワード",
-			SubTitle: "暗号化アクセスが有効になっています",
-			Placeholder: "アクセスパスワードを入力してください",
+		Access: {
+			AccessCode: {
+				Title: "アクセスパスワード",
+				SubTitle: "暗号化アクセスが有効になっています",
+				Placeholder: "アクセスパスワードを入力してください",
+			},
 		},
+
 		Model: "モデル (model)",
 		Temperature: {
 			Title: "ランダム性 (temperature)",
@@ -179,8 +181,7 @@ const jp: PartialLocaleType = {
 		},
 		PresencePenalty: {
 			Title: "トピックの新鮮度 (presence_penalty)",
-			SubTitle:
-				"値が大きいほど、新しいトピックへの展開が可能になります。",
+			SubTitle: "値が大きいほど、新しいトピックへの展開が可能になります。",
 		},
 		FrequencyPenalty: {
 			Title: "話題の頻度 (frequency_penalty)",
@@ -195,7 +196,8 @@ const jp: PartialLocaleType = {
 			History: (content: string) =>
 				"これは、AI とユーザの過去のチャットを要約した前提となるストーリーです：" +
 				content,
-			Topic: "4～5文字でこの文章の簡潔な主題を返してください。説明、句読点、感嘆詞、余分なテキストは無しで。もし主題がない場合は、「おしゃべり」を返してください",
+			Topic:
+				"4～5文字でこの文章の簡潔な主題を返してください。説明、句読点、感嘆詞、余分なテキストは無しで。もし主題がない場合は、「おしゃべり」を返してください",
 			Summarize:
 				"あなたとユーザの会話を簡潔にまとめて、後続のコンテキストプロンプトとして使ってください。200字以内に抑えてください。",
 		},
@@ -229,9 +231,7 @@ const jp: PartialLocaleType = {
 		},
 		EditModal: {
 			Title: (readonly: boolean) =>
-				`キャラクタープリセットを編集 ${
-					readonly ? "（読み取り専用）" : ""
-				}`,
+				`キャラクタープリセットを編集 ${readonly ? "（読み取り専用）" : ""}`,
 			Download: "ダウンロード",
 			Clone: "複製",
 		},

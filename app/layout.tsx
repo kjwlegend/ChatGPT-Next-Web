@@ -6,50 +6,46 @@ import "./styles/layout.scss";
 import { getClientConfig } from "./config/client";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "小光AI",
-  description: "专业的超级助手.",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
-    { media: "(prefers-color-scheme: dark)", color: "#151515" },
-  ],
-  appleWebApp: {
-    title: "小光AI",
-    statusBarStyle: "default",
-  },
+	title: "小光AI",
+	description: "专业的超级助手.",
 };
 
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1,
+	maximumScale: 1,
+	themeColor: [
+		{ media: "(prefers-color-scheme: light)", color: "#fafafa" },
+		{ media: "(prefers-color-scheme: dark)", color: "#151515" },
+	],
+};
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta name="config" content={JSON.stringify(getClientConfig())} />
-        <link rel="manifest" href="/site.webmanifest"></link>
+	return (
+		<html lang="en">
+			<head>
+				<meta name="config" content={JSON.stringify(getClientConfig())} />
+				<link rel="manifest" href="/site.webmanifest"></link>
 
-        <script src="/serviceWorkerRegister.js" defer></script>
-        <script
-          async
-          src="https://jic.talkingdata.com/app/h5/v1?appid=EF569EDD56B64DEEB3BF84539A707729&vn=公测版&vc=0.5"
-        ></script>
-      </head>
-      <body>
-        <section className="appcontainer">
-          <Header />
-          {children}
-          <Footer />
-        </section>
-      </body>
-    </html>
-  );
+				<script src="/serviceWorkerRegister.js" defer></script>
+				<script
+					async
+					src="https://jic.talkingdata.com/app/h5/v1?appid=EF569EDD56B64DEEB3BF84539A707729&vn=公测版&vc=0.5"
+				></script>
+			</head>
+			<body>
+				<section className="appcontainer">
+					<Header />
+					{children}
+					<Footer />
+				</section>
+			</body>
+		</html>
+	);
 }

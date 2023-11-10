@@ -3,7 +3,11 @@
 
 <h1 align="center">ChatGPT Next Web LangChain</h1>
 
-一键免费部署你的跨平台私人 ChatGPT 应用（基于 LangChain 实现插件功能）。
+English / [简体中文](./README_CN.md)
+
+One-Click to get well-designed cross-platform ChatGPT web UI.
+
+一键免费部署你的跨平台私人 ChatGPT 应用。
 
 [![Web][Web-image]][web-url]
 [![Windows][Windows-image]][download-url]
@@ -60,7 +64,10 @@
 
 - [x] 支持使用 DuckDuckGo 作为默认搜索引擎
 
-  当前配置 `SERPAPI_API_KEY` 时优先使用 `SerpAPI` 作为搜索插件，不配置时默认使用 `DuckDuckGo` 作为搜索插件。
+- 🚀 v2.0 is released, now you can create prompt templates, turn your ideas into reality! Read this: [ChatGPT Prompt Engineering Tips: Zero, One and Few Shot Prompting](https://www.allabtai.com/prompt-engineering-tips-zero-one-and-few-shot-prompting/).
+- 🚀 v2.7 let's share conversations as image, or share to ShareGPT!
+- 🚀 v2.8 now we have a client that runs across all platforms!
+- 🚀 v2.9.11 you can use azure endpoint now.
 
   当前配置 `BING_SEARCH_API_KEY` 时优先使用 `BingSerpAPI` 作为搜索插件，不配置时默认使用 `DuckDuckGo` 作为搜索插件。
 
@@ -77,7 +84,11 @@
 ## 已知问题
 - [x] ~~使用插件时需将模型切换为 `0613` 版本模型，如：`gpt-3.5-turbo-0613`~~
 
-  尝试使用 `chat-conversational-react-description` 等类型的 `agent` 使用插件时效果并不理想，不再考虑支持其它版本的模型。
+- 🚀 v2.0 已经发布，现在你可以使用面具功能快速创建预制对话了！ 了解更多： [ChatGPT 提示词高阶技能：零次、一次和少样本提示](https://github.com/Yidadaa/ChatGPT-Next-Web/issues/138)。
+- 💡 想要更方便地随时随地使用本项目？可以试下这款桌面插件：https://github.com/mushan0x0/AI0x0.com
+- 🚀 v2.7 现在可以将会话分享为图片了，也可以分享到 ShareGPT 的在线链接。
+- 🚀 v2.8 发布了横跨 Linux/Windows/MacOS 的体积极小的客户端。
+- 🚀 v2.9.11 现在可以使用自定义 Azure 服务了。
 
   限制修改为非 `0301` 和 `0314` 模型均可调用插件。 [#10](https://github.com/Hk-Gosuto/ChatGPT-Next-Web-LangChain/issues/10)
 - [x] `SERPAPI_API_KEY` 目前为必填，后续会支持使用 DuckDuckGo 替换搜索插件
@@ -148,13 +159,15 @@ OpanAI 密钥，你在 openai 账户页面申请的 api key。
 - google
 - baidu
 
-### `CODE` （可选）
+### `CODE` (optional)
 
-访问密码，可选，可以使用逗号隔开多个密码。
+Access password, separated by comma.
 
-**警告**：如果不填写此项，则任何人都可以直接使用你部署后的网站，可能会导致你的 token 被急速消耗完毕，建议填写此选项。
+### `OPENAI_API_KEY` (required)
 
-### `BASE_URL` （可选）
+Your openai api key.
+
+### `BASE_URL` (optional)
 
 > Default: `https://api.openai.com`
 
@@ -166,7 +179,21 @@ OpenAI 接口代理 URL，如果你手动配置了 openai 接口代理，请填�
 
 ### `OPENAI_ORG_ID` （可选）
 
-指定 OpenAI 中的组织 ID。
+### `AZURE_URL` (optional)
+
+> Example: https://{azure-resource-url}/openai/deployments/{deploy-name}
+
+Azure deploy url.
+
+### `AZURE_API_KEY` (optional)
+
+Azure Api Key.
+
+### `AZURE_API_VERSION` (optional)
+
+Azure Api Version, find it at [Azure Documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#chat-completions).
+
+### `HIDE_USER_API_KEY` (optional)
 
 ### `HIDE_USER_API_KEY` （可选）
 
@@ -178,11 +205,24 @@ OpenAI 接口代理 URL，如果你手动配置了 openai 接口代理，请填�
 
 ### `HIDE_BALANCE_QUERY` （可选）
 
-如果你不想让用户查询余额，将此环境变量设置为 1 即可。
+### `ENABLE_BALANCE_QUERY` (optional)
 
-### `R2_ACCOUNT_ID` （可选）
+> Default: Empty
 
-Cloudflare R2 帐户 ID，使用 `DALL-E` 插件时需要配置。
+If you do want users to query balance, set this value to 1, or you should set it to 0.
+
+### `DISABLE_FAST_LINK` (optional)
+
+> Default: Empty
+
+If you want to disable parse settings from url, set this to 1.
+
+### `CUSTOM_MODELS` (optional)
+
+> Default: Empty
+> Example: `+llama,+claude-2,-gpt-3.5-turbo` means add `llama, claude-2` to model list, and remove `gpt-3.5-turbo` from list.
+
+To control custom models, use `+` to add a custom model, use `-` to hide a model, separated by comma.
 
 ### `R2_ACCESS_KEY_ID` （可选）
 

@@ -50,7 +50,16 @@ import Locale, {
 } from "../locales";
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
-import { Path, RELEASE_URL, STORAGE_KEY, UPDATE_URL } from "../constant";
+import {
+	Azure,
+	OPENAI_BASE_URL,
+	Path,
+	RELEASE_URL,
+	STORAGE_KEY,
+	ServiceProvider,
+	SlotID,
+	UPDATE_URL,
+} from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
@@ -91,8 +100,7 @@ function EditPromptModal(props: { id: string; onClose: () => void }) {
 						onInput={(e) =>
 							promptStore.updatePrompt(
 								props.id,
-								(prompt) =>
-									(prompt.title = e.currentTarget.value),
+								(prompt) => (prompt.title = e.currentTarget.value),
 							)
 						}
 					></input>
@@ -104,8 +112,7 @@ function EditPromptModal(props: { id: string; onClose: () => void }) {
 						onInput={(e) =>
 							promptStore.updatePrompt(
 								props.id,
-								(prompt) =>
-									(prompt.content = e.currentTarget.value),
+								(prompt) => (prompt.content = e.currentTarget.value),
 							)
 						}
 					></Input>
@@ -169,22 +176,10 @@ function UserPromptModal(props: { onClose?: () => void }) {
 
 					<div className={styles["user-prompt-list"]}>
 						{prompts.map((v, _) => (
-							<div
-								className={styles["user-prompt-item"]}
-								key={v.id ?? v.title}
-							>
+							<div className={styles["user-prompt-item"]} key={v.id ?? v.title}>
 								<div className={styles["user-prompt-header"]}>
-									<div
-										className={styles["user-prompt-title"]}
-									>
-										{v.title}
-									</div>
-									<div
-										className={
-											styles["user-prompt-content"] +
-											" one-line"
-										}
-									>
+									<div className={styles["user-prompt-title"]}>{v.title}</div>
+									<div className={styles["user-prompt-content"] + " one-line"}>
 										{v.content}
 									</div>
 								</div>
@@ -193,41 +188,27 @@ function UserPromptModal(props: { onClose?: () => void }) {
 									{v.isUser && (
 										<IconButton
 											icon={<ClearIcon />}
-											className={
-												styles["user-prompt-button"]
-											}
-											onClick={() =>
-												promptStore.remove(v.id!)
-											}
+											className={styles["user-prompt-button"]}
+											onClick={() => promptStore.remove(v.id!)}
 										/>
 									)}
 									{v.isUser ? (
 										<IconButton
 											icon={<EditIcon />}
-											className={
-												styles["user-prompt-button"]
-											}
-											onClick={() =>
-												setEditingPromptId(v.id)
-											}
+											className={styles["user-prompt-button"]}
+											onClick={() => setEditingPromptId(v.id)}
 										/>
 									) : (
 										<IconButton
 											icon={<EyeIcon />}
-											className={
-												styles["user-prompt-button"]
-											}
-											onClick={() =>
-												setEditingPromptId(v.id)
-											}
+											className={styles["user-prompt-button"]}
+											onClick={() => setEditingPromptId(v.id)}
 										/>
 									)}
 									<IconButton
 										icon={<CopyIcon />}
 										className={styles["user-prompt-button"]}
-										onClick={() =>
-											copyToClipboard(v.content)
-										}
+										onClick={() => copyToClipboard(v.content)}
 									/>
 								</div>
 							</div>
@@ -259,11 +240,7 @@ function DangerItems() {
 				<IconButton
 					text={Locale.Settings.Danger.Reset.Action}
 					onClick={async () => {
-						if (
-							await showConfirm(
-								Locale.Settings.Danger.Reset.Confirm,
-							)
-						) {
+						if (await showConfirm(Locale.Settings.Danger.Reset.Confirm)) {
 							appConfig.reset();
 						}
 					}}
@@ -277,11 +254,7 @@ function DangerItems() {
 				<IconButton
 					text={Locale.Settings.Danger.Clear.Action}
 					onClick={async () => {
-						if (
-							await showConfirm(
-								Locale.Settings.Danger.Clear.Confirm,
-							)
-						) {
+						if (await showConfirm(Locale.Settings.Danger.Clear.Confirm)) {
 							chatStore.clearAllData();
 						}
 					}}
@@ -362,8 +335,7 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 							onChange={(e) => {
 								syncStore.update(
 									(config) =>
-										(config.provider = e.target
-											.value as ProviderType),
+										(config.provider = e.target.value as ProviderType),
 								);
 							}}
 						>
@@ -384,9 +356,7 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 							checked={syncStore.useProxy}
 							onChange={(e) => {
 								syncStore.update(
-									(config) =>
-										(config.useProxy =
-											e.currentTarget.checked),
+									(config) => (config.useProxy = e.currentTarget.checked),
 								);
 							}}
 						></input>
@@ -394,18 +364,14 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 					{syncStore.useProxy ? (
 						<ListItem
 							title={Locale.Settings.Sync.Config.ProxyUrl.Title}
-							subTitle={
-								Locale.Settings.Sync.Config.ProxyUrl.SubTitle
-							}
+							subTitle={Locale.Settings.Sync.Config.ProxyUrl.SubTitle}
 						>
 							<input
 								type="text"
 								value={syncStore.proxyUrl}
 								onChange={(e) => {
 									syncStore.update(
-										(config) =>
-											(config.proxyUrl =
-												e.currentTarget.value),
+										(config) => (config.proxyUrl = e.currentTarget.value),
 									);
 								}}
 							></input>
@@ -416,53 +382,38 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 				{syncStore.provider === ProviderType.WebDAV && (
 					<>
 						<List>
-							<ListItem
-								title={
-									Locale.Settings.Sync.Config.WebDav.Endpoint
-								}
-							>
+							<ListItem title={Locale.Settings.Sync.Config.WebDav.Endpoint}>
 								<input
 									type="text"
 									value={syncStore.webdav.endpoint}
 									onChange={(e) => {
 										syncStore.update(
 											(config) =>
-												(config.webdav.endpoint =
-													e.currentTarget.value),
+												(config.webdav.endpoint = e.currentTarget.value),
 										);
 									}}
 								></input>
 							</ListItem>
 
-							<ListItem
-								title={
-									Locale.Settings.Sync.Config.WebDav.UserName
-								}
-							>
+							<ListItem title={Locale.Settings.Sync.Config.WebDav.UserName}>
 								<input
 									type="text"
 									value={syncStore.webdav.username}
 									onChange={(e) => {
 										syncStore.update(
 											(config) =>
-												(config.webdav.username =
-													e.currentTarget.value),
+												(config.webdav.username = e.currentTarget.value),
 										);
 									}}
 								></input>
 							</ListItem>
-							<ListItem
-								title={
-									Locale.Settings.Sync.Config.WebDav.Password
-								}
-							>
+							<ListItem title={Locale.Settings.Sync.Config.WebDav.Password}>
 								<PasswordInput
 									value={syncStore.webdav.password}
 									onChange={(e) => {
 										syncStore.update(
 											(config) =>
-												(config.webdav.password =
-													e.currentTarget.value),
+												(config.webdav.password = e.currentTarget.value),
 										);
 									}}
 								></PasswordInput>
@@ -473,25 +424,20 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 
 				{syncStore.provider === ProviderType.UpStash && (
 					<List>
-						<ListItem
-							title={Locale.Settings.Sync.Config.UpStash.Endpoint}
-						>
+						<ListItem title={Locale.Settings.Sync.Config.UpStash.Endpoint}>
 							<input
 								type="text"
 								value={syncStore.upstash.endpoint}
 								onChange={(e) => {
 									syncStore.update(
 										(config) =>
-											(config.upstash.endpoint =
-												e.currentTarget.value),
+											(config.upstash.endpoint = e.currentTarget.value),
 									);
 								}}
 							></input>
 						</ListItem>
 
-						<ListItem
-							title={Locale.Settings.Sync.Config.UpStash.UserName}
-						>
+						<ListItem title={Locale.Settings.Sync.Config.UpStash.UserName}>
 							<input
 								type="text"
 								value={syncStore.upstash.username}
@@ -499,22 +445,17 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 								onChange={(e) => {
 									syncStore.update(
 										(config) =>
-											(config.upstash.username =
-												e.currentTarget.value),
+											(config.upstash.username = e.currentTarget.value),
 									);
 								}}
 							></input>
 						</ListItem>
-						<ListItem
-							title={Locale.Settings.Sync.Config.UpStash.Password}
-						>
+						<ListItem title={Locale.Settings.Sync.Config.UpStash.Password}>
 							<PasswordInput
 								value={syncStore.upstash.apiKey}
 								onChange={(e) => {
 									syncStore.update(
-										(config) =>
-											(config.upstash.apiKey =
-												e.currentTarget.value),
+										(config) => (config.upstash.apiKey = e.currentTarget.value),
 									);
 								}}
 							></PasswordInput>
@@ -539,10 +480,7 @@ function SyncItems() {
 
 	const stateOverview = useMemo(() => {
 		const sessions = chatStore.sessions;
-		const messageCount = sessions.reduce(
-			(p, c) => p + c.messages.length,
-			0,
-		);
+		const messageCount = sessions.reduce((p, c) => p + c.messages.length, 0);
 
 		return {
 			chat: sessions.length,
@@ -559,9 +497,9 @@ function SyncItems() {
 					title={Locale.Settings.Sync.CloudState}
 					subTitle={
 						syncStore.lastProvider
-							? `${new Date(
-									syncStore.lastSyncTime,
-							  ).toLocaleString()} [${syncStore.lastProvider}]`
+							? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
+									syncStore.lastProvider
+							  }]`
 							: Locale.Settings.Sync.NotSyncYet
 					}
 				>
@@ -615,9 +553,7 @@ function SyncItems() {
 			</List>
 
 			{showSyncConfigModal && (
-				<SyncConfigModal
-					onClose={() => setShowSyncConfigModal(false)}
-				/>
+				<SyncConfigModal onClose={() => setShowSyncConfigModal(false)} />
 			)}
 		</>
 	);
@@ -646,13 +582,27 @@ export function Settings() {
 		console.log("[Update] remote version ", updateStore.remoteVersion);
 	}
 
+	const accessStore = useAccessStore();
+	const shouldHideBalanceQuery = useMemo(() => {
+		const isOpenAiUrl = accessStore.openaiUrl.includes(OPENAI_BASE_URL);
+		return (
+			accessStore.hideBalanceQuery ||
+			isOpenAiUrl ||
+			accessStore.provider === ServiceProvider.Azure
+		);
+	}, [
+		accessStore.hideBalanceQuery,
+		accessStore.openaiUrl,
+		accessStore.provider,
+	]);
+
 	const usage = {
 		used: updateStore.used,
 		subscription: updateStore.subscription,
 	};
 	const [loadingUsage, setLoadingUsage] = useState(false);
 	function checkUsage(force = false) {
-		if (accessStore.hideBalanceQuery) {
+		if (shouldHideBalanceQuery) {
 			return;
 		}
 
@@ -662,7 +612,6 @@ export function Settings() {
 		});
 	}
 
-	const accessStore = useAccessStore();
 	const enabledAccessControl = useMemo(
 		() => accessStore.enabledAccessControl(),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -730,10 +679,7 @@ export function Settings() {
 							content={
 								<AvatarPicker
 									onEmojiClick={(avatar: string) => {
-										updateConfig(
-											(config) =>
-												(config.avatar = avatar),
-										);
+										updateConfig((config) => (config.avatar = avatar));
 										setShowEmojiPicker(false);
 									}}
 								/>
@@ -780,8 +726,7 @@ export function Settings() {
 							onChange={(e) => {
 								updateConfig(
 									(config) =>
-										(config.submitKey = e.target
-											.value as any as SubmitKey),
+										(config.submitKey = e.target.value as any as SubmitKey),
 								);
 							}}
 						>
@@ -798,9 +743,7 @@ export function Settings() {
 							value={config.theme}
 							onChange={(e) => {
 								updateConfig(
-									(config) =>
-										(config.theme = e.target
-											.value as any as Theme),
+									(config) => (config.theme = e.target.value as any as Theme),
 								);
 							}}
 						>
@@ -840,9 +783,7 @@ export function Settings() {
 							onChange={(e) =>
 								updateConfig(
 									(config) =>
-										(config.fontSize = Number.parseInt(
-											e.currentTarget.value,
-										)),
+										(config.fontSize = Number.parseInt(e.currentTarget.value)),
 								)
 							}
 						></InputRange>
@@ -858,8 +799,7 @@ export function Settings() {
 							onChange={(e) =>
 								updateConfig(
 									(config) =>
-										(config.enableAutoGenerateTitle =
-											e.currentTarget.checked),
+										(config.enableAutoGenerateTitle = e.currentTarget.checked),
 								)
 							}
 						></input>
@@ -875,8 +815,7 @@ export function Settings() {
 							onChange={(e) =>
 								updateConfig(
 									(config) =>
-										(config.sendPreviewBubble =
-											e.currentTarget.checked),
+										(config.sendPreviewBubble = e.currentTarget.checked),
 								)
 							}
 						></input>
@@ -913,8 +852,7 @@ export function Settings() {
 							onChange={(e) =>
 								updateConfig(
 									(config) =>
-										(config.hideBuiltinMasks =
-											e.currentTarget.checked),
+										(config.hideBuiltinMasks = e.currentTarget.checked),
 								)
 							}
 						></input>
@@ -932,8 +870,7 @@ export function Settings() {
 							onChange={(e) =>
 								updateConfig(
 									(config) =>
-										(config.disablePromptHint =
-											e.currentTarget.checked),
+										(config.disablePromptHint = e.currentTarget.checked),
 								)
 							}
 						></input>
@@ -957,54 +894,168 @@ export function Settings() {
 				{/* <List>
           {showAccessCode ? (
             <ListItem
-              title={Locale.Settings.AccessCode.Title}
-              subTitle={Locale.Settings.AccessCode.SubTitle}
+              title={Locale.Settings.Access.AccessCode.Title}
+              subTitle={Locale.Settings.Access.AccessCode.SubTitle}
             >
               <PasswordInput
                 value={accessStore.accessCode}
                 type="text"
-                placeholder={Locale.Settings.AccessCode.Placeholder}
+                placeholder={Locale.Settings.Access.AccessCode.Placeholder}
                 onChange={(e) => {
-                  accessStore.updateCode(e.currentTarget.value);
+                  accessStore.update(
+                    (access) => (access.accessCode = e.currentTarget.value),
+                  );
                 }}
               />
             </ListItem>
-          ) : (
-            <></>
           )}
 
-          {!accessStore.hideUserApiKey ? (
+          {!accessStore.hideUserApiKey && (
             <>
               <ListItem
-                title={Locale.Settings.Endpoint.Title}
-                subTitle={Locale.Settings.Endpoint.SubTitle}
+                title={Locale.Settings.Access.CustomEndpoint.Title}
+                subTitle={Locale.Settings.Access.CustomEndpoint.SubTitle}
               >
                 <input
-                  type="text"
-                  value={accessStore.openaiUrl}
-                  placeholder="https://api.openai.com/"
+                  type="checkbox"
+                  checked={accessStore.useCustomConfig}
                   onChange={(e) =>
-                    accessStore.updateOpenAiUrl(e.currentTarget.value)
+                    accessStore.update(
+                      (access) =>
+                        (access.useCustomConfig = e.currentTarget.checked),
+                    )
                   }
                 ></input>
               </ListItem>
-              <ListItem
-                title={Locale.Settings.Token.Title}
-                subTitle={Locale.Settings.Token.SubTitle}
-              >
-                <PasswordInput
-                  value={accessStore.token}
-                  type="text"
-                  placeholder={Locale.Settings.Token.Placeholder}
-                  onChange={(e) => {
-                    accessStore.updateToken(e.currentTarget.value);
-                  }}
-                />
-              </ListItem>
-            </>
-          ) : null}
+              {accessStore.useCustomConfig && (
+                <>
+                  <ListItem
+                    title={Locale.Settings.Access.Provider.Title}
+                    subTitle={Locale.Settings.Access.Provider.SubTitle}
+                  >
+                    <Select
+                      value={accessStore.provider}
+                      onChange={(e) => {
+                        accessStore.update(
+                          (access) =>
+                            (access.provider = e.target
+                              .value as ServiceProvider),
+                        );
+                      }}
+                    >
+                      {Object.entries(ServiceProvider).map(([k, v]) => (
+                        <option value={v} key={k}>
+                          {k}
+                        </option>
+                      ))}
+                    </Select>
+                  </ListItem>
 
-          {!accessStore.hideBalanceQuery ? (
+                  {accessStore.provider === "OpenAI" ? (
+                    <>
+                      <ListItem
+                        title={Locale.Settings.Access.OpenAI.Endpoint.Title}
+                        subTitle={
+                          Locale.Settings.Access.OpenAI.Endpoint.SubTitle
+                        }
+                      >
+                        <input
+                          type="text"
+                          value={accessStore.openaiUrl}
+                          placeholder={OPENAI_BASE_URL}
+                          onChange={(e) =>
+                            accessStore.update(
+                              (access) =>
+                                (access.openaiUrl = e.currentTarget.value),
+                            )
+                          }
+                        ></input>
+                      </ListItem>
+                      <ListItem
+                        title={Locale.Settings.Access.OpenAI.ApiKey.Title}
+                        subTitle={Locale.Settings.Access.OpenAI.ApiKey.SubTitle}
+                      >
+                        <PasswordInput
+                          value={accessStore.openaiApiKey}
+                          type="text"
+                          placeholder={
+                            Locale.Settings.Access.OpenAI.ApiKey.Placeholder
+                          }
+                          onChange={(e) => {
+                            accessStore.update(
+                              (access) =>
+                                (access.openaiApiKey = e.currentTarget.value),
+                            );
+                          }}
+                        />
+                      </ListItem>
+                    </>
+                  ) : (
+                    <>
+                      <ListItem
+                        title={Locale.Settings.Access.Azure.Endpoint.Title}
+                        subTitle={
+                          Locale.Settings.Access.Azure.Endpoint.SubTitle +
+                          Azure.ExampleEndpoint
+                        }
+                      >
+                        <input
+                          type="text"
+                          value={accessStore.azureUrl}
+                          placeholder={Azure.ExampleEndpoint}
+                          onChange={(e) =>
+                            accessStore.update(
+                              (access) =>
+                                (access.azureUrl = e.currentTarget.value),
+                            )
+                          }
+                        ></input>
+                      </ListItem>
+                      <ListItem
+                        title={Locale.Settings.Access.Azure.ApiKey.Title}
+                        subTitle={Locale.Settings.Access.Azure.ApiKey.SubTitle}
+                      >
+                        <PasswordInput
+                          value={accessStore.azureApiKey}
+                          type="text"
+                          placeholder={
+                            Locale.Settings.Access.Azure.ApiKey.Placeholder
+                          }
+                          onChange={(e) => {
+                            accessStore.update(
+                              (access) =>
+                                (access.azureApiKey = e.currentTarget.value),
+                            );
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem
+                        title={Locale.Settings.Access.Azure.ApiVerion.Title}
+                        subTitle={
+                          Locale.Settings.Access.Azure.ApiVerion.SubTitle
+                        }
+                      >
+                        <input
+                          type="text"
+                          value={accessStore.azureApiVersion}
+                          placeholder="2023-08-01-preview"
+                          onChange={(e) =>
+                            accessStore.update(
+                              (access) =>
+                                (access.azureApiVersion =
+                                  e.currentTarget.value),
+                            )
+                          }
+                        ></input>
+                      </ListItem>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+          {!shouldHideBalanceQuery ? (
             <ListItem
               title={Locale.Settings.Usage.Title}
               subTitle={
@@ -1031,8 +1082,8 @@ export function Settings() {
           ) : null}
 
           <ListItem
-            title={Locale.Settings.CustomModel.Title}
-            subTitle={Locale.Settings.CustomModel.SubTitle}
+            title={Locale.Settings.Access.CustomModel.Title}
+            subTitle={Locale.Settings.Access.CustomModel.SubTitle}
           >
             <input
               type="text"
@@ -1053,17 +1104,13 @@ export function Settings() {
 						updateConfig={(updater) => {
 							const modelConfig = { ...config.modelConfig };
 							updater(modelConfig);
-							config.update(
-								(config) => (config.modelConfig = modelConfig),
-							);
+							config.update((config) => (config.modelConfig = modelConfig));
 						}}
 					/>
 				</List>
 
 				{shouldShowPromptModal && (
-					<UserPromptModal
-						onClose={() => setShowPromptModal(false)}
-					/>
+					<UserPromptModal onClose={() => setShowPromptModal(false)} />
 				)}
 
 				<List>
@@ -1072,10 +1119,7 @@ export function Settings() {
 						updateConfig={(updater) => {
 							const pluginConfig = { ...config.pluginConfig };
 							updater(pluginConfig);
-							config.update(
-								(config) =>
-									(config.pluginConfig = pluginConfig),
-							);
+							config.update((config) => (config.pluginConfig = pluginConfig));
 						}}
 					/>
 				</List>

@@ -8,6 +8,7 @@ import {
 	DEFAULT_INPUT_TEMPLATE,
 	DEFAULT_SYSTEM_TEMPLATE,
 	getDefaultSystemTemplate,
+	KnowledgeCutOffDate,
 	StoreKey,
 	SUMMARIZE_MODEL,
 } from "../constant";
@@ -134,7 +135,11 @@ function countMessages(msgs: ChatMessage[]) {
 }
 
 function fillTemplateWith(input: string, modelConfig: ModelConfig) {
+	let cutoff =
+		KnowledgeCutOffDate[modelConfig.model] ?? KnowledgeCutOffDate.default;
+
 	const vars = {
+		cutoff,
 		model: modelConfig.model,
 		time: new Date().toLocaleString(),
 		lang: getLang(),
@@ -394,12 +399,9 @@ export const useChatStore = createPersistStore(
 					}
 					session = sessions[index];
 					// console.log("[User Input] session: ", index, session);
-					this.updateSession(
-						sessionId,
-						(sessionToUpdate: ChatSession) => {
-							sessionToUpdate.responseStatus = false;
-						},
-					);
+					this.updateSession(sessionId, (sessionToUpdate: ChatSession) => {
+						sessionToUpdate.responseStatus = false;
+					});
 				} else {
 					session = get().currentSession();
 				}
@@ -437,8 +439,7 @@ export const useChatStore = createPersistStore(
 					.filter(
 						(m) =>
 							(!getLang() ||
-								m.lang ===
-									(getLang() == "cn" ? getLang() : "en")) &&
+								m.lang === (getLang() == "cn" ? getLang() : "en")) &&
 							m.enable,
 					);
 
@@ -505,10 +506,7 @@ export const useChatStore = createPersistStore(
 								botMessage.content = message;
 								get().onNewMessage(botMessage);
 							}
-							ChatControllerPool.remove(
-								session.id,
-								botMessage.id,
-							);
+							ChatControllerPool.remove(session.id, botMessage.id);
 						},
 						onError(error) {
 							const isAborted = error.message.includes("aborted");
@@ -560,16 +558,9 @@ export const useChatStore = createPersistStore(
 								botMessage.content = message;
 								get().onNewMessage(botMessage);
 								responseStatus = session.responseStatus = true;
-								console.log(
-									"responseStatus: ",
-									responseStatus,
-									session,
-								);
+								console.log("responseStatus: ", responseStatus, session);
 							}
-							ChatControllerPool.remove(
-								session.id,
-								botMessage.id,
-							);
+							ChatControllerPool.remove(session.id, botMessage.id);
 						},
 						onError(error) {
 							const isAborted = error.message.includes("aborted");
@@ -635,8 +626,7 @@ export const useChatStore = createPersistStore(
 				const contextPrompts = session.mask.context.slice();
 
 				// system prompts, to get close to OpenAI Web ChatGPT
-				const shouldInjectSystemPrompts =
-					modelConfig.enableInjectSystemPrompts;
+				const shouldInjectSystemPrompts = modelConfig.enableInjectSystemPrompts;
 				const systemPrompts = shouldInjectSystemPrompts
 					? [
 							createMessage({
@@ -680,16 +670,10 @@ export const useChatStore = createPersistStore(
 				// 3. short term memory: latest n messages
 				// 4. newest input message
 				const memoryStartIndex = shouldSendLongTermMemory
-					? Math.min(
-							longTermMemoryStartIndex,
-							shortTermMemoryStartIndex,
-					  )
+					? Math.min(longTermMemoryStartIndex, shortTermMemoryStartIndex)
 					: shortTermMemoryStartIndex;
 				// and if user has cleared history messages, we should exclude the memory too.
-				const contextStartIndex = Math.max(
-					clearContextIndex,
-					memoryStartIndex,
-				);
+				const contextStartIndex = Math.max(clearContextIndex, memoryStartIndex);
 				const maxTokenThreshold = modelConfig.max_tokens;
 
 				// get recent messages as much as possible
@@ -758,17 +742,13 @@ export const useChatStore = createPersistStore(
 					api.llm.chat({
 						messages: topicMessages,
 						config: {
-							model: getSummarizeModel(
-								session.mask.modelConfig.model,
-							),
+							model: getSummarizeModel(session.mask.modelConfig.model),
 						},
 						onFinish(message) {
 							get().updateCurrentSession(
 								(session) =>
 									(session.topic =
-										message.length > 0
-											? trimTopic(message)
-											: DEFAULT_TOPIC),
+										message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
 							);
 						},
 					});
@@ -805,8 +785,7 @@ export const useChatStore = createPersistStore(
 				);
 
 				if (
-					historyMsgLength >
-						modelConfig.compressMessageLengthThreshold &&
+					historyMsgLength > modelConfig.compressMessageLengthThreshold &&
 					modelConfig.sendMemory
 				) {
 					api.llm.chat({
@@ -820,9 +799,7 @@ export const useChatStore = createPersistStore(
 						config: {
 							...modelConfig,
 							stream: true,
-							model: getSummarizeModel(
-								session.mask.modelConfig.model,
-							),
+							model: getSummarizeModel(session.mask.modelConfig.model),
 						},
 						onUpdate(message) {
 							session.memoryPrompt = message;
@@ -911,9 +888,7 @@ export const useChatStore = createPersistStore(
 				newState.sessions.forEach((s) => {
 					if (
 						// Exclude those already set by user
-						!s.mask.modelConfig.hasOwnProperty(
-							"enableInjectSystemPrompts",
-						)
+						!s.mask.modelConfig.hasOwnProperty("enableInjectSystemPrompts")
 					) {
 						// Because users may have changed this configuration,
 						// the user's current configuration is used instead of the default

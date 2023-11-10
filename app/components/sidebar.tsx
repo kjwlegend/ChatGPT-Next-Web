@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import React from "react";
 
 import styles from "./home.module.scss";
@@ -9,6 +9,7 @@ import GithubIcon from "../icons/github.svg";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
+import DeleteIcon from "../icons/delete.svg";
 import MaskIcon from "../icons/mask.svg";
 import PluginIcon from "../icons/plugin.svg";
 import DragIcon from "../icons/drag.svg";
@@ -28,7 +29,7 @@ import {
 } from "../constant";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useMobileScreen } from "../utils";
+import { isIOS, useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
 import { showConfirm, showToast } from "./ui-lib";
 import { useAuthStore } from "../store/auth";
@@ -145,6 +146,11 @@ export function SideBar(props: { className?: string }) {
 	const navigate = useNavigate();
 	const config = useAppConfig();
 	const isMobileScreen = useMobileScreen();
+	const isIOSMobile = useMemo(
+		() => isIOS() && isMobileScreen,
+		[isMobileScreen],
+	);
+
 	useHotKey();
 
 	if (isMobileScreen && !authStore.isAuthenticated) {

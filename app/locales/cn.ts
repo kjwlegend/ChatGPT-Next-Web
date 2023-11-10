@@ -130,7 +130,6 @@ const cn = {
 	Settings: {
 		Title: "设置",
 		SubTitle: "所有设置选项",
-
 		Danger: {
 			Reset: {
 				Title: "重置所有设置",
@@ -160,8 +159,7 @@ const cn = {
 		},
 		InjectSystemPrompts: {
 			Title: "注入系统级提示信息",
-			SubTitle:
-				"强制给每次请求的消息列表开头添加一个模拟 ChatGPT 的系统提示",
+			SubTitle: "强制给每次请求的消息列表开头添加一个模拟 ChatGPT 的系统提示",
 		},
 		InputTemplate: {
 			Title: "用户输入预处理",
@@ -281,19 +279,56 @@ const cn = {
 			Check: "重新检查",
 			NoAccess: "输入 API Key 或访问密码查看余额",
 		},
-		AccessCode: {
-			Title: "访问密码",
-			SubTitle: "管理员已开启加密访问",
-			Placeholder: "请输入访问密码",
+
+		Access: {
+			AccessCode: {
+				Title: "访问密码",
+				SubTitle: "管理员已开启加密访问",
+				Placeholder: "请输入访问密码",
+			},
+			CustomEndpoint: {
+				Title: "自定义接口",
+				SubTitle: "是否使用自定义 Azure 或 OpenAI 服务",
+			},
+			Provider: {
+				Title: "模型服务商",
+				SubTitle: "切换不同的服务商",
+			},
+			OpenAI: {
+				ApiKey: {
+					Title: "API Key",
+					SubTitle: "使用自定义 OpenAI Key 绕过密码访问限制",
+					Placeholder: "OpenAI API Key",
+				},
+
+				Endpoint: {
+					Title: "接口地址",
+					SubTitle: "除默认地址外，必须包含 http(s)://",
+				},
+			},
+			Azure: {
+				ApiKey: {
+					Title: "接口密钥",
+					SubTitle: "使用自定义 Azure Key 绕过密码访问限制",
+					Placeholder: "Azure API Key",
+				},
+
+				Endpoint: {
+					Title: "接口地址",
+					SubTitle: "样例：",
+				},
+
+				ApiVerion: {
+					Title: "接口版本 (azure api version)",
+					SubTitle: "选择指定的部分版本",
+				},
+			},
+			CustomModel: {
+				Title: "自定义模型名",
+				SubTitle: "增加自定义模型可选项，使用英文逗号隔开",
+			},
 		},
-		Endpoint: {
-			Title: "接口地址",
-			SubTitle: "除默认地址外，必须包含 http(s)://",
-		},
-		CustomModel: {
-			Title: "自定义模型名",
-			SubTitle: "增加自定义模型可选项，使用英文逗号隔开",
-		},
+
 		Model: "模型 (model)",
 		Temperature: {
 			Title: "随机性 (temperature)",
@@ -336,9 +371,9 @@ const cn = {
 			"你好!我是小光, 我是你的超级助手, 我能解决您绝大多数的问题, 但如果碰到专业性或特殊任务需求, 可以去[角色](/#/new-chat)页面挑选专业伙伴获得更好质量回答, 也可以去角色页面问问我的其他伙伴",
 		Error: "出错了，稍后重试吧",
 		Prompt: {
-			History: (content: string) =>
-				"这是历史聊天总结作为前情提要：" + content,
-			Topic: "使用四到五个字直接返回这句话的简要主题，不要解释、不要标点、不要语气词、不要多余文本，如果没有主题，请直接返回“闲聊”",
+			History: (content: string) => "这是历史聊天总结作为前情提要：" + content,
+			Topic:
+				"使用四到五个字直接返回这句话的简要主题，不要解释、不要标点、不要语气词、不要多余文本，如果没有主题，请直接返回“闲聊”",
 			Summarize:
 				"简要总结一下对话内容，用作后续的上下文提示 prompt，控制在 200 字以内",
 		},
@@ -411,8 +446,7 @@ const cn = {
 			Sync: {
 				Title: "使用全局设置",
 				SubTitle: "当前对话是否使用全局模型设置",
-				Confirm:
-					"当前对话的自定义设置将会被自动覆盖，确认启用全局设置？",
+				Confirm: "当前对话的自定义设置将会被自动覆盖，确认启用全局设置？",
 			},
 			HideContext: {
 				Title: "隐藏预设对话",

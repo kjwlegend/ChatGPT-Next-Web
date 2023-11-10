@@ -186,8 +186,7 @@ const en: LocaleType = {
 		},
 		AutoGenerateTitle: {
 			Title: "Auto Generate Title",
-			SubTitle:
-				"Generate a suitable title based on the conversation content",
+			SubTitle: "Generate a suitable title based on the conversation content",
 		},
 		Sync: {
 			CloudState: "Last Update",
@@ -206,8 +205,7 @@ const en: LocaleType = {
 				},
 				Proxy: {
 					Title: "Enable CORS Proxy",
-					SubTitle:
-						"Enable a proxy to avoid cross-origin restrictions",
+					SubTitle: "Enable a proxy to avoid cross-origin restrictions",
 				},
 				ProxyUrl: {
 					Title: "Proxy Endpoint",
@@ -273,7 +271,7 @@ const en: LocaleType = {
 		},
 		Token: {
 			Title: "API Key",
-			SubTitle: "Use your key to ignore access code limit",
+			SubTitle: "使用自己的 Key 可绕过密码访问限制",
 			Placeholder: "OpenAI API Key",
 		},
 		Usage: {
@@ -285,19 +283,55 @@ const en: LocaleType = {
 			Check: "Check",
 			NoAccess: "Enter API Key to check balance",
 		},
-		AccessCode: {
-			Title: "Access Code",
-			SubTitle: "Access control enabled",
-			Placeholder: "Need Access Code",
+		Access: {
+			AccessCode: {
+				Title: "Access Code",
+				SubTitle: "Access control Enabled",
+				Placeholder: "Enter Code",
+			},
+			CustomEndpoint: {
+				Title: "Custom Endpoint",
+				SubTitle: "Use custom Azure or OpenAI service",
+			},
+			Provider: {
+				Title: "Model Provider",
+				SubTitle: "Select Azure or OpenAI",
+			},
+			OpenAI: {
+				ApiKey: {
+					Title: "OpenAI API Key",
+					SubTitle: "User custom OpenAI Api Key",
+					Placeholder: "sk-xxx",
+				},
+
+				Endpoint: {
+					Title: "OpenAI Endpoint",
+					SubTitle: "Must starts with http(s):// or use /api/openai as default",
+				},
+			},
+			Azure: {
+				ApiKey: {
+					Title: "Azure Api Key",
+					SubTitle: "Check your api key from Azure console",
+					Placeholder: "Azure Api Key",
+				},
+
+				Endpoint: {
+					Title: "Azure Endpoint",
+					SubTitle: "Example: ",
+				},
+
+				ApiVerion: {
+					Title: "Azure Api Version",
+					SubTitle: "Check your api version from azure console",
+				},
+			},
+			CustomModel: {
+				Title: "Custom Models",
+				SubTitle: "Custom model options, seperated by comma",
+			},
 		},
-		Endpoint: {
-			Title: "Endpoint",
-			SubTitle: "Custom endpoint must start with http(s)://",
-		},
-		CustomModel: {
-			Title: "Custom Models",
-			SubTitle: "Add extra model options, separate by comma",
-		},
+
 		Model: "Model",
 		Temperature: {
 			Title: "Temperature",
@@ -323,16 +357,16 @@ const en: LocaleType = {
 		},
 		Plugin: {
 			Enable: {
-				Title: "Enable Plugin",
-				SubTitle: "Enable plugin invocation",
+				Title: "启用插件",
+				SubTitle: "启用插件调用功能",
 			},
 			MaxIteration: {
-				Title: "Max Iterations",
-				SubTitle: "Max of plugin iterations",
+				Title: "最大迭代数",
+				SubTitle: "插件调用最大迭代数",
 			},
 			ReturnIntermediateStep: {
-				Title: "Return Intermediate Steps",
-				SubTitle: "Return Intermediate Steps",
+				Title: "返回中间步骤",
+				SubTitle: "是否返回插件调用的中间步骤",
 			},
 		},
 	},
@@ -343,7 +377,8 @@ const en: LocaleType = {
 		Prompt: {
 			History: (content: string) =>
 				"This is a summary of the chat history as a recap: " + content,
-			Topic: "Please generate a four to five word title summarizing our conversation without any lead-in, punctuation, quotation marks, periods, symbols, or additional text. Remove enclosing quotation marks.",
+			Topic:
+				"Please generate a four to five word title summarizing our conversation without any lead-in, punctuation, quotation marks, periods, symbols, or additional text. Remove enclosing quotation marks.",
 			Summarize:
 				"Summarize the discussion briefly in 200 words or less to use as a prompt for future context.",
 		},
@@ -364,24 +399,24 @@ const en: LocaleType = {
 		Revert: "Revert",
 	},
 	Plugin: {
-		Name: "Plugin",
+		Name: "插件",
 		Page: {
-			Title: "Plugin Template",
-			SubTitle: (count: number) => `${count} plugin templates`,
-			Search: "Search Templates",
-			Create: "Create",
+			Title: "预设插件",
+			SubTitle: (count: number) => `${count} 个预设插件`,
+			Search: "搜索插件",
+			Create: "新建",
 		},
 		Item: {
-			View: "View",
-			Edit: "Edit",
-			Delete: "Delete",
-			DeleteConfirm: "Confirm to delete?",
+			View: "查看",
+			Edit: "编辑",
+			Delete: "删除",
+			DeleteConfirm: "确认删除？",
 		},
 		EditModal: {
 			Title: (readonly: boolean) =>
-				`Edit Plugin Template ${readonly ? "(readonly)" : ""}`,
-			Download: "Download",
-			Clone: "Clone",
+				`编辑预设插件 ${readonly ? "（只读）" : ""}`,
+			Download: "下载预设",
+			Clone: "克隆预设",
 		},
 	},
 	FineTuned: {
@@ -412,12 +447,11 @@ const en: LocaleType = {
 		Config: {
 			Avatar: "Bot Avatar",
 			Name: "Bot Name",
-			category: "Category",
+			category: "Bot Category",
 			Sync: {
 				Title: "Use Global Config",
 				SubTitle: "Use global config in this chat",
-				Confirm:
-					"Confirm to override custom config with global config?",
+				Confirm: "Confirm to override custom config with global config?",
 			},
 			HideContext: {
 				Title: "Hide Context Prompts",
@@ -437,8 +471,7 @@ const en: LocaleType = {
 		SubTitle: "Chat with the Soul behind the Mask",
 		More: "Find More",
 		NotShow: "Never Show Again",
-		ConfirmNoShow:
-			"Confirm to disable? You can enable it in settings later.",
+		ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
 	},
 
 	UI: {

@@ -10,6 +10,7 @@ export const RUNTIME_CONFIG_DOM = "danger-runtime-config";
 
 export const DEFAULT_CORS_HOST = "https://ab.nextweb.fun";
 export const DEFAULT_API_HOST = `${DEFAULT_CORS_HOST}/api/proxy`;
+export const OPENAI_BASE_URL = "https://api.openai.com";
 
 export enum Path {
 	Home = "/",
@@ -25,10 +26,12 @@ export enum Path {
 
 export enum ApiPath {
 	Cors = "/api/cors",
+	OpenAI = "/api/openai",
 }
 
 export enum SlotID {
 	AppBody = "app-body",
+	CustomModel = "custom-model",
 }
 
 export enum FileName {
@@ -88,11 +91,20 @@ export const REQUEST_TIMEOUT_MS = 60000;
 
 export const EXPORT_MESSAGE_CLASS_NAME = "export-markdown";
 
+export enum ServiceProvider {
+	OpenAI = "OpenAI",
+	Azure = "Azure",
+}
+
 export const OpenaiPath = {
 	ChatPath: "v1/chat/completions",
 	UsagePath: "dashboard/billing/usage",
 	SubsPath: "dashboard/billing/subscription",
 	ListModelPath: "v1/models",
+};
+
+export const Azure = {
+	ExampleEndpoint: "https://{resource-url}/openai/deployments/{deploy-id}",
 };
 
 import { useUserStore } from "@/app/store/user";
@@ -114,7 +126,8 @@ export const DEFAULT_SYSTEM_TEMPLATE = `
 当回答问题时，你可以在末尾加上一些充满鼓励的话语，可以给对方带来信心和动力，让他们感到被支持和激励。
 Knowledge cutoff: 2021-09
 Current model: {{model}}
-Current time: {{time}}`;
+Current time: {{time}}
+`;
 
 export function getDefaultSystemTemplate() {
 	const user = getUserInfo();
@@ -140,6 +153,12 @@ Current time: {{time}}`;
 }
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
+
+export const KnowledgeCutOffDate: Record<string, string> = {
+	default: "2021-09",
+	"gpt-4-1106-preview": "2023-04",
+	"gpt-4-vision-preview": "2023-04",
+};
 
 export const DEFAULT_MODELS = [
 	{
@@ -178,6 +197,16 @@ export const DEFAULT_MODELS = [
 	//   available: false,
 	// },
 	{
+		name: "gpt-4-1106-preview",
+		available: true,
+		displayName: "小光4.0-1107",
+	},
+	{
+		name: "gpt-4-vision-preview",
+		available: true,
+		displayName: "小光4.1-1107",
+	},
+	{
 		name: "gpt-3.5-turbo",
 		displayName: "小光-3.5-0613",
 		available: true,
@@ -191,6 +220,11 @@ export const DEFAULT_MODELS = [
 		name: "gpt-3.5-turbo-0613",
 		displayName: "小光-3.5-0613",
 		available: true,
+	},
+	{
+		name: "gpt-3.5-turbo-1106",
+		available: true,
+		displayName: "小光3.5-1107",
 	},
 	{
 		name: "gpt-3.5-turbo-16k",

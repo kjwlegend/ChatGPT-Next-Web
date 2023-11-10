@@ -47,12 +47,7 @@ export function auth(req: NextRequest) {
 	console.log("Auth", isAuthenticated);
 	console.log("[Time] ", new Date().toLocaleString());
 
-	if (
-		(serverConfig.needCode &&
-			!serverConfig.codes.has(hashedCode) &&
-			!token) ||
-		isAuthenticated === false
-	) {
+	if (isAuthenticated === false) {
 		return {
 			error: true,
 			msg: !accessCode
@@ -62,11 +57,17 @@ export function auth(req: NextRequest) {
 	}
 
 	// if user does not provide an api key, inject system api key
-	if (!token) {
-		const apiKey = serverConfig.apiKey;
-		if (apiKey) {
+	if (isAuthenticated === true) {
+		const serverApiKey = serverConfig.isAzure
+			? serverConfig.azureApiKey
+			: serverConfig.apiKey;
+
+		if (serverApiKey) {
 			console.log("[Auth] use system api key");
-			req.headers.set("Authorization", `Bearer ${apiKey}`);
+			req.headers.set(
+				"Authorization",
+				`${serverConfig.isAzure ? "" : "Bearer "}${serverApiKey}`,
+			);
 		} else {
 			console.log("[Auth] admin did not provide an api key");
 		}
@@ -120,9 +121,7 @@ export async function loginAPI(params: LoginParams) {
 	})
 		.then((res) => {
 			const expirationDate = new Date();
-			expirationDate.setTime(
-				expirationDate.getTime() + 48 * 60 * 60 * 1000,
-			); // 当前时间的 48 小时后
+			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
 			document.cookie = `authenticated=true; expires=${expirationDate.toUTCString()}; path=/`;
 			return res.data;
 		})
