@@ -49,6 +49,7 @@ const App: React.FC = () => {
 			}
 			if (info.file.status === "done") {
 				message.success(`${info.file.name} file uploaded successfully`);
+				// 上传成功后，对文件进行处理
 			} else if (info.file.status === "error") {
 				message.error(`${info.file.name} file upload failed.`);
 			}
