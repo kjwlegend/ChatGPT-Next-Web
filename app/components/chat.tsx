@@ -78,7 +78,6 @@ import {
 	showToast,
 } from "./ui-lib";
 import { useNavigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import {
 	CHAT_PAGE_SIZE,
 	LAST_INPUT_KEY,

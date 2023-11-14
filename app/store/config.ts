@@ -37,7 +37,7 @@ export const DEFAULT_CONFIG = {
 	sendPreviewBubble: true,
 	enableAutoGenerateTitle: true,
 	sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
-
+	// comment
 	disablePromptHint: false,
 
 	dontShowMaskSplashScreen: false, // dont show splash screen when create chat
@@ -47,7 +47,7 @@ export const DEFAULT_CONFIG = {
 	models: DEFAULT_MODELS as any as LLMModel[],
 
 	modelConfig: {
-		model: "gpt-3.5-turbo-16k" as ModelType,
+		model: "gpt-3.5-turbo-1106" as ModelType,
 		temperature: 0.5,
 		top_p: 1,
 		max_tokens: 3000,

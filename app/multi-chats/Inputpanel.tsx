@@ -90,6 +90,7 @@ import {
 import WindowHeaer from "./WindowHeader";
 import { ChatContext } from "./context";
 import { useWorkflowStore } from "../store/workflow";
+import { useAllModels } from "@/app/utils/hooks";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -241,14 +242,9 @@ export function ChatActions(props: {
 
 	// switch model
 	const currentModel = session.mask.modelConfig.model;
-	const models = useMemo(
-		() =>
-			config
-				.allModels()
-				.filter((m) => m.available)
-				.map((m) => m.name),
-		[config],
-	);
+	const models = useAllModels()
+		.filter((m) => m.available)
+		.map((m) => m.name);
 	const [showModelSelector, setShowModelSelector] = useState(false);
 
 	return (

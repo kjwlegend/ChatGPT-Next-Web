@@ -96,6 +96,7 @@ import {
 	startSpeechToText,
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
+import { useAllModels } from "@/app/utils/hooks";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -249,17 +250,13 @@ export function ChatActions(props: {
 
 	// switch model
 	const currentModel = chatStore.currentSession().mask.modelConfig.model;
-	const models = useMemo(
-		() =>
-			config
-				.allModels()
-				.filter((m) => m.available)
-				.map((m) => ({
-					title: m.displayName,
-					value: m.name,
-				})),
-		[config],
-	);
+	const models = useAllModels()
+		.filter((m) => m.available)
+		.map((m) => ({
+			title: m.displayName,
+			value: m.name,
+		}));
+
 	const [showModelSelector, setShowModelSelector] = useState(false);
 
 	return (
@@ -341,7 +338,7 @@ export function ChatActions(props: {
 					<Selector
 						defaultSelectedValue={currentModel}
 						items={models.map((m) => ({
-							title: m.title,
+							title: m.title ? m.title : m.value,
 							value: m.value,
 						}))}
 						onClose={() => setShowModelSelector(false)}

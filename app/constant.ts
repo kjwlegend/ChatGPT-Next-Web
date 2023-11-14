@@ -152,7 +152,7 @@ Current model: {{model}}
 Current time: {{time}}`;
 }
 
-export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
+export const SUMMARIZE_MODEL = "gpt-3.5-turbo-1106";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
 	default: "2021-09",
@@ -201,14 +201,14 @@ export const DEFAULT_MODELS = [
 		available: true,
 		displayName: "小光4.0-1107",
 	},
-	{
-		name: "gpt-4-vision-preview",
-		available: true,
-		displayName: "小光4.1-1107",
-	},
+	// {
+	// 	name: "gpt-4-vision-preview",
+	// 	available: true,
+	// 	displayName: "小光4.1-1107",
+	// },
 	{
 		name: "gpt-3.5-turbo",
-		displayName: "小光-3.5-0613",
+		displayName: "小光-3.5",
 		available: true,
 	},
 	// {
@@ -216,26 +216,26 @@ export const DEFAULT_MODELS = [
 	//   displayName: "小光-3.5-0301",
 	//   available: false,
 	// },
-	{
-		name: "gpt-3.5-turbo-0613",
-		displayName: "小光-3.5-0613",
-		available: true,
-	},
+	// {
+	// 	name: "gpt-3.5-turbo-0613",
+	// 	displayName: "小光-3.5-0613",
+	// 	available: true,
+	// },
 	{
 		name: "gpt-3.5-turbo-1106",
-		available: true,
 		displayName: "小光3.5-1107",
-	},
-	{
-		name: "gpt-3.5-turbo-16k",
-		displayName: "小光-3.5-16k",
 		available: true,
 	},
-	{
-		name: "gpt-3.5-turbo-16k-0613",
-		displayName: "小光-3.5-16k-0613",
-		available: true,
-	},
+	// {
+	// 	name: "gpt-3.5-turbo-16k",
+	// 	displayName: "小光-3.5-16k",
+	// 	available: true,
+	// },
+	// {
+	// 	name: "gpt-3.5-turbo-1106",
+	// 	displayName: "小光-3.5-16k-0613",
+	// 	available: true,
+	// },
 ] as const;
 
 import { getServerSideConfig } from "@/app/config/server";

@@ -63,10 +63,12 @@ interface ToolInput {
 }
 
 async function handle(req: NextRequest) {
+	// Check if the request method is OPTIONS
 	if (req.method === "OPTIONS") {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
 	try {
+		// Authenticate the request
 		const authResult = auth(req);
 		if (authResult.error) {
 			return NextResponse.json(authResult, {
@@ -74,6 +76,7 @@ async function handle(req: NextRequest) {
 			});
 		}
 
+		// Initialize encoder and transform stream
 		const encoder = new TextEncoder();
 		const transformStream = new TransformStream();
 		const writer = transformStream.writable.getWriter();
@@ -87,7 +90,7 @@ async function handle(req: NextRequest) {
 			apiKey = token;
 		}
 
-		// support base url
+		// Support base url
 		let baseUrl = "https://api.openai.com/v1";
 		if (serverConfig.baseUrl) baseUrl = serverConfig.baseUrl;
 		if (
@@ -99,9 +102,10 @@ async function handle(req: NextRequest) {
 			baseUrl = baseUrl.endsWith("/") ? `${baseUrl}v1` : `${baseUrl}/v1`;
 		console.log("[baseUrl]", baseUrl);
 
+		// Initialize handler
 		const handler = BaseCallbackHandler.fromMethods({
 			async handleLLMNewToken(token: string) {
-				// console.log("[Token]", token);
+				// Handle new token
 				if (token) {
 					var response = new ResponseBody();
 					response.message = token;
@@ -112,6 +116,7 @@ async function handle(req: NextRequest) {
 				}
 			},
 			async handleChainError(err, runId, parentRunId, tags) {
+				// Handle chain error
 				console.log("[handleChainError]", err, "writer error");
 				var response = new ResponseBody();
 				response.isSuccess = false;
@@ -123,15 +128,16 @@ async function handle(req: NextRequest) {
 				await writer.close();
 			},
 			async handleChainEnd(outputs, runId, parentRunId, tags) {
+				// Handle chain end
 				console.log("[handleChainEnd]");
 				await writer.ready;
 				await writer.close();
 			},
 			async handleLLMEnd() {
-				// await writer.ready;
-				// await writer.close();
+				// Handle LLM end
 			},
 			async handleLLMError(e: Error) {
+				// Handle LLM error
 				console.log("[handleLLMError]", e, "writer error");
 				var response = new ResponseBody();
 				response.isSuccess = false;
@@ -143,12 +149,13 @@ async function handle(req: NextRequest) {
 				await writer.close();
 			},
 			handleLLMStart(llm, _prompts: string[]) {
-				// console.log("handleLLMStart: I'm the second handler!!", { llm });
+				// Handle LLM start
 			},
 			handleChainStart(chain) {
-				// console.log("handleChainStart: I'm the second handler!!", { chain });
+				// Handle chain start
 			},
 			async handleAgentAction(action) {
+				// Handle agent action
 				try {
 					console.log("[handleAgentAction]", action.tool);
 					if (!reqBody.returnIntermediateSteps) return;
@@ -173,16 +180,20 @@ async function handle(req: NextRequest) {
 				}
 			},
 			handleToolStart(tool, input) {
+				// Handle tool start
 				console.log("[handleToolStart]", { tool });
 			},
 			async handleToolEnd(output, runId, parentRunId, tags) {
+				// Handle tool end
 				console.log("[handleToolEnd]", { output, runId, parentRunId, tags });
 			},
 			handleAgentEnd(action, runId, parentRunId, tags) {
+				// Handle agent end
 				console.log("[handleAgentEnd]");
 			},
 		});
 
+		// Initialize search tool
 		let searchTool: Tool = new DuckDuckGo();
 		if (process.env.CHOOSE_SEARCH_ENGINE) {
 			switch (process.env.CHOOSE_SEARCH_ENGINE) {
@@ -218,6 +229,7 @@ async function handle(req: NextRequest) {
 			});
 		}
 
+		// Initialize model and embeddings
 		const model = new OpenAI(
 			{
 				temperature: 0,
@@ -233,6 +245,7 @@ async function handle(req: NextRequest) {
 			{ basePath: baseUrl },
 		);
 
+		// Initialize tools
 		const tools = [
 			// new RequestsGetTool(),
 			// new RequestsPostTool(),
@@ -251,7 +264,7 @@ async function handle(req: NextRequest) {
 				);
 			},
 		);
-		dallEAPITool.returnDirect = true;
+		// dallEAPITool.returnDirect = false;
 		const stableDiffusionTool = new StableDiffusionWrapper();
 		const arxivAPITool = new ArxivAPIWrapper();
 		if (useTools.includes("web-search")) tools.push(searchTool);
@@ -262,6 +275,7 @@ async function handle(req: NextRequest) {
 			tools.push(stableDiffusionTool);
 		if (useTools.includes(arxivAPITool.name)) tools.push(arxivAPITool);
 
+		// Add tools to the list
 		useTools.forEach((toolName) => {
 			if (toolName) {
 				var tool = langchainTools[
@@ -273,6 +287,7 @@ async function handle(req: NextRequest) {
 			}
 		});
 
+		// Initialize past messages
 		const pastMessages = new Array();
 
 		reqBody.messages
@@ -286,6 +301,7 @@ async function handle(req: NextRequest) {
 					pastMessages.push(new AIMessage(message.content));
 			});
 
+		// Initialize memory
 		const memory = new BufferMemory({
 			memoryKey: "chat_history",
 			returnMessages: true,
@@ -294,6 +310,7 @@ async function handle(req: NextRequest) {
 			chatHistory: new ChatMessageHistory(pastMessages),
 		});
 
+		// Initialize LLM and executor
 		const llm = new ChatOpenAI(
 			{
 				modelName: reqBody.model,
@@ -311,8 +328,10 @@ async function handle(req: NextRequest) {
 			returnIntermediateSteps: reqBody.returnIntermediateSteps,
 			maxIterations: reqBody.maxIterations,
 			memory: memory,
+			// verbose: true
 		});
 
+		// Call executor
 		executor.call(
 			{
 				input: reqBody.messages.slice(-1)[0].content,
@@ -320,11 +339,13 @@ async function handle(req: NextRequest) {
 			[handler],
 		);
 
+		// Return response
 		console.log("returning response");
 		return new Response(transformStream.readable, {
 			headers: { "Content-Type": "text/event-stream" },
 		});
 	} catch (e) {
+		// Handle error
 		return new Response(JSON.stringify({ error: (e as any).message }), {
 			status: 500,
 			headers: { "Content-Type": "application/json" },

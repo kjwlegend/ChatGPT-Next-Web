@@ -31,10 +31,15 @@ export function collectModels(
 	customModels: string,
 ) {
 	const modelTable = collectModelTable(models, customModels);
-	const allModels = Object.keys(modelTable).map((m) => ({
-		name: m,
-		available: modelTable[m],
-	}));
+	const allModels = Object.keys(modelTable).map((m) => {
+		const model = models.find((model) => model.name === m);
+		return {
+			name: m,
+			available: modelTable[m],
+			displayName: model?.displayName,
+		};
+	});
+	// console.log("all available models", allModels);
 
 	return allModels;
 }
