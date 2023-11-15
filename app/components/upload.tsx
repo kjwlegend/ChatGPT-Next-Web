@@ -16,7 +16,6 @@ const App: React.FC = () => {
 		method: "post",
 		data: {
 			username: "kjwlegend",
-			filename: "test",
 		},
 		headers: {
 			authorization: "authorization-text",
@@ -51,11 +50,15 @@ const App: React.FC = () => {
 			if (info.file.status !== "uploading") {
 				console.log(info.file, info.fileList);
 			}
+			// uploading status
+			if (info.file.status === "uploading") {
+				message.loading(`${info.file.name} 文件上传中, 稍后会进行知识库构建`);
+			}
 			if (info.file.status === "done") {
-				message.success(`${info.file.name} file uploaded successfully`);
+				message.success(`${info.file.name} 文件上传且知识库构建成功`);
 				// 上传成功后，对文件进行处理
 			} else if (info.file.status === "error") {
-				message.error(`${info.file.name} file upload failed.`);
+				message.error(`${info.file.name} 文件上传或者知识库构建失败`);
 			}
 			// update fileList
 			setFileList(info.fileList);
@@ -70,7 +73,7 @@ const App: React.FC = () => {
 		},
 	};
 
-	console.log(fileList);
+	// console.log(fileList);
 
 	return (
 		<>

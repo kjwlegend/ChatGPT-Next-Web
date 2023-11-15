@@ -26,6 +26,7 @@ import {
 	BaiduSearch,
 	GoogleSearch,
 } from "@/app/api/langchain-tools/all_search";
+import { KnowledgeSearch } from "@/app/api/langchain-tools/knowledge_search";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
 
@@ -267,6 +268,7 @@ async function handle(req: NextRequest) {
 		// dallEAPITool.returnDirect = false;
 		const stableDiffusionTool = new StableDiffusionWrapper();
 		const arxivAPITool = new ArxivAPIWrapper();
+		const knowledgeSearchTool = new KnowledgeSearch();
 		if (useTools.includes("web-search")) tools.push(searchTool);
 		if (useTools.includes(webBrowserTool.name)) tools.push(webBrowserTool);
 		if (useTools.includes(calculatorTool.name)) tools.push(calculatorTool);
@@ -274,6 +276,9 @@ async function handle(req: NextRequest) {
 		if (useTools.includes(stableDiffusionTool.name))
 			tools.push(stableDiffusionTool);
 		if (useTools.includes(arxivAPITool.name)) tools.push(arxivAPITool);
+		if (useTools.includes(knowledgeSearchTool.name)) {
+			tools.push(knowledgeSearchTool);
+		}
 
 		// Add tools to the list
 		useTools.forEach((toolName) => {

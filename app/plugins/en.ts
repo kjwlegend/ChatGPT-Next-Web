@@ -69,4 +69,14 @@ export const EN_PLUGINS: BuiltinPlugin[] = [
 		createdAt: 1699265115000,
 		enable: false,
 	},
+	{
+		name: "Knowledge Search",
+		toolName: "knowledge_search",
+		lang: "en",
+		description:
+			"Knowledge search is an tool that can search for knowledge from the knowledge base. It is used when the origin model is not enough to answer the question.",
+		builtin: true,
+		createdAt: 1699265115000,
+		enable: false,
+	},
 ];

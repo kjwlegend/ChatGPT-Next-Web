@@ -40,7 +40,7 @@ export class DallEAPIWrapper extends StructuredTool {
 		size: z
 			.enum(["1024x1024", "1024x1792", "1792x1024"])
 			.default("1024x1024")
-			.describe("images size"),
+			.describe("images size, only choose the value from the list"),
 	});
 
 	/** @ignore */

@@ -67,4 +67,14 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		createdAt: 1699265115000,
 		enable: false,
 	},
+	{
+		name: "知识搜索",
+		toolName: "knowledge_search",
+		lang: "cn",
+		description:
+			"知识搜索是一个工具，可以从知识库中搜索知识。当原始模型不足以回答问题时使用。",
+		builtin: true,
+		createdAt: 1699265115000,
+		enable: true,
+	},
 ];
