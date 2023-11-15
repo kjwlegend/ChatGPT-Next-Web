@@ -43,7 +43,7 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		toolName: "dalle_image_generator",
 		lang: "cn",
 		description:
-			"DALL·E 可以根据自然语言的描述创建逼真的图像和艺术。目前仅对接了 DALL 2 版本, 质量堪忧,仅供测试使用",
+			"接入最新的 DALL·E 3 可以根据自然语言的描述创建逼真的图像和艺术。",
 		builtin: true,
 		createdAt: 1694703673000,
 		enable: false,
