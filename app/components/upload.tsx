@@ -4,10 +4,17 @@ import type { UploadProps } from "antd";
 import { Button, message, Upload } from "antd";
 import type { UploadFile } from "antd/lib/upload/interface";
 import { server_url } from "../constant";
+import { removeEmbedding } from "../api/embedding";
+import { getEmbedding } from "../api/embedding";
+import { useUserStore } from "../store";
 
 const App: React.FC = () => {
 	// 储存fileList
 	const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+
+	// get username
+	const { user } = useUserStore();
+	const username = user.username;
 
 	const props: UploadProps = {
 		name: "file",
@@ -15,7 +22,8 @@ const App: React.FC = () => {
 		action: `${server_url}/api/gpt/embeddings/`,
 		method: "post",
 		data: {
-			username: "kjwlegend",
+			username: username,
+			knowledge_group: "personal",
 		},
 		headers: {
 			authorization: "authorization-text",
@@ -62,6 +70,19 @@ const App: React.FC = () => {
 			}
 			// update fileList
 			setFileList(info.fileList);
+		},
+
+		onRemove(file) {
+			// remove file
+			message.warning(`${file.name} 文件已经被移除`);
+			// remove embedding
+			const data = {
+				username: username,
+				file_name: file.name,
+				delete_type: "file",
+			};
+			const res = removeEmbedding(data);
+			console.log(res);
 		},
 		progress: {
 			strokeColor: {

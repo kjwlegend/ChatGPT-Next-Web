@@ -50,6 +50,7 @@ interface RequestBody {
 	maxIterations: number;
 	returnIntermediateSteps: boolean;
 	useTools: (undefined | string)[];
+	username?: string;
 }
 
 class ResponseBody {
@@ -85,6 +86,7 @@ async function handle(req: NextRequest) {
 		const authToken = req.headers.get("Authorization") ?? "";
 		const token = authToken.trim().replaceAll("Bearer ", "").trim();
 		const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
+		const username = reqBody.username ?? "";
 		let useTools = reqBody.useTools ?? [];
 		let apiKey = serverConfig.apiKey;
 		if (isOpenAiKey && token) {
@@ -268,7 +270,7 @@ async function handle(req: NextRequest) {
 		// dallEAPITool.returnDirect = false;
 		const stableDiffusionTool = new StableDiffusionWrapper();
 		const arxivAPITool = new ArxivAPIWrapper();
-		const knowledgeSearchTool = new KnowledgeSearch();
+		const knowledgeSearchTool = new KnowledgeSearch(username);
 		if (useTools.includes("web-search")) tools.push(searchTool);
 		if (useTools.includes(webBrowserTool.name)) tools.push(webBrowserTool);
 		if (useTools.includes(calculatorTool.name)) tools.push(calculatorTool);

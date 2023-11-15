@@ -1,6 +1,7 @@
 import { StructuredTool } from "langchain/tools";
 import { z } from "zod";
 import { getResponse } from "../embedding";
+import { server_url } from "@/app/constant";
 // This is an agent that can be used to make requests to the knowledge search API.
 // It is a structured tool, so it can be used in the same way as other structured tools.
 
@@ -9,8 +10,11 @@ export class KnowledgeSearch extends StructuredTool {
 	description = `knowledge search is an tool that can search for knowledge from the knowledge base. It is used when the origin model is not enough to answer the question.
     knowledge tool can search 4 types of knowledge base: personal, team, agent, public`;
 
-	constructor() {
+	username: string;
+
+	constructor(username: string | undefined) {
 		super();
+		this.username = username ?? "";
 	}
 
 	schema = z.object({
@@ -30,29 +34,22 @@ export class KnowledgeSearch extends StructuredTool {
 		query,
 		knowledge_group,
 		knowledge_category,
-		max_results,
 	}: z.infer<typeof this.schema>) {
 		const data = {
 			query: query,
-			username: "kjwlegend",
+			username: this.username,
 			knowledge_group: knowledge_group,
 			knowledge_category: knowledge_category,
 		};
-		// const response = await getResponse(
-		//     data
-		//     );
-		//     console.log("知识库反馈:", response);
+		console.log("knowledge search data:", data);
 
-		const response = await fetch(
-			"http://localhost:8000/api/gpt/context-search/",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(data),
+		const response = await fetch(`${server_url}/api/gpt/context-search/`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		).then((res) => res.json());
+			body: JSON.stringify(data),
+		}).then((res) => res.json());
 
 		const result = response.data;
 		console.log("知识库反馈:", result);

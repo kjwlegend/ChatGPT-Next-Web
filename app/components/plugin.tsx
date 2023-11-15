@@ -257,10 +257,7 @@ export function ContextPrompts(props: {
 
 	return (
 		<>
-			<div
-				className={chatStyle["context-prompt"]}
-				style={{ marginBottom: 20 }}
-			>
+			<div className={chatStyle["context-prompt"]} style={{ marginBottom: 20 }}>
 				{context.map((c, i) => (
 					<ContextPromptItem
 						key={i}
@@ -301,8 +298,7 @@ export function PluginPage() {
 	const allPlugins = pluginStore
 		.getAll()
 		.filter(
-			(m) =>
-				!getLang() || m.lang === (getLang() == "cn" ? getLang() : "en"),
+			(m) => !getLang() || m.lang === (getLang() == "cn" ? getLang() : "en"),
 		);
 
 	const [searchPlugins, setSearchPlugins] = useState<Plugin[]>([]);
@@ -320,9 +316,7 @@ export function PluginPage() {
 		}
 	};
 
-	const [editingPluginId, setEditingPluginId] = useState<
-		string | undefined
-	>();
+	const [editingPluginId, setEditingPluginId] = useState<string | undefined>();
 	const editingPlugin =
 		pluginStore.get(editingPluginId) ??
 		BUILTIN_PLUGIN_STORE.get(editingPluginId);
@@ -422,16 +416,9 @@ export function PluginPage() {
 							<div className={styles["plugin-item"]} key={m.id}>
 								<div className={styles["plugin-header"]}>
 									<div className={styles["plugin-title"]}>
-										<div className={styles["plugin-name"]}>
-											{m.name}
-										</div>
+										<div className={styles["plugin-name"]}>{m.name}</div>
 										{/* 描述 */}
-										<div
-											className={
-												styles["plugin-info"] +
-												" one-line"
-											}
-										>
+										<div className={styles["plugin-info"]}>
 											{`${m.description}`}
 										</div>
 									</div>
@@ -440,11 +427,9 @@ export function PluginPage() {
 									<input
 										type="checkbox"
 										checked={m.enable}
+										// disabled={!m.builtin}
 										onChange={(e) => {
-											updatePluginEnableStatus(
-												m.id,
-												e.currentTarget.checked,
-											);
+											updatePluginEnableStatus(m.id, e.currentTarget.checked);
 										}}
 									></input>
 									{/* {m.builtin ? (
@@ -481,9 +466,7 @@ export function PluginPage() {
 			{editingPlugin && (
 				<div className="modal-mask">
 					<Modal
-						title={Locale.Plugin.EditModal.Title(
-							editingPlugin?.builtin,
-						)}
+						title={Locale.Plugin.EditModal.Title(editingPlugin?.builtin)}
 						onClose={closePluginModal}
 						actions={[
 							<IconButton

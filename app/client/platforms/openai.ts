@@ -6,7 +6,12 @@ import {
 	REQUEST_TIMEOUT_MS,
 	ServiceProvider,
 } from "@/app/constant";
-import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
+import {
+	useAccessStore,
+	useAppConfig,
+	useChatStore,
+	useUserStore,
+} from "@/app/store";
 
 import {
 	AgentChatOptions,
@@ -96,6 +101,7 @@ export class ChatGPTApi implements LLMApi {
 			frequency_penalty: modelConfig.frequency_penalty,
 			top_p: modelConfig.top_p,
 			max_tokens: Math.max(modelConfig.max_tokens, 1024),
+			username: useUserStore.getState().user?.username,
 			// Please do not ask me why not send max_tokens, no reason, this param is just shit, I dont want to explain anymore.
 		};
 
@@ -246,6 +252,7 @@ export class ChatGPTApi implements LLMApi {
 			maxIterations: options.agentConfig.maxIterations,
 			returnIntermediateSteps: options.agentConfig.returnIntermediateSteps,
 			useTools: options.agentConfig.useTools,
+			username: useUserStore.getState().user?.username,
 		};
 
 		console.log("[Request] openai payload: ", requestPayload);
