@@ -3,6 +3,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { Button, message, Upload } from "antd";
 import type { UploadFile } from "antd/lib/upload/interface";
+import { server_url } from "../constant";
 
 const App: React.FC = () => {
 	// 储存fileList
@@ -10,8 +11,13 @@ const App: React.FC = () => {
 
 	const props: UploadProps = {
 		name: "file",
-		accept: ".txt, .doc, .docx, .pdf, .md , .csv, .xls, .xlsx, .ppt, .pptx",
-		action: "https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188",
+		accept: ".txt, .doc, .docx, .pdf, .md , .csv, .xls, .xlsx",
+		action: `${server_url}/api/gpt/embeddings/`,
+		method: "post",
+		data: {
+			username: "kjwlegend",
+			filename: "test",
+		},
 		headers: {
 			authorization: "authorization-text",
 		},
@@ -26,12 +32,10 @@ const App: React.FC = () => {
 				".csv",
 				".xls",
 				".xlsx",
-				".ppt",
-				".pptx",
 			].some((ext) => file.name.endsWith(ext));
 			if (!isAccepted) {
 				message.error(
-					"只能上传.txt, .doc, .docx, .pdf, .md , .csv, .xls, .xlsx, .ppt, .pptx文件",
+					"只能上传.txt, .doc, .docx, .pdf, .md , .csv, .xls, .xlsx, 文件",
 				);
 			}
 			// max file size is 10MB
