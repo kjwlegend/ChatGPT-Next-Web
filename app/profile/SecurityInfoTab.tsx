@@ -4,7 +4,7 @@ import { useUserStore } from "../store/user";
 import { Form, Input, Button, message, Space } from "antd";
 
 import Upload from "../utils/upload";
-import { updateUserInfo } from "../api/user";
+import { updateProfile } from "../api/user";
 import { server_url } from "../constant";
 import Link from "next/link";
 
@@ -27,7 +27,7 @@ const SecurityInfoTab = () => {
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
 
-    updateUserInfo(user.id, values)
+    updateProfile(user.id, values)
       .then((response) => {
         console.log("User info updated successfully:", response);
         // 在这里处理更新成功后的逻辑

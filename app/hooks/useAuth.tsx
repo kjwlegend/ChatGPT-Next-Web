@@ -4,6 +4,7 @@ import { useAuthStore } from "../store/auth";
 import { useUserStore, User } from "../store/user";
 import { logoutAPI } from "../api/auth";
 import { Result } from "antd";
+import { getUserInfo } from "../api/user";
 
 interface LoginParams {
   username: string;
@@ -21,7 +22,15 @@ export default function useAuth() {
     try {
       setIsLoading(true);
 
+      
       const result = await loginAPI(params);
+      // cookie
+      const expirationDate = new Date();
+			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
+      document.cookie = `authenticated=true; user_id=${result.data.user.id}; expires=${expirationDate.toUTCString()}; path=/`;
+			document.cookie = `user_id=${result.data.user.id}; expires=${expirationDate.toUTCString()}; path=/`;
+			document.cookie = `member_type=${result.data.user.member_type}; expires=${expirationDate.toUTCString()}; path=/`;
+			document.cookie = `member_expire_date=${result.data.user.member_expire_date}; expires=${expirationDate.toUTCString()}; path=/`;
 
       const authInfo = {
         accessToken: result.data.access,
@@ -74,8 +83,51 @@ export default function useAuth() {
       throw new Error(result.msg);
     }
   };
+  const updateUserInfo = async (id: number): Promise<void> => {
+    const user = await getUserInfo(id);
+
+    if (user) {
+      // 处理会员类型 , 如果是 normal 则为普通会员, 如果是 monthly 黄金会员, quartly 为白金会员, yearly 为钻石会员
+
+      // switch 语法
+
+      switch (user.member_type) {
+        case "normal":
+          user.member_type = "普通会员";
+          break;
+        case "monthly":
+          user.member_type = "黄金会员";
+          break;
+        case "quartly":
+          user.member_type = "白金会员";
+          break;
+        case "yearly":
+          user.member_type = "钻石会员";
+          break;
+        default:
+          user.member_type = "普通会员";
+      }
+      // 存在过期时间则处理, 否则显示不过期
+      if (!user.member_expire_date) {
+        user.member_expire_date = "不过期";
+      } else {
+        // 处理 member_expire_date 会员过期时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
+        user.member_expire_date =
+          user.member_expire_date.slice(0, 10);
+      }
+    }
+
+    userStore.updateUser(user);
+  };
+
   const logoutHook = async () => {
     await logoutAPI();
+    //clear cookie
+    document.cookie = `authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `member_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `member_expire_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+
     authStore.logout();
     userStore.clearUser();
   };
@@ -89,6 +141,7 @@ export default function useAuth() {
     user,
     loginHook,
     logoutHook,
+    updateUserInfo,
     isLoading,
   };
 }

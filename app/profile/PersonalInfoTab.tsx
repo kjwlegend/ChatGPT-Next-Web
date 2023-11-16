@@ -10,7 +10,7 @@ import type { DatePickerProps } from "antd";
 import { DatePicker, Space } from "antd";
 
 import { UploadOutlined } from "@ant-design/icons";
-import { updateUserInfo } from "../api/user";
+import { updateProfile } from "../api/user";
 import { server_url } from "../constant";
 import Link from "next/link";
 
@@ -41,7 +41,7 @@ const PersonalInfoTab = () => {
       key: "loading",
     });
 
-    updateUserInfo(user.id, values)
+    updateProfile(user.id, values)
       .then((response) => {
         console.log("User info updated successfully:", response);
         // 在这里处理更新成功后的逻辑

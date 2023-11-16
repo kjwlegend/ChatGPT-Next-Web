@@ -8,7 +8,7 @@ const cn = {
 	Error: {
 		Unauthorized: isApp
 			? "检测到无效 API Key，请前往[设置](/#/settings)页检查 API Key 是否配置正确。"
-			: "访问密码不正确, 请点击[登录](/auth) 输入快速授权码.",
+			: "出错啦, 若未登录请点击[登录](/auth) , 余额不足请点击 [个人中心](/profile#2) 进行会员激活",
 	},
 	Auth: {
 		Title: "小光AI助手",

@@ -6,6 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
 import { useAuthStore } from "@/app/store/auth";
+import { useUserStore } from "@/app/store";
+import { getUserInfo } from "../../user";
 
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 

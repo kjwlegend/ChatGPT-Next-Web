@@ -28,6 +28,7 @@ export interface UserStore {
 	updateModelPreference: (modelPreference: string) => void;
 	setUser: (user: User) => void;
 	clearUser: () => void;
+	updateUser: (user: User) => void;
 }
 export const useUserStore = create<UserStore>()(
 	persist(
@@ -70,6 +71,14 @@ export const useUserStore = create<UserStore>()(
 				}));
 			},
 			setUser: (user: User) => set({ user }),
+			updateUser: (user: User) => {
+				set((state) => ({
+					user: {
+						...state.user,
+						...user,
+					},
+				}));
+			},
 			clearUser: () => {
 				set((state) => ({
 					user: {

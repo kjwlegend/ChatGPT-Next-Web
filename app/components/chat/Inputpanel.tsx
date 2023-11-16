@@ -384,6 +384,7 @@ export function Inputpanel() {
 	const config = useAppConfig();
 	const userStore = useUserStore();
 	const authHook = useAuth();
+	const { updateUserInfo } = authHook;
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -482,6 +483,7 @@ export function Inputpanel() {
 								session.id = newSessionId;
 							});
 						}
+						updateUserInfo(createChatData.user)
 					} else {
 						if (response.code === 401) {
 							messageApi.error("登录已过期(令牌无效)，请重新登录");

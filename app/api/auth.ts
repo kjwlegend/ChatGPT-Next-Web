@@ -5,7 +5,9 @@ import { ACCESS_CODE_PREFIX } from "../constant";
 import request from "../utils/request";
 import { useAuthStore } from "../store/auth";
 import { use } from "react";
-
+import { useUserStore } from "../store";
+import { getUserInfo } from "../constant";
+import { server_url } from "../constant";
 function getIP(req: NextRequest) {
 	let ip = req.ip ?? req.headers.get("x-real-ip");
 	const forwardedFor = req.headers.get("x-forwarded-for");
@@ -27,9 +29,14 @@ function parseApiKey(bearToken: string) {
 	};
 }
 
-export function auth(req: NextRequest) {
+
+export  function auth(req: NextRequest) {
 	const authToken = req.headers.get("Authorization") ?? "";
 	const isAuthenticated = req.cookies.get("authenticated")?.value === "true";
+
+	const user_id = req.cookies.get("user_id")?.value;
+
+	const chat_balance = 1;
 
 	console.log("[Auth] isAuthenticated", isAuthenticated);
 
@@ -50,17 +57,25 @@ export function auth(req: NextRequest) {
 	if (isAuthenticated === false) {
 		return {
 			error: true,
-			msg: !accessCode
-				? "未登录或登录已过期, 请重新登录"
+			msg: !accessCode ? "未登录或登录已过期, 请重新登录"
 				: "未登录或授权码为空, 如清除了cookie, 请重新登录",
 		};
 	}
+	
 
 	// if user does not provide an api key, inject system api key
 	if (isAuthenticated === true) {
 		const serverApiKey = serverConfig.isAzure
 			? serverConfig.azureApiKey
 			: serverConfig.apiKey;
+
+		// check user balance
+		if (chat_balance < -1) {
+			return {
+				error: false,
+				msg: "您的对话余额不足, 请联系充值",
+			};
+		}
 
 		if (serverApiKey) {
 			console.log("[Auth] use system api key");
@@ -120,9 +135,8 @@ export async function loginAPI(params: LoginParams) {
 		data: params,
 	})
 		.then((res) => {
-			const expirationDate = new Date();
-			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
-			document.cookie = `authenticated=true; expires=${expirationDate.toUTCString()}; path=/`;
+
+
 			return res.data;
 		})
 		.catch((err) => {
@@ -137,8 +151,14 @@ export async function logoutAPI() {
 		method: "post",
 	})
 		.then((res) => {
+			// logout 后清除所有cookie
 			document.cookie =
 				"authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie = "member_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie = "member_expire_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			 
+			
 			return res.data;
 		})
 		.catch((err) => {
