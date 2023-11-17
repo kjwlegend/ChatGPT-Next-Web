@@ -29,14 +29,14 @@ function parseApiKey(bearToken: string) {
 	};
 }
 
-
-export  function auth(req: NextRequest) {
+export function auth(req: NextRequest, chat?: number) {
 	const authToken = req.headers.get("Authorization") ?? "";
 	const isAuthenticated = req.cookies.get("authenticated")?.value === "true";
 
 	const user_id = req.cookies.get("user_id")?.value;
-
-	const chat_balance = 1;
+	const chat_balance = 0;
+	console.log("user_id", user_id);
+	console.log("user", chat);
 
 	console.log("[Auth] isAuthenticated", isAuthenticated);
 
@@ -57,11 +57,11 @@ export  function auth(req: NextRequest) {
 	if (isAuthenticated === false) {
 		return {
 			error: true,
-			msg: !accessCode ? "未登录或登录已过期, 请重新登录"
+			msg: !accessCode
+				? "未登录或登录已过期, 请重新登录"
 				: "未登录或授权码为空, 如清除了cookie, 请重新登录",
 		};
 	}
-	
 
 	// if user does not provide an api key, inject system api key
 	if (isAuthenticated === true) {
@@ -69,13 +69,13 @@ export  function auth(req: NextRequest) {
 			? serverConfig.azureApiKey
 			: serverConfig.apiKey;
 
-		// check user balance
-		if (chat_balance < -1) {
-			return {
-				error: false,
-				msg: "您的对话余额不足, 请联系充值",
-			};
-		}
+		// // check user balance
+		// if (chat_balance < -1) {
+		// 	return {
+		// 		error: false,
+		// 		msg: "您的对话余额不足, 请联系充值",
+		// 	};
+		// }
 
 		if (serverApiKey) {
 			console.log("[Auth] use system api key");
@@ -135,8 +135,6 @@ export async function loginAPI(params: LoginParams) {
 		data: params,
 	})
 		.then((res) => {
-
-
 			return res.data;
 		})
 		.catch((err) => {
@@ -154,11 +152,13 @@ export async function logoutAPI() {
 			// logout 后清除所有cookie
 			document.cookie =
 				"authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie = "member_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie = "member_expire_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			 
-			
+			document.cookie =
+				"user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie =
+				"member_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+			document.cookie =
+				"member_expire_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
 			return res.data;
 		})
 		.catch((err) => {

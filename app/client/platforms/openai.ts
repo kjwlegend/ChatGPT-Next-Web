@@ -255,7 +255,7 @@ export class ChatGPTApi implements LLMApi {
 			username: useUserStore.getState().user?.username,
 		};
 
-		console.log("[Request] openai payload: ", requestPayload);
+		console.log("[Agent Request] openai payload: ", requestPayload);
 
 		const shouldStream = true;
 		const controller = new AbortController();
