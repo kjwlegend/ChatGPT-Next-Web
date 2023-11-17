@@ -193,6 +193,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 	);
 	// console.log("response checkkkkkk", responseState);
 	// 在responseState 为 true 时 执行 onNextworkflow
+	const responseStateRef = useRef(responseState);
 	useEffect(() => {
 		const lastMessage = session.messages.at(-1)?.content ?? "";
 		console.log("responseState old", responseState);

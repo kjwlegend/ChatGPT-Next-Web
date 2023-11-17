@@ -52,7 +52,7 @@ const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
 });
 
 const MaskPage = dynamic(
-	async () => (await import("../masklist/mask")).MaskPage,
+	async () => (await import("@/app/chats/masklist/mask")).MaskPage,
 	{
 		loading: () => <Loading noLogo />,
 	},

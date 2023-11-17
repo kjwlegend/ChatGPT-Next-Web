@@ -99,15 +99,6 @@ export const ChatContext = React.createContext<ChatContextType>({
 	scrollRef: React.createRef<HTMLDivElement>(),
 });
 
-export function Loading(props: { noLogo?: boolean }) {
-	return (
-		<div className={styles["loading-content"] + " no-dark"}>
-			{!props.noLogo && <BrainIcon />}
-			<LoadingIcon />
-		</div>
-	);
-}
-
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 function _Chat() {

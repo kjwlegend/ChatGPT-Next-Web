@@ -17,88 +17,88 @@ import LogoutButton from "../components/logout";
 import LoadingIcon from "../icons/three-dots.svg";
 
 export default function AuthPage() {
-  const { isAuthenticated } = useAuthStore();
-  const query = useSearchParams();
-  const inviteCodeStore = useInviteCodeStore();
+	const { isAuthenticated } = useAuthStore();
+	const query = useSearchParams();
+	const inviteCodeStore = useInviteCodeStore();
 
-  const [activeTab, setActiveTab] = useState("2");
-  const [isClient, setIsClient] = useState(false);
+	const [activeTab, setActiveTab] = useState("2");
+	const [isClient, setIsClient] = useState(false);
 
-  // 等待样式表加载完后, 再显示
-  const [show, setShow] = useState(false);
+	// 等待样式表加载完后, 再显示
+	const [show, setShow] = useState(false);
 
-  const inviteCode = query.get("i");
-  console.log("inviteCode", inviteCode);
+	const inviteCode = query.get("i");
+	console.log("inviteCode", inviteCode);
 
-  useEffect(() => {
-    // 在这里可以使用inviteCode进行相应的处理
-    inviteCodeStore.setInviteCode(inviteCode);
-  }, [inviteCode]);
+	useEffect(() => {
+		// 在这里可以使用inviteCode进行相应的处理
+		inviteCodeStore.setInviteCode(inviteCode);
+	}, [inviteCode, inviteCodeStore]);
 
-  useEffect(() => {
-    setIsClient(true);
-    const timeout = setTimeout(() => {
-      setShow(true);
-    }, 200);
+	useEffect(() => {
+		setIsClient(true);
+		const timeout = setTimeout(() => {
+			setShow(true);
+		}, 200);
 
-    // 在组件卸载时清除定时器
-    return () => clearTimeout(timeout);
-  }, []);
+		// 在组件卸载时清除定时器
+		return () => clearTimeout(timeout);
+	}, []);
 
-  if (!show) {
-    return (
-      <div className="main">
-        <LoadingIcon />{" "}
-      </div>
-    );
-  }
+	if (!show) {
+		return (
+			<div className="main">
+				<LoadingIcon />{" "}
+			</div>
+		);
+	}
 
-  const onChange = (key: string) => {
-    console.log(key);
-    setActiveTab(key);
-  };
+	const onChange = (key: string) => {
+		console.log(key);
+		setActiveTab(key);
+	};
 
-  const onRegisterSuccess = () => {
-    setActiveTab("2");
-  };
+	const onRegisterSuccess = () => {
+		setActiveTab("2");
+	};
 
-  const items: TabsProps["items"] = [
-    // {
-    //   key: "1",
-    //   label: `快捷密码登录`,
-    //   children: <CodeLogin />,
-    // },
-    {
-      key: "2",
-      label: `账户登录`,
-      children: <Login />,
-      disabled: false,
-    },
-    {
-      key: "3",
-      label: `账号注册`,
-      children: <Register onRegisterSuccess={onRegisterSuccess} />,
-      disabled: false,
-    },
-  ];
+	const items: TabsProps["items"] = [
+		// {
+		//   key: "1",
+		//   label: `快捷密码登录`,
+		//   children: <CodeLogin />,
+		// },
+		{
+			key: "2",
+			label: `账户登录`,
+			children: <Login />,
+			disabled: false,
+		},
+		{
+			key: "3",
+			label: `账号注册`,
+			children: <Register onRegisterSuccess={onRegisterSuccess} />,
+			disabled: false,
+		},
+	];
 
-  return (
-    <div className={styles["auth-page"] + " main"}>
-      <div className={styles["welcome-header"]}>
-        <div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-        <div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
-      </div>
-      <div className="form-container">
-        <Tabs
-          activeKey={activeTab}
-          items={items}
-          onChange={onChange}
-          size="large"
-          tabBarGutter={50}
-          centered={true}
-        />
-      </div>
-      {isAuthenticated && isClient && <LogoutButton />}
-    </div>
-  );
+	return (
+		<div className={styles["auth-page"] + " main"}>
+			<div className={styles["welcome-header"]}>
+				<div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
+				<div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
+			</div>
+			<div className="form-container">
+				<Tabs
+					activeKey={activeTab}
+					items={items}
+					onChange={onChange}
+					size="large"
+					tabBarGutter={50}
+					centered={true}
+				/>
+			</div>
+			{isAuthenticated && isClient && <LogoutButton />}
+		</div>
+	);
 }

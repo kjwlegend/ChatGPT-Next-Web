@@ -29,7 +29,7 @@ import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import ModalPopup from "@/app/components/welcome";
 
-export function Loading(props: { noLogo?: boolean }) {
+function Loading(props: { noLogo?: boolean }) {
 	return (
 		<div className={styles["loading-content"] + " no-dark"}>
 			{!props.noLogo && <BotIcon />}
@@ -65,7 +65,7 @@ const Plugins = dynamic(async () => (await import("./plugin")).PluginPage, {
 	loading: () => <Loading noLogo />,
 });
 
-export function useSwitchTheme() {
+function useSwitchTheme() {
 	const config = useAppConfig();
 
 	useEffect(() => {
@@ -178,7 +178,7 @@ function Screen() {
 	);
 }
 
-export function useLoadData() {
+function useLoadData() {
 	const config = useAppConfig();
 
 	useEffect(() => {

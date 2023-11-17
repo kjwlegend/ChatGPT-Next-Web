@@ -305,6 +305,12 @@ const items = [
 
 		color: "red",
 	},
+	{
+		label: "2023-11-17",
+		children: " 发布 v1.0.1 版本: 优化站点代码架构",
+
+		color: "red",
+	},
 ];
 
 const Log = () => {

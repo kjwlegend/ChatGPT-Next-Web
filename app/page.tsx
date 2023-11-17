@@ -25,7 +25,6 @@ export default function App() {
 		<>
 			{/* <Home /> */}
 			<About />
-			asdf
 			{serverConfig?.isVercel && <Analytics />}
 		</>
 	);
