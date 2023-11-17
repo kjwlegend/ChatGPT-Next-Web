@@ -46,7 +46,16 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+
+
+    generateBuildId: async () => {
+      // You can, for example, get the latest git commit hash here
+      return 'my-build-id1117'
+    },
+
+
 }
+
 
 const CorsHeaders = [
   { key: "Access-Control-Allow-Credentials", value: "true" },
