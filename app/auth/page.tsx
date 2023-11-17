@@ -33,7 +33,7 @@ export default function AuthPage() {
 	useEffect(() => {
 		// 在这里可以使用inviteCode进行相应的处理
 		inviteCodeStore.setInviteCode(inviteCode);
-	}, [inviteCode, inviteCodeStore]);
+	}, [inviteCode]);
 
 	useEffect(() => {
 		setIsClient(true);
