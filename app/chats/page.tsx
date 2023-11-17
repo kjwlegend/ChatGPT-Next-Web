@@ -3,7 +3,7 @@
 require("../polyfill");
 
 import { useState, useEffect } from "react";
-
+import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 import styles from "./home.module.scss";
 import LoadingIcon from "../icons/three-dots.svg";
 import BotIcon from "../icons/bot.svg";
@@ -12,7 +12,6 @@ import { getCSSVar, useMobileScreen } from "../utils";
 
 import dynamic from "next/dynamic";
 import { Path, SlotID } from "../constant";
-import { ErrorBoundary } from "./error";
 
 import { getISOLang, getLang } from "../locales";
 
@@ -28,7 +27,7 @@ import AuthPage from "../auth/page";
 import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
-import ModalPopup from "./welcome";
+import ModalPopup from "@/app/components/welcome";
 
 export function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -52,15 +51,11 @@ const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
 });
 
 const MaskPage = dynamic(
-	async () => (await import("../masklist/mask")).MaskPage,
+	async () => (await import("./masklist/mask")).MaskPage,
 	{
 		loading: () => <Loading noLogo />,
 	},
 );
-
-const Intro = dynamic(async () => (await import("../about/page")).default, {
-	loading: () => <Loading noLogo />,
-});
 
 const Updates = dynamic(async () => (await import("../updates/page")).default, {
 	loading: () => <Loading noLogo />,
@@ -195,7 +190,7 @@ export function useLoadData() {
 	}, []);
 }
 
-export function Home() {
+export default function Home() {
 	useSwitchTheme();
 	useLoadData();
 	useHtmlLang();
@@ -210,10 +205,8 @@ export function Home() {
 	}
 
 	return (
-		<ErrorBoundary>
-			<Router>
-				<Screen />
-			</Router>
-		</ErrorBoundary>
+		<Router>
+			<Screen />
+		</Router>
 	);
 }
