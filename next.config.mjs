@@ -6,8 +6,10 @@ console.log("[Next] build mode", mode)
 const disableChunk = !!process.env.DISABLE_CHUNK || mode === "export"
 console.log("[Next] build with chunk: ", !disableChunk)
 
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
   webpack (config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -27,6 +29,7 @@ const nextConfig = {
 
     return config
   },
+  distDir: "build",
   output: mode,
   images: {
     unoptimized: mode === "export",
@@ -48,10 +51,10 @@ const nextConfig = {
   },
 
 
-    generateBuildId: async () => {
-      // You can, for example, get the latest git commit hash here
-      return 'my-build-id1117'
-    },
+  generateBuildId: async () => {
+    // You can, for example, get the latest git commit hash here
+    return 'my-build-id1117'
+  },
 
 
 }
@@ -72,7 +75,7 @@ const CorsHeaders = [
     key: "Access-Control-Max-Age",
     value: "86400",
   },
-];
+]
 
 if (mode !== "export") {
   nextConfig.headers = async () => {
@@ -98,7 +101,7 @@ if (mode !== "export") {
         source: "/sharegpt",
         destination: "https://sharegpt.com/api/conversations",
       },
-    ];
+    ]
 
     return {
       beforeFiles: ret,
