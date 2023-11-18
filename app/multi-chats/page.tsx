@@ -66,8 +66,7 @@ import {
 import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar, Button, Menu, Dropdown, Switch } from "antd";
 import type { MenuProps } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
-import { ExportMessageModal } from "../components/exporter";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 import { useAuthStore } from "../store/auth";
 import { createChat, CreateChatData } from "../api/chat";
 
@@ -81,7 +80,7 @@ import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 import { ChatContext } from "./context";
 import Image from "next/image";
-import { ChatItemShort } from "../components/chat-list";
+import { ChatItemShort } from "../chats/chat-list";
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 

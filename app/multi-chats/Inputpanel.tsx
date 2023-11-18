@@ -74,7 +74,7 @@ import {
 	UNFINISHED_INPUT,
 } from "../constant";
 
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 import { useMaskStore } from "../store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 

@@ -37,7 +37,7 @@ import { api } from "@/app/client/api";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "@/app/components/chat/multi-chats.module.scss";
+import styles from "./multi-chats.module.scss";
 
 import {
 	List,
@@ -49,10 +49,10 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
 
 import { prettyObject } from "@/app/utils/format";
-import { ExportMessageModal } from "@/app/components/exporter";
+import { ExportMessageModal } from "@/app/chats/exporter";
 import { getClientConfig } from "@/app/config/client";
 
 import useAuth from "@/app/hooks/useAuth";

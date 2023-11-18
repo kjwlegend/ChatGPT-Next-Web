@@ -166,12 +166,7 @@ export const DEFAULT_MODELS = [
 		displayName: "小光-4.0",
 		available: true,
 	},
-	// {
-	//   name: "gpt-4-0314",
-	//   displayName: "小光-4.0-0314",
 
-	//   available: false,
-	// },
 	// {
 	//   name: "gpt-4-0613",
 	//   displayName: "小光-4.0-0613",
@@ -181,12 +176,6 @@ export const DEFAULT_MODELS = [
 	// {
 	//   name: "gpt-4-32k",
 	//   displayName: "小光-4.0-32k",
-
-	//   available: false,
-	// },
-	// {
-	//   name: "gpt-4-32k-0314",
-	//   displayName: "小光-4.0-32k-0314",
 
 	//   available: false,
 	// },
@@ -212,11 +201,6 @@ export const DEFAULT_MODELS = [
 		available: true,
 	},
 	// {
-	//   name: "gpt-3.5-turbo-0301",
-	//   displayName: "小光-3.5-0301",
-	//   available: false,
-	// },
-	// {
 	// 	name: "gpt-3.5-turbo-0613",
 	// 	displayName: "小光-3.5-0613",
 	// 	available: true,
@@ -229,11 +213,6 @@ export const DEFAULT_MODELS = [
 	// {
 	// 	name: "gpt-3.5-turbo-16k",
 	// 	displayName: "小光-3.5-16k",
-	// 	available: true,
-	// },
-	// {
-	// 	name: "gpt-3.5-turbo-1106",
-	// 	displayName: "小光-3.5-16k-0613",
 	// 	available: true,
 	// },
 ] as const;

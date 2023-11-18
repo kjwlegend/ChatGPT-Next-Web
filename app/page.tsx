@@ -1,6 +1,4 @@
 "use client";
-import { Analytics } from "@vercel/analytics/react";
-import { Home } from "./components/home";
 import About from "./about/page";
 import { getServerSideConfig } from "./config/server";
 import { useEffect } from "react";
@@ -23,9 +21,7 @@ export default function App() {
 
 	return (
 		<>
-			{/* <Home /> */}
 			<About />
-			{serverConfig?.isVercel && <Analytics />}
 		</>
 	);
 }

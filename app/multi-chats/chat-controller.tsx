@@ -61,11 +61,10 @@ import {
 } from "../constant";
 import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 import { useMaskStore } from "../store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
-import { ExportMessageModal } from "../components/exporter";
 import { getClientConfig } from "../config/client";
 import { useAuthStore } from "../store/auth";
 import { createChat, CreateChatData } from "../api/chat";

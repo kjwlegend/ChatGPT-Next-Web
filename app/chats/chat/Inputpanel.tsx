@@ -57,7 +57,7 @@ import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "@/app/components/chat/multi-chats.module.scss";
+import styles from "./multi-chats.module.scss";
 
 import {
 	List,
@@ -77,7 +77,7 @@ import {
 	UNFINISHED_INPUT,
 } from "@/app/constant";
 
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
 import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
 

@@ -1,28 +1,27 @@
-"use client";
-import { IconButton } from "@/app/components/button";
-import { ErrorBoundary } from "@/app/components/error";
+import { IconButton } from "../components/button";
+import { ErrorBoundary } from "../components/error";
 
 import styles from "./mask.module.scss";
 
-import DownloadIcon from "@/app/icons/download.svg";
-import UploadIcon from "@/app/icons/upload.svg";
-import EditIcon from "@/app/icons/edit.svg";
-import AddIcon from "@/app/icons/add.svg";
-import CloseIcon from "@/app/icons/close.svg";
-import DeleteIcon from "@/app/icons/delete.svg";
-import EyeIcon from "@/app/icons/eye.svg";
-import CopyIcon from "@/app/icons/copy.svg";
-import DragIcon from "@/app/icons/drag.svg";
+import DownloadIcon from "../icons/download.svg";
+import UploadIcon from "../icons/upload.svg";
+import EditIcon from "../icons/edit.svg";
+import AddIcon from "../icons/add.svg";
+import CloseIcon from "../icons/close.svg";
+import DeleteIcon from "../icons/delete.svg";
+import EyeIcon from "../icons/eye.svg";
+import CopyIcon from "../icons/copy.svg";
+import DragIcon from "../icons/drag.svg";
 
-import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "@/app/store/mask";
+import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "../store/mask";
 import {
 	ChatMessage,
 	createMessage,
 	ModelConfig,
 	useAppConfig,
 	useChatStore,
-} from "@/app/store";
-import { ROLES } from "@/app/client/api";
+} from "../store";
+import { ROLES } from "../client/api";
 import {
 	Input,
 	List,
@@ -31,20 +30,20 @@ import {
 	Popover,
 	Select,
 	showConfirm,
-} from "@/app/components/ui-lib";
-import { Avatar, AvatarPicker } from "@/app/components/emoji";
-import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "@/app/locales";
-import { MaskCategory, maskCategories, MaskCategoryType } from "@/app/constant";
-
+} from "../components/ui-lib";
+import { Avatar, AvatarPicker } from "../components/emoji";
+import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
+import { MaskCategory } from "../constant";
 import { useNavigate } from "react-router-dom";
+import { Row, Col } from "antd";
 
-import chatStyle from "../chat.module.scss";
+import chatStyle from "./chat.module.scss";
 import { useEffect, useState } from "react";
-import { copyToClipboard, downloadAs, readFromFile } from "@/app/utils";
-import { Updater } from "@/app/typing";
-import { ModelConfigList } from "@/app/components/model-config";
-import { FileName, Path } from "@/app/constant";
-import { BUILTIN_MASK_STORE } from "@/app/masks";
+import { copyToClipboard, downloadAs, readFromFile } from "../utils";
+import { Updater } from "../typing";
+import { ModelConfigList } from "../components/model-config";
+import { FileName, Path } from "../constant";
+import { BUILTIN_MASK_STORE } from "../masks";
 import { nanoid } from "nanoid";
 import {
 	DragDropContext,
@@ -52,13 +51,6 @@ import {
 	Draggable,
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
-
-import { Card, Button } from "antd";
-import MaskComponent from "./maskitem";
-
-import MultipleTag from "@/app/components/multipletags";
-
-const { Meta } = Card;
 
 // drag and drop helper function
 function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
@@ -106,128 +98,135 @@ export function MaskConfig(props: {
 
 	return (
 		<>
-			<ContextPrompts
-				context={props.mask.context}
-				updateContext={(updater) => {
-					const context = props.mask.context.slice();
-					updater(context);
-					props.updateMask((mask) => (mask.context = context));
-				}}
-			/>
-
-			<List>
-				<ListItem title={Locale.Mask.Config.Avatar}>
-					<Popover
-						content={
-							<AvatarPicker
-								onEmojiClick={(emoji) => {
-									props.updateMask((mask) => (mask.avatar = emoji));
-									setShowPicker(false);
-								}}
-							></AvatarPicker>
-						}
-						open={showPicker}
-						onClose={() => setShowPicker(false)}
-					>
-						<div
-							onClick={() => setShowPicker(true)}
-							style={{ cursor: "pointer" }}
-						>
-							<MaskAvatar mask={props.mask} />
-						</div>
-					</Popover>
-				</ListItem>
-				<ListItem title={Locale.Mask.Config.Name}>
-					<input
-						type="text"
-						value={props.mask.name}
-						onInput={(e) =>
-							props.updateMask((mask) => {
-								mask.name = e.currentTarget.value;
-							})
-						}
-					></input>
-				</ListItem>
-				<ListItem title={Locale.Mask.Config.category}>
-					<select
-						value={props.mask.category}
-						onChange={(e) =>
-							props.updateMask((mask) => {
-								mask.category = e.currentTarget.value;
-							})
-						}
-					>
-						{Object.values(MaskCategory).map((category) => (
-							<option key={category.key} value={category.value}>
-								{category.value}
-							</option>
-						))}
-					</select>
-				</ListItem>
-				<ListItem
-					title={Locale.Mask.Config.HideContext.Title}
-					subTitle={Locale.Mask.Config.HideContext.SubTitle}
-				>
-					<input
-						type="checkbox"
-						checked={props.mask.hideContext}
-						onChange={(e) => {
-							props.updateMask((mask) => {
-								mask.hideContext = e.currentTarget.checked;
-							});
+			{/* 1 row 2 col layout */}
+			<Row gutter={16}>
+				<Col xs={24} sm={14}>
+					<ContextPrompts
+						context={props.mask.context}
+						updateContext={(updater) => {
+							const context = props.mask.context.slice();
+							updater(context);
+							props.updateMask((mask) => (mask.context = context));
 						}}
-					></input>
-				</ListItem>
-
-				{!props.shouldSyncFromGlobal ? (
-					<ListItem
-						title={Locale.Mask.Config.Share.Title}
-						subTitle={Locale.Mask.Config.Share.SubTitle}
-					>
-						<IconButton
-							icon={<CopyIcon />}
-							text={Locale.Mask.Config.Share.Action}
-							onClick={copyMaskLink}
-						/>
-					</ListItem>
-				) : null}
-
-				{props.shouldSyncFromGlobal ? (
-					<ListItem
-						title={Locale.Mask.Config.Sync.Title}
-						subTitle={Locale.Mask.Config.Sync.SubTitle}
-					>
-						<input
-							type="checkbox"
-							checked={props.mask.syncGlobalConfig}
-							onChange={async (e) => {
-								const checked = e.currentTarget.checked;
-								if (
-									checked &&
-									(await showConfirm(Locale.Mask.Config.Sync.Confirm))
-								) {
-									props.updateMask((mask) => {
-										mask.syncGlobalConfig = checked;
-										mask.modelConfig = { ...globalConfig.modelConfig };
-									});
-								} else if (!checked) {
-									props.updateMask((mask) => {
-										mask.syncGlobalConfig = checked;
-									});
+					/>
+				</Col>
+				<Col xs={24} sm={10}>
+					<List>
+						<ListItem title={Locale.Mask.Config.Avatar}>
+							<Popover
+								content={
+									<AvatarPicker
+										onEmojiClick={(emoji) => {
+											props.updateMask((mask) => (mask.avatar = emoji));
+											setShowPicker(false);
+										}}
+									></AvatarPicker>
 								}
-							}}
-						></input>
-					</ListItem>
-				) : null}
-			</List>
+								open={showPicker}
+								onClose={() => setShowPicker(false)}
+							>
+								<div
+									onClick={() => setShowPicker(true)}
+									style={{ cursor: "pointer" }}
+								>
+									<MaskAvatar mask={props.mask} />
+								</div>
+							</Popover>
+						</ListItem>
+						<ListItem title={Locale.Mask.Config.Name}>
+							<input
+								type="text"
+								value={props.mask.name}
+								onInput={(e) =>
+									props.updateMask((mask) => {
+										mask.name = e.currentTarget.value;
+									})
+								}
+							></input>
+						</ListItem>
+						<ListItem title={Locale.Mask.Config.category}>
+							<select
+								value={props.mask.category}
+								onChange={(e) =>
+									props.updateMask((mask) => {
+										mask.category = e.currentTarget.value;
+									})
+								}
+								disabled
+							>
+								{Object.values(MaskCategory).map((category) => (
+									<option key={category.key} value={category.value}>
+										{category.value}
+									</option>
+								))}
+							</select>
+						</ListItem>
+						<ListItem
+							title={Locale.Mask.Config.HideContext.Title}
+							subTitle={Locale.Mask.Config.HideContext.SubTitle}
+						>
+							<input
+								type="checkbox"
+								checked={props.mask.hideContext}
+								onChange={(e) => {
+									props.updateMask((mask) => {
+										mask.hideContext = e.currentTarget.checked;
+									});
+								}}
+							></input>
+						</ListItem>
 
-			<List>
-				<ModelConfigList
-					modelConfig={{ ...props.mask.modelConfig }}
-					updateConfig={updateConfig}
-				/>
-				{props.extraListItems}
-			</List>
+						{!props.shouldSyncFromGlobal ? (
+							<ListItem
+								title={Locale.Mask.Config.Share.Title}
+								subTitle={Locale.Mask.Config.Share.SubTitle}
+							>
+								<IconButton
+									icon={<CopyIcon />}
+									text={Locale.Mask.Config.Share.Action}
+									onClick={copyMaskLink}
+								/>
+							</ListItem>
+						) : null}
+
+						{props.shouldSyncFromGlobal ? (
+							<ListItem
+								title={Locale.Mask.Config.Sync.Title}
+								subTitle={Locale.Mask.Config.Sync.SubTitle}
+							>
+								<input
+									type="checkbox"
+									checked={props.mask.syncGlobalConfig}
+									onChange={async (e) => {
+										const checked = e.currentTarget.checked;
+										if (
+											checked &&
+											(await showConfirm(Locale.Mask.Config.Sync.Confirm))
+										) {
+											props.updateMask((mask) => {
+												mask.syncGlobalConfig = checked;
+												mask.modelConfig = { ...globalConfig.modelConfig };
+											});
+										} else if (!checked) {
+											props.updateMask((mask) => {
+												mask.syncGlobalConfig = checked;
+											});
+										}
+									}}
+								></input>
+							</ListItem>
+						) : null}
+					</List>
+
+					<List>
+						<ModelConfigList
+							modelConfig={{ ...props.mask.modelConfig }}
+							updateConfig={updateConfig}
+						/>
+						{props.extraListItems}
+					</List>
+				</Col>
+			</Row>
 		</>
 	);
 }
@@ -269,7 +268,7 @@ function ContextPromptItem(props: {
 				value={props.prompt.content}
 				type="text"
 				className={chatStyle["context-content"]}
-				rows={focusingInput ? 10 : 2}
+				rows={focusingInput ? 12 : 3}
 				onFocus={() => setFocusingInput(true)}
 				onBlur={() => {
 					setFocusingInput(false);
@@ -408,22 +407,16 @@ export function MaskPage() {
 
 	const maskStore = useMaskStore();
 	const chatStore = useChatStore();
-	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
-
-	const handleTagsChange = (selectedTags: string[]) => {
-		console.log("fu", selectedTags);
-		setSelectedTags(selectedTags);
-	};
 
 	const [filterLang, setFilterLang] = useState<Lang>();
 
-	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
+	const [filterCategory, setFilterCategory] = useState<any>();
 
 	const allMasks = maskStore.getAll().filter((m) => {
 		if (filterLang && m.lang !== filterLang) {
 			return false;
 		}
-		if (!selectedTags.includes("全部") && !selectedTags.includes(m.category)) {
+		if (filterCategory && m.category !== filterCategory) {
 			return false;
 		}
 		return true;
@@ -433,11 +426,13 @@ export function MaskPage() {
 	const [searchText, setSearchText] = useState("");
 	const masks = searchText.length > 0 ? searchMasks : allMasks;
 
-	// simple search, will refactor later
+	// refactored already, now it accurate
 	const onSearch = (text: string) => {
 		setSearchText(text);
 		if (text.length > 0) {
-			const result = allMasks.filter((m) => m.name.includes(text));
+			const result = allMasks.filter((m) =>
+				m.name.toLowerCase().includes(text.toLowerCase()),
+			);
 			setSearchMasks(result);
 		} else {
 			setSearchMasks(allMasks);
@@ -487,14 +482,14 @@ export function MaskPage() {
 					</div>
 
 					<div className="window-actions">
-						{/* <div className="window-action-button">
-              <IconButton
-                icon={<DownloadIcon />}
-                bordered
-                onClick={downloadAll}
-                text={Locale.UI.Export}
-              />
-            </div> */}
+						<div className="window-action-button">
+							<IconButton
+								icon={<DownloadIcon />}
+								bordered
+								onClick={downloadAll}
+								text={Locale.UI.Export}
+							/>
+						</div>
 						<div className="window-action-button">
 							<IconButton
 								icon={<UploadIcon />}
@@ -514,13 +509,6 @@ export function MaskPage() {
 				</div>
 
 				<div className={styles["mask-page-body"]}>
-					<div className={styles["mask-category"]}>
-						<MultipleTag
-							tagsData={MaskCategory.map((v) => v.value)}
-							onTagsChange={handleTagsChange}
-						/>
-					</div>
-
 					<div className={styles["mask-filter"]}>
 						<input
 							type="text"
@@ -530,6 +518,29 @@ export function MaskPage() {
 							onInput={(e) => onSearch(e.currentTarget.value)}
 						/>
 
+						<Select
+							className={styles["mask-filter-lang"]}
+							value={filterCategory ?? Locale.Settings.category.All}
+							onChange={(e) => {
+								const value = e.currentTarget.value;
+								if (value === Locale.Settings.category.All) {
+									setFilterLang(undefined);
+									setFilterCategory(undefined);
+								} else {
+									setFilterLang(undefined);
+									setFilterCategory(MaskCategory);
+								}
+							}}
+						>
+							<option key="all" value={Locale.Settings.category.All}>
+								{Locale.Settings.category.All}
+							</option>
+							{Object.values(MaskCategory).map((category) => (
+								<option value={category.key} key={category.value}>
+									{category.value}
+								</option>
+							))}
+						</Select>
 						<Select
 							className={styles["mask-filter-lang"]}
 							value={filterLang ?? Locale.Settings.Lang.All}
@@ -564,13 +575,57 @@ export function MaskPage() {
 						/>
 					</div>
 
-					<div className={`${styles["mask-list"]} flex-container`}>
+					<div>
 						{masks.map((m) => (
-							<MaskComponent
-								mask={m}
-								key={m.id}
-								setEditingMaskId={(id) => setEditingMaskId(id)}
-							/>
+							<div className={styles["mask-item"]} key={m.id}>
+								<div className={styles["mask-header"]}>
+									<div className={styles["mask-icon"]}>
+										<MaskAvatar mask={m} />
+									</div>
+									<div className={styles["mask-title"]}>
+										<div className={styles["mask-name"]}>{m.name}</div>
+										<div className={styles["mask-info"] + " one-line"}>
+											{`${Locale.Mask.Item.Info(m.context.length)} / ${
+												ALL_LANG_OPTIONS[m.lang]
+											} / ${m.modelConfig.model}`}
+										</div>
+									</div>
+								</div>
+								<div className={styles["mask-actions"]}>
+									<IconButton
+										icon={<AddIcon />}
+										text={Locale.Mask.Item.Chat}
+										onClick={() => {
+											chatStore.newSession(m);
+											navigate(Path.Chat);
+										}}
+									/>
+									{m.builtin ? (
+										<IconButton
+											icon={<EyeIcon />}
+											text={Locale.Mask.Item.View}
+											onClick={() => setEditingMaskId(m.id)}
+										/>
+									) : (
+										<IconButton
+											icon={<EditIcon />}
+											text={Locale.Mask.Item.Edit}
+											onClick={() => setEditingMaskId(m.id)}
+										/>
+									)}
+									{!m.builtin && (
+										<IconButton
+											icon={<DeleteIcon />}
+											text={Locale.Mask.Item.Delete}
+											onClick={async () => {
+												if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
+													maskStore.delete(m.id);
+												}
+											}}
+										/>
+									)}
+								</div>
+							</div>
 						))}
 					</div>
 				</div>

@@ -43,7 +43,7 @@ import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "@/app/components/chat/multi-chats.module.scss";
+import styles from "./multi-chats.module.scss";
 
 import {
 	List,
@@ -63,7 +63,7 @@ import {
 } from "@/app/constant";
 import { Avatar } from "@/app/components/emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
 
 import { useAuthStore } from "@/app/store/auth";
 

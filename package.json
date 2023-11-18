@@ -1,6 +1,6 @@
 {
-  "name": "chatgpt-next-web",
-  "private": false,
+  "name": "xiaoguang-ai",
+  "private": true,
   "license": "mit",
   "homepage": "./",
   "scripts": {
@@ -32,6 +32,7 @@
     "cargo": "^0.8.0",
     "cheerio": "^1.0.0-rc.12",
     "d3-dsv": "2",
+    "debounce": "^2.0.0",
     "duck-duck-scrape": "^2.2.4",
     "emoji-picker-react": "^4.5.1",
     "encoding": "^0.1.13",
@@ -45,7 +46,7 @@
     "langchain": "^0.0.178",
     "mermaid": "^10.3.1",
     "microsoft-cognitiveservices-speech-sdk": "^1.31.0",
-    "nanoid": "^4.0.2",
+    "nanoid": "^5.0.3",
     "next": "^14.0.1",
     "node-fetch": "^3.3.1",
     "node-gyp": "^10.0.1",
@@ -84,11 +85,10 @@
     "husky": "^8.0.0",
     "lint-staged": "^13.2.2",
     "prettier": "^3.0.2",
-    "typescript": "^5.2.2",
+    "typescript": "<5.1.0",
     "webpack": "^5.88.1"
   },
   "resolutions": {
     "lint-staged/yaml": "^2.2.2"
-  },
-  "buildDate": "20231117"
+  }
 }

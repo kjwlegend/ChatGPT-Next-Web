@@ -3,7 +3,7 @@ import React from "react";
 
 import styles from "./home.module.scss";
 
-import { IconButton } from "@/app/components/button";
+import { IconButton } from "../components/button";
 import SettingsIcon from "../icons/settings.svg";
 import GithubIcon from "../icons/github.svg";
 import ChatGptIcon from "../icons/chatgpt.svg";
@@ -13,7 +13,7 @@ import DeleteIcon from "../icons/delete.svg";
 import MaskIcon from "../icons/mask.svg";
 import PluginIcon from "../icons/plugin.svg";
 import DragIcon from "../icons/drag.svg";
-import MainNav from "@/app/components/header";
+import MainNav from "../components/header";
 import Locale from "../locales";
 
 import Image from "next/image";
@@ -31,12 +31,12 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { isIOS, useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "@/app/components/ui-lib";
+import { showConfirm, showToast } from "../components/ui-lib";
 import { useAuthStore } from "../store/auth";
 
 import AuthPage from "../auth/page";
-import DrawerMenu from "./drawer-menu";
-import UserInfo from "@/app/components/userinfo";
+import DrawerMenu from "../components/drawer-menu";
+import UserInfo from "../components/userinfo";
 import { Divider } from "antd";
 import Upload from "@/app/components/upload";
 

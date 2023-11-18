@@ -47,10 +47,9 @@ import {
 	showToast,
 } from "../components/ui-lib";
 
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 
 import { prettyObject } from "../utils/format";
-import { ExportMessageModal } from "../components/exporter";
 import { getClientConfig } from "../config/client";
 
 import useAuth from "../hooks/useAuth";
@@ -188,13 +187,6 @@ export default function WindowHeader(props: {
 			</div>
 			<div className="window-actions">
 				{!isMobileScreen && (
-					// <div className="window-action-button">
-					//   <IconButton
-					//     icon={<RenameIcon />}
-					//     bordered
-					//     onClick={() => setIsEditingMessage(true)}
-					//   />
-					// </div>
 					<div>
 						<span style={{ marginRight: "10px", fontSize: "12px" }}>
 							自动流
@@ -210,29 +202,20 @@ export default function WindowHeader(props: {
 						/>
 					</div>
 				)}
-				{/* <div className="window-action-button">
-          <IconButton
-            icon={<ExportIcon />}
-            bordered
-            title={Locale.Chat.Actions.Export}
-            onClick={() => {
-              setShowExport(true);
-            }}
-          />
-        </div>
-        {showMaxIcon && (
-          <div className="window-action-button">
-            <IconButton
-              icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
-              bordered
-              onClick={() => {
-                config.update((config) => {
-                  config.showHeader = !config.showHeader;
-                });
-              }}
-            />
-          </div>
-        )} */}
+
+				{showMaxIcon && (
+					<div className="window-action-button">
+						<IconButton
+							icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
+							bordered
+							onClick={() => {
+								config.update((config) => {
+									config.showHeader = !config.showHeader;
+								});
+							}}
+						/>
+					</div>
+				)}
 			</div>
 			{isEditingMessage && (
 				<EditMessageModal
@@ -250,9 +233,6 @@ export default function WindowHeader(props: {
 				session={session}
 				index={index}
 			/>
-			{showExport && (
-				<ExportMessageModal onClose={() => setShowExport(false)} />
-			)}
 		</div>
 	);
 }

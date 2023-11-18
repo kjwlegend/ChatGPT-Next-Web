@@ -57,7 +57,7 @@ import { Prompt, usePromptStore } from "../store/prompt";
 import Locale from "../locales";
 
 import { IconButton } from "../components/button";
-import styles from "@/app/components/chat/multi-chats.module.scss";
+import styles from "./multi-chats.module.scss";
 
 import {
 	List,
@@ -77,7 +77,7 @@ import {
 } from "../constant";
 import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 import { useMaskStore } from "../store/mask";
 
 export function SessionConfigModel(props: {

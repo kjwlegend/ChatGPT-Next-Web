@@ -43,7 +43,6 @@ import dynamic from "next/dynamic";
 import { ChatControllerPool } from "../client/controller";
 import { Prompt, usePromptStore } from "../store/prompt";
 import Locale from "../locales";
-
 import { IconButton } from "../components/button";
 import styles from "@/app/multi-chats/multi-chats.module.scss";
 
@@ -65,7 +64,7 @@ import {
 } from "../constant";
 import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../components/mask";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 
 import { useAuthStore } from "../store/auth";
 

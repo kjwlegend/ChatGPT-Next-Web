@@ -11,15 +11,6 @@ console.log("[Next] build with chunk: ", !disableChunk)
 const nextConfig = {
 
   webpack: (config, { isServer }) => {
-    // 获取当前时间作为时间戳
-    const timestamp = new Date().getTime()
-
-    if (!isServer) {
-      // 修改客户端打包文件的文件名
-      config.output.filename = `static/chunks/[name].${timestamp}.js`
-      config.output.chunkFilename = `static/chunks/[name].${timestamp}.js`
-    }
-
 
     config.module.rules.push({
       test: /\.svg$/,
@@ -39,7 +30,7 @@ const nextConfig = {
 
     return config
   },
-  distDir: "build",
+  // distDir: "dist",
   output: mode,
   images: {
     unoptimized: mode === "export",

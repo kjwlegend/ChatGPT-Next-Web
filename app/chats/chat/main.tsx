@@ -49,7 +49,7 @@ import { prettyObject } from "@/app/utils/format";
 import BrainIcon from "@/app/icons/brain.svg";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 
-import styles from "@/app/components/chat/multi-chats.module.scss";
+import styles from "./multi-chats.module.scss";
 
 import { IconButton } from "@/app/components/button";
 import {
@@ -63,8 +63,8 @@ import {
 } from "@/app/components/ui-lib";
 import { Avatar } from "@/app/components/emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/components/mask";
-import { ExportMessageModal } from "@/app/components/exporter";
+import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
+import { ExportMessageModal } from "@/app/chats/exporter";
 import { useAuthStore } from "@/app/store/auth";
 import { createChat, CreateChatData } from "@/app/api/chat";
 

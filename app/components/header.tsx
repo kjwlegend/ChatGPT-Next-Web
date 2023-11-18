@@ -95,10 +95,17 @@ export default function MainNav() {
 			{isMobileScreen ? (
 				<Header className={styles.header}>
 					<div className={styles.logo}>
-						<img
+						{/* <img
 							className={styles["logo-image"]}
 							src="/logo-2.png"
 							alt="Logo"
+						/> */}
+						<Image
+							src={"/logo-2.png"}
+							alt="logo"
+							fill={true}
+							objectFit="contain"
+							style={{ left: -50 }}
 						/>
 						<Link href="/">
 							<div className={styles["logo-text"]}>
@@ -113,10 +120,17 @@ export default function MainNav() {
 					style={{ display: !showHeader ? "none" : "" }}
 				>
 					<div className={styles.logo}>
-						<img
+						{/* <img
 							className={styles["logo-image"]}
 							src="/logo-2.png"
 							alt="Logo"
+						/> */}
+						<Image
+							src={"/logo-2.png"}
+							alt="logo"
+							fill={true}
+							objectFit="contain"
+							style={{ left: -80 }}
 						/>
 						<Link href="/">
 							<div className={styles["logo-text"]}>

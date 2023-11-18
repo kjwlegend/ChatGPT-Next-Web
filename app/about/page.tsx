@@ -23,6 +23,7 @@ import {
 	SmileOutlined,
 	SyncOutlined,
 } from "@ant-design/icons";
+import { relative } from "path";
 
 const { Content } = Layout;
 
@@ -31,20 +32,20 @@ const featureContent = [
 		// title: '我们的特点',
 		// subtitle: '由专业提示词工程师持续微调的智能助手',
 		// description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-		background: "assets/carousel-1.png",
+		background: "/assets/carousel-1.png",
 	},
 	// Add more feature content objects if needed
 	{
 		// title: '我们的特点22',
 		// subtitle: '由专业提示词工程师持续微调的智能助手',
 		// description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-		background: "assets/carousel-2.png",
+		background: "/assets/carousel-2.png",
 	},
 	{
 		// title: '我们的特点22',
 		// subtitle: '由专业提示词工程师持续微调的智能助手',
 		// description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-		background: "assets/carousel-3.png",
+		background: "/assets/carousel-3.png",
 	},
 ];
 
@@ -247,11 +248,12 @@ const FeatureSection: React.FC = () => {
 			<Carousel autoplay dotPosition="bottom" easing="linear" effect="fade">
 				{featureContent.map((content, index) => (
 					<div key={index}>
-						<div>
-							<img
+						<div className={styles.carousel}>
+							<Image
 								src={content.background}
-								alt=""
-								style={{ objectFit: "cover", width: "100%", height: "100%" }}
+								alt="小光ai"
+								fill={true}
+								objectFit="contain"
 							/>
 						</div>
 					</div>
@@ -360,10 +362,14 @@ const tab1Content = (
 			</p>
 		</Col>
 		<Col xs={24} sm={24} md={12} lg={12} xl={12}>
-			<img
-				src="https://www.promptingguide.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fcot.1933d9fe.png&w=1080&q=75"
-				alt="Image"
-			/>
+			<div style={{ height: 300, position: "relative" }}>
+				<Image
+					src="/assets/intro-image-1.webp"
+					alt="Image"
+					fill={true}
+					objectFit="cover"
+				/>
+			</div>
 		</Col>
 	</Row>
 );
@@ -380,10 +386,14 @@ const tab2Content = (
 			</p>
 		</Col>
 		<Col xs={24} sm={24} md={12} lg={12} xl={12}>
-			<img
-				src="https://www.promptingguide.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FTOT.3b13bc5e.png&w=1200&q=75"
-				alt="Image"
-			/>
+			<div style={{ height: 300, position: "relative" }}>
+				<Image
+					src="/assets/intro-image-2.webp"
+					alt="Image"
+					fill={true}
+					objectFit="cover"
+				/>
+			</div>
 		</Col>
 	</Row>
 );
@@ -399,10 +409,14 @@ const tab3Content = (
 			</p>
 		</Col>
 		<Col xs={24} sm={24} md={12} lg={12} xl={12}>
-			<img
-				src="https://www.promptingguide.ai/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Factive-prompt.f739657b.png&w=1200&q=75"
-				alt="Image"
-			/>
+			<div style={{ height: 300, position: "relative" }}>
+				<Image
+					src="/assets/intro-image-3.webp"
+					alt="Image"
+					fill={true}
+					objectFit="cover"
+				/>
+			</div>
 		</Col>
 	</Row>
 );
@@ -418,7 +432,14 @@ const tab4Content = (
 			</p>
 		</Col>
 		<Col xs={24} sm={24} md={12} lg={12} xl={12}>
-			<img src="/techdetail-4.jpg" alt="Image" />
+			<div style={{ height: 300, position: "relative" }}>
+				<Image
+					src="/assets/intro-image-4.jpg"
+					alt="Image"
+					fill={true}
+					objectFit="cover"
+				/>
+			</div>
 		</Col>
 	</Row>
 );

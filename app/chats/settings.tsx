@@ -2,22 +2,22 @@ import { useState, useEffect, useMemo } from "react";
 
 import styles from "./settings.module.scss";
 
-import ResetIcon from "../icons/reload.svg";
-import AddIcon from "../icons/add.svg";
-import CloseIcon from "../icons/close.svg";
-import CopyIcon from "../icons/copy.svg";
-import ClearIcon from "../icons/clear.svg";
-import LoadingIcon from "../icons/three-dots.svg";
-import EditIcon from "../icons/edit.svg";
-import EyeIcon from "../icons/eye.svg";
-import DownloadIcon from "../icons/download.svg";
-import UploadIcon from "../icons/upload.svg";
-import ConfigIcon from "../icons/config.svg";
-import ConfirmIcon from "../icons/confirm.svg";
+import ResetIcon from "@/app/icons/reload.svg";
+import AddIcon from "@/app/icons/add.svg";
+import CloseIcon from "@/app/icons/close.svg";
+import CopyIcon from "@/app/icons/copy.svg";
+import ClearIcon from "@/app/icons/clear.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
+import EditIcon from "@/app/icons/edit.svg";
+import EyeIcon from "@/app/icons/eye.svg";
+import DownloadIcon from "@/app/icons/download.svg";
+import UploadIcon from "@/app/icons/upload.svg";
+import ConfigIcon from "@/app/icons/config.svg";
+import ConfirmIcon from "@/app/icons/confirm.svg";
 
-import ConnectionIcon from "../icons/connection.svg";
-import CloudSuccessIcon from "../icons/cloud-success.svg";
-import CloudFailIcon from "../icons/cloud-fail.svg";
+import ConnectionIcon from "@/app/icons/connection.svg";
+import CloudSuccessIcon from "@/app/icons/cloud-success.svg";
+import CloudFailIcon from "@/app/icons/cloud-fail.svg";
 
 import {
 	Input,
@@ -30,7 +30,7 @@ import {
 	showConfirm,
 	showToast,
 } from "@/app/components/ui-lib";
-import { ModelConfigList } from "./model-config";
+import { ModelConfigList } from "@/app/components/model-config";
 
 import { IconButton } from "@/app/components/button";
 import {
@@ -40,15 +40,15 @@ import {
 	useUpdateStore,
 	useAccessStore,
 	useAppConfig,
-} from "../store";
+} from "@/app/store";
 
 import Locale, {
 	AllLangs,
 	ALL_LANG_OPTIONS,
 	changeLang,
 	getLang,
-} from "../locales";
-import { copyToClipboard } from "../utils";
+} from "@/app/locales";
+import { copyToClipboard } from "@/app/utils";
 import Link from "next/link";
 import {
 	Azure,
@@ -59,18 +59,19 @@ import {
 	ServiceProvider,
 	SlotID,
 	UPDATE_URL,
-} from "../constant";
-import { Prompt, SearchService, usePromptStore } from "../store/prompt";
-import { InputRange } from "./input-range";
+} from "@/app/constant";
+import { Prompt, SearchService, usePromptStore } from "@/app/store/prompt";
+import { ErrorBoundary } from "@/app/components/error";
+import { InputRange } from "@/app/components/input-range";
 import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarPicker } from "./emoji";
-import { getClientConfig } from "../config/client";
-import { useSyncStore } from "../store/sync";
-import { useAuthStore } from "../store/auth";
+import { Avatar, AvatarPicker } from "@/app/components/emoji";
+import { getClientConfig } from "@/app/config/client";
+import { useSyncStore } from "@/app/store/sync";
+import { useAuthStore } from "@/app/store/auth";
 import { nanoid } from "nanoid";
 import { PluginConfigList } from "./plugin-config";
-import { useMaskStore } from "../store/mask";
-import { ProviderType } from "../utils/cloud";
+import { useMaskStore } from "@/app/store/mask";
+import { ProviderType } from "@/app/utils/cloud";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
 	const promptStore = usePromptStore();
@@ -635,7 +636,7 @@ export function Settings() {
 	const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
 
 	return (
-		<>
+		<ErrorBoundary>
 			<div className="window-header" data-tauri-drag-region>
 				<div className="window-header-title">
 					<div className="window-header-main-title">
@@ -998,6 +999,6 @@ export function Settings() {
 
 				<DangerItems />
 			</div>
-		</>
+		</ErrorBoundary>
 	);
 }
