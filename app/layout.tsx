@@ -31,6 +31,9 @@ export default function RootLayout({
 		<html lang="en">
 			<head>
 				<meta name="config" content={JSON.stringify(getClientConfig())} />
+				<meta http-equiv="pragma" content="no-cache" />
+				<meta http-equiv="cache-control" content="no-cache" />
+				<meta http-equiv="expires" content="0" />
 				<link rel="manifest" href="/site.webmanifest"></link>
 
 				<script src="/serviceWorkerRegister.js?v=1.0.1" defer></script>
