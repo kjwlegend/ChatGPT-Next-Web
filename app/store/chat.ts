@@ -527,7 +527,7 @@ export const useChatStore = createPersistStore(
 								botMessage.id ?? messageIndex,
 							);
 
-							console.error("[Chat] failed ", error);
+							console.error("[Chat] failed ", error.message);
 						},
 						onController(controller) {
 							// collect controller for stop/retry
@@ -581,7 +581,7 @@ export const useChatStore = createPersistStore(
 								botMessage.id ?? messageIndex,
 							);
 
-							console.error("[Chat] failed ", error);
+							console.error("[Chat] failed ", error.message);
 						},
 						onController(controller) {
 							// collect controller for stop/retry

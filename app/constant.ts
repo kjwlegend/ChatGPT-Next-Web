@@ -195,16 +195,12 @@ export const DEFAULT_MODELS = [
 	// 	available: true,
 	// 	displayName: "小光4.1-1107",
 	// },
-	{
-		name: "gpt-3.5-turbo",
-		displayName: "小光-3.5",
-		available: true,
-	},
 	// {
-	// 	name: "gpt-3.5-turbo-0613",
-	// 	displayName: "小光-3.5-0613",
+	// 	name: "gpt-3.5-turbo",
+	// 	displayName: "小光-3.5",
 	// 	available: true,
 	// },
+
 	{
 		name: "gpt-3.5-turbo-1106",
 		displayName: "小光3.5-1107",

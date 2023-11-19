@@ -93,6 +93,8 @@ async function handle(req: NextRequest) {
 			apiKey = token;
 		}
 
+		console.log("[req]", reqBody);
+
 		// Support base url
 		let baseUrl = "https://api.openai.com/v1";
 		if (serverConfig.baseUrl) baseUrl = serverConfig.baseUrl;
@@ -271,6 +273,7 @@ async function handle(req: NextRequest) {
 		const stableDiffusionTool = new StableDiffusionWrapper();
 		const arxivAPITool = new ArxivAPIWrapper();
 		const knowledgeSearchTool = new KnowledgeSearch(username);
+
 		if (useTools.includes("web-search")) tools.push(searchTool);
 		if (useTools.includes(webBrowserTool.name)) tools.push(webBrowserTool);
 		if (useTools.includes(calculatorTool.name)) tools.push(calculatorTool);

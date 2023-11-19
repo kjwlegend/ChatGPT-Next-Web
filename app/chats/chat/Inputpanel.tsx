@@ -347,9 +347,10 @@ export function ChatActions(props: {
 							chatStore.updateCurrentSession((session) => {
 								session.mask.modelConfig.model = s[0] as ModelType;
 								session.mask.syncGlobalConfig = false;
-								session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
-									session.mask.modelConfig.model,
-								);
+								// session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
+								// 	session.mask.modelConfig.model,
+								// );
+								console.log(session.mask.modelConfig);
 							});
 							showToast(s[0]);
 						}}
