@@ -128,11 +128,34 @@ export class ChatGPTApi implements LLMApi {
 
 			if (shouldStream) {
 				let responseText = "";
+				let remainText = "";
 				let finished = false;
+				// animate response to make it looks smooth
+				function animateResponseText() {
+					if (finished || controller.signal.aborted) {
+						responseText += remainText;
+						console.log("[Response Animation] finished");
+						return;
+					}
+
+					if (remainText.length > 0) {
+						const fetchCount = Math.max(1, Math.round(remainText.length / 60));
+						const fetchText = remainText.slice(0, fetchCount);
+						responseText += fetchText;
+						remainText = remainText.slice(fetchCount);
+						options.onUpdate?.(responseText, fetchText);
+					}
+
+					requestAnimationFrame(animateResponseText);
+				}
+
+				// start animaion
+				animateResponseText();
 
 				const finish = () => {
 					if (!finished) {
-						options.onFinish(responseText);
+						// options.onFinish(responseText);
+						options.onFinish(responseText + remainText);
 						finished = true;
 					}
 				};
@@ -196,8 +219,9 @@ export class ChatGPTApi implements LLMApi {
 							};
 							const delta = json.choices[0]?.delta?.content;
 							if (delta) {
-								responseText += delta;
-								options.onUpdate?.(responseText, delta);
+								remainText += delta;
+								// responseText += delta;
+								// options.onUpdate?.(responseText, delta);
 							}
 						} catch (e) {
 							console.error("[Request] parse error", text);
