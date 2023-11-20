@@ -93,8 +93,6 @@ async function handle(req: NextRequest) {
 			apiKey = token;
 		}
 
-		console.log("[req]", reqBody);
-
 		// Support base url
 		let baseUrl = "https://api.openai.com/v1";
 		if (serverConfig.baseUrl) baseUrl = serverConfig.baseUrl;
