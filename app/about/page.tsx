@@ -123,9 +123,73 @@ const differentFromOthersContent = [
 
 const whatWeCanDoContent = [
 	{
-		title: "小光AI 能为你",
-		colorText: "做什么?",
+		title: "小光AI智能集成",
+		colorText: "All Tools!",
 		cards: [
+			{
+				key: "1",
+				title: "搜索引擎",
+				content: "同时检索百度和google并返回相关信息",
+				icon : (
+					<span>
+		
+				<Image
+						src="/assets/search.png"
+						alt="feature"
+						height={50}
+						width={50}
+					/>,
+					</span>
+				) ,
+			},
+			{
+				key: "2",
+				title: "网页浏览",
+				content: "通过输入网址, 即可针对网页内容进行自动检索和总结 (在网站允许爬虫情况)",
+				icon : (
+					<span>
+		
+				<Image
+						src="/assets/liulanqi.png"
+						alt="feature"
+						height={50}
+						width={50}
+					/>,
+					</span>
+				) ,
+			},
+			{
+				key: "3",
+				title: "知识库查询",
+				content: "检索PDF,TXT,Word文件, 基于已有信息进行针对性的对话和生成",
+				icon : (
+					<span>
+		
+				<Image
+						src="/assets/zhishiku.png"
+						alt="feature"
+						height={50}
+						width={50}
+					/>,
+					</span>
+				) ,
+			},
+			{
+				key: "4",
+				title: "绘画接入",
+				content: "dalle 3 和midjourney 集成, 用自然语言直接进行图画生成, 免除复杂提示词撰写",
+				icon : (
+					<span>
+		
+				<Image
+						src="/assets/draw.png"
+						alt="feature"
+						height={50}
+						width={50}
+					/>,
+					</span>
+				) ,
+			},
 			{
 				icon: (
 					<span className={styles["icon"]}>
@@ -152,7 +216,7 @@ const whatWeCanDoContent = [
 						/>
 					</span>
 				),
-				title: "语音交互(即将上线)",
+				title: "语音交互",
 				content:
 					"提供语音交互的功能，用户可以直接通过语音与小光 AI 智能助手进行交流",
 			},
@@ -168,7 +232,7 @@ const whatWeCanDoContent = [
 					</span>
 				),
 				// icon: <HomeOutlined />,
-				title: "图像生成(即将上线)",
+				title: "图像生成",
 				content:
 					"基于用户输入的文本，生成对应的图像，生成对应的海报, 产品图片等",
 			},
@@ -183,15 +247,16 @@ const whatWeCanDoContent = [
 						/>
 					</span>
 				),
-				title: "文件生成(即将上线)",
+				title: "本地检索",
 				content:
-					"支持上传 PDF, Word, PPT 等文件，生成对应的文字总结, 支持特定领域的文件文案生成",
+					"支持上传 PDF, Word, txt 文件, 进行基于本地知识的检索, 查询和总结",
 			},
 			// Add more cards if needed
 		],
 	},
 	// Add more differentFromOthers content objects if needed
 ];
+
 
 const CollapseContent: CollapseProps["items"] = [
 	{
@@ -542,6 +607,7 @@ const WhatWeCanDoSection: React.FC = () => {
 	);
 };
 
+
 const CollapseSection: React.FC = () => {
 	return (
 		<div className={styles["section"]}>
@@ -591,10 +657,10 @@ const HomePage: React.FC = () => {
 			<Content>
 				<FeatureSection />
 				<ChatBlock />
+				<WhatWeCanDoSection />
 				<WhyChooseUsSection />
 				<DifferentFromOthersSection />
 				<TechnicalDetailsSection />
-				<WhatWeCanDoSection />
 				<ChatBlock />
 				<Divider />
 				<CollapseSection />

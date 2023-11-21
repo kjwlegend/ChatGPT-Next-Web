@@ -30,6 +30,8 @@ import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
 import { makeAzurePath } from "@/app/azure";
 
+import { auth } from "@/app/api/auth";
+
 export interface OpenAIListModelResponse {
 	object: string;
 	data: Array<{
@@ -37,6 +39,22 @@ export interface OpenAIListModelResponse {
 		object: string;
 		root: string;
 	}>;
+}
+
+function CheckUserBalance() {
+	const balance = useUserStore.getState().user.chat_balance;
+
+	console.log("balance", balance);
+
+	if (balance < 2) {
+		return {
+			error: true,
+			msg: "您的对话余额不足, 请联系充值",
+		};
+	}
+	return {
+		error: false,
+	};
 }
 
 export class ChatGPTApi implements LLMApi {
@@ -79,6 +97,9 @@ export class ChatGPTApi implements LLMApi {
 	}
 
 	async chat(options: ChatOptions) {
+
+		const balance = CheckUserBalance();
+
 		const messages = options.messages.map((v) => ({
 			role: v.role,
 			content: v.content,
@@ -91,6 +112,7 @@ export class ChatGPTApi implements LLMApi {
 				model: options.config.model,
 			},
 		};
+		const user = useUserStore.getState().user;
 
 		const requestPayload = {
 			messages,
@@ -101,7 +123,7 @@ export class ChatGPTApi implements LLMApi {
 			frequency_penalty: modelConfig.frequency_penalty,
 			top_p: modelConfig.top_p,
 			max_tokens: Math.max(modelConfig.max_tokens, 1024),
-			// username: useUserStore.getState().user?.username,
+
 			// Please do not ask me why not send max_tokens, no reason, this param is just shit, I dont want to explain anymore.
 		};
 
@@ -110,8 +132,10 @@ export class ChatGPTApi implements LLMApi {
 		const shouldStream = !!options.config.stream;
 		const controller = new AbortController();
 		options.onController?.(controller);
-
+	
 		try {
+
+
 			const chatPath = this.path(OpenaiPath.ChatPath);
 			const chatPayload = {
 				method: "POST",
@@ -130,6 +154,8 @@ export class ChatGPTApi implements LLMApi {
 				let responseText = "";
 				let remainText = "";
 				let finished = false;
+
+
 				// animate response to make it looks smooth
 				function animateResponseText() {
 					if (finished || controller.signal.aborted) {
@@ -159,6 +185,12 @@ export class ChatGPTApi implements LLMApi {
 						finished = true;
 					}
 				};
+
+				if (balance.error) {
+					options.onFinish(balance.msg??"余额不足, 请充值");
+					finished = true;
+				}
+
 
 				controller.signal.onabort = finish;
 
@@ -237,6 +269,9 @@ export class ChatGPTApi implements LLMApi {
 					openWhenHidden: true,
 				});
 			} else {
+				if (balance.error) {
+					options.onFinish(balance.msg??"");
+				}
 				const res = await fetch(chatPath, chatPayload);
 				clearTimeout(requestTimeoutId);
 
@@ -264,6 +299,8 @@ export class ChatGPTApi implements LLMApi {
 			},
 		};
 
+		const balance = CheckUserBalance();
+
 		const requestPayload = {
 			messages,
 			stream: options.config.stream,
@@ -276,7 +313,7 @@ export class ChatGPTApi implements LLMApi {
 			maxIterations: options.agentConfig.maxIterations,
 			returnIntermediateSteps: options.agentConfig.returnIntermediateSteps,
 			useTools: options.agentConfig.useTools,
-			username: useUserStore.getState().user?.username,
+			user: useUserStore.getState().user,
 		};
 
 		console.log("[Agent Request] openai payload: ", requestPayload);
@@ -311,6 +348,10 @@ export class ChatGPTApi implements LLMApi {
 						finished = true;
 					}
 				};
+				if (balance.error) {
+					options.onFinish(balance.msg??"余额不足, 请充值");
+					finished = true;
+				}
 
 				controller.signal.onabort = finish;
 
@@ -388,6 +429,9 @@ export class ChatGPTApi implements LLMApi {
 					openWhenHidden: true,
 				});
 			} else {
+				if (balance.error) {
+					options.onFinish(balance.msg??"余额不足, 请充值");
+				}
 				const res = await fetch(path, chatPayload);
 				clearTimeout(requestTimeoutId);
 

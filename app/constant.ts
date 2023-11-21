@@ -152,7 +152,7 @@ Current model: {{model}}
 Current time: {{time}}`;
 }
 
-export const SUMMARIZE_MODEL = "gpt-3.5-turbo-1106";
+export const SUMMARIZE_MODEL = "gpt-3.5-turbo-16k";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
 	default: "2021-09",
@@ -173,18 +173,7 @@ export const DEFAULT_MODELS = [
 
 	//   available: false,
 	// },
-	// {
-	//   name: "gpt-4-32k",
-	//   displayName: "小光-4.0-32k",
 
-	//   available: false,
-	// },
-	// {
-	//   name: "gpt-4-32k-0613",
-	//   displayName: "小光-4.0-32k-0613",
-
-	//   available: false,
-	// },
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
@@ -201,16 +190,16 @@ export const DEFAULT_MODELS = [
 	// 	available: true,
 	// },
 
-	{
-		name: "gpt-3.5-turbo-1106",
-		displayName: "小光3.5-1107",
-		available: true,
-	},
 	// {
-	// 	name: "gpt-3.5-turbo-16k",
-	// 	displayName: "小光-3.5-16k",
+	// 	name: "gpt-3.5-turbo-1106",
+	// 	displayName: "小光3.5-1107",
 	// 	available: true,
 	// },
+	{
+		name: "gpt-3.5-turbo-16k",
+		displayName: "小光-3.5-16k",
+		available: true,
+	},
 ] as const;
 
 import { getServerSideConfig } from "@/app/config/server";

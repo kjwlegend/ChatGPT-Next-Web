@@ -29,6 +29,8 @@ import {
 import { KnowledgeSearch } from "@/app/api/langchain-tools/knowledge_search";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
+import { getUserInfo } from "@/app/api/user";
+import { User, useUserStore } from "@/app/store";
 
 const serverConfig = getServerSideConfig();
 
@@ -50,7 +52,7 @@ interface RequestBody {
 	maxIterations: number;
 	returnIntermediateSteps: boolean;
 	useTools: (undefined | string)[];
-	username?: string;
+	user?: User;
 }
 
 class ResponseBody {
@@ -70,13 +72,6 @@ async function handle(req: NextRequest) {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
 	try {
-		// Authenticate the request
-		const authResult = auth(req);
-		if (authResult.error) {
-			return NextResponse.json(authResult, {
-				status: 401,
-			});
-		}
 
 		// Initialize encoder and transform stream
 		const encoder = new TextEncoder();
@@ -86,11 +81,19 @@ async function handle(req: NextRequest) {
 		const authToken = req.headers.get("Authorization") ?? "";
 		const token = authToken.trim().replaceAll("Bearer ", "").trim();
 		const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
-		const username = reqBody.username ?? "";
+		const username = reqBody.user?.username ?? "";
 		let useTools = reqBody.useTools ?? [];
 		let apiKey = serverConfig.apiKey;
 		if (isOpenAiKey && token) {
 			apiKey = token;
+		}
+
+		// Authenticate the request
+		const authResult = auth(req);
+		if (authResult.error) {
+			return NextResponse.json(authResult, {
+				status: 401,
+			});
 		}
 
 		// Support base url

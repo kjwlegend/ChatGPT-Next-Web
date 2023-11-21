@@ -78,12 +78,12 @@ service.interceptors.response.use(
   },
 );
 
-request.get = function (url: string, config?: AxiosRequestConfig) {
-  return service.get(url, config);
+request.get =  function (url: string, config?: AxiosRequestConfig) {
+  return  service.get(url, config);
 };
 
-request.post = function (url: string, data?: any, config?: AxiosRequestConfig) {
-  return service.post(url, data, config);
+request.post =  function (url: string, data?: any, config?: AxiosRequestConfig) {
+  return  service.post(url, data, config);
 };
 
 export default request;

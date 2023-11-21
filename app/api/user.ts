@@ -15,7 +15,7 @@ export async function updateProfile(userId: number, userInfo: User) {
 }
 
 export async function getUserInfo(userId: any) {
-  return request({
+  return await request({
     url: `/gpt/users/${userId}/`,
     method: "get",
   })

@@ -749,11 +749,15 @@ function _Chat() {
 					chat_session: session.id, // 替换为实际的聊天会话 ID
 					message: userInput, // 使用用户输入作为 message 参数
 					memory: recentMessages,
+					model: session.mask.modelConfig.model,
+
 				};
+				console.log("createChatData:", createChatData);
 
 				// 调用 createChat 接口
 				createChat(createChatData).then((response) => {
 					// 处理 createChat 接口的响应
+					console.log("createChat data:", createChatData);
 					console.log("createChat response:", response);
 					const data = response.data;
 

@@ -98,13 +98,12 @@
         }
 
         :global .ant-card-meta-description {
-          height: 90px;
-          // overflow: scroll; /* 隐藏溢出的内容 */
+          height: 100%;
 
           text-overflow: ellipsis; /* 显示省略号 */
           display: -webkit-box; /* 将元素设置为弹性盒子 */
           -webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
-          -webkit-line-clamp: 4; /* 设置文本显示的最大行数为3行 */
+          -webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
         }
         // 屏幕大于 1500
         @media (min-width: 1500px) {
@@ -121,8 +120,7 @@
           width: calc(100% - 20px);
 
           :global .ant-card-meta-description {
-            height: 80px;
-            overflow: scroll; /* 隐藏溢出的内容 */
+            height: 100%;
             text-overflow: ellipsis; /* 显示省略号 */
             // white-space: nowrap; /* 防止文字换行 */
           }

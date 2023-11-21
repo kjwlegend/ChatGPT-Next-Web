@@ -464,12 +464,17 @@ export function Inputpanel() {
 			.then(() => {
 				setIsLoading(false);
 
+				// 构建 createChat 接口的请求参数
+
 				const createChatData: CreateChatData = {
-					user: userStore.user.id,
-					chat_session: session.id,
-					message: userInput,
+					user: userStore.user.id, // 替换为实际的用户 ID
+					chat_session: session.id, // 替换为实际的聊天会话 ID
+					message: userInput, // 使用用户输入作为 message 参数
 					memory: recentMessages,
+					model: session.mask.modelConfig.model,
+
 				};
+				// console.log("createChatData:", createChatData);
 
 				createChat(createChatData).then((response) => {
 					// console.log("createChat response:", response);

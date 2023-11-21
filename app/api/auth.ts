@@ -6,7 +6,7 @@ import request from "../utils/request";
 import { useAuthStore } from "../store/auth";
 import { use } from "react";
 import { useUserStore } from "../store";
-import { getUserInfo } from "../constant";
+import { getUserInfo } from "./user";
 import { server_url } from "../constant";
 function getIP(req: NextRequest) {
 	let ip = req.ip ?? req.headers.get("x-real-ip");
@@ -29,14 +29,10 @@ function parseApiKey(bearToken: string) {
 	};
 }
 
-export function auth(req: NextRequest, chat?: number) {
+export async function auth(req: NextRequest) {
 	const authToken = req.headers.get("Authorization") ?? "";
 	const isAuthenticated = req.cookies.get("authenticated")?.value === "true";
 
-	const user_id = req.cookies.get("user_id")?.value;
-	const chat_balance = 0;
-	console.log("user_id", user_id);
-	console.log("user", chat);
 
 	console.log("[Auth] isAuthenticated", isAuthenticated);
 
@@ -69,13 +65,6 @@ export function auth(req: NextRequest, chat?: number) {
 			? serverConfig.azureApiKey
 			: serverConfig.apiKey;
 
-		// // check user balance
-		// if (chat_balance < -1) {
-		// 	return {
-		// 		error: false,
-		// 		msg: "您的对话余额不足, 请联系充值",
-		// 	};
-		// }
 
 		if (serverApiKey) {
 			console.log("[Auth] use system api key");

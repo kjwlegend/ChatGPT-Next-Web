@@ -26,7 +26,7 @@ export const featureMask: BuiltinMask[] = [
 		],
 		syncGlobalConfig: true,
 		modelConfig: {
-			model: "gpt-3.5-turbo-1106",
+			model: "gpt-3.5-turbo-16k",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -66,7 +66,7 @@ export const featureMask: BuiltinMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo-1106",
+			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
 			max_tokens: 5000,
 			presence_penalty: 0,
@@ -103,7 +103,7 @@ export const featureMask: BuiltinMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo-1106",
+			model: "gpt-3.5-turbo-16k",
 			temperature: 0.5,
 			max_tokens: 4000,
 			presence_penalty: 0,
@@ -139,7 +139,7 @@ export const featureMask: BuiltinMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo-1106",
+			model: "gpt-3.5-turbo-16k",
 			temperature: 0.5,
 			max_tokens: 4000,
 			presence_penalty: 0,
@@ -178,7 +178,7 @@ export const featureMask: BuiltinMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo-1106",
+			model: "gpt-3.5-turbo-16k",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 6000,
@@ -218,7 +218,7 @@ export const featureMask: BuiltinMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo-1106",
+			model: "gpt-3.5-turbo-16k",
 			temperature: 0.35,
 			top_p: 1,
 			max_tokens: 6500,

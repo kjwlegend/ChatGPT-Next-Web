@@ -112,9 +112,6 @@ export function Chatbody() {
 
 	const playAudio = async (message: ChatMessage) => {
 		console.log("synthesizer", synthesizer);
-		if (synthesizer) {
-			synthesizer.close();
-		}
 
 		const newSynthesizer = await convertTextToSpeech(message.content);
 		console.log("newSynthesizer", newSynthesizer);
