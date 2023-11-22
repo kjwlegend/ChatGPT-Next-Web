@@ -124,3 +124,81 @@
     align-items: center;
   }
 }
+
+
+
+//  payment modal =============
+
+.payment-modal-container {
+
+
+  :global .ant-modal-content {
+    background-image: url('/bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  :global .ant-modal-header {
+    background: none;
+  }
+
+  .modal-content-container {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .service, .balance, .deduction, .remaining {
+    /* 设置字体大小 */
+    font-size: 16px;
+    /* 设置字体颜色为渐变色 */
+    color: #636363;
+    /* 设置行高 */
+    line-height: 1.5;
+    /* 设置字体加粗 */
+    // font-weight: bold;
+  }
+  .payment-image {
+
+    margin-left: 10px;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+      
+    }
+
+  
+  .payment-method {
+    /* 设置背景颜色为渐变色 */
+    background: linear-gradient(to right, #f4d5ff 0%, #d2f8f8 100%);
+    /* 设置边框为无 */
+    border: none;
+    /* 设置字体颜色为白色 */
+    color: white;
+    /* 设置内边距 */
+    padding: 10px 20px;
+    /* 设置圆角 */
+    border-radius: 20px;
+    /* 设置字体大小 */
+    font-size: 16px;
+    /* 设置字体加粗 */
+    font-weight: bold;
+  }
+  
+  .payment-method .ant-radio-button-wrapper {
+    /* 设置背景色为透明 */
+    background: transparent;
+    /* 设置边框为无 */
+    border: none;
+    /* 设置字体颜色为白色 */
+    color: white;
+  }
+  
+  .payment-method .ant-radio-button-wrapper-checked {
+    /* 设置背景色为深色渐变色 */
+    background: linear-gradient(to right, #5effec 0%, rgb(102, 255, 247) 100%);
+    /* 设置边框为无 */
+    border: none;
+    /* 设置字体颜色为白色 */
+    color: white;
+  }
+
+}

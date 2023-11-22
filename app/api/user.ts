@@ -25,3 +25,26 @@ export async function getUserInfo(userId: any) {
 			return err.response;
 		});
 }
+
+// Member type 包含 normal, monthly, quarterly, yearly
+export type member_type = "normal" | "monthly" | "quarterly" | "yearly";
+
+interface upgradeMemberParams {
+	user_id: number;
+	member_type: member_type;
+	order_amount: number;
+	payment_type: string;
+}
+
+// upgradeMember
+export async function upgradeMember(params: upgradeMemberParams) {
+	return request({
+		url: `/gpt/orders/`,
+		method: "post",
+		data: params,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.data;
+		});
+}
