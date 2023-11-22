@@ -9,6 +9,7 @@ import { Col, Divider, Row, Statistic } from "antd";
 import { Typography } from "antd";
 import { QRCode } from "antd";
 import { useRouter } from "next/router";
+import useAuth from "../hooks/useAuth";
 
 const { Paragraph } = Typography;
 
@@ -38,9 +39,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
 				<h3>{title}</h3>
 				<button
 					className={
-						isCurrentPackage
-							? styles.currentButton
-							: styles.upgradeButton
+						isCurrentPackage ? styles.currentButton : styles.upgradeButton
 					}
 					onClick={onUpgrade}
 				>
@@ -61,17 +60,21 @@ const CardComponent: React.FC<CardComponentProps> = ({
 
 const MembershipTab = () => {
 	const { user } = useUserStore();
+	const { updateUserInfo } = useAuth();
+
 	const {
 		member_type,
 		xgb_balance,
 		chat_balance,
 		draw_balance,
 		member_expire_date,
+		id,
 	} = user;
 
 	useEffect(() => {
 		// 在这里可以根据需要加载邀请人数和邀请点数的数据
-	}, []);
+		updateUserInfo(id);
+	}, [id]);
 
 	const currentPackage = (packageType: string) => {
 		return member_type === packageType;
