@@ -29,7 +29,7 @@ export const CN_MASKS: BuiltinMask[] = [
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.4,
 			top_p: 1,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0.2,
 			frequency_penalty: 0.3,
 			sendMemory: true,
@@ -66,7 +66,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -102,7 +102,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -137,7 +137,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -172,7 +172,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -207,7 +207,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -242,7 +242,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -278,7 +278,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -313,7 +313,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -355,7 +355,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -390,7 +390,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -425,7 +425,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -460,7 +460,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -495,7 +495,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -530,7 +530,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -565,7 +565,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -600,7 +600,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -635,7 +635,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -670,7 +670,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -706,7 +706,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -741,7 +741,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -776,7 +776,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -811,7 +811,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -846,7 +846,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -881,7 +881,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -916,7 +916,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -951,7 +951,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -986,7 +986,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1021,7 +1021,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1056,7 +1056,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1091,7 +1091,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1126,7 +1126,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1162,7 +1162,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1198,7 +1198,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1233,7 +1233,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1268,7 +1268,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1303,7 +1303,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1338,7 +1338,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1373,7 +1373,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1408,7 +1408,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1444,7 +1444,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1479,7 +1479,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1514,7 +1514,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1549,7 +1549,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1620,7 +1620,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1656,7 +1656,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1691,7 +1691,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1726,7 +1726,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1761,7 +1761,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1796,7 +1796,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
@@ -1831,7 +1831,7 @@ export const CN_MASKS: BuiltinMask[] = [
 		modelConfig: {
 			model: "gpt-3.5-turbo-16k",
 			temperature: 0.3,
-			max_tokens: 5000,
+			max_tokens: 4096,
 			presence_penalty: 0,
 			frequency_penalty: 0,
 			sendMemory: true,
