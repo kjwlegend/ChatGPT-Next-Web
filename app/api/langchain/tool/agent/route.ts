@@ -89,7 +89,7 @@ async function handle(req: NextRequest) {
 		}
 
 		// Authenticate the request
-		const authResult = auth(req);
+		const authResult = await auth(req);
 		if (authResult.error) {
 			return NextResponse.json(authResult, {
 				status: 401,

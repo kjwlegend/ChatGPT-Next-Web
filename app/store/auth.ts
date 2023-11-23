@@ -6,7 +6,7 @@ export interface AuthState {
 	isAuthenticated: boolean;
 	accessToken: string | null;
 	refreshToken: string | null;
-	login: (accessToken: string, refreshToken: string) => void;
+	login: (accessToken: string | null, refreshToken: string | null) => void;
 	logout: () => void;
 	getAccessToken: () => string | null;
 	getRefreshToken: () => string | null;

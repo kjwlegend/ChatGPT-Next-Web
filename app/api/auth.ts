@@ -152,6 +152,6 @@ export async function logoutAPI() {
 		})
 		.catch((err) => {
 			// console.log(err);
-			return err.response.data;
+			return err.response;
 		});
 }

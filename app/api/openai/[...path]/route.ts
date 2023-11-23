@@ -50,7 +50,7 @@ async function handle(
 		);
 	}
 
-	const authResult = auth(req);
+	const authResult = await auth(req);
 	if (authResult.error) {
 		// console.log("[OpenAI Route] auth error ", authResult.error);
 		return NextResponse.json(authResult, {

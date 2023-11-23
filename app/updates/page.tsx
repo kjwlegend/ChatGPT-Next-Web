@@ -309,6 +309,12 @@ const items = [
 		label: "2023-11-17",
 		children: " 发布 v1.0.1 版本: 优化站点代码架构",
 
+		color: "blue",
+	},
+	{
+		label: "2023-11-23",
+		children: " 发布 v1.1.0 版本: 完善会员流程, 开放小光币兑换, 修复一些bug",
+
 		color: "red",
 	},
 ];

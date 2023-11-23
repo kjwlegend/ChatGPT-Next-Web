@@ -7,7 +7,7 @@ const service: AxiosInstance = axios.create({
   timeout: 15000,
 });
 
-async function refreshTokenAndRetryRequest(error, originalRequest) {
+async function refreshTokenAndRetryRequest(error: any, originalRequest: any) {
   const refreshToken = useAuthStore.getState().getRefreshToken();
   try {
     const response = await service.post("/api/gpt/token/refresh/", {

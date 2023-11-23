@@ -108,7 +108,7 @@ const differentFromOthersContent = [
 			{
 				title: "缺乏'LangChain' 技术",
 				content:
-					"在提示词工程中，'langchain' 是一个术语，指的是在多语言环境下使用不同语言的提示词来引导语言模型生成相应语言的输出。",
+					"LangChain 是一个多重提示词调用的工作流程, 通过丰富原本的输入, 并经过一系列的任务流程来达到强化输出的目的",
 			},
 			{
 				title: "缺乏少样本和零样本训练技术",

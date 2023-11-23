@@ -89,7 +89,7 @@ const MembershipTab = () => {
 			case "quarterly":
 				setSelectedMembershipName("白金会员");
 				break;
-			case "yearly":
+			case "halfyearly":
 				setSelectedMembershipName("钻石会员");
 				break;
 			default:
@@ -301,13 +301,13 @@ const MembershipTab = () => {
 						groupSeparator=""
 					/>
 				</Col>
-				<Col xs={12} sm={4}>
+				{/* <Col xs={12} sm={4}>
 					<Statistic
 						title="剩余绘画支持"
 						value={draw_balance || ""}
 						groupSeparator=""
 					/>
-				</Col>
+				</Col> */}
 				<Col xs={12} sm={4}>
 					<Statistic
 						title="对话重置时间"
@@ -326,7 +326,7 @@ const MembershipTab = () => {
 						{ description: "对话次数", value: "200 次/月" },
 						{ description: "最大token支持", value: "4000" },
 						{ description: "模型支持", value: "小光3.5, 4.0" },
-						{ description: "上下文长度", value: "8k" },
+						{ description: "上下文长度", value: "16k" },
 						{ description: "联网搜索", value: "是" },
 						{ description: "绘画支持", value: "否" },
 						{ description: "本地知识库", value: "是" },
@@ -375,14 +375,14 @@ const MembershipTab = () => {
 							description: "模型支持",
 							value: "小光3.5, 4.0",
 						},
-						{ description: "上下文长度", value: "16k" },
+						{ description: "上下文长度", value: "16k,32k" },
 						{ description: "联网搜索", value: "是" },
 						{ description: "绘画支持", value: "Dalle-3, MJ" },
 						{ description: "本地知识库", value: "是" },
 						{ description: "特殊功能支持", value: "工作流" },
 					]}
 					isCurrentPackage={currentPackage("钻石会员")}
-					onUpgrade={() => handleUpgrade("yearly")}
+					onUpgrade={() => handleUpgrade("halfyearly")}
 				/>
 			</div>
 		</div>

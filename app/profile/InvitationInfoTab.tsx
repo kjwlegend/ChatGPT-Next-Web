@@ -31,7 +31,7 @@ const InvitePage = () => {
 					<Statistic title="邀请人数" value={invite_count} />
 				</Col>
 				<Col xs={12} sm={8}>
-					<Statistic title="邀请点数" value={xgb_balance} />
+					<Statistic title="小光币" value={xgb_balance} />
 				</Col>
 				<Col xs={12} sm={8}>
 					<Statistic
@@ -75,7 +75,7 @@ const InvitePage = () => {
 
 				<p className={styles["label-title"]}>规则说明:</p>
 				<p>
-					每一位通过您的链接注册小光，双方都会获得20点邀请点数,
+					每一位通过您的链接注册小光，双方都会获得10小光币,
 					邀请点数可以用来兑换未来的小光会员服务。包括GPT-4.0 接口,
 					文案批量自动化生成, 以及更多高级功能。
 				</p>
