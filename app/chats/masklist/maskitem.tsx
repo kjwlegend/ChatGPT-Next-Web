@@ -24,6 +24,7 @@ import {
 import { Card } from "antd";
 import { IconButton } from "@/app/components/button";
 import { Avatar, AvatarPicker } from "@/app/components/emoji";
+import {Avatar as BotAvatar} from "antd";
 import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "@/app/store/mask";
 import {
 	ChatMessage,
@@ -164,16 +165,69 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 		);
 	};
 
-	const renderRoleplay = () => {
+	const ColorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
+	const getRandomColor = () => {
+		return ColorList[Math.floor(Math.random() * ColorList.length)];
+	  };
+	
+	  const renderRoleplay = () => {
+		const author = mask.author || '@创世神';
+	
 		return (
-			<div className={styles["mask-item-roleplay"]}>
-				<h1>{mask.name}</h1>
-				<p>{mask.description}</p>
-				<button onClick={onChat}>Chat</button>
-				{!mask.builtin && <button onClick={onDelete}>Delete</button>}
-			</div>
+		  <div className={styles['mask-item-roleplay']}>
+			<BotAvatar
+			  style={{ backgroundColor: getRandomColor(), fontSize: '32px'}}
+			  size={100}
+			  src={mask.img}
+			>
+			  {mask.name}
+			</BotAvatar>
+			<div className={styles['author']}>{author}</div>
+
+			<h1 className={styles['name']}>{mask.name}</h1>
+			<IconButton
+						icon={<AddIcon />}
+						key="chat"
+						text={Locale.Mask.Item.Chat}
+						onClick={() => onChat()}
+					/>
+        <p className={styles['description']}>{mask.description ?? "作者很懒, 还没有上传介绍"}</p>
+			<div className={styles['actions']}>
+
+
+						{mask.builtin ? (
+							<IconButton
+								icon={<EyeIcon />}
+								key="view"
+								text={`热度: ${mask.hotness ? mask.hotness : "0"}`}
+								// onClick={() => setEditingMaskId(mask.id)}
+							/>
+						) : (
+							<IconButton
+								icon={<EditIcon />}
+								key="edit"
+								text={Locale.Mask.Item.Edit}
+								onClick={() => setEditingMaskId(mask.id)}
+							/>
+						)}
+
+						{!mask.builtin && (
+							<IconButton
+								icon={<DeleteIcon />}
+								text={Locale.Mask.Item.Delete}
+								key="delete"
+								onClick={async () => {
+									if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
+										onDelete();
+									}
+								}}
+							/>
+						)}
+						</div>
+
+		  </div>
 		);
-	};
+	  };
 
 	const renderComponent = () => {
 		if (styleName === "card") {

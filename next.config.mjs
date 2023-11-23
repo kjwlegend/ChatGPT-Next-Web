@@ -32,6 +32,7 @@ const nextConfig = {
   },
   // distDir: "dist",
   output: mode,
+  // trailingSlash: true,
   images: {
     unoptimized: mode === "export",
     remotePatterns: [

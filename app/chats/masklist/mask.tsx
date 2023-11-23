@@ -53,7 +53,7 @@ import {
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { Card, Button } from "antd";
+import { Card, Button, Switch , Segmented} from "antd";
 import MaskComponent from "./maskitem";
 
 import MultipleTag from "@/app/components/multipletags";
@@ -98,7 +98,7 @@ export function MaskConfig(props: {
 	};
 
 	const copyMaskLink = () => {
-		const maskLink = `${location.protocol}//${location.host}/#${Path.NewChat}?mask=${props.mask.id}`;
+		const maskLink = `${location.protocol}//${location.host}/chats#${Path.NewChat}?mask=${props.mask.id}`;
 		copyToClipboard(maskLink);
 	};
 
@@ -409,15 +409,56 @@ export function MaskPage() {
 	const maskStore = useMaskStore();
 	const chatStore = useChatStore();
 	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
+	const [isBuiltin, setisBuiltin] = useState(false);
+	const [filterLang, setFilterLang] = useState<Lang>();
+	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
+	const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
+	const [searchText, setSearchText] = useState("");
+	const [cardStyle, setCardStyle] = useState<"roleplay" | "card">("roleplay");
+
+	const [segmentValue, setsegmentValue] = useState<string | number>('场景助手');
+
+	const segmentOptions = [
+		{label: "场景助手", value: "场景助手", disabled: false},
+		{label: "角色对话", value: "角色对话", disabled: false},
+		{label: "工作流", value: "工作流", disabled: true},
+	]
+
+	const handleSegmentChange = (value: string | number) => {
+		setsegmentValue(value);
+		console.log("value = ", value);
+		// set card style
+		switch (value) {
+			case "场景助手":
+				setCardStyle("card");
+				break;
+			case "角色对话":
+				setCardStyle("roleplay");
+				break;
+			case "工作流":
+				setCardStyle("card");
+				break;
+			default:
+				break;
+		}
+
+	};
+
+
+
+	
+
+	const handleSwitchChange = (checked :boolean) => {
+	  setisBuiltin(checked);
+	  console.log("checked = ", checked);
+	};
+
 
 	const handleTagsChange = (selectedTags: string[]) => {
 		console.log("fu", selectedTags);
 		setSelectedTags(selectedTags);
 	};
 
-	const [filterLang, setFilterLang] = useState<Lang>();
-
-	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
 
 	const allMasks = maskStore.getAll().filter((m) => {
 		if (filterLang && m.lang !== filterLang) {
@@ -426,11 +467,13 @@ export function MaskPage() {
 		if (!selectedTags.includes("全部") && !selectedTags.includes(m.category)) {
 			return false;
 		}
+		if (isBuiltin && !!m.builtin) {
+			return false;
+		}
 		return true;
 	});
 
-	const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
-	const [searchText, setSearchText] = useState("");
+
 	const masks = searchText.length > 0 ? searchMasks : allMasks;
 
 	// simple search, will refactor later
@@ -514,7 +557,15 @@ export function MaskPage() {
 				</div>
 
 				<div className={styles["mask-page-body"]}>
+				{/* ====顶部筛选器==== */}
+				<div>
+				<Segmented options={segmentOptions} value={segmentValue} block onChange={handleSegmentChange} size="large"/>
+				</div>
 					<div className={styles["mask-category"]}>
+						<span className={styles['builtin']}>
+						<Switch  defaultChecked onChange={handleSwitchChange} unCheckedChildren="只看自建" checkedChildren="查看全部" />
+
+						</span>
 						<MultipleTag
 							tagsData={MaskCategory.map((v) => v.value)}
 							onTagsChange={handleTagsChange}
@@ -563,12 +614,14 @@ export function MaskPage() {
 							}}
 						/>
 					</div>
+				{/* ====顶部end==== */}
 
 					<div className={`${styles["mask-list"]} flex-container`}>
 						{masks.map((m) => (
 							<MaskComponent
 								mask={m}
 								key={m.id}
+								styleName={cardStyle}
 								setEditingMaskId={(id) => setEditingMaskId(id)}
 							/>
 						))}

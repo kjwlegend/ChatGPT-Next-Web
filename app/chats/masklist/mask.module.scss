@@ -8,6 +8,39 @@
     padding: 20px;
     overflow-y: auto;
 
+    // ============= 顶部切换segment =============
+
+    :global .ant-segmented{
+
+      margin: 20px;
+
+      @media screen and (max-width: 768px) {
+      margin: 5px;
+      }
+
+       .ant-segmented-item {
+
+        &:hover {
+          color: rgba(0, 0, 0, 0.25);
+  
+        }
+  
+        &.ant-segmented-item-selected {
+          background: rgb(55, 126, 233);
+          color: white;
+        }
+  
+        &.ant-segmented-item-disabled {
+          color: rgba(0, 0, 0, 0.25);
+          cursor: not-allowed;
+        }
+      }
+  
+    }
+    .builtin {
+      margin-right: 5px;
+    }
+
     .mask-category {
       margin: 10px;
       font-size: 14px;
@@ -136,6 +169,63 @@
         &.develop {
           background-color: aquamarine;
         }
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .mask-item-roleplay {
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 5px 3px 15px 0px rgba(0, 0, 0, 0.08);
+        width: 19%;
+        margin: 10px 2px;
+
+        @media screen and (max-width: 768px) {
+          width: 45%;
+          margin: 10px 0;
+        }
+          
+        
+      
+       :global .ant-avatar >img {
+          height: unset;
+        }
+      .name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333333;
+        margin-bottom: 10px;
+      }
+      
+      .description {
+        font-size: 14px;
+        color: #666666;
+        margin-bottom: 20px;
+        text-align: left;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
+        height: 60px;
+        display: -webkit-box; /* 将元素设置为弹性盒子 */
+        -webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
+        overflow: hidden;
+
+        
+      }
+      .author {
+        font-size: 14px;
+        color: #999999;
+        margin-top: 10px;
+      }
       }
     }
   }

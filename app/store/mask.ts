@@ -9,6 +9,7 @@ import { createPersistStore } from "../utils/store";
 export type Mask = {
 	id: string;
 	createdAt: number;
+	author? : string;
 	avatar: string;
 	name: string;
 	category: string;
