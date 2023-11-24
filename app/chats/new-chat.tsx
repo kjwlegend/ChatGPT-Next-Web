@@ -25,6 +25,7 @@ import { useCommand } from "../command";
 import { showConfirm } from "@/app/components/ui-lib";
 import { BUILTIN_MASK_STORE } from "../masks";
 import Image from "next/image";
+import { type } from "os";
 
 function getIntersectionArea(aRect: DOMRect, bRect: DOMRect) {
 	const xmin = Math.max(aRect.x, bRect.x);
@@ -91,7 +92,7 @@ function useMaskGroup(masks: Mask[]) {
 function featureMaskGroup(masks: Mask[]) {
 	// 2个filter , build-in mask 和 feature mask
 	const featureMasks = masks.filter(
-		(mask) => mask.featureMask === true && mask.builtin === true,
+		(mask) => mask.featureMask === true && mask.builtin === true && mask.type !== "roleplay",
 	);
 	return [...featureMasks];
 }
