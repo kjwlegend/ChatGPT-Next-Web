@@ -84,7 +84,7 @@ export const featureMask: BuiltinMask[] = [
 	{
 		avatar: "a-xiaoliang",
 		name: "小亮(开发者)",
-		category: "开发",
+		category: "技术开发",
 		featureMask: true,
 		description:
 			"超级代码高手。他拥有出色的编码技能和丰富的经验，能够轻松应对各种编程语言。他对编码充满热爱. \n\n座右铭: '代码如诗'",
@@ -121,7 +121,7 @@ export const featureMask: BuiltinMask[] = [
 	{
 		avatar: "a-xiaoshuang",
 		name: "小双(女巫)",
-		category: "魔法",
+		category: "生活助手",
 		featureMask: true,
 		description:
 			"精通占星和塔罗的女巫, 对于探索和解读未知的事物充满热情.能够为人们提供指引和启发，致力于为他人带来光明和希望。\n\n座右铭: '星光指引未来'",
@@ -157,7 +157,7 @@ export const featureMask: BuiltinMask[] = [
 
 	{
 		avatar: "a-konglaoshi",
-		category: "通用",
+		category: "生活助手",
 		name: "孔老师(教育家)",
 		featureMask: true,
 		description:
@@ -197,7 +197,7 @@ export const featureMask: BuiltinMask[] = [
 	},
 	{
 		avatar: "a-xiaopei",
-		category: "职业",
+		category: "职场日常",
 		name: "小佩(面试官)",
 		featureMask: true,
 		description:

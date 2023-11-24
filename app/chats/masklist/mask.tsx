@@ -568,7 +568,7 @@ export function MaskPage() {
 					<div className={styles["mask-category"]}>
 						<span className={styles["builtin"]}>
 							<Switch
-								defaultChecked
+								defaultChecked={isBuiltin}
 								onChange={handleSwitchChange}
 								unCheckedChildren="只看自建"
 								checkedChildren="查看全部"

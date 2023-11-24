@@ -192,7 +192,6 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 	);
 	// console.log("response checkkkkkk", responseState);
 	// 在responseState 为 true 时 执行 onNextworkflow
-	const responseStateRef = useRef(responseState);
 	useEffect(() => {
 		const lastMessage = session.messages.at(-1)?.content ?? "";
 		console.log("responseState old", responseState);
@@ -346,6 +345,13 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 		const sessions = workflowStore.sessions;
 		const nextSession = sessions.at(index + 1);
 
+		console.log(
+			"工作流, 当前session: ",
+			session,
+			"下一个session: ",
+			nextSession,
+		);
+
 		if (!nextSession) {
 			return;
 		}
@@ -366,6 +372,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 					chat_session: session.id,
 					message: message,
 					memory: recentMessages,
+					model: session.mask.modelConfig.model,
 				};
 
 				createChat(createChatData).then((response) => {

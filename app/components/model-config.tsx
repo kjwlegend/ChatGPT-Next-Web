@@ -38,24 +38,26 @@ export function ModelConfigList(props: {
 	return (
 		<>
 			{/* <ListItem title={Locale.Settings.Model}>
-        <Select
-          value={props.modelConfig.model}
-          onChange={(e) => {
-            props.updateConfig(
-              (config) =>
-                (config.model = ModalConfigValidator.model(
-                  e.currentTarget.value,
-                )),
-            );
-          }}
-        >
-          {allModels.map((v, i) => (
-            <option value={v.name} key={i} disabled={!v.available}>
-              {v.name}
-            </option>
-          ))}
-        </Select>
-      </ListItem> */}
+				<Select
+					value={props.modelConfig.model}
+					onChange={(e) => {
+						props.updateConfig(
+							(config) =>
+								(config.model = ModalConfigValidator.model(
+									e.currentTarget.value,
+								)),
+						);
+					}}
+				>
+					{allModels
+						.filter((v) => v.available)
+						.map((v, i) => (
+							<option value={v.name} key={i}>
+								{v.displayName}
+							</option>
+						))}
+				</Select>
+			</ListItem> */}
 			<ListItem
 				title={Locale.Settings.Temperature.Title}
 				subTitle={Locale.Settings.Temperature.SubTitle}

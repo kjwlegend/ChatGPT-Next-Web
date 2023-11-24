@@ -284,7 +284,7 @@ export function ChatActions(props: {
 					/>
 				)}
 
-				<ChatAction
+				{/* <ChatAction
 					onClick={nextTheme}
 					text={Locale.Chat.InputActions.Theme[theme]}
 					icon={
@@ -298,7 +298,7 @@ export function ChatActions(props: {
 							) : null}
 						</>
 					}
-				/>
+				/> */}
 
 				<ChatAction
 					onClick={props.showPromptHints}
@@ -472,7 +472,6 @@ export function Inputpanel() {
 					message: userInput, // 使用用户输入作为 message 参数
 					memory: recentMessages,
 					model: session.mask.modelConfig.model,
-
 				};
 				// console.log("createChatData:", createChatData);
 

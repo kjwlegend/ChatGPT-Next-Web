@@ -461,17 +461,20 @@ export function Chatbody() {
 									</div>
 								)}
 								<div className={styles["chat-message-item"]}>
-									<div
-										className={`${
-											isUser
-												? styles["user"] + " " + styles["play"]
-												: styles["bot"] + " " + styles["play"]
-										}`}
-									>
-										<button onClick={() => playAudio(message)}>
-											<PlayIcon />
-										</button>
-									</div>
+									{/* 只有等于roleplay 时才展示playicon */}
+									{session.mask.type === "roleplay" && !isUser && (
+										<div
+											className={`${
+												isUser
+													? styles["user"] + " " + styles["play"]
+													: styles["bot"] + " " + styles["play"]
+											}`}
+										>
+											<button onClick={() => playAudio(message)}>
+												<PlayIcon />
+											</button>
+										</div>
+									)}
 									<Markdown
 										content={message.content}
 										loading={

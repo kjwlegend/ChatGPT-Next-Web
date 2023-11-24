@@ -53,6 +53,8 @@ export enum StoreKey {
 export type MaskCategoryType = {
 	key: string;
 	value: string;
+	scene: string;
+	tags: string[];
 };
 
 export const MaskCategory: MaskCategoryType[] = [];

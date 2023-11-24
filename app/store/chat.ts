@@ -504,6 +504,7 @@ export const useChatStore = createPersistStore(
 							botMessage.streaming = false;
 							if (message) {
 								botMessage.content = message;
+								responseStatus = session.responseStatus = true;
 								get().onNewMessage(botMessage);
 							}
 							ChatControllerPool.remove(session.id, botMessage.id);

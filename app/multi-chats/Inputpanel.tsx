@@ -436,7 +436,6 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
 					message: userInput, // 使用用户输入作为 message 参数
 					memory: recentMessages,
 					model: session.mask.modelConfig.model,
-
 				};
 				// console.log("createChatData:", createChatData);
 

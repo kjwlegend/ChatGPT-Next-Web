@@ -36,7 +36,7 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		description: "用于与Wikipedia API交互和从Wikipedia API获取数据的工具。",
 		builtin: true,
 		createdAt: 1694235989000,
-		enable: false,
+		enable: true,
 	},
 	{
 		name: "DALL·E",
@@ -46,7 +46,7 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 			"接入最新的 DALL·E 3 可以根据自然语言的描述创建逼真的图像和艺术。",
 		builtin: true,
 		createdAt: 1694703673000,
-		enable: false,
+		enable: true,
 	},
 	// {
 	// 	name: "Stable Diffusion",
@@ -56,7 +56,7 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 	// 		"Stable Diffusion 图像生成模型。使用本插件需要配置 Cloudflare R2 对象存储服务以及 stable-diffusion-webui 接口。",
 	// 	builtin: true,
 	// 	createdAt: 1688899480510,
-	// 	enable: false,
+	// 	enable: true,
 	// },
 	{
 		name: "Arxiv",
@@ -65,7 +65,7 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		description: "使用 Arxiv 接口搜索并获取文章信息。",
 		builtin: true,
 		createdAt: 1699265115000,
-		enable: false,
+		enable: true,
 	},
 	{
 		name: "知识搜索",

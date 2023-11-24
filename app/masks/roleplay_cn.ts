@@ -86,7 +86,7 @@ export const RolePlay: BuiltinMask[] = [
 	{
 		avatar: "a-xiaoliang",
 		name: "小亮(开发者)",
-		category: "开发",
+		category: "通用",
 		type: "roleplay",
 		featureMask: true,
 		description:
@@ -124,7 +124,7 @@ export const RolePlay: BuiltinMask[] = [
 	{
 		avatar: "a-xiaoshuang",
 		name: "小双(女巫)",
-		category: "魔法",
+		category: "通用",
 		type: "roleplay",
 		featureMask: true,
 		description:
@@ -202,7 +202,7 @@ export const RolePlay: BuiltinMask[] = [
 	},
 	{
 		avatar: "a-xiaopei",
-		category: "职业",
+		category: "通用",
 		name: "小佩(面试官)",
 		type: "roleplay",
 		featureMask: true,
