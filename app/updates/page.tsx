@@ -317,6 +317,13 @@ const items = [
 
 		color: "red",
 	},
+	{
+		label: "2023-11-24",
+		children:
+			" 发布 v1.2.0 版本: 优化全部角色页面, 增加助手和虚拟对话分栏. 助手分类重新构建",
+
+		color: "blue",
+	},
 ];
 
 const Log = () => {
