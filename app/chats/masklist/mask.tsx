@@ -53,7 +53,7 @@ import {
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { Card, Button, Switch , Segmented} from "antd";
+import { Card, Button, Switch, Segmented } from "antd";
 import MaskComponent from "./maskitem";
 
 import MultipleTag from "@/app/components/multipletags";
@@ -414,15 +414,15 @@ export function MaskPage() {
 	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
 	const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
 	const [searchText, setSearchText] = useState("");
-	const [cardStyle, setCardStyle] = useState<"roleplay" | "card">("roleplay");
+	const [cardStyle, setCardStyle] = useState<"roleplay" | "card">("card");
 
-	const [segmentValue, setsegmentValue] = useState<string | number>('场景助手');
+	const [segmentValue, setsegmentValue] = useState<string | number>("场景助手");
 
 	const segmentOptions = [
-		{label: "场景助手", value: "场景助手", disabled: false},
-		{label: "角色对话", value: "角色对话", disabled: false},
-		{label: "工作流", value: "工作流", disabled: true},
-	]
+		{ label: "场景助手", value: "场景助手", disabled: false },
+		{ label: "角色对话", value: "角色对话", disabled: false },
+		{ label: "工作流", value: "工作流", disabled: true },
+	];
 
 	const handleSegmentChange = (value: string | number) => {
 		setsegmentValue(value);
@@ -441,24 +441,17 @@ export function MaskPage() {
 			default:
 				break;
 		}
-
 	};
 
-
-
-	
-
-	const handleSwitchChange = (checked :boolean) => {
-	  setisBuiltin(checked);
-	  console.log("checked = ", checked);
+	const handleSwitchChange = (checked: boolean) => {
+		setisBuiltin(checked);
+		console.log("checked = ", checked);
 	};
-
 
 	const handleTagsChange = (selectedTags: string[]) => {
 		console.log("fu", selectedTags);
 		setSelectedTags(selectedTags);
 	};
-
 
 	const allMasks = maskStore.getAll().filter((m) => {
 		if (filterLang && m.lang !== filterLang) {
@@ -470,9 +463,14 @@ export function MaskPage() {
 		if (isBuiltin && !!m.builtin) {
 			return false;
 		}
+		if (cardStyle === "roleplay" && m.type !== "roleplay") {
+			return false;
+		}
+		if (cardStyle === "card" && m.type === "roleplay") {
+			return false;
+		}
 		return true;
 	});
-
 
 	const masks = searchText.length > 0 ? searchMasks : allMasks;
 
@@ -557,14 +555,24 @@ export function MaskPage() {
 				</div>
 
 				<div className={styles["mask-page-body"]}>
-				{/* ====顶部筛选器==== */}
-				<div>
-				<Segmented options={segmentOptions} value={segmentValue} block onChange={handleSegmentChange} size="large"/>
-				</div>
+					{/* ====顶部筛选器==== */}
+					<div>
+						<Segmented
+							options={segmentOptions}
+							value={segmentValue}
+							block
+							onChange={handleSegmentChange}
+							size="large"
+						/>
+					</div>
 					<div className={styles["mask-category"]}>
-						<span className={styles['builtin']}>
-						<Switch  defaultChecked onChange={handleSwitchChange} unCheckedChildren="只看自建" checkedChildren="查看全部" />
-
+						<span className={styles["builtin"]}>
+							<Switch
+								defaultChecked
+								onChange={handleSwitchChange}
+								unCheckedChildren="只看自建"
+								checkedChildren="查看全部"
+							/>
 						</span>
 						<MultipleTag
 							tagsData={MaskCategory.map((v) => v.value)}
@@ -614,7 +622,7 @@ export function MaskPage() {
 							}}
 						/>
 					</div>
-				{/* ====顶部end==== */}
+					{/* ====顶部end==== */}
 
 					<div className={`${styles["mask-list"]} flex-container`}>
 						{masks.map((m) => (

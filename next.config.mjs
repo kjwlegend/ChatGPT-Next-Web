@@ -51,6 +51,17 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+  headers: () => [
+    {
+      source: '/',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'no-store',
+        }
+      ]
+    }
+  ]
 
 }
 

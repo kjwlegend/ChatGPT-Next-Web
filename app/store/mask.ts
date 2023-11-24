@@ -5,11 +5,13 @@ import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey, MaskCategory, MaskCategoryType } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
+import { type } from "os";
 
 export type Mask = {
 	id: string;
 	createdAt: number;
-	author? : string;
+	author?: string;
+	type?: string;
 	avatar: string;
 	name: string;
 	category: string;
@@ -110,12 +112,8 @@ export const useMaskStore = createPersistStore(
 					}) as Mask,
 			);
 			buildinMasks.sort((a, b) => {
-				const hotnessA = isNaN(Number(a.hotness))
-					? 0
-					: Number(a.hotness);
-				const hotnessB = isNaN(Number(b.hotness))
-					? 0
-					: Number(b.hotness);
+				const hotnessA = isNaN(Number(a.hotness)) ? 0 : Number(a.hotness);
+				const hotnessB = isNaN(Number(b.hotness)) ? 0 : Number(b.hotness);
 
 				// 3层排序逻辑: featureMask > hotness > createdAt
 				if (a.featureMask && !b.featureMask) return -1;

@@ -1,232 +1,224 @@
 @import "@/app/styles/animation.scss";
 .mask-page {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 
-  .mask-page-body {
-    padding: 20px;
-    overflow-y: auto;
+	.mask-page-body {
+		padding: 20px;
+		overflow-y: auto;
 
-    // ============= 顶部切换segment =============
+		// ============= 顶部切换segment =============
 
-    :global .ant-segmented{
+		:global .ant-segmented {
+			margin: 20px;
 
-      margin: 20px;
+			@media screen and (max-width: 768px) {
+				margin: 5px;
+			}
 
-      @media screen and (max-width: 768px) {
-      margin: 5px;
-      }
+			.ant-segmented-item {
+				&:hover {
+					color: rgba(0, 0, 0, 0.25);
+				}
 
-       .ant-segmented-item {
+				&.ant-segmented-item-selected {
+					background: rgb(55, 126, 233);
+					color: white;
+				}
 
-        &:hover {
-          color: rgba(0, 0, 0, 0.25);
-  
-        }
-  
-        &.ant-segmented-item-selected {
-          background: rgb(55, 126, 233);
-          color: white;
-        }
-  
-        &.ant-segmented-item-disabled {
-          color: rgba(0, 0, 0, 0.25);
-          cursor: not-allowed;
-        }
-      }
-  
-    }
-    .builtin {
-      margin-right: 5px;
-    }
+				&.ant-segmented-item-disabled {
+					color: rgba(0, 0, 0, 0.25);
+					cursor: not-allowed;
+				}
+			}
+		}
+		.builtin {
+			margin-right: 5px;
+		}
 
-    .mask-category {
-      margin: 10px;
-      font-size: 14px;
+		.mask-category {
+			margin: 10px;
+			font-size: 14px;
 
-      :global .ant-tag {
-        margin: 5px;
-        font-size: 14px;
+			:global .ant-tag {
+				margin: 5px;
+				font-size: 14px;
 
-        &.ant-tag-checkable {
-          padding: 0 5px;
-          // border-color: #d9d9d9;
-          background-color: rgba(0, 0, 0, 0.03);
-        }
-        &.ant-tag-checkable-checked {
-          background-color: rgb(55 126 233);
-        }
-      }
-    }
+				&.ant-tag-checkable {
+					padding: 0 5px;
+					// border-color: #d9d9d9;
+					background-color: rgba(0, 0, 0, 0.03);
+				}
+				&.ant-tag-checkable-checked {
+					background-color: rgb(55 126 233);
+				}
+			}
+		}
 
-    .mask-filter {
-      width: 100%;
-      max-width: 100%;
-      margin-bottom: 20px;
-      animation: slide-in ease 0.3s;
-      height: 40px;
+		.mask-filter {
+			width: 100%;
+			max-width: 100%;
+			margin-bottom: 20px;
+			animation: slide-in ease 0.3s;
+			height: 40px;
 
-      display: flex;
+			display: flex;
 
-      .search-bar {
-        flex-grow: 1;
-        max-width: 100%;
-        min-width: 0;
-      }
+			.search-bar {
+				flex-grow: 1;
+				max-width: 100%;
+				min-width: 0;
+			}
 
-      .mask-filter-lang {
-        height: 100%;
-        margin-left: 10px;
-      }
+			.mask-filter-lang {
+				height: 100%;
+				margin-left: 10px;
+			}
 
-      .mask-create {
-        height: 100%;
-        margin-left: 10px;
-        box-sizing: border-box;
-        min-width: 80px;
-      }
-    }
-    .mask-list {
-      justify-content: space-around;
-      row-gap: 10px;
-      align-items: stretch;
-      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
-        "Helvetica", "Arial", sans-serif, "Noto Sans", "SF Pro SC",
-        "SF Pro Text", "SF Pro Icons";
+			.mask-create {
+				height: 100%;
+				margin-left: 10px;
+				box-sizing: border-box;
+				min-width: 80px;
+			}
+		}
+		.mask-list {
+			justify-content: space-around;
+			row-gap: 10px;
+			align-items: stretch;
+			font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
+				"Helvetica", "Arial", sans-serif, "Noto Sans", "SF Pro SC",
+				"SF Pro Text", "SF Pro Icons";
 
-      .mask-item {
-        padding: 10px;
-        margin: 10px;
-        width: calc(33% - 20px);
+			.mask-item {
+				padding: 10px;
+				margin: 10px;
+				width: calc(33% - 20px);
 
-        border: var(--border-in-light);
-        animation: slide-in ease 0.3s;
-        padding-bottom: 1px;
+				border: var(--border-in-light);
+				animation: slide-in ease 0.3s;
+				padding-bottom: 1px;
 
-        &:hover {
-          box-shadow:
-            0 1px 2px -2px rgba(0, 0, 0, 0.16),
-            0 3px 6px 0 rgb(0 215 255 / 29%),
-            0 5px 12px 4px rgba(0, 0, 0, 0.09);
-        }
+				&:hover {
+					box-shadow:
+						0 1px 2px -2px rgba(0, 0, 0, 0.16),
+						0 3px 6px 0 rgb(0 215 255 / 29%),
+						0 5px 12px 4px rgba(0, 0, 0, 0.09);
+				}
 
-        .mask-header {
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          column-gap: 1rem;
-          font-size: 0.95rem;
-          font-weight: 400;
-          letter-spacing: 2px;
-        }
+				.mask-header {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+					column-gap: 1rem;
+					font-size: 0.95rem;
+					font-weight: 400;
+					letter-spacing: 2px;
+				}
 
-        :global .ant-card-actions > li {
-          text-align: center;
-          margin: 0;
+				:global .ant-card-actions > li {
+					text-align: center;
+					margin: 0;
 
-          button {
-            margin: auto;
-          }
-        }
+					button {
+						margin: auto;
+					}
+				}
 
-        :global .ant-card-meta-description {
-          height: 100%;
+				:global .ant-card-meta-description {
+					height: 100%;
 
-          text-overflow: ellipsis; /* 显示省略号 */
-          display: -webkit-box; /* 将元素设置为弹性盒子 */
-          -webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
-          -webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
-        }
-        // 屏幕大于 1500
-        @media (min-width: 1500px) {
-          width: calc(25% - 20px);
-        }
+					text-overflow: ellipsis; /* 显示省略号 */
+					display: -webkit-box; /* 将元素设置为弹性盒子 */
+					-webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
+					-webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
+				}
+				// 屏幕大于 1500
+				@media (min-width: 1500px) {
+					width: calc(25% - 20px);
+				}
 
-        // 屏幕小于 1024
-        @media (max-width: 1024px) {
-          width: calc(50% - 20px);
-        }
+				// 屏幕小于 1024
+				@media (max-width: 1024px) {
+					width: calc(50% - 20px);
+				}
 
-        // 屏幕小于 768
-        @media (max-width: 768px) {
-          width: calc(100% - 20px);
+				// 屏幕小于 768
+				@media (max-width: 768px) {
+					width: calc(100% - 20px);
 
-          :global .ant-card-meta-description {
-            height: 100%;
-            text-overflow: ellipsis; /* 显示省略号 */
-            // white-space: nowrap; /* 防止文字换行 */
-          }
-        }
+					:global .ant-card-meta-description {
+						height: 100%;
+						text-overflow: ellipsis; /* 显示省略号 */
+						// white-space: nowrap; /* 防止文字换行 */
+					}
+				}
 
-        .label {
-          background: rgb(21, 193, 236);
-          padding: 4px 5px;
-          font-size: 10px;
-          color: white;
-          border-radius: 5px;
-        }
-        &.develop {
-          background-color: aquamarine;
-        }
-      }
+				.label {
+					background: rgb(21, 193, 236);
+					padding: 4px 5px;
+					font-size: 10px;
+					color: white;
+					border-radius: 5px;
+				}
+				&.develop {
+					background-color: aquamarine;
+				}
+			}
 
-      .actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .mask-item-roleplay {
+			.actions {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.mask-item-roleplay {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: flex-start;
+				text-align: center;
+				padding: 20px;
+				background-color: #ffffff;
+				border-radius: 8px;
+				box-shadow: 5px 3px 15px 0px rgba(0, 0, 0, 0.08);
+				width: 19%;
+				margin: 10px 2px;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 5px 3px 15px 0px rgba(0, 0, 0, 0.08);
-        width: 19%;
-        margin: 10px 2px;
+				@media screen and (max-width: 768px) {
+					width: 40%;
+					margin: 10px 0;
+					padding: 10px;
+				}
 
-        @media screen and (max-width: 768px) {
-          width: 45%;
-          margin: 10px 0;
-        }
-          
-        
-      
-       :global .ant-avatar >img {
-          height: unset;
-        }
-      .name {
-        font-size: 16px;
-        font-weight: bold;
-        color: #333333;
-        margin-bottom: 10px;
-      }
-      
-      .description {
-        font-size: 14px;
-        color: #666666;
-        margin-bottom: 20px;
-        text-align: left;
-        text-overflow: ellipsis;
-        -webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
-        height: 60px;
-        display: -webkit-box; /* 将元素设置为弹性盒子 */
-        -webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
-        overflow: hidden;
+				:global .ant-avatar > img {
+					height: unset;
+				}
+				.name {
+					font-size: 16px;
+					font-weight: bold;
+					color: #333333;
+					margin-bottom: 10px;
+				}
 
-        
-      }
-      .author {
-        font-size: 14px;
-        color: #999999;
-        margin-top: 10px;
-      }
-      }
-    }
-  }
+				.description {
+					font-size: 14px;
+					color: #666666;
+					margin-bottom: 20px;
+					text-align: left;
+					text-overflow: ellipsis;
+					-webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
+					height: 60px;
+					display: -webkit-box; /* 将元素设置为弹性盒子 */
+					-webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
+					overflow: hidden;
+				}
+				.author {
+					font-size: 14px;
+					color: #999999;
+					margin-top: 10px;
+				}
+			}
+		}
+	}
 }

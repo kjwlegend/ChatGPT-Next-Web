@@ -1,9 +1,11 @@
 import { BuiltinMask } from "./typing";
 import { MaskCategory, maskCategories } from "../constant";
 import { featureMask } from "./featureMask_cn";
+import { RolePlay } from "./roleplay_cn";
 
 export const CN_MASKS: BuiltinMask[] = [
 	...featureMask,
+	...RolePlay,
 
 	{
 		avatar: "gpt-bot",
