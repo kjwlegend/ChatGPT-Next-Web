@@ -51,13 +51,31 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
-  headers: () => [
+  headers: async () => [
     {
       source: '/',
       headers: [
         {
           key: 'Cache-Control',
-          value: 'no-store',
+          value: 'no-cache',
+        }
+      ]
+    },
+    {
+      source: '/chats',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'no-cache',
+        }
+      ]
+    },
+    {
+      source: '/multi-chats',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'no-cache',
         }
       ]
     }
