@@ -830,16 +830,20 @@ export const useChatStore = createPersistStore(
 				set(() => ({ sessions }));
 			},
 			updateSession(
-				sessionId: string,
+				sessionId: string | undefined,
 				updater: (session: ChatSession) => void,
 			) {
-				const sessions = get().sessions;
-				const sessionToUpdate = sessions.find(
-					(session) => session.id === sessionId,
-				);
-				if (sessionToUpdate) {
-					updater(sessionToUpdate);
-					set(() => ({ sessions }));
+				if (sessionId) {
+					set((state) => ({
+						sessions: state.sessions.map((session) => {
+							if (session.id === sessionId) {
+								updater(session);
+							}
+							return session;
+						}),
+					}));
+				} else {
+					this.updateCurrentSession(updater);
 				}
 			},
 

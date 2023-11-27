@@ -24,6 +24,8 @@ import StopIcon from "../icons/pause.svg";
 import RobotIcon from "../icons/robot.svg";
 import playIcon from "../icons/play.svg";
 
+import EnablePluginIcon from "@/app/icons/plugin_enable.svg";
+import DisablePluginIcon from "@/app/icons/plugin_disable.svg";
 import {
 	ChatMessage,
 	SubmitKey,
@@ -55,6 +57,8 @@ import Locale from "../locales";
 
 import { IconButton } from "../components/button";
 import styles from "@/app/multi-chats/multi-chats.module.scss";
+
+import { ChatActions as ChatActions2 } from "../chats/chat/Inputpanel";
 
 import {
 	List,
@@ -222,9 +226,20 @@ export function ChatActions(props: {
 }) {
 	const config = useAppConfig();
 	const chatStore = useChatStore();
-
+	const { chat_balance } = useUserStore().user;
 	const sessionId = props.session.id;
 	const session = props.session;
+	const usePlugins = session.mask.usePlugins;
+
+	function switchUsePlugins() {
+		chatStore.updateSession(sessionId, () => {
+			session.mask.usePlugins = !session.mask.usePlugins;
+		});
+		console.log("switchUsePlugins", usePlugins);
+		console.log("session", session, "index: ", props.index);
+	}
+
+	// console.log("session", session, "index: ", props.index);
 	const index = props.index;
 	// switch themes
 	const theme = config.theme;
@@ -244,33 +259,37 @@ export function ChatActions(props: {
 	const currentModel = session.mask.modelConfig.model;
 	const models = useAllModels()
 		.filter((m) => m.available)
-		.map((m) => m.name);
+		.map((m) => ({
+			title: m.displayName,
+			value: m.name,
+		}));
 	const [showModelSelector, setShowModelSelector] = useState(false);
 
 	return (
 		<div className={styles["chat-input-actions"]}>
-			{couldStop && (
-				<ChatAction
-					onClick={stopAll}
-					text={Locale.Chat.InputActions.Stop}
-					icon={<StopIcon />}
-				/>
-			)}
-			{!props.hitBottom && (
-				<ChatAction
-					onClick={props.scrollToBottom}
-					text={Locale.Chat.InputActions.ToBottom}
-					icon={<BottomIcon />}
-				/>
-			)}
-			{props.hitBottom && (
-				<ChatAction
-					onClick={props.showPromptModal}
-					text={Locale.Chat.InputActions.Settings}
-					icon={<SettingsIcon />}
-				/>
-			)}
-			{/* 
+			<div>
+				{couldStop && (
+					<ChatAction
+						onClick={stopAll}
+						text={Locale.Chat.InputActions.Stop}
+						icon={<StopIcon />}
+					/>
+				)}
+				{!props.hitBottom && (
+					<ChatAction
+						onClick={props.scrollToBottom}
+						text={Locale.Chat.InputActions.ToBottom}
+						icon={<BottomIcon />}
+					/>
+				)}
+				{props.hitBottom && (
+					<ChatAction
+						onClick={props.showPromptModal}
+						text={Locale.Chat.InputActions.Settings}
+						icon={<SettingsIcon />}
+					/>
+				)}
+				{/* 
       <ChatAction
         onClick={nextTheme}
         text={Locale.Chat.InputActions.Theme[theme]}
@@ -287,47 +306,72 @@ export function ChatActions(props: {
         }
       /> */}
 
-			<ChatAction
-				onClick={props.showPromptHints}
-				text={Locale.Chat.InputActions.Prompt}
-				icon={<PromptIcon />}
-			/>
+				<ChatAction
+					onClick={props.showPromptHints}
+					text={Locale.Chat.InputActions.Prompt}
+					icon={<PromptIcon />}
+				/>
 
-			<ChatAction
-				text={Locale.Chat.InputActions.Clear}
-				icon={<BreakIcon />}
-				onClick={() => {
-					chatStore.updateSession(
-						sessionId,
-						(session) => (session.clearContextIndex = session.messages.length),
-					);
-				}}
-			/>
-
-			{/* <ChatAction
-        onClick={() => setShowModelSelector(true)}
-        text={currentModel}
-        icon={<RobotIcon />}
-      />
-
-      {showModelSelector && (
-        <Selector
-          defaultSelectedValue={currentModel}
-          items={models.map((m) => ({
-            title: m,
-            value: m,
-          }))}
-          onClose={() => setShowModelSelector(false)}
-          onSelection={(s) => {
-            if (s.length === 0) return;
-            chatStore.updateSession(sessionId, (session) => {
-              session.mask.modelConfig.model = s[0] as ModelType;
-              session.mask.syncGlobalConfig = false;
-            });
-            showToast(s[0]);
-          }}
-        />
-      )} */}
+				<ChatAction
+					onClick={() => setShowModelSelector(true)}
+					text={currentModel}
+					icon={<RobotIcon />}
+				/>
+				{config.pluginConfig.enable &&
+					/^gpt(?!.*03\d{2}$).*$/.test(currentModel) && (
+						<ChatAction
+							onClick={switchUsePlugins}
+							text={
+								usePlugins
+									? Locale.Chat.InputActions.DisablePlugins
+									: Locale.Chat.InputActions.EnablePlugins
+							}
+							icon={usePlugins ? <EnablePluginIcon /> : <DisablePluginIcon />}
+						/>
+					)}
+				{showModelSelector && (
+					<Selector
+						defaultSelectedValue={currentModel}
+						items={models.map((m) => ({
+							title: m.title ? m.title : m.value,
+							value: m.value,
+						}))}
+						onClose={() => setShowModelSelector(false)}
+						onSelection={(s) => {
+							if (s.length === 0) return;
+							chatStore.updateSession(sessionId, () => {
+								session.mask.modelConfig.model = s[0] as ModelType;
+								session.mask.syncGlobalConfig = false;
+								// session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
+								// 	session.mask.modelConfig.model,
+								// );
+								console.log(session.mask.modelConfig);
+							});
+							showToast(s[0]);
+						}}
+					/>
+				)}
+				<ChatAction
+					text={Locale.Chat.InputActions.Clear}
+					icon={<BreakIcon />}
+					onClick={() => {
+						console.log("=-====clear====");
+						chatStore.updateSession(sessionId, () => {
+							if (session.clearContextIndex === session.messages.length) {
+								session.clearContextIndex = undefined;
+							} else {
+								session.clearContextIndex = session.messages.length;
+								session.memoryPrompt = ""; // will clear memory
+							}
+							console.log("session", session.memoryPrompt);
+						});
+					}}
+				/>
+			</div>
+			<div>
+				{/* 展示用户余额 */}
+				<span className={styles["chat-balance"]}>对话余额: {chat_balance}</span>
+			</div>
 		</div>
 	);
 }
@@ -386,7 +430,7 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
 		clear: () =>
 			chatStore.updateSession(
 				sessionId,
-				(session) => (session.clearContextIndex = session.messages.length),
+				() => (session.clearContextIndex = session.messages.length),
 			),
 		del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
 	});
@@ -448,7 +492,7 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
 						const newSessionId = data.chat_session;
 
 						if (session.id !== newSessionId) {
-							chatStore.updateSession(sessionId, (session) => {
+							chatStore.updateSession(sessionId, () => {
 								session.id = newSessionId;
 							});
 						}

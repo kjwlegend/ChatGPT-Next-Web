@@ -111,14 +111,14 @@ export function EditMessageModal(props: { onClose: () => void }) {
 						></input>
 					</ListItem>
 				</List>
-				<ContextPrompts
+				{/* <ContextPrompts
 					context={messages}
 					updateContext={(updater) => {
 						const newMessages = messages.slice();
 						updater(newMessages);
 						setMessages(newMessages);
 					}}
-				/>
+				/> */}
 			</Modal>
 		</div>
 	);

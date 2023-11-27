@@ -33,6 +33,8 @@ const nextConfig = {
   // distDir: "dist",
   output: mode,
   // trailingSlash: true,
+  generateEtags: false,
+  poweredByHeader: false,
   images: {
     unoptimized: mode === "export",
     remotePatterns: [
@@ -51,35 +53,8 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
-  headers: async () => [
-    {
-      source: '/',
-      headers: [
-        {
-          key: 'Cache-Control',
-          value: 'no-cache',
-        }
-      ]
-    },
-    {
-      source: '/chats',
-      headers: [
-        {
-          key: 'Cache-Control',
-          value: 'no-cache',
-        }
-      ]
-    },
-    {
-      source: '/multi-chats',
-      headers: [
-        {
-          key: 'Cache-Control',
-          value: 'no-cache',
-        }
-      ]
-    }
-  ]
+
+
 
 }
 
@@ -107,6 +82,33 @@ if (mode !== "export") {
       {
         source: "/api/:path*",
         headers: CorsHeaders,
+      },
+      {
+        source: '/chats',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache',
+          }
+        ],
+      },
+      {
+        source: '/multi-chats',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache',
+          }
+        ],
+      },
+      {
+        source: '/',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache',
+          }
+        ],
       },
     ]
   }

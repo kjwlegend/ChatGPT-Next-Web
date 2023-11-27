@@ -15,6 +15,10 @@ export const BUILTIN_MASK_STORE = {
 		if (!id) return undefined;
 		return this.masks[id] as Mask | undefined;
 	},
+	getByname(name: string) {
+		// search by name
+		return Object.values(this.masks).find((m) => m.name === name);
+	},
 	add(m: BuiltinMask) {
 		const mask = { ...m, id: this.buildinId++, builtin: true };
 		this.masks[mask.id] = mask;
@@ -27,9 +31,10 @@ async function fetchHotnessData() {
 	try {
 		const response = await getPromptHotness();
 		const hotnessData = response.data;
+
 		hotnessData.forEach((item: any) => {
-			const maskId = item.prompt.toString();
-			const mask = BUILTIN_MASK_STORE.get(maskId);
+			const maskName = item.prompt.toString();
+			const mask = BUILTIN_MASK_STORE.getByname(maskName);
 			if (mask) {
 				mask.hotness = item.hotness;
 			}

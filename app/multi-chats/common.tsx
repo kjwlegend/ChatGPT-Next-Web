@@ -107,7 +107,7 @@ export function SessionConfigModel(props: {
 							if (await showConfirm(Locale.Memory.ResetConfirm)) {
 								chatStore.updateSession(
 									sessionId,
-									(session) => (session.memoryPrompt = ""),
+									() => (session.memoryPrompt = ""),
 								);
 							}
 						}}
@@ -130,10 +130,7 @@ export function SessionConfigModel(props: {
 					updateMask={(updater) => {
 						const mask = { ...session.mask };
 						updater(mask);
-						chatStore.updateSession(
-							sessionId,
-							(session) => (session.mask = mask),
-						);
+						chatStore.updateSession(sessionId, () => (session.mask = mask));
 					}}
 					shouldSyncFromGlobal
 					extraListItems={

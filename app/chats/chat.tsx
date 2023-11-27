@@ -426,7 +426,7 @@ export function ChatActions(props: {
 	hitBottom: boolean;
 }) {
 	const config = useAppConfig();
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const chatStore = useChatStore();
 
 	// switch Plugins
@@ -505,13 +505,13 @@ export function ChatActions(props: {
 					icon={<PromptIcon />}
 				/>
 
-				<ChatAction
+				{/* <ChatAction
 					onClick={() => {
 						navigate(Path.Masks);
 					}}
 					text={Locale.Chat.InputActions.Masks}
 					icon={<MaskIcon />}
-				/>
+				/> */}
 
 				<ChatAction
 					onClick={() => setShowModelSelector(true)}
@@ -750,7 +750,6 @@ function _Chat() {
 					message: userInput, // 使用用户输入作为 message 参数
 					memory: recentMessages,
 					model: session.mask.modelConfig.model,
-
 				};
 				console.log("createChatData:", createChatData);
 

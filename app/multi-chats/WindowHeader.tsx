@@ -93,7 +93,7 @@ export function EditMessageModal(props: {
 						icon={<ConfirmIcon />}
 						key="ok"
 						onClick={() => {
-							chatStore.updateSession(sessionId, (session) => {
+							chatStore.updateSession(sessionId, () => {
 								session.messages = messages;
 							});
 							props.onClose();
@@ -110,21 +110,21 @@ export function EditMessageModal(props: {
 							type="text"
 							value={session.topic}
 							onInput={(e) =>
-								chatStore.updateSession(sessionId, (session) => {
+								chatStore.updateSession(sessionId, () => {
 									session.topic = e.currentTarget.value;
 								})
 							}
 						></input>
 					</ListItem>
 				</List>
-				<ContextPrompts
+				{/* <ContextPrompts
 					context={messages}
 					updateContext={(updater) => {
 						const newMessages = messages.slice();
 						updater(newMessages);
 						setMessages(newMessages);
 					}}
-				/>
+				/> */}
 			</Modal>
 		</div>
 	);

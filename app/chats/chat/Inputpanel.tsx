@@ -226,6 +226,7 @@ export function ChatActions(props: {
 }) {
 	const config = useAppConfig();
 	const chatStore = useChatStore();
+	const { chat_balance } = useUserStore().user;
 
 	const usePlugins = chatStore.currentSession().mask.usePlugins;
 	function switchUsePlugins() {
@@ -307,17 +308,6 @@ export function ChatActions(props: {
 				/>
 
 				<ChatAction
-					text={Locale.Chat.InputActions.Clear}
-					icon={<BreakIcon />}
-					onClick={() => {
-						chatStore.updateCurrentSession(
-							(session) =>
-								(session.clearContextIndex = session.messages.length),
-						);
-					}}
-				/>
-
-				<ChatAction
 					onClick={() => setShowModelSelector(true)}
 					text={currentModel}
 					icon={<RobotIcon />}
@@ -356,8 +346,6 @@ export function ChatActions(props: {
 						}}
 					/>
 				)}
-			</div>
-			<div>
 				<ChatAction
 					text={Locale.Chat.InputActions.Clear}
 					icon={<BreakIcon />}
@@ -372,6 +360,14 @@ export function ChatActions(props: {
 						});
 					}}
 				/>
+			</div>
+			<div>
+				<div>
+					{/* 展示用户余额 */}
+					<span className={styles["chat-balance"]}>
+						对话余额: {chat_balance}
+					</span>
+				</div>
 			</div>
 		</div>
 	);
