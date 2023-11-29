@@ -229,10 +229,7 @@ export function PromptToast(props: {
 	const context = session.mask.context;
 
 	return (
-		<div
-			className={styles["prompt-toast"] + " desktop-only"}
-			key="prompt-toast"
-		>
+		<div className={styles["prompt-toast"]} key="prompt-toast">
 			{props.showToast && (
 				<div
 					className={styles["prompt-toast-inner"] + " clickable"}

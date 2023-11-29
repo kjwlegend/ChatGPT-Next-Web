@@ -165,7 +165,7 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 export const DEFAULT_MODELS = [
 	{
 		name: "gpt-4",
-		displayName: "小光-4.0",
+		displayName: "小光Pro-(5次/消息)",
 		available: true,
 	},
 
@@ -179,7 +179,7 @@ export const DEFAULT_MODELS = [
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
-		displayName: "小光4.0-1107",
+		displayName: "小光4.0-(5次/消息)",
 	},
 	// {
 	// 	name: "gpt-4-vision-preview",
@@ -194,12 +194,12 @@ export const DEFAULT_MODELS = [
 
 	{
 		name: "gpt-3.5-turbo-1106",
-		displayName: "小光3.5-1107",
+		displayName: "小光AI(1次/消息)",
 		available: true,
 	},
 	{
 		name: "gpt-3.5-turbo-16k",
-		displayName: "小光-3.5-16k",
+		displayName: "小光AI-16K(1次/消息)",
 		available: true,
 	},
 ] as const;
