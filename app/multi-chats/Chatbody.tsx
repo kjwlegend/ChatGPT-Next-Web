@@ -90,19 +90,20 @@ const Markdown = dynamic(
 type RenderMessage = ChatMessage & { preview?: boolean };
 
 export function Chatbody(props: { session: ChatSession; index: number }) {
-	const sessionId = props.session.id;
 	const index = props.index;
 	const authHook = useAuth();
-
 	const config = useAppConfig();
 	const chatStore = useChatStore();
 	const workflowStore = useWorkflowStore();
 	const userStore = useUserStore();
 
 	const allSessions = chatStore.sessions;
+	const sessionId = props.session.id;
+
 	// 通过sessionID 去allSessions中找到对应的session
 
 	const session = allSessions.find((s) => s.id === sessionId)!;
+	// const session = props.session;
 
 	const fontSize = config.fontSize;
 
@@ -125,7 +126,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
 	const context: RenderMessage[] = useMemo(() => {
 		return session.mask.hideContext ? [] : session.mask.context.slice();
-	}, [session.mask.context, session.mask.hideContext]);
+	}, [session.mask?.context, session.mask?.hideContext]);
 
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -311,7 +312,9 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 		deleteMessage(botMessage?.id);
 
 		setIsLoading(true);
-		chatStore.onUserInput(userMessage.content).then(() => setIsLoading(false));
+		chatStore
+			.onUserInput(userMessage.content, sessionId)
+			.then(() => setIsLoading(false));
 		inputRef.current?.focus();
 	};
 
