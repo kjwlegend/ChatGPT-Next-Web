@@ -324,6 +324,18 @@ const items = [
 
 		color: "blue",
 	},
+	{
+		label: "2023-11-26",
+		children: " 发布 v1.2.1 版本: 全面优化普通角色提示词, 提升回答质量和能力",
+
+		color: "blue",
+	},
+	{
+		label: "2023-11-30",
+		children: " 发布 v1.2.2 版本: 修复工作流页面bug, 改进代码结构",
+
+		color: "blue",
+	},
 ];
 
 const Log = () => {
