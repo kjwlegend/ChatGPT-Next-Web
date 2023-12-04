@@ -336,6 +336,12 @@ const items = [
 
 		color: "blue",
 	},
+	{
+		label: "2023-12-04",
+		children: " 发布 v1.3.0 版本: 增加基础对话角色及角色分类",
+
+		color: "blue",
+	},
 ];
 
 const Log = () => {

@@ -58,24 +58,7 @@ export type MaskCategoryType = {
 };
 
 export const MaskCategory: MaskCategoryType[] = [];
-export let maskCategories = [
-	// MaskCategory.All,
-	// "通用",
-	// "开发",
-	// "职业",
-	// "魔法",
-	// "创作",
-	// MaskCategory.Kind,
-	// MaskCategory.Emotion,
-	// MaskCategory.RolePlay,
-	// "文案",
-	// "设计",
-	// "教育",
-	// "游戏",
-	// "健身",
-	// "音乐",
-	// "旅行",
-];
+export let maskCategories = [];
 
 export const DEFAULT_SIDEBAR_WIDTH = 300;
 export const MAX_SIDEBAR_WIDTH = 500;

@@ -414,7 +414,9 @@ export function MaskPage() {
 	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
 	const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
 	const [searchText, setSearchText] = useState("");
-	const [cardStyle, setCardStyle] = useState<"roleplay" | "card">("card");
+	const [cardStyle, setCardStyle] = useState<
+		"roleplay" | "assistant" | "workflow"
+	>("assistant");
 
 	const [segmentValue, setsegmentValue] = useState<string | number>("场景助手");
 
@@ -430,13 +432,13 @@ export function MaskPage() {
 		// set card style
 		switch (value) {
 			case "场景助手":
-				setCardStyle("card");
+				setCardStyle("assistant");
 				break;
 			case "角色对话":
 				setCardStyle("roleplay");
 				break;
 			case "工作流":
-				setCardStyle("card");
+				setCardStyle("workflow");
 				break;
 			default:
 				break;
@@ -466,7 +468,7 @@ export function MaskPage() {
 		if (cardStyle === "roleplay" && m.type !== "roleplay") {
 			return false;
 		}
-		if (cardStyle === "card" && m.type === "roleplay") {
+		if (cardStyle === "assistant" && m.type === "assistant") {
 			return false;
 		}
 		return true;
@@ -575,7 +577,9 @@ export function MaskPage() {
 							/>
 						</span>
 						<MultipleTag
-							tagsData={MaskCategory.map((v) => v.value)}
+							tagsData={MaskCategory.filter((c) => c.scene === cardStyle).map(
+								(c) => c.value,
+							)}
 							onTagsChange={handleTagsChange}
 						/>
 					</div>
