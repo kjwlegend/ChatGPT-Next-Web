@@ -363,7 +363,7 @@ export function ChatActions(props: {
 								session.clearContextIndex = session.messages.length;
 								session.memoryPrompt = ""; // will clear memory
 							}
-							console.log("session", sessionId);
+							console.log("session", sessionId, "clearContextIndex", session.clearContextIndex);
 						});
 					}}
 				/>

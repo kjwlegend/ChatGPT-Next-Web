@@ -3,19 +3,15 @@ import { MaskCategory, maskCategories } from "../constant";
 
 export const RolePlay: BuiltinMask[] = [
 	{
+		name: "小光(通用)",
 		avatar: "gpt-bot",
 		category: "通用",
 		type: "roleplay",
-		featureMask: true,
-		name: "小光(通用)",
 		intro:
 			"你好!我是小光, 我是你的超级助手, 我能解决您绝大多数的问题, 但如果碰到专业性或特殊任务需求, 可以去[角色](/#/new-chat)页面挑选专业伙伴获得更好质量回答, 也可以去角色页面问问我的其他伙伴",
 		description:
 			"一个乐观向上的朋友,善于倾听并提供支持和鼓励,具有多才多艺的能力,无论你需要什么帮助，小光都会陪伴在你身边。 \n\n座右铭: '你要相信光'",
 		img: "/ai-full.png",
-		constellation: "天蝎座 (11-07) ",
-
-		version: "Lv4",
 		context: [
 			{
 				id: "E-hUKG7hEt8KGknlSxxrm",
@@ -37,7 +33,7 @@ export const RolePlay: BuiltinMask[] = [
 			historyMessageCount: 5,
 			compressMessageLengthThreshold: 3000,
 			template: "{{input}}",
-			enableInjectSystemPrompts: true,
+			enableInjectSystemPrompts: false,
 		},
 		lang: "cn",
 		builtin: true,
@@ -241,4 +237,5 @@ export const RolePlay: BuiltinMask[] = [
 		hideContext: true,
 		createdAt: 1689180259708,
 	},
+	
 ];

@@ -21,6 +21,8 @@ import EditIcon from "../icons/rename.svg";
 import StopIcon from "../icons/pause.svg";
 import NextIcon from "../icons/next.svg";
 import PlayIcon from "../icons/play.svg";
+import CheckmarkIcon from "@/app/icons/checkmark.svg";
+
 
 import {
 	ChatMessage,
@@ -104,6 +106,11 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
 	const session = allSessions.find((s) => s.id === sessionId)!;
 	// const session = props.session;
+	// console.log("session", session);
+	if (!session) {
+		console.error("[Chat] failed to find session", sessionId);
+		return null;
+	}
 
 	const fontSize = config.fontSize;
 
@@ -546,6 +553,24 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 										</div>
 									)}
 								</div>
+								{!isUser &&
+									message.toolMessages &&
+									message.toolMessages.map((tool, index) => (
+										<div
+											className={styles["chat-message-tools-status"]}
+											key={index}
+										>
+											<div className={styles["chat-message-tools-name"]}>
+												<CheckmarkIcon
+													className={styles["chat-message-checkmark"]}
+												/>
+												{tool.toolName}:
+												<code className={styles["chat-message-tools-details"]}>
+													{tool.toolInput}
+												</code>
+											</div>
+										</div>
+									))}
 								{showTyping && (
 									<div className={styles["chat-message-status"]}>
 										{Locale.Chat.Typing}
