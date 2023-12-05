@@ -70,9 +70,9 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
 
 export function MaskAvatar(props: { mask: Mask }) {
 	return props.mask.avatar !== DEFAULT_MASK_AVATAR ? (
-		<Avatar avatar={props.mask.avatar} />
+		<Avatar mask={props.mask} />
 	) : (
-		<Avatar model={props.mask} />
+		<Avatar mask={props.mask} />
 	);
 }
 

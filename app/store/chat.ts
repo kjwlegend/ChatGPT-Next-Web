@@ -807,7 +807,11 @@ export const useChatStore = createPersistStore(
 						},
 						onFinish(message) {
 							console.log("[Memory] ", message);
-							session.lastSummarizeIndex = lastSummarizeIndex;
+							// session.lastSummarizeIndex = lastSummarizeIndex;
+							get().updateCurrentSession((session) => {
+								session.lastSummarizeIndex = lastSummarizeIndex;
+								session.memoryPrompt = message; // Update the memory prompt for stored it in local storage
+							});
 						},
 						onError(err) {
 							console.error("[Summarize] ", err);

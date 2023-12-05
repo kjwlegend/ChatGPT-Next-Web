@@ -23,7 +23,6 @@ import NextIcon from "../icons/next.svg";
 import PlayIcon from "../icons/play.svg";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 
-
 import {
 	ChatMessage,
 	useChatStore,
@@ -102,16 +101,6 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 	const allSessions = chatStore.sessions;
 	const sessionId = props.session.id;
 
-	// 通过sessionID 去allSessions中找到对应的session
-
-	const session = allSessions.find((s) => s.id === sessionId)!;
-	// const session = props.session;
-	// console.log("session", session);
-	if (!session) {
-		console.error("[Chat] failed to find session", sessionId);
-		return null;
-	}
-
 	const fontSize = config.fontSize;
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -130,6 +119,12 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 		enableAutoFlow,
 		setEnableAutoFlow,
 	} = useContext(ChatContext);
+
+	// 通过sessionID 去allSessions中找到对应的session
+
+	const session = allSessions.find((s) => s.id === sessionId)!;
+	// const session = props.session;
+	// console.log("session", session);
 
 	const context: RenderMessage[] = useMemo(() => {
 		return session.mask.hideContext ? [] : session.mask.context.slice();
@@ -218,7 +213,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
 	if (!session) {
 		console.error("[Chat] failed to find session", sessionId);
-		return null;
+		return <div>会话读取失败</div>;
 	}
 
 	if (
