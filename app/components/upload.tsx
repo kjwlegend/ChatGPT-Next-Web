@@ -60,7 +60,10 @@ const App: React.FC = () => {
 			}
 			// uploading status
 			if (info.file.status === "uploading") {
-				message.loading(`${info.file.name} 文件上传中, 稍后会进行知识库构建`);
+				// display message one time during uploading status
+				if (info.file.percent === 15) {
+					message.loading(`${info.file.name} 文件上传中, 稍后会进行知识库构建`);
+				}
 			}
 			if (info.file.status === "done") {
 				message.success(`${info.file.name} 文件上传且知识库构建成功`);

@@ -4,14 +4,14 @@ import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask, Mask } from "./mask";
+import { KnowledgeCutOffDate, StoreKey, SUMMARIZE_MODEL } from "../constant";
+
 import {
 	DEFAULT_INPUT_TEMPLATE,
 	DEFAULT_SYSTEM_TEMPLATE,
 	getDefaultSystemTemplate,
-	KnowledgeCutOffDate,
-	StoreKey,
-	SUMMARIZE_MODEL,
-} from "../constant";
+} from "@/app/chains/default";
+
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
@@ -490,9 +490,13 @@ export const useChatStore = createPersistStore(
 						},
 						onToolUpdate(toolName, toolInput) {
 							botMessage.streaming = true;
-							if (toolName && toolInput) {
+							//  根据toolName获取对应的 toolName, 并输出对应的 name
+							const tool = allPlugins.find((m) => m.toolName === toolName);
+							const name = tool?.name;
+							console.log("toolName: ", toolName, "tool: ", tool?.name);
+							if (name && toolInput) {
 								botMessage.toolMessages!.push({
-									toolName,
+									toolName: name,
 									toolInput,
 								});
 							}

@@ -342,6 +342,11 @@ const items = [
 
 		color: "blue",
 	},
+	{
+		label: "2023-12-07",
+		children: " 发布 v1.3.1 版本: 修复工作流页面bug, 改进代码结构",
+		color: "blue",
+	},
 ];
 
 const Log = () => {

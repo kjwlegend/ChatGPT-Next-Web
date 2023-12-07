@@ -3,7 +3,7 @@ import { BuiltinPlugin } from "./typing";
 export const CN_PLUGINS: BuiltinPlugin[] = [
 	{
 		name: "搜索引擎",
-		toolName: "web-search",
+		toolName: "all_search",
 		lang: "cn",
 		description: "搜索引擎的网络搜索功能工具。",
 		builtin: true,
@@ -68,11 +68,11 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		enable: true,
 	},
 	{
-		name: "知识搜索",
-		toolName: "knowledge_search",
+		name: "文档搜索",
+		toolName: "doc_search",
 		lang: "cn",
 		description:
-			"知识搜索是一个工具，可以从知识库中搜索知识。当原始模型不足以回答问题时使用。",
+			"文档搜索是一个工具，可以从你上传的文档或者公共文档中搜索知识。当原始模型不足以回答问题时使用。",
 		builtin: true,
 		createdAt: 1699265115000,
 		enable: true,
