@@ -112,9 +112,9 @@ export function MaskConfig(props: {
 				</Col>
 				<Col xs={24} sm={10}>
 					<List>
-						<ListItem title={Locale.Mask.Config.Avatar}>
+						{/* <ListItem title={Locale.Mask.Config.Avatar}>
 							<Popover
-								content={<div>"Avatar"</div>}
+								content={<div>Avatar</div>}
 								open={showPicker}
 								onClose={() => setShowPicker(false)}
 							>
@@ -125,7 +125,7 @@ export function MaskConfig(props: {
 									<MaskAvatar mask={props.mask} />
 								</div>
 							</Popover>
-						</ListItem>
+						</ListItem> */}
 						<ListItem title={Locale.Mask.Config.Name}>
 							<input
 								type="text"
