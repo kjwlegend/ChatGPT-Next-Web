@@ -23,7 +23,7 @@ import {
 } from "@/app/components/ui-lib";
 import { Card } from "antd";
 import { IconButton } from "@/app/components/button";
-import { Avatar, AvatarPicker } from "@/app/components/emoji";
+import { Avatar } from "@/app/components/emoji";
 import { Avatar as BotAvatar } from "antd";
 import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "@/app/store/mask";
 import {
