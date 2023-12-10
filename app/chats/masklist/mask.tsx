@@ -32,7 +32,7 @@ import {
 	Select,
 	showConfirm,
 } from "@/app/components/ui-lib";
-import { Avatar, AvatarPicker } from "@/app/components/emoji";
+import { Avatar } from "@/app/components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "@/app/locales";
 import { MaskCategory, maskCategories, MaskCategoryType } from "@/app/constant";
 
@@ -116,7 +116,7 @@ export function MaskConfig(props: {
 			/>
 
 			<List>
-				<ListItem title={Locale.Mask.Config.Avatar}>
+				{/* <ListItem title={Locale.Mask.Config.Avatar}>
 					<Popover
 						content={
 							<AvatarPicker
@@ -136,7 +136,7 @@ export function MaskConfig(props: {
 							<MaskAvatar mask={props.mask} />
 						</div>
 					</Popover>
-				</ListItem>
+				</ListItem> */}
 				<ListItem title={Locale.Mask.Config.Name}>
 					<input
 						type="text"
