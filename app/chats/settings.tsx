@@ -64,7 +64,7 @@ import { Prompt, SearchService, usePromptStore } from "@/app/store/prompt";
 import { ErrorBoundary } from "@/app/components/error";
 import { InputRange } from "@/app/components/input-range";
 import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarPicker } from "@/app/components/emoji";
+import { Avatar } from "@/app/components/emoji";
 import { getClientConfig } from "@/app/config/client";
 import { useSyncStore } from "@/app/store/sync";
 import { useAuthStore } from "@/app/store/auth";

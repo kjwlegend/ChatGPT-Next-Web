@@ -31,7 +31,7 @@ async function search(
 	const headers = new Headers();
 	headers.append("User-Agent", getRandomUserAgent());
 	const resp = await fetch(
-		`https://proxy.xiaoguang.online/search?nfpr=1&num=${maxResults}&pws=0&q=${encodeURIComponent(
+		`https://proxy.xiaoguang.fun/search?nfpr=1&num=${maxResults}&pws=0&q=${encodeURIComponent(
 			input,
 		)}`,
 		{

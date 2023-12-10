@@ -92,7 +92,6 @@ export const Azure = {
 	ExampleEndpoint: "https://{resource-url}/openai/deployments/{deploy-id}",
 };
 
-
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo-16k";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
@@ -146,7 +145,7 @@ export const DEFAULT_MODELS = [
 import { getServerSideConfig } from "@/app/config/server";
 
 export const server_url = "http://localhost:8000";
-// export const server_url = "https://admin.xiaoguang.online";
+// export const server_url = "https://admin.xiaoguang.fun";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

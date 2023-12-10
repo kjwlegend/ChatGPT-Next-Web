@@ -20,6 +20,7 @@ import {
 	createMessage,
 	useAppConfig,
 	DEFAULT_TOPIC,
+	ChatSession,
 } from "@/app/store";
 
 import { useNavigate } from "react-router-dom";
@@ -62,9 +63,23 @@ import { SessionConfigModel } from "./common";
 
 import { ChatContext } from "./main";
 
-export function EditMessageModal(props: { onClose: () => void }) {
+export function EditMessageModal(props: {
+	onClose: () => void;
+	index?: number;
+	session?: ChatSession;
+	isworkflow: boolean;
+}) {
 	const chatStore = useChatStore();
-	const session = chatStore.currentSession();
+
+	let session: ChatSession;
+	// isworkflow = true then, session use props.session. else use currentSession
+	if (props.isworkflow && props.session) {
+		session = props.session;
+	} else {
+		session = chatStore.currentSession();
+	}
+	const sessionId = session.id;
+
 	const [messages, setMessages] = useState(session.messages.slice());
 
 	return (
@@ -87,7 +102,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
 						icon={<ConfirmIcon />}
 						key="ok"
 						onClick={() => {
-							chatStore.updateCurrentSession((session) => {
+							chatStore.updateSession(sessionId, () => {
 								session.messages = messages;
 							});
 							props.onClose();
@@ -104,7 +119,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
 							type="text"
 							value={session.topic}
 							onInput={(e) =>
-								chatStore.updateCurrentSession((session) => {
+								chatStore.updateSession(sessionId, () => {
 									session.topic = e.currentTarget.value;
 								})
 							}
@@ -205,6 +220,7 @@ export default function WindowHeader() {
 					onClose={() => {
 						setIsEditingMessage(false);
 					}}
+					isworkflow={false}
 				/>
 			)}
 			<PromptToast

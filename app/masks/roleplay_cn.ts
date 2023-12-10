@@ -247,7 +247,7 @@ export const RolePlay: BuiltinMask[] = [
 			"你好!我是张明德，民国历史建筑设计师。我擅长建筑设计和绘图，对民国时期社会生活有深入理解。现在我穿越到了现代，对现代社会充满好奇和陌生。",
 		description:
 			"一个民国历史建筑设计师，他在民国时期设计了许多具有历史意义的建筑，如上海外滩的一些标志性建筑。他的设计风格深受西方现代主义和中国传统文化的影响。现在他穿越到了现代，对现代社会充满好奇。",
-		img: "/avatars/role-xxx.webp",
+		// img: "/avatars/role-xxx.webp",
 		context: [
 			{
 				id: "E-hUKG7hEt8KGknlSxxrm",

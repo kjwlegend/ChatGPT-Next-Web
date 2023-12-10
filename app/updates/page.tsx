@@ -172,7 +172,7 @@ const items = [
 	},
 	{
 		label: "2023-07-28",
-		children: "发布 v0.5.2 版本: 公测版正式上线, 启用 https://xiaoguang.online",
+		children: "发布 v0.5.2 版本: 公测版正式上线, 启用 https://xiaoguang.fun",
 		color: "red",
 	},
 	{

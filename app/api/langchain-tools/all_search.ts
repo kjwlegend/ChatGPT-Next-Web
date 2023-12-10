@@ -87,7 +87,7 @@ export class BaiduSearch extends Tool {
 export class GoogleSearch extends Tool {
 	name = "google_search";
 	maxResults = 10;
-	searchUrl = "https://proxy.xiaoguang.online/search?nfpr=1&num=10&q=";
+	searchUrl = "https://proxy.xiaoguang.fun/search?nfpr=1&num=10&q=";
 	resultSelector = "div.g";
 
 	/** @ignore */
@@ -117,7 +117,7 @@ export class GoogleSearch extends Tool {
 export class AllSearch extends Tool {
 	name = "all_search";
 	maxResults = 6;
-	searchUrl = "https://proxy.xiaoguang.online/search?nfpr=1&num=10&q=";
+	searchUrl = "https://proxy.xiaoguang.fun/search?nfpr=1&num=10&q=";
 	resultSelector = "div.g";
 
 	/** @ignore */
@@ -132,7 +132,7 @@ export class AllSearch extends Tool {
 		const googleSearch = await search(
 			input,
 			this.maxResults,
-			"https://proxy.xiaoguang.online/search?nfpr=1&num=10&q=",
+			"https://proxy.xiaoguang.fun/search?nfpr=1&num=10&q=",
 			"div.g",
 		);
 
