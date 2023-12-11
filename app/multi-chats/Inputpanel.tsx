@@ -58,8 +58,6 @@ import Locale from "../locales";
 import { IconButton } from "../components/button";
 import styles from "@/app/multi-chats/multi-chats.module.scss";
 
-import { ChatActions as ChatActions2 } from "../chats/chat/Inputpanel";
-
 import {
 	List,
 	ListItem,
@@ -363,7 +361,12 @@ export function ChatActions(props: {
 								session.clearContextIndex = session.messages.length;
 								session.memoryPrompt = ""; // will clear memory
 							}
-							console.log("session", sessionId, "clearContextIndex", session.clearContextIndex);
+							console.log(
+								"session",
+								sessionId,
+								"clearContextIndex",
+								session.clearContextIndex,
+							);
 						});
 					}}
 				/>

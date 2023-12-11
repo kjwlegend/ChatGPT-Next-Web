@@ -62,6 +62,8 @@ import { message } from "antd";
 import { SessionConfigModel } from "./common";
 
 import { ChatContext } from "./main";
+import { index, is } from "cheerio/lib/api/traversing";
+import { Switch } from "antd";
 
 export function EditMessageModal(props: {
 	onClose: () => void;
@@ -139,109 +141,24 @@ export function EditMessageModal(props: {
 	);
 }
 
-export default function WindowHeader() {
-	const chatStore = useChatStore();
-	const session = chatStore.currentSession();
-	const config = useAppConfig();
-	const [showExport, setShowExport] = useState(false);
-	const navigate = useNavigate();
-
-	const { showPromptModal, setShowPromptModal, hitBottom, setHitBottom } =
-		useContext(ChatContext);
-
-	const isMobileScreen = useMobileScreen();
-	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
-
-	const [isEditingMessage, setIsEditingMessage] = useState(false);
-
-	return (
-		<div className="window-header" data-tauri-drag-region>
-			{isMobileScreen && (
-				<div className="window-actions">
-					<div className={"window-action-button"}>
-						<IconButton
-							icon={<ReturnIcon />}
-							bordered
-							title={Locale.Chat.Actions.ChatList}
-							onClick={() => navigate(Path.Home)}
-						/>
-					</div>
-				</div>
-			)}
-
-			<div className={`window-header-title ${styles["chat-body-title"]}`}>
-				<div
-					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
-					onClickCapture={() => setIsEditingMessage(true)}
-				>
-					{!session.topic ? DEFAULT_TOPIC : session.topic}
-				</div>
-				<div className="window-header-sub-title">
-					{Locale.Chat.SubTitle(session.messages.length)}
-				</div>
-			</div>
-			<div className="window-actions">
-				{!isMobileScreen && (
-					<div className="window-action-button">
-						<IconButton
-							icon={<RenameIcon />}
-							bordered
-							onClick={() => setIsEditingMessage(true)}
-						/>
-					</div>
-				)}
-				<div className="window-action-button">
-					<IconButton
-						icon={<ExportIcon />}
-						bordered
-						title={Locale.Chat.Actions.Export}
-						onClick={() => {
-							setShowExport(true);
-						}}
-					/>
-				</div>
-				{showMaxIcon && (
-					<div className="window-action-button">
-						<IconButton
-							icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
-							bordered
-							onClick={() => {
-								config.update((config) => {
-									config.showHeader = !config.showHeader;
-								});
-							}}
-						/>
-					</div>
-				)}
-			</div>
-			{isEditingMessage && (
-				<EditMessageModal
-					onClose={() => {
-						setIsEditingMessage(false);
-					}}
-					isworkflow={false}
-				/>
-			)}
-			<PromptToast
-				showToast={!hitBottom}
-				showModal={showPromptModal}
-				setShowModal={setShowPromptModal}
-			/>
-			{showExport && (
-				<ExportMessageModal onClose={() => setShowExport(false)} />
-			)}
-		</div>
-	);
-}
-
 export function PromptToast(props: {
 	showToast?: boolean;
 	showModal?: boolean;
 	setShowModal: (_: boolean) => void;
+	isworkflow: boolean;
+	index?: number;
+	session?: ChatSession;
 }) {
 	const chatStore = useChatStore();
-	const session = chatStore.currentSession();
+	let session: ChatSession;
+	// isworkflow = true then, session use props.session. else use currentSession
+	if (props.isworkflow && props.session) {
+		session = props.session;
+	} else {
+		session = chatStore.currentSession();
+	}
+	const sessionId = session.id;
+
 	const context = session.mask.context;
 
 	return (
@@ -259,8 +176,283 @@ export function PromptToast(props: {
 				</div>
 			)}
 			{props.showModal && (
-				<SessionConfigModel onClose={() => props.setShowModal(false)} />
+				<SessionConfigModel
+					onClose={() => props.setShowModal(false)}
+					session={session}
+					index={props.index}
+					isworkflow={props.isworkflow}
+				/>
 			)}
+		</div>
+	);
+}
+
+// window header title
+
+type WindowHeaderTitleProps = {
+	session?: ChatSession;
+	index?: number;
+	isworkflow: boolean;
+};
+
+function WindowHeaderTitle({
+	session,
+	index,
+	isworkflow,
+}: WindowHeaderTitleProps) {
+	const chatStore = useChatStore();
+	const currentSession =
+		isworkflow && session ? session : chatStore.currentSession();
+	const sessionId = currentSession.id;
+	const config = useAppConfig();
+
+	const isMobileScreen = useMobileScreen();
+	const clientConfig = useMemo(() => getClientConfig(), []);
+	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+
+	const [isEditingMessage, setIsEditingMessage] = useState(false);
+
+	return (
+		<>
+			<div className={`window-header-title ${styles["chat-body-title"]}`}>
+				<div
+					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
+					onClickCapture={() => setIsEditingMessage(true)}
+				>
+					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
+				</div>
+				<div className="window-header-sub-title">
+					{Locale.Chat.SubTitle(currentSession.messages.length)}
+				</div>
+			</div>
+			{isEditingMessage && (
+				<EditMessageModal
+					onClose={() => {
+						setIsEditingMessage(false);
+					}}
+					isworkflow={isworkflow}
+					session={currentSession}
+				/>
+			)}
+		</>
+	);
+}
+
+// window actions
+
+//  将按钮部分抽离出来
+function ReturnButton() {
+	const navigate = useNavigate();
+
+	return (
+		<div className="window-actions">
+			<div className={"window-action-button"}>
+				<IconButton
+					icon={<ReturnIcon />}
+					bordered
+					title={Locale.Chat.Actions.ChatList}
+					onClick={() => navigate(Path.Home)}
+				/>
+			</div>
+		</div>
+	);
+}
+// auto flow switch
+type AutoFlowSwitchProps = {
+	enableAutoFlow: boolean;
+	setEnableAutoFlow: (checked: boolean) => void;
+	index: number;
+};
+function AutoFlowSwitch({
+	enableAutoFlow,
+	setEnableAutoFlow,
+	index,
+}: AutoFlowSwitchProps) {
+	return (
+		<div>
+			<span style={{ marginRight: "10px", fontSize: "12px" }}>自动流</span>
+			<Switch
+				checkedChildren="开启"
+				unCheckedChildren="人工"
+				defaultChecked={enableAutoFlow}
+				onChange={(checked) => {
+					console.log(checked, index);
+					setEnableAutoFlow(checked);
+				}}
+			/>
+		</div>
+	);
+}
+
+function WindowActions(props: {
+	session?: ChatSession;
+	index?: number;
+	isworkflow: boolean;
+}) {
+	const chatStore = useChatStore();
+	let session: ChatSession;
+	// isworkflow = true then, session use props.session. else use currentSession
+	if (props.isworkflow && props.session) {
+		session = props.session;
+	} else {
+		session = chatStore.currentSession();
+	}
+	const sessionId = session.id;
+	const index = props.index ?? 0;
+
+	const config = useAppConfig();
+	const [showExport, setShowExport] = useState(false);
+
+	const {
+		hitBottom,
+		setHitBottom,
+
+		showPromptModal,
+		setShowPromptModal,
+		userInput,
+		setUserInput,
+		enableAutoFlow,
+		setEnableAutoFlow,
+	} = useContext(ChatContext);
+
+	const isMobileScreen = useMobileScreen();
+	const clientConfig = useMemo(() => getClientConfig(), []);
+	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+
+	const [isEditingMessage, setIsEditingMessage] = useState(false);
+
+	const AutoFlowSwitchButton = () => (
+		<div className="window-action-button">
+			<AutoFlowSwitch
+				enableAutoFlow={enableAutoFlow}
+				setEnableAutoFlow={setEnableAutoFlow}
+				index={index}
+			/>
+		</div>
+	);
+
+	const RenameButton = () => (
+		<div className="window-action-button">
+			<IconButton
+				icon={<RenameIcon />}
+				bordered
+				onClick={() => setIsEditingMessage(true)}
+			/>
+		</div>
+	);
+
+	const ExportButton = () => (
+		<div className="window-action-button">
+			<IconButton
+				icon={<ExportIcon />}
+				bordered
+				title={Locale.Chat.Actions.Export}
+				onClick={() => {
+					setShowExport(true);
+				}}
+			/>
+		</div>
+	);
+
+	const MaxMinButton = () => (
+		<div className="window-action-button">
+			<IconButton
+				icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
+				bordered
+				onClick={() => {
+					config.update((config) => {
+						config.showHeader = !config.showHeader;
+					});
+				}}
+			/>
+		</div>
+	);
+
+	return (
+		<>
+			<div className="window-actions">
+				{!isMobileScreen && props.isworkflow && <AutoFlowSwitchButton />}
+				{!isMobileScreen && !props.isworkflow && <RenameButton />}
+				{!props.isworkflow && <ExportButton />}
+				{showMaxIcon && <MaxMinButton />}
+			</div>
+			{showExport && (
+				<ExportMessageModal onClose={() => setShowExport(false)} />
+			)}
+			{isEditingMessage && (
+				<EditMessageModal
+					onClose={() => {
+						setIsEditingMessage(false);
+					}}
+					isworkflow={props.isworkflow}
+					session={session}
+				/>
+			)}
+		</>
+	);
+}
+
+export default function WindowHeader(props: {
+	session?: ChatSession;
+	index?: number;
+	isworkflow: boolean;
+}) {
+	const chatStore = useChatStore();
+	let session: ChatSession;
+	// isworkflow = true then, session use props.session. else use currentSession
+	if (props.isworkflow && props.session) {
+		session = props.session;
+	} else {
+		session = chatStore.currentSession();
+	}
+	const sessionId = session.id;
+	const index = props.index ?? 0;
+
+	const config = useAppConfig();
+	const [showExport, setShowExport] = useState(false);
+
+	const {
+		hitBottom,
+		setHitBottom,
+
+		showPromptModal,
+		setShowPromptModal,
+		userInput,
+		setUserInput,
+		enableAutoFlow,
+		setEnableAutoFlow,
+	} = useContext(ChatContext);
+
+	const isMobileScreen = useMobileScreen();
+	const clientConfig = useMemo(() => getClientConfig(), []);
+	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+
+	const [isEditingMessage, setIsEditingMessage] = useState(false);
+
+	return (
+		<div className="window-header" data-tauri-drag-region>
+			{isMobileScreen && !props.isworkflow && <ReturnButton />}
+
+			<WindowHeaderTitle
+				session={session}
+				index={index}
+				isworkflow={props.isworkflow}
+			/>
+
+			<WindowActions
+				session={session}
+				index={index}
+				isworkflow={props.isworkflow}
+			/>
+
+			<PromptToast
+				showToast={!hitBottom}
+				showModal={showPromptModal}
+				setShowModal={setShowPromptModal}
+				session={session}
+				index={index}
+				isworkflow={props.isworkflow}
+			/>
 		</div>
 	);
 }

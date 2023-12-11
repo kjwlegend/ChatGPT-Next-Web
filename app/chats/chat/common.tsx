@@ -81,13 +81,25 @@ import { Avatar } from "@/app/components/emoji";
 import { Avatar as UserAvatar } from "antd";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
 import { useMaskStore } from "@/app/store/mask";
+import { ChatSession } from "@/app/store";
 
-export function SessionConfigModel(props: { onClose: () => void }) {
+export function SessionConfigModel(props: {
+	onClose: () => void;
+	index?: number;
+	session?: ChatSession;
+	isworkflow: boolean;
+}) {
 	const chatStore = useChatStore();
+	let session: ChatSession;
+	// isworkflow = true then, session use props.session. else use currentSession
+	if (props.isworkflow && props.session) {
+		session = props.session;
+	} else {
+		session = chatStore.currentSession();
+	}
+	const sessionId = session.id;
 
-	const session = chatStore.currentSession();
 	const maskStore = useMaskStore();
-	const navigate = useNavigate();
 
 	return (
 		<div className="modal-mask">
@@ -102,8 +114,9 @@ export function SessionConfigModel(props: { onClose: () => void }) {
 						text={Locale.Chat.Config.Reset}
 						onClick={async () => {
 							if (await showConfirm(Locale.Memory.ResetConfirm)) {
-								chatStore.updateCurrentSession(
-									(session) => (session.memoryPrompt = ""),
+								chatStore.updateSession(
+									sessionId,
+									() => (session.memoryPrompt = ""),
 								);
 							}
 						}}
@@ -126,7 +139,7 @@ export function SessionConfigModel(props: { onClose: () => void }) {
 					updateMask={(updater) => {
 						const mask = { ...session.mask };
 						updater(mask);
-						chatStore.updateCurrentSession((session) => (session.mask = mask));
+						chatStore.updateSession(sessionId, () => (session.mask = mask));
 					}}
 					shouldSyncFromGlobal
 					extraListItems={

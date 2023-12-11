@@ -70,13 +70,16 @@ import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 import { useAuthStore } from "../store/auth";
 import { createChat, CreateChatData } from "../api/chat";
 
-import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
+import { ChatActions, ChatAction } from "./Inputpanel";
 import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
 } from "./chat-controller";
-import WindowHeaer from "./WindowHeader";
+import WindowHeader from "./WindowHeader";
+// import WindowHeader from "../chats/chat/WindowHeader";
+// import { Inputpanel } from "../chats/chat/Inputpanel";
+import { Inputpanel } from "./Inputpanel";
 import { Chatbody } from "./Chatbody";
 import { ChatContext } from "./context";
 import Image from "next/image";
@@ -150,7 +153,7 @@ function _Chat(props: { _session: ChatSession; index: number }) {
 						setEnableAutoFlow,
 					}}
 				>
-					<WindowHeaer session={_session} index={index} />
+					<WindowHeader session={_session} index={index} isworkflow={true} />
 					<Chatbody session={_session} index={index} />
 					<Inputpanel session={_session} index={index} />
 				</ChatContext.Provider>
