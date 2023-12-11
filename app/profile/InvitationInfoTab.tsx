@@ -45,29 +45,22 @@ const InvitePage = () => {
 			<div>
 				<Row gutter={16}>
 					<Col xs={24} sm={14}>
-						<p className={styles["label-title"]}>
-							邀请方法1 - 链接:
-						</p>
+						<p className={styles["label-title"]}>邀请方法1 - 链接:</p>
 						<Paragraph className={styles["link"]} copyable>
 							{inviteLink}
 						</Paragraph>
 						<p>
 							{" "}
-							或者将{" "}
-							<span style={{ color: "red" }}>
-								?i=您的专属id
-							</span>{" "}
+							或者将 <span style={{ color: "red" }}>?i=您的专属id</span>{" "}
 							添加到小光同学的任意网址后面
 						</p>
 					</Col>
 					<Col xs={24} sm={10}>
-						<p className={styles["label-title"]}>
-							方法2 - 使用专属二维码:
-						</p>
+						<p className={styles["label-title"]}>方法2 - 使用专属二维码:</p>
 						<QRCode
 							errorLevel="H"
 							value={inviteLink}
-							icon="https://xiaoguang.online/bot.png"
+							icon="https://xiaoguang.fun/bot.png"
 						/>
 					</Col>
 				</Row>

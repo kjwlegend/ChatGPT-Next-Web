@@ -97,6 +97,7 @@ import {
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
 import { useAllModels } from "@/app/utils/hooks";
+import { ChatSession } from "@/app/store";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -223,16 +224,27 @@ export function ChatActions(props: {
 	scrollToBottom: () => void;
 	showPromptHints: () => void;
 	hitBottom: boolean;
+	session?: ChatSession;
+	index?: number;
 }) {
 	const config = useAppConfig();
 	const chatStore = useChatStore();
+	const session = props.session ? props.session : chatStore.currentSession();
 	const { chat_balance } = useUserStore().user;
 
-	const usePlugins = chatStore.currentSession().mask.usePlugins;
+	const usePlugins = session.mask.usePlugins;
 	function switchUsePlugins() {
-		chatStore.updateCurrentSession((session) => {
+		chatStore.updateSession(session.id, () => {
 			session.mask.usePlugins = !session.mask.usePlugins;
 		});
+		console.log(
+			"session id",
+			session.id,
+			"index",
+			props.index,
+			"plugin: ",
+			session.mask.usePlugins,
+		);
 	}
 
 	// switch themes
@@ -250,7 +262,7 @@ export function ChatActions(props: {
 	const stopAll = () => ChatControllerPool.stopAll();
 
 	// switch model
-	const currentModel = chatStore.currentSession().mask.modelConfig.model;
+	const currentModel = session.mask.modelConfig.model;
 	const models = useAllModels()
 		.filter((m) => m.available)
 		.map((m) => ({
@@ -334,7 +346,7 @@ export function ChatActions(props: {
 						onClose={() => setShowModelSelector(false)}
 						onSelection={(s) => {
 							if (s.length === 0) return;
-							chatStore.updateCurrentSession((session) => {
+							chatStore.updateSession(session.id, () => {
 								session.mask.modelConfig.model = s[0] as ModelType;
 								session.mask.syncGlobalConfig = false;
 								// session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
@@ -350,13 +362,21 @@ export function ChatActions(props: {
 					text={Locale.Chat.InputActions.Clear}
 					icon={<BreakIcon />}
 					onClick={() => {
-						chatStore.updateCurrentSession((session) => {
+						console.log("=-====clear====");
+
+						chatStore.updateSession(session.id, () => {
 							if (session.clearContextIndex === session.messages.length) {
 								session.clearContextIndex = undefined;
 							} else {
 								session.clearContextIndex = session.messages.length;
 								session.memoryPrompt = ""; // will clear memory
 							}
+							console.log(
+								"session",
+								session.id,
+								"clearContextIndex",
+								session.clearContextIndex,
+							);
 						});
 					}}
 				/>
@@ -375,10 +395,10 @@ export function ChatActions(props: {
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 let voicetext: string[] = [];
 
-export function Inputpanel() {
-	const chatStore = useChatStore();
-	const session = chatStore.currentSession();
+export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const config = useAppConfig();
+	const chatStore = useChatStore();
+	const session = props.session ? props.session : chatStore.currentSession();
 	const userStore = useUserStore();
 	const authHook = useAuth();
 	const { updateUserInfo } = authHook;
@@ -395,6 +415,8 @@ export function Inputpanel() {
 		userInput,
 		setUserInput,
 		scrollRef,
+		enableAutoFlow,
+		setEnableAutoFlow,
 	} = useContext(ChatContext);
 
 	const { submitKey, shouldSubmit } = useSubmitHandler();
@@ -418,8 +440,9 @@ export function Inputpanel() {
 		prev: () => chatStore.nextSession(-1),
 		next: () => chatStore.nextSession(1),
 		clear: () =>
-			chatStore.updateCurrentSession(
-				(session) => (session.clearContextIndex = session.messages.length),
+			chatStore.updateSession(
+				session.id,
+				() => (session.clearContextIndex = session.messages.length),
 			),
 		del: () => chatStore.deleteSession(chatStore.currentSessionIndex),
 	});
@@ -456,7 +479,7 @@ export function Inputpanel() {
 		const recentMessages = chatStore.getMessagesWithMemory();
 
 		chatStore
-			.onUserInput(userInput)
+			.onUserInput(userInput, session.id)
 			.then(() => {
 				setIsLoading(false);
 
@@ -480,7 +503,7 @@ export function Inputpanel() {
 						const newSessionId = data.chat_session;
 
 						if (session.id !== newSessionId) {
-							chatStore.updateCurrentSession((session) => {
+							chatStore.updateSession(session.id, () => {
 								session.id = newSessionId;
 							});
 						}
@@ -591,6 +614,7 @@ export function Inputpanel() {
 	const SEARCH_TEXT_LIMIT = 30;
 	const onInput = (text: string) => {
 		setUserInput(text);
+		console.log("text:", text);
 		const n = text.trim().length;
 
 		// clear search results
@@ -674,6 +698,8 @@ export function Inputpanel() {
 					setUserInput("/");
 					onSearch("");
 				}}
+				session={session}
+				index={props.index}
 			/>
 			<div className={styles["chat-input-panel-inner"]}>
 				<textarea

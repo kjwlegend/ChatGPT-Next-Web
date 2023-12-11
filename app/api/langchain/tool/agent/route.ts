@@ -26,7 +26,7 @@ import {
 	BaiduSearch,
 	GoogleSearch,
 } from "@/app/api/langchain-tools/all_search";
-import { KnowledgeSearch } from "@/app/api/langchain-tools/knowledge_search";
+import { KnowledgeSearch } from "@/app/api/langchain-tools/doc_search";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
 import { getUserInfo } from "@/app/api/user";
@@ -72,7 +72,6 @@ async function handle(req: NextRequest) {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
 	try {
-
 		// Initialize encoder and transform stream
 		const encoder = new TextEncoder();
 		const transformStream = new TransformStream();
@@ -275,7 +274,7 @@ async function handle(req: NextRequest) {
 		const arxivAPITool = new ArxivAPIWrapper();
 		const knowledgeSearchTool = new KnowledgeSearch(username);
 
-		if (useTools.includes("web-search")) tools.push(searchTool);
+		if (useTools.includes("all_search")) tools.push(searchTool);
 		if (useTools.includes(webBrowserTool.name)) tools.push(webBrowserTool);
 		if (useTools.includes(calculatorTool.name)) tools.push(calculatorTool);
 		if (useTools.includes(dallEAPITool.name)) tools.push(dallEAPITool);

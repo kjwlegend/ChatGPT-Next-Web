@@ -518,7 +518,7 @@ export function ImagePreviewer(props: {
 
 					<div>
 						<div className={styles["main-title"]}>小光AI</div>
-						<div className={styles["sub-title"]}>xiaoguang.online</div>
+						<div className={styles["sub-title"]}>xiaoguang.fun</div>
 						<div className={styles["icons"]}>
 							<ExportAvatar avatar={config.avatar} />
 							<span className={styles["icon-space"]}>&</span>

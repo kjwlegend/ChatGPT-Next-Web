@@ -31,7 +31,7 @@ import {
 	Select,
 	showConfirm,
 } from "../components/ui-lib";
-import { Avatar, AvatarPicker } from "../components/emoji";
+import { Avatar } from "../components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
 import { MaskCategory } from "../constant";
 import { useNavigate } from "react-router-dom";
@@ -112,16 +112,9 @@ export function MaskConfig(props: {
 				</Col>
 				<Col xs={24} sm={10}>
 					<List>
-						<ListItem title={Locale.Mask.Config.Avatar}>
+						{/* <ListItem title={Locale.Mask.Config.Avatar}>
 							<Popover
-								content={
-									<AvatarPicker
-										onEmojiClick={(emoji) => {
-											props.updateMask((mask) => (mask.avatar = emoji));
-											setShowPicker(false);
-										}}
-									></AvatarPicker>
-								}
+								content={<div>Avatar</div>}
 								open={showPicker}
 								onClose={() => setShowPicker(false)}
 							>
@@ -132,7 +125,7 @@ export function MaskConfig(props: {
 									<MaskAvatar mask={props.mask} />
 								</div>
 							</Popover>
-						</ListItem>
+						</ListItem> */}
 						<ListItem title={Locale.Mask.Config.Name}>
 							<input
 								type="text"

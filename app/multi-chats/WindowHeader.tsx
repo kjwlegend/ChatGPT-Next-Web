@@ -59,76 +59,7 @@ import { SessionConfigModel } from "./common";
 
 import { ChatContext } from "./context";
 
-export function EditMessageModal(props: {
-	onClose: () => void;
-	index: number;
-	session: ChatSession;
-}) {
-	const index = props.index;
-	const sessionId = props.session.id;
-	const session = props.session;
-
-	const config = useAppConfig();
-	const chatStore = useChatStore();
-
-	const [messages, setMessages] = useState(session.messages.slice());
-
-	return (
-		<div className="modal-mask">
-			<Modal
-				title={Locale.Chat.EditMessage.Title}
-				onClose={props.onClose}
-				actions={[
-					<IconButton
-						text={Locale.UI.Cancel}
-						icon={<CancelIcon />}
-						key="cancel"
-						onClick={() => {
-							props.onClose();
-						}}
-					/>,
-					<IconButton
-						type="primary"
-						text={Locale.UI.Confirm}
-						icon={<ConfirmIcon />}
-						key="ok"
-						onClick={() => {
-							chatStore.updateSession(sessionId, () => {
-								session.messages = messages;
-							});
-							props.onClose();
-						}}
-					/>,
-				]}
-			>
-				<List>
-					<ListItem
-						title={Locale.Chat.EditMessage.Topic.Title}
-						subTitle={Locale.Chat.EditMessage.Topic.SubTitle}
-					>
-						<input
-							type="text"
-							value={session.topic}
-							onInput={(e) =>
-								chatStore.updateSession(sessionId, () => {
-									session.topic = e.currentTarget.value;
-								})
-							}
-						></input>
-					</ListItem>
-				</List>
-				{/* <ContextPrompts
-					context={messages}
-					updateContext={(updater) => {
-						const newMessages = messages.slice();
-						updater(newMessages);
-						setMessages(newMessages);
-					}}
-				/> */}
-			</Modal>
-		</div>
-	);
-}
+import { EditMessageModal, PromptToast } from "../chats/chat/WindowHeader";
 
 export default function WindowHeader(props: {
 	session: ChatSession;
@@ -224,6 +155,7 @@ export default function WindowHeader(props: {
 					}}
 					index={index}
 					session={session}
+					isworkflow={true}
 				/>
 			)}
 			<PromptToast
@@ -232,49 +164,9 @@ export default function WindowHeader(props: {
 				setShowModal={setShowPromptModal}
 				session={session}
 				index={index}
+				isworkflow={true}
 			/>
 		</div>
 	);
 }
 
-export function PromptToast(props: {
-	showToast?: boolean;
-	showModal?: boolean;
-	setShowModal: (_: boolean) => void;
-
-	index: number;
-	session: ChatSession;
-}) {
-	const chatStore = useChatStore();
-	const sessionId = props.session.id;
-	const session = props.session;
-	const index = props.index;
-	const context = session.mask.context;
-
-	return (
-		<div
-			className={styles["prompt-toast"] + " desktop-only"}
-			key="prompt-toast"
-		>
-			{props.showToast && (
-				<div
-					className={styles["prompt-toast-inner"] + " clickable"}
-					role="button"
-					onClick={() => props.setShowModal(true)}
-				>
-					<BrainIcon />
-					<span className={styles["prompt-toast-content"]}>
-						{Locale.Context.Toast(context.length)}
-					</span>
-				</div>
-			)}
-			{props.showModal && (
-				<SessionConfigModel
-					onClose={() => props.setShowModal(false)}
-					session={session}
-					index={index}
-				/>
-			)}
-		</div>
-	);
-}

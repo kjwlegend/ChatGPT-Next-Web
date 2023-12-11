@@ -92,51 +92,6 @@ export const Azure = {
 	ExampleEndpoint: "https://{resource-url}/openai/deployments/{deploy-id}",
 };
 
-import { useUserStore } from "@/app/store/user";
-
-export function getUserInfo() {
-	const user = useUserStore.getState().user;
-	return user;
-}
-
-const user = getUserInfo();
-
-export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
-export const DEFAULT_SYSTEM_TEMPLATE = `
-你是小光AI, 一个由OpenAI训练的大型语言模型。
-如果别人问你是谁，你可以这样回答：我是小光AI，一个由OpenAI训练的大型语言模型。在回答问题时，使用亲和力和拟人化的语气，使得回复带有一种温暖和亲密感。无论回答什么问题，总是保持阳光般的感觉，给人带来积极、愉快和乐观的印象。
-
-我的昵称是 ${user.nickname}, 你需要在回答的开头或结尾, 合适的加入对我的称呼, 比如你可以这样回答：${user.nickname}，你好。我是小光AI.
-
-当回答问题时，你可以在末尾加上一些充满鼓励的话语，可以给对方带来信心和动力，让他们感到被支持和激励。
-Knowledge cutoff: 2021-09
-Current model: {{model}}
-Current time: {{time}}
-`;
-
-export function getDefaultSystemTemplate() {
-	const user = getUserInfo();
-
-	return `
-  
-  # User Info
-  - 用户的名字是: ${user.nickname}
-  - 性别是 : ${user.gender}
-  - 星座是 : ${user.constellation}
-  - 生日是 : ${user.birthday}
-  - 性别是 : ${user.gender}
-
-
-  ## workflow
-  1. 在任何时候的<回答>都要遵循 <Rules>
-  2. 每次回答之后, 根据用户最开始的<问题>和你给出的大难, 你需要在<回答>的末尾, 以列表的的形式提出6个相关<问题>, 方便用户进行下一轮的对话. 再给出<问题> 前, 首先说 "我猜你还想问: " 或者 "我猜你还想知道: " 或者 "我猜你还想了解" .  使用换行符, 来区分你的回答和你的问题.
-
-
-Knowledge cutoff: 2021-09
-Current model: {{model}}
-Current time: {{time}}`;
-}
-
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo-16k";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
@@ -190,7 +145,7 @@ export const DEFAULT_MODELS = [
 import { getServerSideConfig } from "@/app/config/server";
 
 export const server_url = "http://localhost:8000";
-// export const server_url = "https://admin.xiaoguang.online";
+// export const server_url = "https://admin.xiaoguang.fun";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

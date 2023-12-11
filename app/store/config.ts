@@ -1,12 +1,9 @@
 import { LLMModel } from "../client/api";
 import { isMacOS } from "../utils";
 import { getClientConfig } from "../config/client";
-import {
-	DEFAULT_INPUT_TEMPLATE,
-	DEFAULT_MODELS,
-	DEFAULT_SIDEBAR_WIDTH,
-	StoreKey,
-} from "../constant";
+import { DEFAULT_MODELS, DEFAULT_SIDEBAR_WIDTH, StoreKey } from "../constant";
+
+import { DEFAULT_INPUT_TEMPLATE } from "../chains/default";
 import { createPersistStore } from "../utils/store";
 
 export type ModelType = (typeof DEFAULT_MODELS)[number]["name"];
@@ -20,8 +17,8 @@ export enum SubmitKey {
 }
 
 export enum Theme {
-	Auto = "light",
-	Dark = "light",
+	Auto = "auto",
+	Dark = "dark",
 	Light = "light",
 }
 

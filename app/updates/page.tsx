@@ -172,7 +172,7 @@ const items = [
 	},
 	{
 		label: "2023-07-28",
-		children: "发布 v0.5.2 版本: 公测版正式上线, 启用 https://xiaoguang.online",
+		children: "发布 v0.5.2 版本: 公测版正式上线, 启用 https://xiaoguang.fun",
 		color: "red",
 	},
 	{
@@ -340,6 +340,11 @@ const items = [
 		label: "2023-12-04",
 		children: " 发布 v1.3.0 版本: 增加基础对话角色及角色分类",
 
+		color: "blue",
+	},
+	{
+		label: "2023-12-07",
+		children: " 发布 v1.3.1 版本: 修复工作流页面bug, 改进代码结构",
 		color: "blue",
 	},
 ];
