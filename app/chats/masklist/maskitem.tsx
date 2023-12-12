@@ -98,7 +98,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 					</div>
 				}
 				headStyle={{ padding: 5 }}
-				extra={<span className={styles["label"]}>{mask.category}</span>}
+				// extra={}
 				hoverable
 				className={`${styles["mask-item"]} ${getCardStyle()}`}
 				bodyStyle={{ padding: 10 }}
@@ -110,6 +110,8 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 					// 	text={Locale.Mask.Item.Chat}
 					// 	onClick={() => onChat()}
 					// />,
+					<div className={styles["label"]}>{mask.category}</div>,
+
 					<>
 						{" "}
 						{mask.builtin ? (
