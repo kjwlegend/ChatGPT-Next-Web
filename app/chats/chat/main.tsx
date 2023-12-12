@@ -83,6 +83,8 @@ interface ChatContextType {
 	setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
 	showPromptModal: boolean;
 	setShowPromptModal: React.Dispatch<React.SetStateAction<boolean>>;
+	autoScroll: boolean;
+	setAutoScroll: React.Dispatch<React.SetStateAction<boolean>>;
 	userInput: string;
 	setUserInput: React.Dispatch<React.SetStateAction<string>>;
 	scrollRef: React.RefObject<HTMLDivElement>;
@@ -96,10 +98,11 @@ export const ChatContext = React.createContext<ChatContextType>({
 	setHitBottom: () => void 0,
 	showPromptModal: false,
 	setShowPromptModal: () => void 0,
+	autoScroll: true,
+	setAutoScroll: () => void 0,
 	userInput: "",
 	setUserInput: () => void 0,
 	scrollRef: React.createRef<HTMLDivElement>(),
-
 	enableAutoFlow: false,
 	setEnableAutoFlow: () => void 0,
 });
@@ -160,6 +163,8 @@ function _Chat() {
 				value={{
 					hitBottom,
 					setHitBottom,
+					autoScroll,
+					setAutoScroll,
 					showPromptModal,
 					setShowPromptModal,
 					userInput,

@@ -76,14 +76,15 @@ import {
 	useScrollToBottom,
 	ClearContextDivider,
 } from "./chat-controller";
-import WindowHeader from "./WindowHeader";
-// import WindowHeader from "../chats/chat/WindowHeader";
-// import { Inputpanel } from "../chats/chat/Inputpanel";
-import { Inputpanel } from "./Inputpanel";
-import { Chatbody } from "./Chatbody";
-import { ChatContext } from "./context";
-import Image from "next/image";
+// import WindowHeader from "./WindowHeader";
+import WindowHeader from "../chats/chat/WindowHeader";
+import { Inputpanel } from "../chats/chat/Inputpanel";
+import { ChatContext } from "../chats/chat/main";
 import { ChatItemShort } from "../chats/chat-list";
+
+import { Chatbody } from "./Chatbody";
+
+import Image from "next/image";
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
@@ -101,7 +102,7 @@ function _Chat(props: { _session: ChatSession; index: number }) {
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 
 	const config = useAppConfig();
-
+	const scrollRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
 	const isMobileScreen = useMobileScreen();
@@ -149,6 +150,7 @@ function _Chat(props: { _session: ChatSession; index: number }) {
 						setShowPromptModal,
 						userInput,
 						setUserInput,
+						scrollRef,
 						enableAutoFlow,
 						setEnableAutoFlow,
 					}}

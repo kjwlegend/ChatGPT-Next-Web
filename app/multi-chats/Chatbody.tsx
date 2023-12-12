@@ -68,8 +68,8 @@ import { Avatar as UserAvatar } from "antd";
 import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
 
 import { useAuthStore } from "../store/auth";
+import { ChatContext } from "../chats/chat/main";
 
-import { ChatContext } from "./context";
 import { CreateChatData, createChat } from "../api/chat";
 import { message } from "antd";
 import useAuth from "../hooks/useAuth";
@@ -125,6 +125,10 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 	const session = allSessions.find((s) => s.id === sessionId)!;
 	// const session = props.session;
 	// console.log("session", session);
+	if (!session) {
+		console.error("[Chat] failed to find session", sessionId);
+		return <div>会话读取失败, 请删除当前会话或尝试重新添加</div>;
+	}
 
 	const context: RenderMessage[] = useMemo(() => {
 		return session.mask.hideContext ? [] : session.mask.context.slice();
@@ -210,11 +214,6 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 			console.log("responseState new", responseState);
 		}
 	}, [responseState]);
-
-	if (!session) {
-		console.error("[Chat] failed to find session", sessionId);
-		return <div>会话读取失败</div>;
-	}
 
 	if (
 		context.length === 0 &&

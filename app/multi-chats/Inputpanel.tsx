@@ -89,8 +89,8 @@ import {
 	useScrollToBottom,
 	ClearContextDivider,
 } from "./chat-controller";
-import WindowHeaer from "./WindowHeader";
-import { ChatContext } from "./context";
+import { ChatContext } from "../chats/chat/main";
+
 import { useWorkflowStore } from "../store/workflow";
 import { useAllModels } from "@/app/utils/hooks";
 
@@ -227,8 +227,8 @@ export function ChatActions(props: {
 	const { chat_balance } = useUserStore().user;
 	const sessionId = props.session.id;
 	const session = props.session;
-	const usePlugins = session.mask.usePlugins;
 
+	const usePlugins = session.mask.usePlugins;
 	function switchUsePlugins() {
 		chatStore.updateSession(sessionId, () => {
 			session.mask.usePlugins = !session.mask.usePlugins;

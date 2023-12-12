@@ -92,12 +92,20 @@ import {
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
 import { ChatContext } from "./main";
+// import { ChatContext } from "@/app/multi-chats/context";
 import {
 	startSpeechToText,
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
 import { useAllModels } from "@/app/utils/hooks";
 import { ChatSession } from "@/app/store";
+
+import {
+	ApiTwoTone,
+	ThunderboltTwoTone,
+	SettingTwoTone,
+	MessageTwoTone,
+} from "@ant-design/icons";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -230,6 +238,7 @@ export function ChatActions(props: {
 	const config = useAppConfig();
 	const chatStore = useChatStore();
 	const session = props.session ? props.session : chatStore.currentSession();
+	const sessionId = session.id;
 	const { chat_balance } = useUserStore().user;
 
 	const usePlugins = session.mask.usePlugins;
@@ -293,7 +302,7 @@ export function ChatActions(props: {
 					<ChatAction
 						onClick={props.showPromptModal}
 						text={Locale.Chat.InputActions.Settings}
-						icon={<SettingsIcon />}
+						icon={<SettingTwoTone style={{ fontSize: "15px" }} />}
 					/>
 				)}
 
@@ -316,7 +325,7 @@ export function ChatActions(props: {
 				<ChatAction
 					onClick={props.showPromptHints}
 					text={Locale.Chat.InputActions.Prompt}
-					icon={<PromptIcon />}
+					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 				/>
 
 				<ChatAction
@@ -333,7 +342,20 @@ export function ChatActions(props: {
 									? Locale.Chat.InputActions.DisablePlugins
 									: Locale.Chat.InputActions.EnablePlugins
 							}
-							icon={usePlugins ? <EnablePluginIcon /> : <DisablePluginIcon />}
+							icon={
+								usePlugins ? (
+									<ThunderboltTwoTone
+										style={{
+											fontSize: "15px",
+										}}
+									/>
+								) : (
+									<ApiTwoTone
+										twoToneColor="#52c41a"
+										style={{ fontSize: "15px" }}
+									/>
+								)
+							}
 						/>
 					)}
 				{showModelSelector && (
@@ -346,7 +368,7 @@ export function ChatActions(props: {
 						onClose={() => setShowModelSelector(false)}
 						onSelection={(s) => {
 							if (s.length === 0) return;
-							chatStore.updateSession(session.id, () => {
+							chatStore.updateSession(sessionId, () => {
 								session.mask.modelConfig.model = s[0] as ModelType;
 								session.mask.syncGlobalConfig = false;
 								// session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
@@ -364,7 +386,7 @@ export function ChatActions(props: {
 					onClick={() => {
 						console.log("=-====clear====");
 
-						chatStore.updateSession(session.id, () => {
+						chatStore.updateSession(sessionId, () => {
 							if (session.clearContextIndex === session.messages.length) {
 								session.clearContextIndex = undefined;
 							} else {
@@ -373,7 +395,7 @@ export function ChatActions(props: {
 							}
 							console.log(
 								"session",
-								session.id,
+								sessionId,
 								"clearContextIndex",
 								session.clearContextIndex,
 							);
@@ -409,7 +431,6 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const {
 		hitBottom,
 		setHitBottom,
-
 		showPromptModal,
 		setShowPromptModal,
 		userInput,
@@ -614,9 +635,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const SEARCH_TEXT_LIMIT = 30;
 	const onInput = (text: string) => {
 		setUserInput(text);
-		console.log("text:", text);
 		const n = text.trim().length;
-
 		// clear search results
 		if (n === 0) {
 			setPromptHints([]);

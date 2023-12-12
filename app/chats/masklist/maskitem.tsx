@@ -102,13 +102,14 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 				hoverable
 				className={`${styles["mask-item"]} ${getCardStyle()}`}
 				bodyStyle={{ padding: 10 }}
+				onClick={() => onChat()}
 				actions={[
-					<IconButton
-						icon={<AddIcon />}
-						key="chat"
-						text={Locale.Mask.Item.Chat}
-						onClick={() => onChat()}
-					/>,
+					// <IconButton
+					// 	icon={<AddIcon />}
+					// 	key="chat"
+					// 	text={Locale.Mask.Item.Chat}
+					// 	onClick={() => onChat()}
+					// />,
 					<>
 						{" "}
 						{mask.builtin ? (
@@ -123,7 +124,10 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 								icon={<EditIcon />}
 								key="edit"
 								text={Locale.Mask.Item.Edit}
-								onClick={() => setEditingMaskId(mask.id)}
+								onClick={(event: any) => {
+									event.stopPropagation(); // prevent click event from bubbling up to the card
+									setEditingMaskId(mask.id);
+								}}
 							/>
 						)}
 					</>,
@@ -134,7 +138,8 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 								icon={<DeleteIcon />}
 								text={Locale.Mask.Item.Delete}
 								key="delete"
-								onClick={async () => {
+								onClick={async (e) => {
+									e.stopPropagation(); // prevent click event from bubbling up to the card
 									if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
 										onDelete();
 									}
@@ -174,23 +179,23 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 		const author = mask.author || "@创世神";
 
 		return (
-			<div className={styles["mask-item-roleplay"]}>
+			<div className={styles["mask-item-roleplay"]} onClick={() => onChat()}>
+				{/* when mask.img exists, use transparent backgroundColor , otherwise use getRandomColor*/}
 				<BotAvatar
-					style={{ backgroundColor: getRandomColor(), fontSize: "32px" }}
+					style={{
+						backgroundColor: mask.img ? "transparent" : getRandomColor(),
+						fontSize: 30,
+					}}
 					size={100}
 					src={mask.img}
 				>
 					{mask.name}
 				</BotAvatar>
-				<div className={styles["author"]}>{author}</div>
 
 				<h1 className={styles["name"]}>{mask.name}</h1>
-				<IconButton
-					icon={<AddIcon />}
-					key="chat"
-					text={Locale.Mask.Item.Chat}
-					onClick={() => onChat()}
-				/>
+				{/* use mask.category to create a label with background color */}
+				<span className={styles["label"]}>{mask.category}</span>
+
 				<p className={styles["description"]}>
 					{mask.description ?? "作者很懒, 还没有上传介绍"}
 				</p>
@@ -207,7 +212,10 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 							icon={<EditIcon />}
 							key="edit"
 							text={Locale.Mask.Item.Edit}
-							onClick={() => setEditingMaskId(mask.id)}
+							onClick={(e) => {
+								e.stopPropagation(); // prevent click event from bubbling up to the card
+								setEditingMaskId(mask.id);
+							}}
 						/>
 					)}
 
@@ -216,7 +224,8 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 							icon={<DeleteIcon />}
 							text={Locale.Mask.Item.Delete}
 							key="delete"
-							onClick={async () => {
+							onClick={async (e) => {
+								e.stopPropagation(); // prevent click event from bubbling up to the card
 								if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
 									onDelete();
 								}
@@ -224,6 +233,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 						/>
 					)}
 				</div>
+				<div className={styles["author"]}>作者: {author}</div>
 			</div>
 		);
 	};
