@@ -289,12 +289,10 @@ export function ChatActions(props: {
 
 	const usePlugins = session.mask.usePlugins;
 
-	// use antd dropdown to create a dropdown menu, when user click plugin icon, it will show the menu
-
 	function switchUsePlugins() {
 		// based on session.mask.plugins to decide if use plugins
 
-		if (session.mask.plugins.length > 0) {
+		if (session.mask.plugins && session.mask.plugins?.length > 0) {
 			chatStore.updateSession(session.id, () => {
 				session.mask.usePlugins = true;
 			});
@@ -339,13 +337,16 @@ export function ChatActions(props: {
 			key: p.name,
 			label: (
 				<Checkbox
-					checked={session.mask.plugins.includes(p.toolName ?? p.name)}
+					checked={
+						session.mask.plugins &&
+						session.mask.plugins.includes(p.toolName ?? p.name)
+					}
 					onChange={(e) => {
 						chatStore.updateSession(session.id, () => {
 							if (e.target.checked) {
-								session.mask.plugins.push(p.toolName ?? p.name);
+								session.mask.plugins?.push(p.toolName ?? p.name);
 							} else {
-								session.mask.plugins = session.mask.plugins.filter(
+								session.mask.plugins = session.mask.plugins?.filter(
 									(name) => name !== p.toolName,
 								);
 							}

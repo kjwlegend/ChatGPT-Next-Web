@@ -28,7 +28,7 @@ export type Mask = {
 	lang: Lang;
 	builtin: boolean;
 	usePlugins?: boolean;
-	plugins: string[];
+	plugins?: string[];
 	hotness?: number;
 };
 export const DEFAULT_MASK_STATE = {
