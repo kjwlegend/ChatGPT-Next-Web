@@ -98,22 +98,17 @@ export function Chatbody() {
 	const [isLoading, setIsLoading] = useState(false);
 	const isMobileScreen = useMobileScreen();
 
-	// const playAudio = (message: ChatMessage) => {
-	//   convertTextToSpeech(message.content)
-	//     .then(() => {
-	//       console.log("Text converted to speech successfully");
-	//     })
-	//     .catch((error) => {
-	//       console.error("Error converting text to speech:", error);
-	//     });
-	// };
-
 	const [synthesizer, setSynthesizer] = useState<any | null>(null);
 
 	const playAudio = async (message: ChatMessage) => {
 		console.log("synthesizer", synthesizer);
 
-		const newSynthesizer = await convertTextToSpeech(message.content);
+		// remove * _ and special characters from message.content
+		const regex = /[*_~`]/g;
+		const newContent = message.content.replace(regex, "");
+		console.log("newContent", newContent);
+
+		const newSynthesizer = await convertTextToSpeech(newContent);
 		console.log("newSynthesizer", newSynthesizer);
 		setSynthesizer(newSynthesizer);
 	};

@@ -347,6 +347,11 @@ const items = [
 		children: " 发布 v1.3.1 版本: 修复工作流页面bug, 改进代码结构",
 		color: "blue",
 	},
+	{
+		label: "2023-12-13",
+		children: " 发布 v1.3.2 版本: 改进插件调用逻辑, 调整页面交互UI",
+		color: "blue",
+	},
 ];
 
 const Log = () => {

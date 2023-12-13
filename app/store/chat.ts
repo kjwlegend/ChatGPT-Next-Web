@@ -471,7 +471,7 @@ export const useChatStore = createPersistStore(
 					allPlugins.length > 0
 				) {
 					console.log("[ToolAgent] start");
-					const pluginToolNames = allPlugins.map((m) => m.toolName);
+					const pluginToolNames = session.mask.plugins;
 					api.llm.toolAgentChat({
 						messages: sendMessages,
 						config: { ...modelConfig, stream: true },

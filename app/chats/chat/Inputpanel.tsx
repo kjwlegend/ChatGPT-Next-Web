@@ -23,8 +23,6 @@ import StopIcon from "@/app/icons/pause.svg";
 import RobotIcon from "@/app/icons/robot.svg";
 import Record from "@/app/icons/record.svg";
 
-import EnablePluginIcon from "@/app/icons/plugin_enable.svg";
-import DisablePluginIcon from "@/app/icons/plugin_disable.svg";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 
 import {
@@ -49,8 +47,6 @@ import {
 } from "@/app/utils";
 
 import { api } from "@/app/client/api";
-
-import dynamic from "next/dynamic";
 
 import { ChatControllerPool } from "@/app/client/controller";
 import { Prompt, usePromptStore } from "@/app/store/prompt";
@@ -106,6 +102,10 @@ import {
 	SettingTwoTone,
 	MessageTwoTone,
 } from "@ant-design/icons";
+
+import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
+import { type } from "os";
+import { usePluginStore } from "@/app/store/plugin";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -182,65 +182,97 @@ export function ChatAction(props: {
 	text: string;
 	icon: JSX.Element;
 	onClick: () => void;
-  }) {
+	type?: "default" | "dropdown";
+	dropdownItems?: MenuProps;
+}) {
 	const iconRef = useRef<HTMLDivElement>(null);
 	const textRef = useRef<HTMLDivElement>(null);
 	const [width, setWidth] = useState({
-	  full: 16,
-	  icon: 16,
+		full: 16,
+		icon: 16,
 	});
-  
-	const isMobileScreen = useMobileScreen();
-  
-	function updateWidth() {
-	  if (!iconRef.current || !textRef.current) return;
-	  const getWidth = (dom: HTMLDivElement) => dom.getBoundingClientRect().width;
-	  const textWidth = getWidth(textRef.current);
-	  const iconWidth = getWidth(iconRef.current);
-	  setWidth({
-		full: textWidth + iconWidth,
-		icon: iconWidth,
-	  });
-	}
-  
-	useEffect(() => {
-	  if (!isMobileScreen) {
-		updateWidth(); // Update width on mount for non-mobile screens
-	  }
-	}, [isMobileScreen]);
-  
-	return (
-	  <div
-		className={`${styles["chat-input-action"]} clickable`}
-		onClick={() => {
-		  props.onClick();
-		  if (isMobileScreen) {
-			setTimeout(updateWidth, 1);
-		  }
-		}}
-		onTouchStart={isMobileScreen ? updateWidth : undefined}
-		style={
-		  isMobileScreen
-			? {
-				"--icon-width": `${width.icon}px`,
-				"--full-width": `${width.full}px`,
-			  }
-			: {
-				width: 'auto',
-			  } as React.CSSProperties
-		} 
-	  >
-		<div ref={iconRef} className={styles["icon"]}>
-		  {props.icon}
-		</div>
-		<div className={styles["text"]} ref={textRef}>
-		  {props.text}
-		</div>
-	  </div>
-	);
-  }
 
-  
+	const isMobileScreen = useMobileScreen();
+
+	function updateWidth() {
+		if (!iconRef.current || !textRef.current) return;
+		const getWidth = (dom: HTMLDivElement) => dom.getBoundingClientRect().width;
+		const textWidth = getWidth(textRef.current);
+		const iconWidth = getWidth(iconRef.current);
+		setWidth({
+			full: textWidth + iconWidth,
+			icon: iconWidth,
+		});
+	}
+
+	useEffect(() => {
+		if (!isMobileScreen) {
+			updateWidth(); // Update width on mount for non-mobile screens
+		}
+	}, [isMobileScreen]);
+
+	const actionContent = (
+		<>
+			<div ref={iconRef} className={styles["icon"]}>
+				{props.icon}
+			</div>
+			<div className={styles["text"]} ref={textRef}>
+				{props.text}
+			</div>
+		</>
+	);
+
+	if (props.type === "dropdown" && props.dropdownItems) {
+		return (
+			<Dropdown
+				menu={props.dropdownItems}
+				placement="topLeft"
+				trigger={["click"]}
+				arrow={{ pointAtCenter: true }}
+			>
+				<div
+					className={`${styles["chat-input-action"]} clickable`}
+					onClick={props.onClick}
+					style={
+						isMobileScreen
+							? {
+									"--icon-width": `${width.icon}px`,
+									"--full-width": `${width.full}px`,
+							  }
+							: ({ width: "auto" } as React.CSSProperties)
+					}
+				>
+					{actionContent}
+				</div>
+			</Dropdown>
+		);
+	} else {
+		return (
+			<div
+				className={`${styles["chat-input-action"]} clickable`}
+				onClick={() => {
+					props.onClick();
+					if (isMobileScreen) {
+						setTimeout(updateWidth, 1);
+					}
+				}}
+				onMouseEnter={isMobileScreen ? updateWidth : undefined}
+				onTouchStart={isMobileScreen ? updateWidth : undefined}
+				style={
+					isMobileScreen
+						? {
+								"--icon-width": `${width.icon}px`,
+								"--full-width": `${width.full}px`,
+						  }
+						: ({ width: "auto" } as React.CSSProperties)
+				}
+			>
+				{actionContent}
+			</div>
+		);
+	}
+}
+
 export function ChatActions(props: {
 	showPromptModal: () => void;
 	scrollToBottom: () => void;
@@ -256,19 +288,84 @@ export function ChatActions(props: {
 	const { chat_balance } = useUserStore().user;
 
 	const usePlugins = session.mask.usePlugins;
+
+	// use antd dropdown to create a dropdown menu, when user click plugin icon, it will show the menu
+
 	function switchUsePlugins() {
-		chatStore.updateSession(session.id, () => {
-			session.mask.usePlugins = !session.mask.usePlugins;
-		});
-		console.log(
-			"session id",
-			session.id,
-			"index",
-			props.index,
-			"plugin: ",
-			session.mask.usePlugins,
-		);
+		// based on session.mask.plugins to decide if use plugins
+
+		if (session.mask.plugins.length > 0) {
+			chatStore.updateSession(session.id, () => {
+				session.mask.usePlugins = true;
+			});
+
+			console.log(
+				"session id",
+				session.id,
+				"usePlugins: ",
+				session.mask.usePlugins,
+			);
+		} else {
+			chatStore.updateSession(session.id, () => {
+				session.mask.usePlugins = false;
+			});
+
+			console.log(
+				"session id",
+				session.id,
+				"usePlugins: ",
+				session.mask.usePlugins,
+			);
+		}
 	}
+
+	const availablePlugins = usePluginStore()
+		.getAll()
+		.filter((p) => getLang() === p.lang);
+
+	if (!session.mask.plugins) {
+		session.mask.plugins = [];
+	}
+
+	// console.log("availablePlugins", availablePlugins);
+	// add available plugins to items, make the option as a checkbox using antd component
+	// when click the check box item, it will add the item.toolName into mask.plugins
+	// when click the check box item again, it will remove the item.toolName from mask.plugins
+	// use checkbox style to show the check box
+	// add a select all button to select all plugins
+
+	const items: MenuProps["items"] = availablePlugins.map((p) => {
+		return {
+			key: p.name,
+			label: (
+				<Checkbox
+					checked={session.mask.plugins.includes(p.toolName ?? p.name)}
+					onChange={(e) => {
+						chatStore.updateSession(session.id, () => {
+							if (e.target.checked) {
+								session.mask.plugins.push(p.toolName ?? p.name);
+							} else {
+								session.mask.plugins = session.mask.plugins.filter(
+									(name) => name !== p.toolName,
+								);
+							}
+						});
+						console.log(
+							"session id",
+							session.id,
+							"plugin: ",
+							session.mask.plugins,
+						);
+					}}
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
+				>
+					{p.name}
+				</Checkbox>
+			),
+		};
+	});
 
 	// switch themes
 	const theme = config.theme;
@@ -336,28 +433,29 @@ export function ChatActions(props: {
 					}
 				/> */}
 
-				<ChatAction
+				{/* <ChatAction
 					onClick={props.showPromptHints}
 					text={Locale.Chat.InputActions.Prompt}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
-				/>
+				/> */}
 
 				<ChatAction
 					onClick={() => setShowModelSelector(true)}
 					text={currentModel}
-					icon={<RobotIcon />}
+					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 				/>
+
 				{config.pluginConfig.enable &&
 					/^gpt(?!.*03\d{2}$).*$/.test(currentModel) && (
 						<ChatAction
 							onClick={switchUsePlugins}
 							text={
-								usePlugins
+								session.mask.plugins.length > 0
 									? Locale.Chat.InputActions.DisablePlugins
 									: Locale.Chat.InputActions.EnablePlugins
 							}
 							icon={
-								usePlugins ? (
+								session.mask.plugins.length > 0 ? (
 									<ThunderboltTwoTone
 										style={{
 											fontSize: "15px",
@@ -370,6 +468,8 @@ export function ChatActions(props: {
 									/>
 								)
 							}
+							type="dropdown"
+							dropdownItems={{ items }}
 						/>
 					)}
 				{showModelSelector && (

@@ -32,20 +32,20 @@ const featureContent = [
 		// title: '我们的特点',
 		// subtitle: '由专业提示词工程师持续微调的智能助手',
 		// description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-		background: "/assets/carousel-1.png",
+		background: "/assets/carousel-1.webp",
 	},
 	// Add more feature content objects if needed
 	{
 		// title: '我们的特点22',
 		// subtitle: '由专业提示词工程师持续微调的智能助手',
 		// description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-		background: "/assets/carousel-2.png",
+		background: "/assets/carousel-2.webp",
 	},
 	{
 		// title: '我们的特点22',
 		// subtitle: '由专业提示词工程师持续微调的智能助手',
 		// description: '我们的小光 AI 智能助手经过由专业提示词工程师持续微调的训练，具备以下特点：',
-		background: "/assets/carousel-3.png",
+		background: "/assets/carousel-3.webp",
 	},
 ];
 
@@ -56,31 +56,31 @@ const whyChooseUsContent = [
 		subtitle: "由专业提示词工程师持续微调的智能助手",
 		blocks: [
 			{
-				image: "/assets/personal-01.jpg",
+				image: "/assets/personal-01.webp",
 				title: "人格赋予",
 				content:
 					"相比传统聊天机器人，小光提供更有温度, 情感的回答. 让你面对的不再是冰冷的机器, 而是可以信赖的伙伴",
 			},
 			{
-				image: "/assets/personal-02.jpg",
+				image: "/assets/personal-02.webp",
 				title: "深度模型调教",
 				content:
 					"并不是简单的市场上prompts加载, 小光AI的内置预设由专业提示词工程师持续调教，小光 AI 智能助手能够根据用户的意图和需求，提供个性化、有针对性的回答",
 			},
 			{
-				image: "/assets/personal-03.jpg",
+				image: "/assets/personal-03.webp",
 				title: "广泛应用场景",
 				content:
 					"我们的团队持续改进和优化小光 AI 智能助手，适用于各种应用场景，包括但不限于教育、金融、医疗等领域，为不同行业和个人提供智能支持",
 			},
 			{
-				image: "/assets/personal-04.jpg",
+				image: "/assets/personal-04.webp",
 				title: "专业个性化输出",
 				content:
 					"专业行业咨询团队，针对不同行业设定特定角色，加强特定输出，为用户提供与其领域相关的专业建议和信息",
 			},
 			{
-				image: "/assets/personal-05.jpg",
+				image: "/assets/personal-05.webp",
 				title: "以你为中心的迭代",
 				content:
 					"时刻关注用户的反馈和需求，持续改进和优化底层模型和提示词，为用户提供更好的体验和服务",
@@ -123,72 +123,74 @@ const differentFromOthersContent = [
 
 const whatWeCanDoContent = [
 	{
-		title: "小光AI智能集成",
+		title: "智能集成",
 		colorText: "All Tools!",
 		cards: [
 			{
 				key: "1",
 				title: "搜索引擎",
 				content: "同时检索百度和google并返回相关信息",
-				icon : (
+				icon: (
 					<span>
-		
-				<Image
-						src="/assets/search.png"
-						alt="feature"
-						height={50}
-						width={50}
-					/>,
+						<Image
+							src="/assets/search.png"
+							alt="feature"
+							height={50}
+							width={50}
+						/>
+						,
 					</span>
-				) ,
+				),
 			},
 			{
 				key: "2",
 				title: "网页浏览",
-				content: "通过输入网址, 即可针对网页内容进行自动检索和总结 (在网站允许爬虫情况)",
-				icon : (
+				content:
+					"通过输入网址, 即可针对网页内容进行自动检索和总结 (在网站允许爬虫情况)",
+				icon: (
 					<span>
-		
-				<Image
-						src="/assets/liulanqi.png"
-						alt="feature"
-						height={50}
-						width={50}
-					/>,
+						<Image
+							src="/assets/liulanqi.png"
+							alt="feature"
+							height={50}
+							width={50}
+						/>
+						,
 					</span>
-				) ,
+				),
 			},
 			{
 				key: "3",
 				title: "知识库查询",
 				content: "检索PDF,TXT,Word文件, 基于已有信息进行针对性的对话和生成",
-				icon : (
+				icon: (
 					<span>
-		
-				<Image
-						src="/assets/zhishiku.png"
-						alt="feature"
-						height={50}
-						width={50}
-					/>,
+						<Image
+							src="/assets/zhishiku.png"
+							alt="feature"
+							height={50}
+							width={50}
+						/>
+						,
 					</span>
-				) ,
+				),
 			},
 			{
 				key: "4",
 				title: "绘画接入",
-				content: "dalle 3 和midjourney 集成, 用自然语言直接进行图画生成, 免除复杂提示词撰写",
-				icon : (
+				content:
+					"dalle 3 和midjourney 集成, 用自然语言直接进行图画生成, 免除复杂提示词撰写",
+				icon: (
 					<span>
-		
-				<Image
-						src="/assets/draw.png"
-						alt="feature"
-						height={50}
-						width={50}
-					/>,
+						<Image
+							src="/assets/draw.png"
+							alt="feature"
+							height={50}
+							width={50}
+						/>
+						,
 					</span>
-				) ,
+				),
 			},
 			{
 				icon: (
@@ -256,7 +258,6 @@ const whatWeCanDoContent = [
 	},
 	// Add more differentFromOthers content objects if needed
 ];
-
 
 const CollapseContent: CollapseProps["items"] = [
 	{
@@ -606,7 +607,6 @@ const WhatWeCanDoSection: React.FC = () => {
 		</div>
 	);
 };
-
 
 const CollapseSection: React.FC = () => {
 	return (

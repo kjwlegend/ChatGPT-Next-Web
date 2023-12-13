@@ -6,7 +6,7 @@ import { StoreKey, MaskCategory, MaskCategoryType } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
 import { type } from "os";
-
+import { Plugin } from "./plugin";
 export type Mask = {
 	id: string;
 	createdAt: number;
@@ -28,6 +28,7 @@ export type Mask = {
 	lang: Lang;
 	builtin: boolean;
 	usePlugins?: boolean;
+	plugins: string[];
 	hotness?: number;
 };
 export const DEFAULT_MASK_STATE = {
@@ -54,6 +55,7 @@ export const createEmptyMask = () =>
 		usePlugins: /^gpt(?!.*03\d{2}$).*$/.test(
 			useAppConfig.getState().modelConfig.model,
 		),
+		plugins: [],
 	}) as Mask;
 
 export const useMaskStore = createPersistStore(
