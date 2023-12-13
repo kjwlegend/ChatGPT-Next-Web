@@ -110,7 +110,9 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 					// 	text={Locale.Mask.Item.Chat}
 					// 	onClick={() => onChat()}
 					// />,
-					<div className={styles["label"]}>{mask.category}</div>,
+					<div className={styles["label"]} key={mask.id}>
+						{mask.category}
+					</div>,
 
 					<>
 						{" "}
@@ -181,7 +183,11 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 		const author = mask.author || "@创世神";
 
 		return (
-			<div className={styles["mask-item-roleplay"]} onClick={() => onChat()}>
+			<div
+				className={styles["mask-item-roleplay"]}
+				onClick={() => onChat()}
+				key={mask.id}
+			>
 				{/* when mask.img exists, use transparent backgroundColor , otherwise use getRandomColor*/}
 				<BotAvatar
 					style={{
