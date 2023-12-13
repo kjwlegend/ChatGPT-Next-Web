@@ -260,10 +260,10 @@ export function ChatAction(props: {
 				onTouchStart={isMobileScreen ? updateWidth : undefined}
 				style={
 					isMobileScreen
-						? {
+						? ({
 								"--icon-width": `${width.icon}px`,
 								"--full-width": `${width.full}px`,
-						  }
+						  } as React.CSSProperties)
 						: ({ width: "auto" } as React.CSSProperties)
 				}
 			>
