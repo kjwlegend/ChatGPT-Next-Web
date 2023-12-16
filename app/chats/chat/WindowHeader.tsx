@@ -50,7 +50,11 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
+import {
+	ContextPrompts,
+	MaskAvatar,
+	MaskConfig,
+} from "@/app/chats/mask-components";
 
 import { prettyObject } from "@/app/utils/format";
 import { ExportMessageModal } from "@/app/chats/exporter";

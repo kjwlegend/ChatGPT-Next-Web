@@ -19,12 +19,12 @@ const { Content } = Layout;
 
 const items = [
 	{
-		label: "2023-04-15",
+		label: "2023-05-15",
 		children: "小规模测试版发布, 主要为朋友和公司团队内部使用",
 		color: "green",
 	},
 	{
-		label: "2023-05-06",
+		label: "2023-06-15",
 		children: "系统升级, 增加预设功能",
 	},
 	{
@@ -350,6 +350,11 @@ const items = [
 	{
 		label: "2023-12-13",
 		children: " 发布 v1.3.2 版本: 改进插件调用逻辑, 调整页面交互UI",
+		color: "blue",
+	},
+	{
+		label: "2023-12-16",
+		children: " 发布 v1.3.3 版本: 优化了对话配置流程和界面",
 		color: "blue",
 	},
 ];

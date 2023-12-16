@@ -63,7 +63,11 @@ import {
 } from "@/app/constant";
 import { Avatar } from "@/app/components/emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
+import {
+	ContextPrompts,
+	MaskAvatar,
+	MaskConfig,
+} from "@/app/chats/mask-components";
 
 import { useAuthStore } from "@/app/store/auth";
 

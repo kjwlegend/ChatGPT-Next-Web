@@ -38,7 +38,6 @@ import chatStyle from "./chat.module.scss";
 import { useEffect, useState } from "react";
 import { copyToClipboard, downloadAs, readFromFile } from "../utils";
 import { Updater } from "../typing";
-import { ModelConfigList } from "./model-config";
 import { FileName, Path } from "../constant";
 import { BUILTIN_PLUGIN_STORE } from "../plugins";
 import { nanoid } from "nanoid";

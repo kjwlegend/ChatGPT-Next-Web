@@ -6,6 +6,7 @@ import React, {
 	useMemo,
 	Fragment,
 	useContext,
+	use,
 } from "react";
 import { getISOLang, getLang } from "@/app/locales";
 
@@ -73,7 +74,11 @@ import {
 	UNFINISHED_INPUT,
 } from "@/app/constant";
 
-import { ContextPrompts, MaskAvatar, MaskConfig } from "@/app/chats/mask";
+import {
+	ContextPrompts,
+	MaskAvatar,
+	MaskConfig,
+} from "@/app/chats/mask-components";
 import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
 
@@ -291,7 +296,17 @@ export function ChatActions(props: {
 
 	function switchUsePlugins() {
 		// based on session.mask.plugins to decide if use plugins
+		console.log(
+			"session id",
+			session.id,
+			"usePlugins: ",
+			session.mask.usePlugins,
+		);
+	}
 
+	// use useeffect to check mask.plugins.length , if zero then set usePlugins to false
+
+	useEffect(() => {
 		if (session.mask.plugins && session.mask.plugins?.length > 0) {
 			chatStore.updateSession(session.id, () => {
 				session.mask.usePlugins = true;
@@ -315,7 +330,7 @@ export function ChatActions(props: {
 				session.mask.usePlugins,
 			);
 		}
-	}
+	}, [session.mask.plugins]);
 
 	const availablePlugins = usePluginStore()
 		.getAll()

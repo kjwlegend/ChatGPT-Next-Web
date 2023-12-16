@@ -88,7 +88,11 @@ import {
 } from "../constant";
 import { Avatar } from "./emoji";
 import { Avatar as UserAvatar } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "./masklist/mask";
+import {
+	ContextPrompts,
+	MaskAvatar,
+	MaskConfig,
+} from "@/app/chats/mask-components";
 import { useMaskStore } from "../store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";

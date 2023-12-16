@@ -66,7 +66,12 @@ import {
 import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar, Button, Menu, Dropdown, Switch } from "antd";
 import type { MenuProps } from "antd";
-import { ContextPrompts, MaskAvatar, MaskConfig } from "../chats/mask";
+import {
+	ContextPrompts,
+	MaskAvatar,
+	MaskConfig,
+} from "@/app/chats/mask-components";
+
 import { useAuthStore } from "../store/auth";
 import { createChat, CreateChatData } from "../api/chat";
 
