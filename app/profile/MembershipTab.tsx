@@ -112,7 +112,7 @@ const MembershipTab = () => {
 		normal: 0,
 		monthly: 20,
 		quarterly: 55,
-		yearly: 98,
+		halfyearly: 98,
 	});
 
 	useEffect(() => {
@@ -216,8 +216,8 @@ const MembershipTab = () => {
 				return price.monthly;
 			case "quarterly":
 				return price.quarterly;
-			case "yearly":
-				return price.yearly;
+			case "halfyearly":
+				return price.halfyearly;
 			default:
 				return 0;
 		}
