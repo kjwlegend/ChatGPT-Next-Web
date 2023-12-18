@@ -314,7 +314,7 @@ export function MaskPage() {
 		if (cardStyle === "roleplay" && m.type !== "roleplay") {
 			return false;
 		}
-		if (cardStyle === "assistant" && m.type === "assistant") {
+		if (cardStyle === "assistant" &&( m.type === "roleplay" || m.type === "workflow"  )) {
 			return false;
 		}
 		return true;

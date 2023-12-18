@@ -14,6 +14,7 @@ interface LoginParams {
 export default function useAuth() {
 	const [user, setUser] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [expirationDate, setExpirationDate] = useState<Date>(new Date());
 
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
@@ -22,14 +23,21 @@ export default function useAuth() {
 		setUser(storedUser);
 	}, [authStore]);
 
+
+
+
 	const loginHook = async (params: LoginParams): Promise<void> => {
 		try {
 			setIsLoading(true);
 
 			const result = await loginAPI(params);
 			// cookie
-			const expirationDate = new Date();
+			// const expirationDate = new Date();
+			// const expirationDate = new Date();
+			console.log("当前:" ,expirationDate);
 			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
+			console.log("48小时后:" ,expirationDate);
+			setExpirationDate(expirationDate);
 			document.cookie = `authenticated=true; user_id=${
 				result.data.user.id
 			}; expires=${expirationDate.toUTCString()}; path=/`;
@@ -171,6 +179,7 @@ export default function useAuth() {
 		authStore.logout();
 		userStore.clearUser();
 	};
+
 
 	return {
 		user,

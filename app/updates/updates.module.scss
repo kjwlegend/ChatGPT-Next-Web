@@ -1,3 +1,19 @@
+@keyframes fade-in {
+	from {
+	  opacity: 0;
+	}
+	to {
+	  opacity: 1;
+	}
+  }
+  
+  .fade-in-animation {
+	animation: fade-in 1s ease-in-out;
+  }
+  .fade-in-element {
+	opacity: 0;
+  }
+
 .home-page {
 	margin: auto;
 	display: flex;
