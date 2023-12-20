@@ -12,6 +12,8 @@ export const DEFAULT_CORS_HOST = "https://ab.nextweb.fun";
 export const DEFAULT_API_HOST = `${DEFAULT_CORS_HOST}/api/proxy`;
 export const OPENAI_BASE_URL = "https://api.openai.com";
 
+export const LAST_INPUT_IMAGE_KEY = "last-input-image";
+
 export enum Path {
 	Home = "/",
 	Chat = "/chat",
@@ -122,7 +124,7 @@ export const DEFAULT_MODELS = [
 	// {
 	// 	name: "gpt-4-vision-preview",
 	// 	available: true,
-	// 	displayName: "小光4.1-1107",
+	// 	displayName: "小光4-vision",
 	// },
 	// {
 	// 	name: "gpt-3.5-turbo",

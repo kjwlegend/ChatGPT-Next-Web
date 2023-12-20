@@ -4,23 +4,18 @@ import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask, Mask } from "./mask";
-import { KnowledgeCutOffDate, StoreKey, SUMMARIZE_MODEL } from "../constant";
-
 import {
 	DEFAULT_INPUT_TEMPLATE,
 	DEFAULT_SYSTEM_TEMPLATE,
-	getDefaultSystemTemplate,
-} from "@/app/chains/default";
-
+	KnowledgeCutOffDate,
+	StoreKey,
+	SUMMARIZE_MODEL,
+} from "../constant";
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
-import { createChatSession } from "../api/chat";
-import { UserStore, useUserStore } from "./user";
-import { BUILTIN_MASKS } from "../masks";
-import type { BuiltinMask } from "../masks";
 import { Plugin, usePluginStore } from "../store/plugin";
 
 export interface ChatToolMessage {
@@ -36,7 +31,6 @@ export type ChatMessage = RequestMessage & {
 	isError?: boolean;
 	id: string;
 	model?: ModelType;
-	image_url?: string;
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
@@ -68,7 +62,6 @@ export interface ChatSession {
 	clearContextIndex?: number;
 
 	mask: Mask;
-	responseStatus?: boolean;
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
@@ -98,37 +91,6 @@ function createEmptySession(): ChatSession {
 function getSummarizeModel(currentModel: string) {
 	// if it is using gpt-* models, force to use 3.5 to summarize
 	return currentModel.startsWith("gpt") ? SUMMARIZE_MODEL : currentModel;
-}
-
-interface ChatStore {
-	sessions: ChatSession[];
-	currentSessionIndex: number;
-	clearSessions: () => void;
-	moveSession: (from: number, to: number) => void;
-	selectSession: (index: number) => void;
-	newSession: (mask?: Mask, useUserStore?: UserStore) => ChatSession;
-	deleteSession: (index: number, useUserStore?: UserStore) => void;
-	currentSession: () => ChatSession;
-	nextSession: (delta: number) => void;
-	onNewMessage: (message: ChatMessage) => void;
-	onUserInput: (content: string, sessionId?: string) => Promise<void>;
-	summarizeSession: () => void;
-	updateStat: (message: ChatMessage) => void;
-	updateCurrentSession: (updater: (session: ChatSession) => void) => void;
-	updateSession(
-		sessionId: string,
-		updater: (session: ChatSession) => void,
-	): void;
-	updateMessage: (
-		sessionIndex: number,
-		messageIndex: number,
-		updater: (message?: ChatMessage) => void,
-	) => void;
-	resetSession: () => void;
-	getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
-	getMemoryPrompt: () => ChatMessage;
-
-	clearAllData: () => void;
 }
 
 function countMessages(msgs: ChatMessage[]) {
@@ -216,15 +178,12 @@ export const useChatStore = createPersistStore(
 				});
 			},
 
-			newSession(mask?: Mask, userStore?: UserStore) {
-				const config = useAppConfig.getState();
+			newSession(mask?: Mask) {
 				const session = createEmptySession();
 
-				let model = config.modelConfig.model;
-
 				if (mask) {
+					const config = useAppConfig.getState();
 					const globalModelConfig = config.modelConfig;
-					model = mask.modelConfig.model;
 
 					session.mask = {
 						...mask,
@@ -234,62 +193,12 @@ export const useChatStore = createPersistStore(
 						},
 					};
 					session.topic = mask.name;
-				} else {
-					// 如果没有传入mask，则使用默认的mask
-					const defaultMask = BUILTIN_MASKS.find(
-						(m: BuiltinMask) => m.name === "小光(通用)",
-					);
-					if (defaultMask) {
-						session.mask = {
-							id: "100000",
-							...defaultMask,
-							modelConfig: {
-								...config.modelConfig,
-								...defaultMask.modelConfig,
-							},
-						};
-						session.topic = defaultMask.name;
-					}
-				}
-
-				if (userStore) {
-					const user = userStore.user; // 从 userStore 中获取 user 对象
-					const userId = user.id; // 从 user 对象中获取 id 字段
-
-					// 判断mask.id 是否为数字, 如果不是数字, 则说明是自定义的 mask, prompt_id 设置为 100000
-					// 如果是数字, 则说明是内置的 mask, prompt_id 设置为 mask.id
-
-					if (!session.mask.id || isNaN(Number(session.mask.id))) {
-						console.log("original mask id ", session.mask.id);
-						session.mask.id = "100000";
-						console.log("new mask id ", session.mask.id);
-					}
-
-					const promptId = isNaN(Number(session.mask.id))
-						? "100000"
-						: session.mask.id;
-
-					const data = {
-						user: userId,
-						prompt_id: promptId,
-						model: model,
-					};
-					console.log("createChatSession data ", data);
-					createChatSession(data)
-						.then((res) => {
-							console.log(res);
-							session.id = res.data.session_id;
-						})
-						.catch((err) => {
-							console.log(err);
-						});
 				}
 
 				set((state) => ({
 					currentSessionIndex: 0,
 					sessions: [session].concat(state.sessions),
 				}));
-				return session;
 			},
 
 			nextSession(delta: number) {
@@ -299,7 +208,7 @@ export const useChatStore = createPersistStore(
 				get().selectSession(limit(i + delta));
 			},
 
-			deleteSession(index: number, userStore?: UserStore) {
+			deleteSession(index: number) {
 				const deletingLastSession = get().sessions.length === 1;
 				const deletedSession = get().sessions.at(index);
 
@@ -317,26 +226,6 @@ export const useChatStore = createPersistStore(
 				if (deletingLastSession) {
 					nextIndex = 0;
 					sessions.push(createEmptySession());
-
-					// session id  设置为空
-					if (userStore) {
-						const user = userStore.user; // 从 userStore 中获取 user 对象
-						const userId = user.id; // 从 user 对象中获取 id 字段
-						const session = sessions.at(0);
-						if (!session) return;
-
-						const data = {
-							user: userId,
-						};
-						createChatSession(data)
-							.then((res) => {
-								console.log(res);
-								session.id = res.data.session_id || nanoid();
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					}
 				}
 
 				// for undo delete action
@@ -385,35 +274,8 @@ export const useChatStore = createPersistStore(
 				get().summarizeSession();
 			},
 
-			async onUserInput(
-				content: string,
-				image_url?: string,
-				sessionId?: string,
-			) {
-				// if sessionID is not provided, use current session, else use the session with the provided ID
-				let session: ChatSession;
-
-				if (sessionId) {
-					const sessions = get().sessions;
-					const index = sessions.findIndex(
-						(session) => session.id === sessionId,
-					);
-					if (index === -1) {
-						console.error("Session ID not found");
-						return;
-					}
-					session = sessions[index];
-					// console.log("[User Input] session: ", index, session);
-					this.updateSession(sessionId, (sessionToUpdate: ChatSession) => {
-						sessionToUpdate.responseStatus = false;
-					});
-				} else {
-					session = get().currentSession();
-				}
-				let responseStatus = session.responseStatus;
-
-				console.log("click send: ", session.topic, responseStatus);
-
+			async onUserInput(content: string, image_url?: string) {
+				const session = get().currentSession();
 				const modelConfig = session.mask.modelConfig;
 
 				const userContent = fillTemplateWith(content, modelConfig);
@@ -424,7 +286,6 @@ export const useChatStore = createPersistStore(
 					content: userContent,
 					image_url: image_url,
 				});
-
 				const botMessage: ChatMessage = createMessage({
 					role: "assistant",
 					streaming: true,
@@ -433,7 +294,7 @@ export const useChatStore = createPersistStore(
 				});
 
 				// get recent messages
-				const recentMessages = get().getMessagesWithMemory(session);
+				const recentMessages = get().getMessagesWithMemory();
 				const sendMessages = recentMessages.concat(userMessage);
 				const messageIndex = get().currentSession().messages.length + 1;
 
@@ -449,38 +310,15 @@ export const useChatStore = createPersistStore(
 							m.enable,
 					);
 
-				if (!sessionId) {
-					// save user's and bot's message
-					get().updateCurrentSession((session) => {
-						const savedUserMessage = {
-							...userMessage,
-							content,
-						};
-						session.messages.push(savedUserMessage);
-						session.messages.push(botMessage);
-					});
-				} else {
-					get().updateSession(sessionId, (session: ChatSession) => {
-						const savedUserMessage = {
-							...userMessage,
-							content,
-						};
-						session.messages = session.messages.concat([
-							savedUserMessage,
-							botMessage,
-						]);
-					});
-				}
-				// 检查当前插件开启状态
-				console.log(
-					"config enable",
-					config.pluginConfig.enable,
-					"\n session",
-					session.mask.usePlugins,
-					"\n AllPlugin",
-					allPlugins.length,
-					allPlugins,
-				);
+				// save user's and bot's message
+				get().updateCurrentSession((session) => {
+					const savedUserMessage = {
+						...userMessage,
+						content,
+					};
+					session.messages.push(savedUserMessage);
+					session.messages.push(botMessage);
+				});
 				if (
 					config.pluginConfig.enable &&
 					session.mask.usePlugins &&
@@ -488,14 +326,11 @@ export const useChatStore = createPersistStore(
 					modelConfig.model != "gpt-4-vision-preview"
 				) {
 					console.log("[ToolAgent] start");
-					const pluginToolNames = session.mask.plugins;
+					const pluginToolNames = allPlugins.map((m) => m.toolName);
 					api.llm.toolAgentChat({
 						messages: sendMessages,
 						config: { ...modelConfig, stream: true },
-						agentConfig: {
-							...pluginConfig,
-							useTools: pluginToolNames,
-						},
+						agentConfig: { ...pluginConfig, useTools: pluginToolNames },
 						onUpdate(message) {
 							botMessage.streaming = true;
 							if (message) {
@@ -507,13 +342,9 @@ export const useChatStore = createPersistStore(
 						},
 						onToolUpdate(toolName, toolInput) {
 							botMessage.streaming = true;
-							//  根据toolName获取对应的 toolName, 并输出对应的 name
-							const tool = allPlugins.find((m) => m.toolName === toolName);
-							const name = tool?.name;
-							console.log("toolName: ", toolName, "tool: ", tool?.name);
-							if (name && toolInput) {
+							if (toolName && toolInput) {
 								botMessage.toolMessages!.push({
-									toolName: name,
+									toolName,
 									toolInput,
 								});
 							}
@@ -525,7 +356,6 @@ export const useChatStore = createPersistStore(
 							botMessage.streaming = false;
 							if (message) {
 								botMessage.content = message;
-								responseStatus = session.responseStatus = true;
 								get().onNewMessage(botMessage);
 							}
 							ChatControllerPool.remove(session.id, botMessage.id);
@@ -579,8 +409,6 @@ export const useChatStore = createPersistStore(
 							if (message) {
 								botMessage.content = message;
 								get().onNewMessage(botMessage);
-								responseStatus = session.responseStatus = true;
-								console.log("responseStatus: ", responseStatus, session);
 							}
 							ChatControllerPool.remove(session.id, botMessage.id);
 						},
@@ -630,15 +458,8 @@ export const useChatStore = createPersistStore(
 				} as ChatMessage;
 			},
 
-			getMessagesWithMemory(_session?: ChatSession) {
-				let session: ChatSession;
-				// 定义一个session
-				if (_session) {
-					session = _session;
-				} else {
-					session = get().currentSession();
-				}
-
+			getMessagesWithMemory() {
+				const session = get().currentSession();
 				const modelConfig = session.mask.modelConfig;
 				const clearContextIndex = session.clearContextIndex ?? 0;
 				const messages = session.messages.slice();
@@ -655,17 +476,16 @@ export const useChatStore = createPersistStore(
 								role: "system",
 								content: fillTemplateWith("", {
 									...modelConfig,
-									template: getDefaultSystemTemplate(),
+									template: DEFAULT_SYSTEM_TEMPLATE,
 								}),
 							}),
 					  ]
 					: [];
 				if (shouldInjectSystemPrompts) {
-					// console.log(
-					//   "[Global System Prompt] ",
-					//   systemPrompts.at(0)?.content ?? "empty",
-					// );
-					console.log("[Global System Prompt] : true");
+					console.log(
+						"[Global System Prompt] ",
+						systemPrompts.at(0)?.content ?? "empty",
+					);
 				}
 
 				// long term memory
@@ -828,7 +648,6 @@ export const useChatStore = createPersistStore(
 						},
 						onFinish(message) {
 							console.log("[Memory] ", message);
-							// session.lastSummarizeIndex = lastSummarizeIndex;
 							get().updateCurrentSession((session) => {
 								session.lastSummarizeIndex = lastSummarizeIndex;
 								session.memoryPrompt = message; // Update the memory prompt for stored it in local storage
@@ -853,23 +672,6 @@ export const useChatStore = createPersistStore(
 				const index = get().currentSessionIndex;
 				updater(sessions[index]);
 				set(() => ({ sessions }));
-			},
-			updateSession(
-				sessionId: string | undefined,
-				updater: (session: ChatSession) => void,
-			) {
-				if (sessionId) {
-					set((state) => ({
-						sessions: state.sessions.map((session) => {
-							if (session.id === sessionId) {
-								updater(session);
-							}
-							return session;
-						}),
-					}));
-				} else {
-					this.updateCurrentSession(updater);
-				}
 			},
 
 			clearAllData() {

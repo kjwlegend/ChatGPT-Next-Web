@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import {
 	Card,
 	Carousel,
@@ -307,11 +307,69 @@ const contentStyle: React.CSSProperties = {
 	backgroundSize: "contain",
 	backgroundRepeat: "no-repeat",
 };
-
 const FeatureSection: React.FC = () => {
+	const router = useRouter();
+
+	const startChat = () => {
+		router.push("/chats/");
+	};
+	const register = () => {
+		router.push("/auth");
+	};
+	const typedTextSpan = useRef<HTMLSpanElement>(null);
+	const cursorSpan = useRef<HTMLSpanElement>(null);
+	const timeoutId = useRef<NodeJS.Timeout | null>(null);
+
+	const textArray = ["更智能", "更懂你", "更好用"];
+	const typingDelay = 200;
+	const erasingDelay = 100;
+	const newTextDelay = 2000; // Delay between current and next text
+	let textArrayIndex = 0;
+	let charIndex = 0;
+
+	const type = useCallback(() => {
+		if (charIndex < textArray[textArrayIndex].length) {
+			if (!cursorSpan.current?.classList.contains("typing"))
+				cursorSpan.current?.classList.add("typing");
+			typedTextSpan.current!.textContent +=
+				textArray[textArrayIndex].charAt(charIndex);
+			charIndex++;
+			timeoutId.current = setTimeout(type, typingDelay);
+		} else {
+			cursorSpan.current?.classList.remove("typing");
+			timeoutId.current = setTimeout(erase, newTextDelay);
+		}
+	}, [textArray, typingDelay, newTextDelay]);
+
+	const erase = useCallback(() => {
+		if (charIndex > 0) {
+			if (!cursorSpan.current?.classList.contains("typing"))
+				cursorSpan.current?.classList.add("typing");
+			typedTextSpan.current!.textContent = textArray[textArrayIndex].substring(
+				0,
+				charIndex - 1,
+			);
+			charIndex--;
+			timeoutId.current = setTimeout(erase, erasingDelay);
+		} else {
+			cursorSpan.current?.classList.remove("typing");
+			textArrayIndex++;
+			if (textArrayIndex >= textArray.length) textArrayIndex = 0;
+			timeoutId.current = setTimeout(type, typingDelay + 1100);
+		}
+	}, [textArray, typingDelay, erasingDelay]);
+
+	useEffect(() => {
+		if (textArray.length)
+			timeoutId.current = setTimeout(type, newTextDelay + 250);
+		return () => {
+			if (timeoutId.current) clearTimeout(timeoutId.current);
+		};
+	}, [textArray, newTextDelay, type]);
+
 	return (
 		<div className={styles["section"]}>
-			<Carousel autoplay dotPosition="bottom" easing="linear" effect="fade">
+			{/* <Carousel autoplay dotPosition="bottom" easing="linear" effect="fade">
 				{featureContent.map((content, index) => (
 					<div key={index}>
 						<div className={styles.carousel}>
@@ -324,11 +382,56 @@ const FeatureSection: React.FC = () => {
 						</div>
 					</div>
 				))}
-			</Carousel>
+			</Carousel> */}
+			<div className={styles["intro"]}>
+				<div className={styles["image-container"]}>
+					<Image
+						src="/ai-full.png"
+						alt="小光ai"
+						fill={true}
+						objectFit="contain"
+					/>
+				</div>
+
+				<div className={styles["intro-action"]}>
+					<h1>
+						小光 AI{" "}
+						<span
+							ref={typedTextSpan}
+							className={`${styles["typed-text"]} ${styles["linear-text"]}`}
+						></span>
+						<span ref={cursorSpan} className={styles["cursor"]}>
+							&nbsp;
+						</span>
+					</h1>
+					<h2>专业提示词工程师研发</h2>
+					<div className={`${styles["flex-container"]} flex-container`}>
+						<h3>不只是娱乐, 也是生产力！</h3>
+						<div className={styles["buttons-container"]}>
+							<Button
+								size="large"
+								type="primary"
+								onClick={startChat}
+								className={styles["blue"]}
+							>
+								开始对话
+							</Button>
+
+							<Button
+								size="large"
+								type="primary"
+								onClick={register}
+								className={styles["black"]}
+							>
+								立即注册
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 };
-
 const WhyChooseUsSection: React.FC = () => {
 	return (
 		<div className={`${styles["section"]} ${styles["whydifferent"]}`}>
@@ -336,7 +439,11 @@ const WhyChooseUsSection: React.FC = () => {
 				<div key={index}>
 					<Divider>
 						<h2>
-							{content.title} <span> {content.colorText} </span>
+							{content.title}{" "}
+							<span className={styles["linear-text"]}>
+								{" "}
+								{content.colorText}{" "}
+							</span>
 						</h2>
 					</Divider>
 					<Row gutter={[16, 16]} justify="space-between" align="middle">
@@ -392,7 +499,11 @@ const DifferentFromOthersSection: React.FC = () => {
 				<div key={index}>
 					<Divider>
 						<h2>
-							{content.title} <span> {content.colorText} </span>
+							{content.title}{" "}
+							<span className={styles["linear-text"]}>
+								{" "}
+								{content.colorText}{" "}
+							</span>
 						</h2>
 					</Divider>
 					<Row gutter={[16, 16]}>
@@ -549,7 +660,11 @@ const TechnicalDetailsSection: React.FC = () => {
 				<div key={index}>
 					<Divider>
 						<h2>
-							{content.title} <span> {content.colorText} </span>
+							{content.title}{" "}
+							<span className={styles["linear-text"]}>
+								{" "}
+								{content.colorText}{" "}
+							</span>
 						</h2>
 					</Divider>
 					<Tabs
@@ -580,12 +695,16 @@ const WhatWeCanDoSection: React.FC = () => {
 				<div key={index}>
 					<Divider>
 						<h2>
-							{content.title} <span> {content.colorText} </span>
+							{content.title}{" "}
+							<span className={styles["linear-text"]}>
+								{" "}
+								{content.colorText}{" "}
+							</span>
 						</h2>
 					</Divider>
 					<Row gutter={[16, 16]}>
 						{content.cards.map((card, index) => (
-							<Col xs={24} sm={24} md={12} lg={6} xl={6} key={index}>
+							<Col xs={12} sm={12} md={12} lg={6} xl={6} key={index}>
 								<Card
 									title={card.title}
 									cover={card.icon}
@@ -656,7 +775,6 @@ const HomePage: React.FC = () => {
 		<div className={styles["home-page"] + " main"}>
 			<Content>
 				<FeatureSection />
-				<ChatBlock />
 				<WhatWeCanDoSection />
 				<WhyChooseUsSection />
 				<DifferentFromOthersSection />

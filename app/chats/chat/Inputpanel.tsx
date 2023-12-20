@@ -23,6 +23,8 @@ import BottomIcon from "@/app/icons/bottom.svg";
 import StopIcon from "@/app/icons/pause.svg";
 import RobotIcon from "@/app/icons/robot.svg";
 import Record from "@/app/icons/record.svg";
+import UploadIcon from "@/app/icons/upload.svg";
+import CloseIcon from "@/app/icons/close.svg";
 
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 
@@ -72,6 +74,7 @@ import {
 	Path,
 	REQUEST_TIMEOUT_MS,
 	UNFINISHED_INPUT,
+	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 
 import {
@@ -81,6 +84,7 @@ import {
 } from "@/app/chats/mask-components";
 import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
+import Image from "next/image";
 
 import { createChat, CreateChatData } from "@/app/api/chat";
 import useAuth from "@/app/hooks/useAuth";
@@ -186,6 +190,7 @@ export function PromptHints(props: {
 export function ChatAction(props: {
 	text: string;
 	icon: JSX.Element;
+	innerNode?: JSX.Element;
 	onClick: () => void;
 	type?: "default" | "dropdown";
 	dropdownItems?: MenuProps;
@@ -224,6 +229,7 @@ export function ChatAction(props: {
 			<div className={styles["text"]} ref={textRef}>
 				{props.text}
 			</div>
+			{props.innerNode}
 		</>
 	);
 
@@ -282,6 +288,7 @@ export function ChatActions(props: {
 	showPromptModal: () => void;
 	scrollToBottom: () => void;
 	showPromptHints: () => void;
+	imageSelected: (img: any) => void;
 	hitBottom: boolean;
 	session?: ChatSession;
 	index?: number;
@@ -292,44 +299,54 @@ export function ChatActions(props: {
 	const sessionId = session.id;
 	const { chat_balance } = useUserStore().user;
 
+	const fileInputRef = React.useRef<HTMLInputElement>(null);
+
 	const usePlugins = session.mask.usePlugins;
+
+	// use useeffect to check mask.plugins.length , if zero then set usePlugins to false
+
+	function selectImage() {
+		if (fileInputRef?.current) {
+			console.log("upload click1");
+
+			fileInputRef.current.click();
+		}
+	}
+
+	const onImageSelected = async (e: any) => {
+		const file = e.target.files[0];
+		const fileName = await api.file.upload(file);
+		props.imageSelected({
+			fileName,
+			fileUrl: `/api/file/${fileName}`,
+		});
+		e.target.value = null;
+	};
 
 	function switchUsePlugins() {
 		// based on session.mask.plugins to decide if use plugins
+
+		if (session.mask.plugins && session.mask.plugins?.length > 0) {
+			chatStore.updateSession(session.id, () => {
+				session.mask.usePlugins = true;
+			});
+		} else {
+			chatStore.updateSession(session.id, () => {
+				session.mask.usePlugins = false;
+			});
+		}
 		console.log(
 			"session id",
 			session.id,
 			"usePlugins: ",
 			session.mask.usePlugins,
+			"plugin list",
+			session.mask.plugins,
 		);
 	}
 
-	// use useeffect to check mask.plugins.length , if zero then set usePlugins to false
-
 	useEffect(() => {
-		if (session.mask.plugins && session.mask.plugins?.length > 0) {
-			chatStore.updateSession(session.id, () => {
-				session.mask.usePlugins = true;
-			});
-
-			console.log(
-				"session id",
-				session.id,
-				"usePlugins: ",
-				session.mask.usePlugins,
-			);
-		} else {
-			chatStore.updateSession(session.id, () => {
-				session.mask.usePlugins = false;
-			});
-
-			console.log(
-				"session id",
-				session.id,
-				"usePlugins: ",
-				session.mask.usePlugins,
-			);
-		}
+		console.log("usePlugins: ", session.mask.usePlugins);
 	}, [session.mask.plugins]);
 
 	const availablePlugins = usePluginStore()
@@ -366,12 +383,8 @@ export function ChatActions(props: {
 								);
 							}
 						});
-						console.log(
-							"session id",
-							session.id,
-							"plugin: ",
-							session.mask.plugins,
-						);
+
+						switchUsePlugins();
 					}}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -462,7 +475,8 @@ export function ChatActions(props: {
 				/>
 
 				{config.pluginConfig.enable &&
-					/^gpt(?!.*03\d{2}$).*$/.test(currentModel) && (
+					/^gpt(?!.*03\d{2}$).*$/.test(currentModel) &&
+					currentModel != "gpt-4-vision-preview" && (
 						<ChatAction
 							onClick={switchUsePlugins}
 							text={
@@ -488,6 +502,23 @@ export function ChatActions(props: {
 							dropdownItems={{ items }}
 						/>
 					)}
+				{currentModel == "gpt-4-vision-preview" && (
+					<ChatAction
+						onClick={selectImage}
+						text="选择图片"
+						icon={<UploadIcon />}
+						innerNode={
+							<input
+								type="file"
+								accept=".png,.jpg,.webp,.jpeg"
+								id="chat-image-file-select-upload"
+								style={{ display: "none" }}
+								onChange={onImageSelected}
+								ref={fileInputRef}
+							/>
+						}
+					/>
+				)}
 				{showModelSelector && (
 					<Selector
 						defaultSelectedValue={currentModel}
@@ -553,10 +584,12 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const session = props.session ? props.session : chatStore.currentSession();
 	const userStore = useUserStore();
 	const authHook = useAuth();
+	const promptStore = usePromptStore();
+	const isMobileScreen = useMobileScreen();
+
 	const { updateUserInfo } = authHook;
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
-	const [isLoading, setIsLoading] = useState(false);
 
 	const {
 		hitBottom,
@@ -568,14 +601,16 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		scrollRef,
 		enableAutoFlow,
 		setEnableAutoFlow,
+		userImage,
+		setUserImage,
 	} = useContext(ChatContext);
 
 	const { submitKey, shouldSubmit } = useSubmitHandler();
 	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
-	const isMobileScreen = useMobileScreen();
-
-	const promptStore = usePromptStore();
 	const [promptHints, setPromptHints] = useState<RenderPompt[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+
+	const textareaMinHeight = userImage ? 121 : 68;
 
 	const onSearch = useDebouncedCallback(
 		(text: string) => {
@@ -615,7 +650,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const doSubmit = (userInput: string) => {
+	const doSubmit = (userInput: string, userImage?: any) => {
 		if (userInput.trim() === "") return;
 
 		const matchCommand = chatCommands.match(userInput);
@@ -630,7 +665,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		const recentMessages = chatStore.getMessagesWithMemory();
 
 		chatStore
-			.onUserInput(userInput, session.id)
+			.onUserInput(userInput, userImage?.fileUrl, session.id)
 			.then(() => {
 				setIsLoading(false);
 
@@ -683,6 +718,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		setUserInput("");
 		voicetext = [];
 		setPromptHints([]);
+		setUserImage(null);
 		if (!isMobileScreen) inputRef.current?.focus();
 		setAutoScroll(false);
 	};
@@ -752,11 +788,13 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			!(e.metaKey || e.altKey || e.ctrlKey)
 		) {
 			setUserInput(localStorage.getItem(LAST_INPUT_KEY) ?? "");
+			setUserImage(localStorage.getItem(LAST_INPUT_IMAGE_KEY));
+
 			e.preventDefault();
 			return;
 		}
 		if (shouldSubmit(e) && promptHints.length === 0) {
-			doSubmit(userInput);
+			doSubmit(userInput, userImage);
 			e.preventDefault();
 		}
 	};
@@ -847,6 +885,9 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 					setUserInput("/");
 					onSearch("");
 				}}
+				imageSelected={(img: any) => {
+					setUserImage(img);
+				}}
 				session={session}
 				index={props.index}
 			/>
@@ -864,14 +905,40 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 					autoFocus={autoFocus}
 					style={{
 						fontSize: config.fontSize,
+						minHeight: textareaMinHeight,
 					}}
 				/>
+				{userImage && (
+					<div className={styles["chat-input-image"]}>
+						<div
+							style={{ position: "relative", width: "48px", height: "48px" }}
+						>
+							<Image
+								loader={() => userImage.fileUrl}
+								src={userImage.fileUrl}
+								alt={userImage.filename}
+								title={userImage.filename}
+								layout="fill"
+								objectFit="cover"
+								objectPosition="center"
+							/>
+						</div>
+						<button
+							className={styles["chat-input-image-close"]}
+							onClick={() => {
+								setUserImage(null);
+							}}
+						>
+							<CloseIcon />
+						</button>
+					</div>
+				)}
 				<IconButton
 					icon={<SendWhiteIcon />}
 					text=""
 					className={styles["chat-input-send"]}
 					type="primary"
-					onClick={() => doSubmit(userInput)}
+					onClick={() => doSubmit(userInput, userImage)}
 				/>
 				<IconButton
 					icon={<Record />}

@@ -3,7 +3,7 @@ import { BuiltinPlugin } from "./typing";
 export const CN_PLUGINS: BuiltinPlugin[] = [
 	{
 		name: "搜索引擎",
-		toolName: "all_search",
+		toolName: "web-search",
 		lang: "cn",
 		description: "搜索引擎的网络搜索功能工具。",
 		builtin: true,

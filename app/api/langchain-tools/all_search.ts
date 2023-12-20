@@ -115,7 +115,7 @@ export class GoogleSearch extends Tool {
 }
 
 export class AllSearch extends Tool {
-	name = "all_search";
+	name = "web-search";
 	maxResults = 6;
 	searchUrl = "https://proxy.xiaoguang.fun/search?nfpr=1&num=10&q=";
 	resultSelector = "div.g";

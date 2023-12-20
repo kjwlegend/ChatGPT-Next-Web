@@ -125,6 +125,8 @@ export function Chatbody() {
 		userInput,
 		setUserInput,
 		scrollRef,
+		userImage,
+		setUserImage,
 	} = useContext(ChatContext);
 
 	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
@@ -175,6 +177,7 @@ export function Chatbody() {
 								...createMessage({
 									role: "user",
 									content: userInput,
+									image_url: userImage?.fileUrl,
 								}),
 								preview: true,
 							},
@@ -187,6 +190,7 @@ export function Chatbody() {
 		isLoading,
 		session.messages,
 		userInput,
+		userImage?.fileUrl,
 	]);
 
 	const [msgRenderIndex, _setMsgRenderIndex] = useState(
@@ -282,7 +286,9 @@ export function Chatbody() {
 		deleteMessage(botMessage?.id);
 
 		setIsLoading(true);
-		chatStore.onUserInput(userMessage.content).then(() => setIsLoading(false));
+		chatStore
+			.onUserInput(userMessage.content, userMessage.image_url)
+			.then(() => setIsLoading(false));
 		inputRef.current?.focus();
 	};
 
@@ -475,6 +481,7 @@ export function Chatbody() {
 										</div>
 									)}
 									<Markdown
+										imageBase64={message.image_url}
 										content={message.content}
 										loading={
 											(message.preview || message.streaming) &&

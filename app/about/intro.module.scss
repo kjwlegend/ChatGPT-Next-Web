@@ -9,6 +9,26 @@
 	background-position: 100% 0;
 	background-attachment: fixed;
 
+	--card-height: 65vh;
+	--card-width: calc(var(--card-height) / 1.5);
+
+	button {
+		margin: 10px 20px;
+	}
+
+	.buttons-container {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.blue {
+		background-color: #0547ff;
+	}
+	.black {
+		background-color: #000000;
+		color: #fff;
+	}
+
 	:global .ant-layout-content {
 		width: 100%;
 		box-sizing: border-box;
@@ -31,6 +51,7 @@
 				position: relative;
 			}
 		}
+
 		.carousel {
 			height: 500px;
 			width: 100%;
@@ -41,18 +62,99 @@
 			}
 		}
 
+		.intro {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			background: linear-gradient(
+				112.58deg,
+				#ffffff 25.84%,
+				#bdb4ff 20%,
+				#edf9ff 90.31%
+			);
+			border-radius: 15px;
+			margin: 0 auto;
+
+			.image-container {
+				flex-basis: 30%;
+				min-height: 300px;
+				width: 150px;
+				position: relative;
+			}
+
+			.intro-action {
+				flex-basis: 60%;
+				text-align: left;
+			}
+			.flex-container {
+				justify-content: flex-start;
+			}
+
+			@media screen and (max-width: 768px) {
+				flex-direction: column;
+
+				background: linear-gradient(
+					335deg,
+					#ffffff -3.16%,
+					#bdb4ff 47%,
+					#edf9ff 83.31%
+				);
+
+				.image-container {
+					display: none;
+				}
+				.intro-action {
+					flex-basis: 100%;
+					text-align: center;
+				}
+				.flex-container {
+					justify-content: center;
+					flex-direction: column;
+				}
+			}
+		}
+
+		h1 {
+			// color: white;
+			font-size: 48px;
+			margin-bottom: 20px;
+			font-weight: 600;
+
+			@media screen and (max-width: 768px) {
+				font-size: 42px;
+			}
+		}
 		h2 {
 			font-size: 36px;
-			margin-bottom: 40px;
+			margin-bottom: 20px;
 
-			span {
-				padding-left: 5px;
-				letter-spacing: 2px;
-				background-image: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
-				background-clip: text;
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
+			@media screen and (max-width: 768px) {
+				font-size: 24px;
 			}
+		}
+
+		span.typed-text {
+			font-weight: 600;
+		}
+		span.cursor {
+			display: inline-block;
+			background-color: #1f5fbe;
+			margin-left: 0.1rem;
+			width: 5px;
+			animation: blink 1s infinite;
+		}
+		span.cursor.typing {
+			animation: none;
+		}
+
+		.linear-text {
+			padding-left: 5px;
+			letter-spacing: 2px;
+			background-image: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
 		}
 
 		:global .ant-card {
@@ -160,17 +262,6 @@
 			color: rgb(255, 255, 255);
 			margin-top: 0;
 		}
-
-		button {
-			margin: 0 20px;
-		}
-		.blue {
-			background-color: #0547ff;
-		}
-		.black {
-			background-color: #000000;
-			color: #fff;
-		}
 	}
 
 	:global .ant-collapse {
@@ -269,5 +360,44 @@
 				font-weight: bold;
 			}
 		}
+	}
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes blink {
+	0% {
+		background-color: #1e2eb8;
+	}
+	49% {
+		background-color: #e616c3;
+	}
+	50% {
+		background-color: transparent;
+	}
+	99% {
+		background-color: transparent;
+	}
+	100% {
+		background-color: #1e2eb8;
+	}
+}
+
+@keyframes spin {
+	0% {
+		--rotate: 0deg;
+	}
+	100% {
+		--rotate: 360deg;
 	}
 }

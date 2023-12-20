@@ -27,17 +27,6 @@ import { BUILTIN_MASK_STORE } from "../masks";
 import Image from "next/image";
 import { type } from "os";
 
-function getIntersectionArea(aRect: DOMRect, bRect: DOMRect) {
-	const xmin = Math.max(aRect.x, bRect.x);
-	const xmax = Math.min(aRect.x + aRect.width, bRect.x + bRect.width);
-	const ymin = Math.max(aRect.y, bRect.y);
-	const ymax = Math.min(aRect.y + aRect.height, bRect.y + bRect.height);
-	const width = xmax - xmin;
-	const height = ymax - ymin;
-	const intersectionArea = width < 0 || height < 0 ? 0 : width * height;
-	return intersectionArea;
-}
-
 function MaskItem(props: { mask: Mask; onClick?: () => void }) {
 	return (
 		<div className={styles["mask"]} onClick={props.onClick}>
@@ -92,7 +81,10 @@ function useMaskGroup(masks: Mask[]) {
 function featureMaskGroup(masks: Mask[]) {
 	// 2个filter , build-in mask 和 feature mask
 	const featureMasks = masks.filter(
-		(mask) => mask.featureMask === true && mask.builtin === true && mask.type !== "roleplay",
+		(mask) =>
+			mask.featureMask === true &&
+			mask.builtin === true &&
+			mask.type !== "roleplay",
 	);
 	return [...featureMasks];
 }
@@ -182,7 +174,6 @@ export function NewChat() {
 						icon={<LeftIcon />}
 						text={Locale.NewChat.Return}
 						onClick={() => navigate(Path.Home)}
-						bordered
 						shadow
 					></IconButton>
 					<IconButton
@@ -200,7 +191,6 @@ export function NewChat() {
 						text={Locale.NewChat.More}
 						onClick={() => navigate(Path.Masks)}
 						icon={<EyeIcon />}
-						bordered
 						shadow
 					/>
 

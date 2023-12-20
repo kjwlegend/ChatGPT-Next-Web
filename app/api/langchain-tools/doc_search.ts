@@ -12,7 +12,7 @@ export class KnowledgeSearch extends StructuredTool {
 
 	username: string;
 
-	constructor(username: string | undefined) {
+	constructor(username?: string | undefined) {
 		super();
 		this.username = username ?? "";
 	}

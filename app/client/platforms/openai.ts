@@ -46,7 +46,7 @@ function CheckUserBalance() {
 
 	console.log("balance", balance);
 
-	if (balance < 2) {
+	if (balance <= 0) {
 		return {
 			error: true,
 			msg: "您的对话余额不足, 请联系充值",
@@ -97,9 +97,44 @@ export class ChatGPTApi implements LLMApi {
 	}
 
 	async chat(options: ChatOptions) {
-
 		const balance = CheckUserBalance();
 
+		// const messages: any[] = [];
+		// for (const v of options.messages) {
+		// 	let message: {
+		// 		role: string;
+		// 		content: { type: string; text?: string; image_url?: { url: string } }[];
+		// 	} = {
+		// 		role: v.role,
+		// 		content: [],
+		// 	};
+		// 	message.content.push({
+		// 		type: "text",
+		// 		text: v.content,
+		// 	});
+		// 	if (v.image_url) {
+		// 		await fetch(v.image_url)
+		// 			.then((response) => response.blob())
+		// 			.then((blob) => {
+		// 				const reader = new FileReader();
+		// 				reader.onloadend = function () {
+		// 					const base64data = reader.result;
+		// 					message.content.push({
+		// 						type: "image_url",
+		// 						image_url: {
+		// 							url: base64data,
+		// 						},
+		// 					});
+		// 				};
+		// 				reader.readAsDataURL(blob);
+		// 			})
+		// 			.catch((error) => {
+		// 				console.error(error);
+		// 			});
+		// 	}
+		// 	messages.push(message);
+		// }
+		// 老版本;
 		const messages = options.messages.map((v) => ({
 			role: v.role,
 			content: v.content,
@@ -122,8 +157,11 @@ export class ChatGPTApi implements LLMApi {
 			presence_penalty: modelConfig.presence_penalty,
 			frequency_penalty: modelConfig.frequency_penalty,
 			top_p: modelConfig.top_p,
-			max_tokens: Math.max(modelConfig.max_tokens, 1024),
-
+			max_tokens:
+				modelConfig.model == "gpt-4-vision-preview"
+					? modelConfig.max_tokens
+					: null,
+			// max_tokens: Math.max(modelConfig.max_tokens, 1024),
 			// Please do not ask me why not send max_tokens, no reason, this param is just shit, I dont want to explain anymore.
 		};
 
@@ -132,10 +170,8 @@ export class ChatGPTApi implements LLMApi {
 		const shouldStream = !!options.config.stream;
 		const controller = new AbortController();
 		options.onController?.(controller);
-	
+
 		try {
-
-
 			const chatPath = this.path(OpenaiPath.ChatPath);
 			const chatPayload = {
 				method: "POST",
@@ -154,7 +190,6 @@ export class ChatGPTApi implements LLMApi {
 				let responseText = "";
 				let remainText = "";
 				let finished = false;
-
 
 				// animate response to make it looks smooth
 				function animateResponseText() {
@@ -187,10 +222,9 @@ export class ChatGPTApi implements LLMApi {
 				};
 
 				if (balance.error) {
-					options.onFinish(balance.msg??"余额不足, 请充值");
+					options.onFinish(balance.msg ?? "余额不足, 请充值");
 					finished = true;
 				}
-
 
 				controller.signal.onabort = finish;
 
@@ -252,8 +286,6 @@ export class ChatGPTApi implements LLMApi {
 							const delta = json.choices[0]?.delta?.content;
 							if (delta) {
 								remainText += delta;
-								// responseText += delta;
-								// options.onUpdate?.(responseText, delta);
 							}
 						} catch (e) {
 							console.error("[Request] parse error", text);
@@ -270,7 +302,7 @@ export class ChatGPTApi implements LLMApi {
 				});
 			} else {
 				if (balance.error) {
-					options.onFinish(balance.msg??"");
+					options.onFinish(balance.msg ?? "");
 				}
 				const res = await fetch(chatPath, chatPayload);
 				clearTimeout(requestTimeoutId);
@@ -323,7 +355,9 @@ export class ChatGPTApi implements LLMApi {
 		options.onController?.(controller);
 
 		try {
-			const path = "/api/langchain/tool/agent";
+			let path = "/api/langchain/tool/agent/";
+			const enableNodeJSPlugin = !!process.env.NEXT_PUBLIC_ENABLE_NODEJS_PLUGIN;
+			path = enableNodeJSPlugin ? path + "nodejs" : path + "edge";
 			const chatPayload = {
 				method: "POST",
 				body: JSON.stringify(requestPayload),
@@ -349,7 +383,7 @@ export class ChatGPTApi implements LLMApi {
 					}
 				};
 				if (balance.error) {
-					options.onFinish(balance.msg??"余额不足, 请充值");
+					options.onFinish(balance.msg ?? "余额不足, 请充值");
 					finished = true;
 				}
 
@@ -430,7 +464,7 @@ export class ChatGPTApi implements LLMApi {
 				});
 			} else {
 				if (balance.error) {
-					options.onFinish(balance.msg??"余额不足, 请充值");
+					options.onFinish(balance.msg ?? "余额不足, 请充值");
 				}
 				const res = await fetch(path, chatPayload);
 				clearTimeout(requestTimeoutId);

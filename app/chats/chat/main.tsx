@@ -94,6 +94,8 @@ interface ChatContextType {
 	scrollRef: React.RefObject<HTMLDivElement>;
 	enableAutoFlow: boolean;
 	setEnableAutoFlow: React.Dispatch<React.SetStateAction<boolean>>;
+	userImage: any;
+	setUserImage: React.Dispatch<React.SetStateAction<any>>;
 }
 
 // 创建 ChatContext 上下文对象
@@ -109,6 +111,8 @@ export const ChatContext = React.createContext<ChatContextType>({
 	scrollRef: React.createRef<HTMLDivElement>(),
 	enableAutoFlow: false,
 	setEnableAutoFlow: () => void 0,
+	userImage: "",
+	setUserImage: () => void 0,
 });
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -122,6 +126,7 @@ function _Chat() {
 	const [userInput, setUserInput] = useState("");
 	const [autoScroll, setAutoScroll] = useState(true);
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
+	const [userImage, setUserImage] = useState<any>();
 
 	const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -176,6 +181,8 @@ function _Chat() {
 					scrollRef,
 					enableAutoFlow,
 					setEnableAutoFlow,
+					userImage,
+					setUserImage,
 				}}
 			>
 				<WindowHeaer isworkflow={false} />

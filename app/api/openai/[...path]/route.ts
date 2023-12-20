@@ -6,10 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
 
-import { getUserInfo } from "../../user";
-import { use } from "react";
-import { METHODS, get } from "http";
-
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 
 function getModels(remoteModelRes: OpenAIListModelResponse) {
@@ -28,7 +24,6 @@ async function handle(
 	req: NextRequest,
 	{ params }: { params: { path: string[] } },
 ) {
-
 	console.log("[OpenAI Route] params ", params);
 
 	if (req.method === "OPTIONS") {
@@ -52,7 +47,6 @@ async function handle(
 
 	const authResult = await auth(req);
 	if (authResult.error) {
-		// console.log("[OpenAI Route] auth error ", authResult.error);
 		return NextResponse.json(authResult, {
 			status: 401,
 		});
@@ -81,3 +75,22 @@ export const GET = handle;
 export const POST = handle;
 
 export const runtime = "edge";
+export const preferredRegion = [
+	"arn1",
+	"bom1",
+	"cdg1",
+	"cle1",
+	"cpt1",
+	"dub1",
+	"fra1",
+	"gru1",
+	"hnd1",
+	"iad1",
+	"icn1",
+	"kix1",
+	"lhr1",
+	"pdx1",
+	"sfo1",
+	"sin1",
+	"syd1",
+];
