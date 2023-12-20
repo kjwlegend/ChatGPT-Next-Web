@@ -121,11 +121,11 @@ export const DEFAULT_MODELS = [
 		available: true,
 		displayName: "小光4.0-(5次/消息)",
 	},
-	// {
-	// 	name: "gpt-4-vision-preview",
-	// 	available: true,
-	// 	displayName: "小光4-vision",
-	// },
+	{
+		name: "gpt-4-vision-preview",
+		available: true,
+		displayName: "(测试功能-暂不可用)",
+	},
 	// {
 	// 	name: "gpt-3.5-turbo",
 	// 	displayName: "小光-3.5",

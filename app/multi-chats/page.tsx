@@ -105,6 +105,7 @@ function _Chat(props: { _session: ChatSession; index: number }) {
 	const [userInput, setUserInput] = useState("");
 	const [autoScroll, setAutoScroll] = useState(true);
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
+	const [userImage, setUserImage] = useState<any>();
 
 	const config = useAppConfig();
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -158,6 +159,8 @@ function _Chat(props: { _session: ChatSession; index: number }) {
 						scrollRef,
 						enableAutoFlow,
 						setEnableAutoFlow,
+						userImage,
+						setUserImage,
 					}}
 				>
 					<WindowHeader session={_session} index={index} isworkflow={true} />
