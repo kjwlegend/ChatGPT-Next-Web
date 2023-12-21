@@ -81,6 +81,7 @@ import {
 import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 import Upload from "@/app/components/upload";
+import { ChatSession } from "@/app/store";
 
 interface ChatContextType {
 	hitBottom: boolean;
@@ -117,9 +118,25 @@ export const ChatContext = React.createContext<ChatContextType>({
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
-function _Chat() {
+export function _Chat(props: {
+	_session?: ChatSession;
+	index?: number | 0;
+	isworkflow: boolean;
+}) {
 	const chatStore = useChatStore();
-	const session = chatStore.currentSession();
+
+	const { _session, index } = props;
+
+	// if props._session is not provided, use current session
+
+	let session;
+	if (_session) {
+		session = _session;
+	} else {
+		session = chatStore.currentSession();
+	}
+
+	const sessionId = session.id;
 
 	const [hitBottom, setHitBottom] = useState(true);
 	const [showPromptModal, setShowPromptModal] = useState(false);
@@ -137,7 +154,7 @@ function _Chat() {
 	const isMobileScreen = useMobileScreen();
 
 	useEffect(() => {
-		chatStore.updateCurrentSession((session) => {
+		chatStore.updateSession(sessionId, (session) => {
 			const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
 			session.messages.forEach((m) => {
 				// check if should stop all stale messages
@@ -167,7 +184,12 @@ function _Chat() {
 	const clientConfig = useMemo(() => getClientConfig(), []);
 
 	return (
-		<div className={styles.chat} key={session.id}>
+		<div
+			className={`${styles.chat} ${
+				props.isworkflow ? styles["workflow-chat"] : ""
+			}`}
+			key={session.id}
+		>
 			<ChatContext.Provider
 				value={{
 					hitBottom,
@@ -185,9 +207,17 @@ function _Chat() {
 					setUserImage,
 				}}
 			>
-				<WindowHeaer isworkflow={false} />
-				<Chatbody />
-				<Inputpanel />
+				<WindowHeaer
+					session={_session}
+					index={index}
+					isworkflow={props.isworkflow}
+				/>
+				<Chatbody
+					_session={_session}
+					index={index}
+					isworkflow={props.isworkflow}
+				/>
+				<Inputpanel session={_session} index={index} />
 			</ChatContext.Provider>
 		</div>
 	);
@@ -208,5 +238,5 @@ export function useLoadData() {
 export function Chat() {
 	const chatStore = useChatStore();
 	const sessionIndex = chatStore.currentSessionIndex;
-	return <_Chat key={sessionIndex}></_Chat>;
+	return <_Chat key={sessionIndex} isworkflow={false}></_Chat>;
 }

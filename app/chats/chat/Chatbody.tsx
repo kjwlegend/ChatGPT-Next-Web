@@ -21,6 +21,7 @@ import EditIcon from "@/app/icons/rename.svg";
 import StopIcon from "@/app/icons/pause.svg";
 import PlayIcon from "@/app/icons/play.svg";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
+import NextIcon from "@/app/icons/next.svg";
 
 import {
 	ChatMessage,
@@ -80,8 +81,13 @@ import {
 	ClearContextDivider,
 } from "./chat-controller";
 
+import { CreateChatData, createChat } from "@/app/api/chat";
+
 import { convertTextToSpeech } from "@/app/utils/voicetotext";
 import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
+import { ChatSession } from "@/app/store";
+import { message } from "antd";
+import useAuth from "@/app/hooks/useAuth";
 
 const Markdown = dynamic(async () => (await import("../markdown")).Markdown, {
 	loading: () => <LoadingIcon />,
@@ -89,10 +95,21 @@ const Markdown = dynamic(async () => (await import("../markdown")).Markdown, {
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
-export function Chatbody() {
+export function Chatbody(props: {
+	_session?: ChatSession;
+	index?: number;
+	isworkflow?: boolean;
+}) {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
-	const session = chatStore.currentSession();
+	const authHook = useAuth();
+
+	const { _session, index, isworkflow } = props;
+
+	// if props._session is not provided, use current session
+	const session = _session ?? chatStore.currentSession();
+
+	const sessionId = session.id;
 
 	const config = useAppConfig();
 	const fontSize = config.fontSize;
@@ -103,6 +120,7 @@ export function Chatbody() {
 	const isMobileScreen = useMobileScreen();
 
 	const [synthesizer, setSynthesizer] = useState<any | null>(null);
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const playAudio = async (message: ChatMessage) => {
 		console.log("synthesizer", synthesizer);
@@ -124,6 +142,8 @@ export function Chatbody() {
 		setShowPromptModal,
 		userInput,
 		setUserInput,
+		enableAutoFlow,
+		setEnableAutoFlow,
 		scrollRef,
 		userImage,
 		setUserImage,
@@ -193,6 +213,21 @@ export function Chatbody() {
 		userImage?.fileUrl,
 	]);
 
+	const renderedUserAvatar = useMemo(() => {
+		if (userStore.user.avatar) {
+			return <UserAvatar size="large" src={userStore.user.avatar} />;
+		} else {
+			return (
+				<UserAvatar
+					style={{ backgroundColor: "rgb(91, 105, 230)" }}
+					size="large"
+				>
+					{userStore.user.nickname}
+				</UserAvatar>
+			);
+		}
+	}, [userStore.user.avatar, userStore.user.nickname]);
+
 	const [msgRenderIndex, _setMsgRenderIndex] = useState(
 		Math.max(0, renderMessages.length - CHAT_PAGE_SIZE),
 	);
@@ -242,11 +277,111 @@ export function Chatbody() {
 		setAutoScroll(isHitBottom);
 	};
 
+	// 采用store 的方式来获取 responseState
+	let responseState = session.responseStatus;
+	// console.log("response checkkkkkk", responseState);
+	// 在responseState 为 true 时 执行 onNextworkflow
+	useEffect(() => {
+		const lastMessage = session.messages.at(-1)?.content ?? "";
+		console.log("responseState old", responseState);
+		// console.log("lastMessage", lastMessage);
+		if (responseState && enableAutoFlow) {
+			onNextworkflow(lastMessage);
+			// 将session 的 responseState 转为false
+			chatStore.updateSession(sessionId, () => {
+				session.responseStatus = false;
+			});
+		}
+		console.log("responseState2222 new", responseState);
+	}, [responseState]);
+
+	const onNextworkflow = (message: string) => {
+		// 点击后将该条 message 传递到下一个 session
+		// 找到当前session 的index
+		const sessions = chatStore.sessions;
+		const index = sessions.findIndex((s) => s.id === sessionId);
+		// 找到下一个 是 workflow 的session 的index
+		const nextSession = sessions.find(
+			(s, i) => i > index && s.isworkflow === true,
+		);
+
+		console.log(
+			"工作流, 当前session: ",
+			session,
+			"下一个session: ",
+			nextSession,
+		);
+
+		if (!nextSession) {
+			return;
+		}
+
+		const nextSessionId = nextSession.id;
+
+		// 获取所点击的 message
+		// console.log("nextSession", nextSession, message);
+		const recentMessages = chatStore.getMessagesWithMemory(nextSession);
+
+		chatStore
+			.onUserInput(message, undefined, nextSessionId)
+			.then(() => {
+				setIsLoading(false);
+
+				const createChatData: CreateChatData = {
+					user: userStore.user.id,
+					chat_session: session.id,
+					message: message,
+					memory: recentMessages,
+					model: session.mask.modelConfig.model,
+				};
+
+				createChat(createChatData).then((response) => {
+					console.log("createChat response:", response);
+					const data = response.data;
+
+					if (data) {
+						console.log("createChat success:", response);
+						const newSessionId = data.chat_session;
+
+						if (session.id !== newSessionId) {
+							chatStore.updateSession(sessionId, (session) => {
+								session.id = newSessionId;
+							});
+						}
+					} else {
+						if (response.code === 401) {
+							messageApi.error("登录已过期(令牌无效)，请重新登录");
+							authHook.logoutHook();
+						} else if (response.code === 4001) {
+							messageApi.error("登录已过期(令牌无效)，请重新登录");
+							authHook.logoutHook();
+						} else if (response.code === 4000) {
+							messageApi.error(
+								"当前对话出现错误, 请重新新建对话",
+								response.msg,
+							);
+						}
+					}
+				});
+			})
+			.catch((error) => {
+				setIsLoading(false);
+				console.error("chatStore.onUserInput error:", error);
+			});
+		localStorage.setItem(LAST_INPUT_KEY, userInput);
+	};
+
 	const onUserStop = (messageId: string) => {
 		ChatControllerPool.stop(session.id, messageId);
 	};
 
 	const onResend = (message: ChatMessage) => {
+		// when it is resending a message
+		// 1. for a user's message, find the next bot response
+		// 2. for a bot's message, find the last user's input
+		// 3. delete original user input and bot's message
+		// 4. resend the user's input
+
 		const resendingIndex = session.messages.findIndex(
 			(m) => m.id === message.id,
 		);
@@ -287,15 +422,15 @@ export function Chatbody() {
 
 		setIsLoading(true);
 		chatStore
-			.onUserInput(userMessage.content, userMessage.image_url)
+			.onUserInput(userMessage.content, userMessage.image_url, sessionId)
 			.then(() => setIsLoading(false));
 		inputRef.current?.focus();
 	};
 
 	const deleteMessage = (msgId?: string) => {
-		chatStore.updateCurrentSession(
-			(session) =>
-				(session.messages = session.messages.filter((m) => m.id !== msgId)),
+		chatStore.updateSession(
+			sessionId,
+			() => (session.messages = session.messages.filter((m) => m.id !== msgId)),
 		);
 	};
 
@@ -304,7 +439,7 @@ export function Chatbody() {
 	};
 
 	const onPinMessage = (message: ChatMessage) => {
-		chatStore.updateCurrentSession((session) =>
+		chatStore.updateSession(sessionId, () =>
 			session.mask.context.push(message),
 		);
 
@@ -337,6 +472,7 @@ export function Chatbody() {
 				setAutoScroll(false);
 			}}
 		>
+			{contextHolder}
 			{messages.map((message, i) => {
 				const isUser = message.role === "user";
 
@@ -368,7 +504,7 @@ export function Chatbody() {
 														message.content,
 														10,
 													);
-													chatStore.updateCurrentSession((session) => {
+													chatStore.updateSession(sessionId, () => {
 														const m = session.mask.context
 															.concat(session.messages)
 															.find((m) => m.id === message.id);
@@ -380,23 +516,7 @@ export function Chatbody() {
 											></IconButton>
 										</div>
 										{isUser ? (
-											userStore.user.avatar ? ( // show user avatar
-												<>
-													<UserAvatar
-														size="large"
-														src={userStore.user.avatar}
-													/>
-												</>
-											) : (
-												<UserAvatar
-													style={{
-														backgroundColor: "rgb(91, 105, 230)",
-													}}
-													size="large"
-												>
-													{userStore.user.nickname}{" "}
-												</UserAvatar>
-											)
+											renderedUserAvatar
 										) : (
 											<MaskAvatar mask={session.mask} />
 										)}
@@ -418,13 +538,11 @@ export function Chatbody() {
 															icon={<ResetIcon />}
 															onClick={() => onResend(message)}
 														/>
-
 														<ChatAction
 															text={Locale.Chat.Actions.Delete}
 															icon={<DeleteIcon />}
 															onClick={() => onDelete(message.id ?? i)}
 														/>
-
 														<ChatAction
 															text={Locale.Chat.Actions.Pin}
 															icon={<PinIcon />}
@@ -435,6 +553,14 @@ export function Chatbody() {
 															icon={<CopyIcon />}
 															onClick={() => copyToClipboard(message.content)}
 														/>
+														{/* next icon */}
+														{isworkflow && (
+															<ChatAction
+																text={Locale.Chat.Actions.Next}
+																icon={<NextIcon />}
+																onClick={() => onNextworkflow(message.content)}
+															/>
+														)}
 													</>
 												)}
 											</div>

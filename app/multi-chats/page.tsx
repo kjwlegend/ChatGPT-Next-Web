@@ -6,6 +6,7 @@ import React, {
 	useMemo,
 	useCallback,
 	Fragment,
+	use,
 } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import dynamic from "next/dynamic";
@@ -88,89 +89,11 @@ import { ChatContext } from "../chats/chat/main";
 import { ChatItemShort } from "../chats/chat-list";
 
 import { Chatbody } from "./Chatbody";
+import { _Chat } from "../chats/chat/main";
 
 import Image from "next/image";
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
-
-function _Chat(props: { _session: ChatSession; index: number }) {
-	const { _session, index } = props;
-	const sessionId = _session.id;
-
-	const chatStore = useChatStore();
-	const session = _session;
-
-	const [hitBottom, setHitBottom] = useState(true);
-	const [showPromptModal, setShowPromptModal] = useState(false);
-	const [userInput, setUserInput] = useState("");
-	const [autoScroll, setAutoScroll] = useState(true);
-	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
-	const [userImage, setUserImage] = useState<any>();
-
-	const config = useAppConfig();
-	const scrollRef = useRef<HTMLDivElement>(null);
-	const inputRef = useRef<HTMLTextAreaElement>(null);
-
-	const isMobileScreen = useMobileScreen();
-
-	useEffect(() => {
-		chatStore.updateSession(sessionId, (session) => {
-			const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
-			session.messages.forEach((m) => {
-				// check if should stop all stale messages
-				if (m.isError || new Date(m.date).getTime() < stopTiming) {
-					if (m.streaming) {
-						m.streaming = false;
-					}
-
-					if (m.content.length === 0) {
-						m.isError = true;
-						m.content = prettyObject({
-							error: true,
-							message: "empty response",
-						});
-					}
-				}
-			});
-			// auto sync mask config from global config
-			if (session.mask.syncGlobalConfig) {
-				console.log("[Mask] syncing from global, name = ", session.mask.name);
-				session.mask.modelConfig = { ...config.modelConfig };
-			}
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const clientConfig = useMemo(() => getClientConfig(), []);
-
-	return (
-		<>
-			<div className={styles.chat} key={session.id}>
-				<ChatContext.Provider
-					value={{
-						hitBottom,
-						setHitBottom,
-						autoScroll,
-						setAutoScroll,
-						showPromptModal,
-						setShowPromptModal,
-						userInput,
-						setUserInput,
-						scrollRef,
-						enableAutoFlow,
-						setEnableAutoFlow,
-						userImage,
-						setUserImage,
-					}}
-				>
-					<WindowHeader session={_session} index={index} isworkflow={true} />
-					<Chatbody session={_session} index={index} />
-					<Inputpanel session={_session} index={index} />
-				</ChatContext.Provider>
-			</div>
-		</>
-	);
-}
 
 const useHasHydrated = (): boolean => {
 	const [hasHydrated, setHasHydrated] = useState<boolean>(false);
@@ -186,15 +109,12 @@ const GenerateMenuItems = () => {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
 	const maskStore = useMaskStore().getAll();
-	const {
-		sessions,
-		selectedIndex,
-		setSessions,
-		moveSession,
-		selectSession,
-		sessionClickHandler,
-		sessionDeleteHandler,
-	} = useWorkflowStore();
+
+	const _isworkflow = true;
+
+	function setworkflow(_session: ChatSession) {
+		chatStore.setworkflow(_session, _isworkflow);
+	}
 
 	const allSessions = chatStore.sessions;
 
@@ -202,18 +122,16 @@ const GenerateMenuItems = () => {
 		key: item.id,
 		label: item.topic,
 		onClick: () => {
-			// 将allsessions中的session, 被点击的那一个复制到sessions中
-			// 判断是否已经添加了相同 key 的 session
-			const isSessionExist = sessions.some((session) => session.id === item.id);
-			if (!isSessionExist) {
-				setSessions(item);
-			}
+			setworkflow(item);
 		},
 	}));
 
 	const handleMaskClick = (mask: any) => {
-		const newsession: ChatSession = chatStore.newSession(mask, userStore);
-		setSessions(newsession);
+		const newsession: ChatSession = chatStore.newSession(
+			mask,
+			userStore,
+			_isworkflow,
+		);
 	};
 
 	const maskItems = Object.values(maskStore).reduce(
@@ -278,15 +196,10 @@ import {
 import { useWorkflowStore } from "../store/workflow";
 
 function SessionList() {
-	const {
-		sessions,
-		selectedIndex,
-		setSessions,
-		moveSession,
-		selectSession,
-		sessionClickHandler,
-		sessionDeleteHandler,
-	} = useWorkflowStore();
+	const [selectIndex, setSelectIndex] = useState(0);
+	const { moveSession, setworkflow } = useChatStore();
+	const chatStore = useChatStore();
+	const sessions = chatStore.sessions.filter((session) => session.isworkflow);
 
 	const items: MenuProps["items"] = GenerateMenuItems();
 
@@ -302,7 +215,6 @@ function SessionList() {
 		) {
 			return;
 		}
-
 		moveSession(source.index, destination.index);
 	};
 
@@ -325,13 +237,13 @@ function SessionList() {
 										key={item.id}
 										id={item.id}
 										index={i}
-										selected={i === selectedIndex}
+										selected={i === selectIndex}
 										onClick={() => {
-											sessionClickHandler(i);
+											setSelectIndex(i);
+											console.log("setSelectIndex", i);
 										}}
 										onDelete={async () => {
-											sessionDeleteHandler(i);
-											// chatStore.deleteSession(i, userStore);
+											setworkflow(item, false);
 										}}
 										mask={item.mask}
 									/>
@@ -363,8 +275,8 @@ function SessionList() {
 }
 
 export default function Chat() {
-	const workflowStore = useWorkflowStore();
-	const sessions = workflowStore.sessions;
+	const chatStore = useChatStore();
+	const sessions = chatStore.sessions.filter((session) => session.isworkflow);
 
 	const items: MenuProps["items"] = GenerateMenuItems();
 
@@ -383,7 +295,12 @@ export default function Chat() {
 			<div className={styles["chats-container"]}>
 				{sessions.length !== 0 ? (
 					sessions.map((session, index) => (
-						<_Chat key={index} _session={session} index={index} />
+						<_Chat
+							key={index}
+							_session={session}
+							index={index}
+							isworkflow={true}
+						/>
 					))
 				) : (
 					<div className={styles["welcome-container"]}>

@@ -55,7 +55,7 @@ export const createEmptyMask = () =>
 		usePlugins: /^gpt(?!.*03\d{2}$).*$/.test(
 			useAppConfig.getState().modelConfig.model,
 		),
-		plugins: [],
+		plugins: ["web-search"],
 	}) as Mask;
 
 export const useMaskStore = createPersistStore(

@@ -28,6 +28,7 @@ export interface ChatToolMessage {
 	toolInput?: string;
 }
 import { createPersistStore } from "../utils/store";
+import { Session } from "inspector";
 
 export type ChatMessage = RequestMessage & {
 	date: string;
@@ -59,16 +60,15 @@ export interface ChatStat {
 export interface ChatSession {
 	id: string;
 	topic: string;
-
 	memoryPrompt: string;
 	messages: ChatMessage[];
 	stat: ChatStat;
 	lastUpdate: number;
 	lastSummarizeIndex: number;
 	clearContextIndex?: number;
-
 	mask: Mask;
 	responseStatus?: boolean;
+	isworkflow?: boolean;
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
@@ -90,8 +90,8 @@ function createEmptySession(): ChatSession {
 		},
 		lastUpdate: Date.now(),
 		lastSummarizeIndex: 0,
-
 		mask: createEmptyMask(),
+		isworkflow: false,
 	};
 }
 
@@ -216,7 +216,7 @@ export const useChatStore = createPersistStore(
 				});
 			},
 
-			newSession(mask?: Mask, userStore?: UserStore) {
+			newSession(mask?: Mask, userStore?: UserStore, isworkflow?: boolean) {
 				const config = useAppConfig.getState();
 				const session = createEmptySession();
 
@@ -250,6 +250,9 @@ export const useChatStore = createPersistStore(
 						};
 						session.topic = defaultMask.name;
 					}
+				}
+				if (isworkflow) {
+					session.isworkflow = true;
 				}
 
 				if (userStore) {
@@ -872,6 +875,18 @@ export const useChatStore = createPersistStore(
 				}
 			},
 
+			setworkflow(_session: ChatSession, isworkflow: boolean) {
+				const sessionId = _session.id;
+				set((state) => ({
+					sessions: state.sessions.map((session) => {
+						if (session.id === sessionId) {
+							session.isworkflow = isworkflow;
+						}
+						return session;
+					}),
+				}));
+			},
+
 			clearAllData() {
 				localStorage.clear();
 				location.reload();
@@ -882,7 +897,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.1,
+		version: 3.2,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(
@@ -926,6 +941,13 @@ export const useChatStore = createPersistStore(
 						s.mask.modelConfig.enableInjectSystemPrompts =
 							config.modelConfig.enableInjectSystemPrompts;
 					}
+				});
+			}
+
+			//  add isworkflow attribute to old sessions
+			if (version < 3.2) {
+				newState.sessions.forEach((s) => {
+					s.isworkflow = false;
 				});
 			}
 

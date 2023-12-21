@@ -127,8 +127,11 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 	// 通过sessionID 去allSessions中找到对应的session
 
 	const session = allSessions.find((s) => s.id === sessionId)!;
-	// const session = props.session;
-	// console.log("session", session);
+
+	// if (!session) {
+	// 	console.log("session is null");
+	// 	return null;
+	// }
 
 	const context: RenderMessage[] = useMemo(() => {
 		return session.mask.hideContext ? [] : session.mask.context.slice();
@@ -214,10 +217,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 			console.log("responseState new", responseState);
 		}
 	}, [responseState]);
-	if (!session) {
-		console.error("[Chat] failed to find session", sessionId);
-		return <div>会话读取失败, 请删除当前会话或尝试重新添加</div>;
-	}
+
 	if (
 		context.length === 0 &&
 		session.messages.at(0)?.content !== BOT_HELLO.content
