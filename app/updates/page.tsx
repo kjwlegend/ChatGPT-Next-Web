@@ -399,6 +399,12 @@ const items = [
 		color: "blue",
 		className: "fade-in-element",
 	},
+	{
+		label: "2023-12-21",
+		children: " 发布 v1.4.1 版本: 工作流模块代码重构, 精简代码结构, bug 修复",
+		color: "blue",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
