@@ -108,30 +108,11 @@ export const DEFAULT_MODELS = [
 		displayName: "小光Pro-(5次/消息)",
 		available: true,
 	},
-
-	// {
-	//   name: "gpt-4-0613",
-	//   displayName: "小光-4.0-0613",
-
-	//   available: false,
-	// },
-
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
 		displayName: "小光4.0-(5次/消息)",
 	},
-	{
-		name: "gpt-4-vision-preview",
-		available: true,
-		displayName: "(测试功能-暂不可用)",
-	},
-	// {
-	// 	name: "gpt-3.5-turbo",
-	// 	displayName: "小光-3.5",
-	// 	available: true,
-	// },
-
 	{
 		name: "gpt-3.5-turbo-1106",
 		displayName: "小光AI(1次/消息)",
@@ -139,8 +120,13 @@ export const DEFAULT_MODELS = [
 	},
 	{
 		name: "gpt-3.5-turbo-16k",
-		displayName: "小光AI-16K(1次/消息)",
+		displayName: "小光AI-旧(1次/消息)",
 		available: true,
+	},
+	{
+		name: "gpt-4-vision-preview",
+		available: true,
+		displayName: "(测试功能-暂不可用)",
 	},
 ] as const;
 

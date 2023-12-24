@@ -525,11 +525,31 @@ export const useChatStore = createPersistStore(
 				messageIndex: number,
 				session: ChatSession,
 			) {
+				const config = useAppConfig.getState();
+				const pluginConfig = config.pluginConfig;
+				const allPlugins = usePluginStore.getState().getAll();
+
 				return {
 					onUpdate: (message: string) => {
 						botMessage.streaming = true;
 						if (message) {
 							botMessage.content = message;
+						}
+						get().updateCurrentSession((session) => {
+							session.messages = session.messages.concat();
+						});
+					},
+					onToolUpdate(toolName: string, toolInput: string) {
+						botMessage.streaming = true;
+						//  根据toolName获取对应的 toolName, 并输出对应的 name
+						const tool = allPlugins.find((m) => m.toolName === toolName);
+						const name = tool?.name;
+						console.log("toolName: ", toolName, "tool: ", tool?.name);
+						if (name && toolInput) {
+							botMessage.toolMessages!.push({
+								toolName: name,
+								toolInput,
+							});
 						}
 						get().updateCurrentSession((session) => {
 							session.messages = session.messages.concat();
@@ -583,6 +603,7 @@ export const useChatStore = createPersistStore(
 					onFinish: (message: string) => void;
 					onError?: (error: Error) => void;
 					onController?: (controller: AbortController) => void;
+					onToolUpdate?: (toolName: string, toolInput: string) => void;
 				},
 				modelConfig?: ModelConfig,
 				stream?: boolean,

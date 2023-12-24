@@ -439,6 +439,23 @@ const items = [
 		color: "blue",
 		className: "fade-in-element",
 	},
+	{
+		label: "2023-12-25",
+		children: (
+			<>
+				发布 v1.5.0 版本, 小光说:
+				<div>
+					虽然提示词是解锁GPT的秘密武器,
+					可是太过于深奥所以大伙都没法获得想要的输出.
+					为了让大伙更好的体验小光AI的威力,
+					小光特地联系了小亮同学,在圣诞夜疯狂加班,
+					做出了自动生成优化提示词的功能! 为此小亮又少了13根头发{" "}
+				</div>
+			</>
+		),
+		color: "blue",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

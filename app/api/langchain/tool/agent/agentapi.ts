@@ -122,7 +122,7 @@ export class AgentApi {
 			},
 			async handleAgentAction(action) {
 				try {
-					console.log("[handleAgentAction]", action.tool);
+					// console.log("[handleAgentAction tool]", action.tool);
 					// if (!reqBody.returnIntermediateSteps) return;
 					var response = new ResponseBody();
 					response.isToolMessage = true;
@@ -133,7 +133,7 @@ export class AgentApi {
 						encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
 					);
 				} catch (ex) {
-					console.error("[handleAgentAction]", ex);
+					// console.error("[handleAgentAction error]", ex);
 					var response = new ResponseBody();
 					response.isSuccess = false;
 					response.message = (ex as Error).message;
@@ -145,7 +145,7 @@ export class AgentApi {
 				}
 			},
 			handleToolStart(tool, input) {
-				// console.log("[handleToolStart]", { tool });
+				console.log("[handleToolStart]", { tool });
 			},
 			async handleToolEnd(output, runId, parentRunId, tags) {
 				// console.log("[handleToolEnd]", { output, runId, parentRunId, tags });
@@ -315,7 +315,7 @@ export class AgentApi {
 
 				maxIterations: reqBody.maxIterations,
 				memory: memory,
-				// verbose: true,
+				verbose: true,
 			});
 
 			executor.call(

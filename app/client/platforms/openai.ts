@@ -444,6 +444,7 @@ export class ChatGPTApi implements LLMApi {
 								responseText += response.message;
 								options.onUpdate?.(responseText, response.message);
 							} else {
+								console.log("tool name", response);
 								options.onToolUpdate?.(response.toolName!, response.message);
 							}
 						} catch (e) {
@@ -467,6 +468,7 @@ export class ChatGPTApi implements LLMApi {
 				clearTimeout(requestTimeoutId);
 
 				const resJson = await res.json();
+				console.log("resJson", resJson);
 				const message = this.extractMessage(resJson);
 				options.onFinish(message);
 			}
