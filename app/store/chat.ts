@@ -463,6 +463,7 @@ export const useChatStore = createPersistStore(
 					model: modelConfig.model,
 					toolMessages: [],
 				});
+				console.log("[botMessage] ", botMessage);
 
 				// get recent messages
 				const recentMessages = get().getMessagesWithMemory(session);

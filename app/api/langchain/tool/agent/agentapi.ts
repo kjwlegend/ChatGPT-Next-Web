@@ -315,7 +315,7 @@ export class AgentApi {
 
 				maxIterations: reqBody.maxIterations,
 				memory: memory,
-				verbose: true,
+				// verbose: true,
 			});
 
 			executor.call(
