@@ -79,7 +79,7 @@ const cn = {
 		Send: "发送",
 		Config: {
 			Reset: "清除记忆",
-			SaveAs: "存为面具",
+			SaveAs: "存为助手",
 		},
 		IsContext: "预设提示词",
 	},
@@ -366,7 +366,7 @@ const cn = {
 		},
 	},
 	Store: {
-		DefaultTopic: "新的聊天",
+		DefaultTopic: "小光(通用)",
 		BotHello:
 			"你好!我是小光, 我是你的超级助手, 我能解决您绝大多数的问题, 但如果碰到专业性或特殊任务需求, 可以去[角色](/#/new-chat)页面挑选专业伙伴获得更好质量回答, 也可以去角色页面问问我的其他伙伴",
 		Error: "出错了，稍后重试吧",

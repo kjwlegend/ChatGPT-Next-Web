@@ -310,8 +310,8 @@ export class AgentApi {
 			);
 			const executor = await initializeAgentExecutorWithOptions(tools, llm, {
 				agentType: "openai-functions",
-				returnIntermediateSteps: reqBody.returnIntermediateSteps,
-				// returnIntermediateSteps: true,
+				// returnIntermediateSteps: reqBody.returnIntermediateSteps,
+				returnIntermediateSteps: true,
 
 				maxIterations: reqBody.maxIterations,
 				memory: memory,

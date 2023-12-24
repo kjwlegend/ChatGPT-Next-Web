@@ -200,11 +200,13 @@ function SessionList() {
 	const { moveSession, setworkflow } = useChatStore();
 	const chatStore = useChatStore();
 	const sessions = chatStore.sessions.filter((session) => session.isworkflow);
+	// console.log("sessions", sessions);
 
 	const items: MenuProps["items"] = GenerateMenuItems();
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
+		console.log("destination", destination, "source", source);
 		if (!destination) {
 			return;
 		}
@@ -215,7 +217,8 @@ function SessionList() {
 		) {
 			return;
 		}
-		moveSession(source.index, destination.index);
+		moveSession(source.index, destination.index, sessions);
+		setSelectIndex(destination.index);
 	};
 
 	return (

@@ -13,6 +13,9 @@ import EyeIcon from "../icons/eye.svg";
 import CopyIcon from "../icons/copy.svg";
 import DragIcon from "../icons/drag.svg";
 
+import { Button } from "antd";
+import { genPrompt } from "../chains/promptgen";
+
 import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "../store/mask";
 import {
 	ChatMessage,
@@ -280,6 +283,7 @@ function ContextPromptItem(props: {
 	remove: () => void;
 }) {
 	const [focusingInput, setFocusingInput] = useState(false);
+	const [loadings, setLoadings] = useState<boolean[]>([]);
 
 	const onChange = (e: RadioChangeEvent) => {
 		// update role
@@ -288,6 +292,39 @@ function ContextPromptItem(props: {
 			role: e.target.value as any,
 		});
 		console.log(`Roles checked:${e.target.value}`);
+	};
+
+	const enterLoading = (index: number) => {
+		setLoadings((prevLoadings) => {
+			const newLoadings = [...prevLoadings];
+			newLoadings[index] = true;
+			return newLoadings;
+		});
+	};
+
+	// 重命名函数以避免冲突，并处理异步逻辑
+	const handleGenPrompt = () => {
+		// 获取当前textArea的值
+		const currentContent = props.prompt.content;
+
+		setLoadings((prevLoadings) => {
+			const newLoadings = [...prevLoadings];
+			newLoadings[0] = true;
+			return newLoadings;
+		});
+
+		genPrompt(currentContent).then((newPrompt) => {
+			props.update({
+				...props.prompt,
+				content: newPrompt,
+			});
+
+			setLoadings((prevLoadings) => {
+				const newLoadings = [...prevLoadings];
+				newLoadings[0] = false;
+				return newLoadings;
+			});
+		});
 	};
 
 	return (
@@ -305,6 +342,16 @@ function ContextPromptItem(props: {
 						))}
 					</Radio.Group>
 				</div>
+				<Button
+					type="primary"
+					onClick={() => {
+						handleGenPrompt();
+					}}
+					loading={loadings[0]}
+					size="middle"
+				>
+					优化提示词
+				</Button>
 
 				<IconButton
 					icon={
@@ -321,6 +368,7 @@ function ContextPromptItem(props: {
 					<TextArea
 						value={props.prompt.content}
 						className={chatStyle["context-content"]}
+						placeholder="请添加提示词, 如不会撰写, 也输入大致需求和主题后, 再点击生成提示词"
 						showCount
 						onFocus={() => setFocusingInput(true)}
 						onBlur={() => {

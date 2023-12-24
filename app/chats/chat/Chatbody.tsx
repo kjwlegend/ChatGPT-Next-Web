@@ -283,7 +283,7 @@ export function Chatbody(props: {
 	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
 		const lastMessage = session.messages.at(-1)?.content ?? "";
-		console.log("responseState old", responseState);
+		// console.log("responseState old", responseState);
 		// console.log("lastMessage", lastMessage);
 		if (responseState && enableAutoFlow) {
 			onNextworkflow(lastMessage);
@@ -292,7 +292,7 @@ export function Chatbody(props: {
 				session.responseStatus = false;
 			});
 		}
-		console.log("responseState2222 new", responseState);
+		// console.log("responseState2222 new", responseState);
 	}, [responseState]);
 
 	const onNextworkflow = (message: string) => {
@@ -632,7 +632,9 @@ export function Chatbody(props: {
 								</div>
 							</div>
 						</div>
-						{shouldShowClearContextDivider && <ClearContextDivider />}
+						{shouldShowClearContextDivider && (
+							<ClearContextDivider sessionId={sessionId} />
+						)}
 					</Fragment>
 				);
 			})}

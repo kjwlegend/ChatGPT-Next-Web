@@ -388,14 +388,8 @@ const items = [
 	},
 	{
 		label: "2023-12-16",
-		children: " 发布 v1.3.3 版本: 优化了对话配置流程和界面",
-		color: "blue",
-		className: "fade-in-element",
-	},
-	{
-		label: "2023-12-21",
 		children:
-			" 发布 v1.4 版本: 代码结构重构, gpt4v 模型优化中, 图片上传功能优化中, 重新设计首页PC端和手机端视觉",
+			" 发布 v1.3.3 版本: 优化了对话配置流程和界面, 增加进阶周报生成器助手",
 		color: "blue",
 		className: "fade-in-element",
 	},
@@ -403,14 +397,42 @@ const items = [
 		label: "2023-12-21",
 		children: (
 			<>
+				发布 v1.4 版本:
+				<ul>
+					<li>
+						代码结构重构, gpt4v 模型优化中, 图片上传功能优化中,
+						重新设计首页PC端和手机端视觉
+					</li>
+					<li> 新增角色: Typescript, Django, Vue 代码重构优化助手</li>
+				</ul>
+			</>
+		),
+
+		color: "blue",
+		className: "fade-in-element",
+	},
+	{
+		label: "2023-12-22",
+		children: (
+			<>
 				发布 v1.4.1 版本:
 				<ul>
-					<li>工作流模块代码重构, 精简代码结构, bug 修复"</li>
+					<li>工作流模块代码重构, 精简代码结构, bug 修复</li>
 					<li> 新增角色: BRD 产品经理</li>
-					<li>网页浏览: 支持不带有反爬虫的网页内容浏览并总结</li>
-					<li>计算器插件: 支持简单的数学运算</li>
-					<li>增加会员系统, 以上功能目前仍然免费测试</li>
-					<li>优化了小光接口响应速度</li>
+				</ul>
+			</>
+		),
+		color: "blue",
+		className: "fade-in-element",
+	},
+	{
+		label: "2023-12-23",
+		children: (
+			<>
+				发布 v1.4.2 版本:
+				<ul>
+					<li>bug 修复: 修复了工作流任务排序的问题</li>
+					<li>优化: 调整了工作流输入框图标的动效</li>
 				</ul>
 			</>
 		),

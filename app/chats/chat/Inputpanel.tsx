@@ -194,6 +194,7 @@ export function ChatAction(props: {
 	onClick: () => void;
 	type?: "default" | "dropdown";
 	dropdownItems?: MenuProps;
+	hidetext?: boolean | undefined;
 }) {
 	const iconRef = useRef<HTMLDivElement>(null);
 	const textRef = useRef<HTMLDivElement>(null);
@@ -245,12 +246,14 @@ export function ChatAction(props: {
 					className={`${styles["chat-input-action"]} clickable`}
 					onClick={props.onClick}
 					style={
-						isMobileScreen
+						isMobileScreen || props.hidetext
 							? ({
 									"--icon-width": `${width.icon}px`,
 									"--full-width": `${width.full}px`,
 							  } as React.CSSProperties)
-							: ({ width: "auto" } as React.CSSProperties)
+							: ({
+									width: "auto",
+							  } as React.CSSProperties)
 					}
 				>
 					{actionContent}
@@ -267,15 +270,21 @@ export function ChatAction(props: {
 						setTimeout(updateWidth, 1);
 					}
 				}}
-				onMouseEnter={isMobileScreen ? updateWidth : undefined}
-				onTouchStart={isMobileScreen ? updateWidth : undefined}
+				onMouseEnter={
+					props.hidetext && isMobileScreen ? updateWidth : undefined
+				}
+				onTouchStart={
+					props.hidetext && isMobileScreen ? updateWidth : undefined
+				}
 				style={
-					isMobileScreen
+					isMobileScreen || props.hidetext
 						? ({
 								"--icon-width": `${width.icon}px`,
 								"--full-width": `${width.full}px`,
 						  } as React.CSSProperties)
-						: ({ width: "auto" } as React.CSSProperties)
+						: ({
+								width: "auto",
+						  } as React.CSSProperties)
 				}
 			>
 				{actionContent}
@@ -292,6 +301,7 @@ export function ChatActions(props: {
 	hitBottom: boolean;
 	session?: ChatSession;
 	index?: number;
+	workflows?: boolean;
 }) {
 	const config = useAppConfig();
 	const chatStore = useChatStore();
@@ -429,6 +439,7 @@ export function ChatActions(props: {
 						onClick={stopAll}
 						text={Locale.Chat.InputActions.Stop}
 						icon={<StopIcon />}
+						hidetext={props.workflows ? true : false}
 					/>
 				)}
 				{!props.hitBottom && (
@@ -436,6 +447,7 @@ export function ChatActions(props: {
 						onClick={props.scrollToBottom}
 						text={Locale.Chat.InputActions.ToBottom}
 						icon={<BottomIcon />}
+						hidetext={props.workflows ? true : false}
 					/>
 				)}
 				{props.hitBottom && (
@@ -443,6 +455,7 @@ export function ChatActions(props: {
 						onClick={props.showPromptModal}
 						text={Locale.Chat.InputActions.Settings}
 						icon={<SettingTwoTone style={{ fontSize: "15px" }} />}
+						hidetext={props.workflows ? true : false}
 					/>
 				)}
 
@@ -472,6 +485,7 @@ export function ChatActions(props: {
 					onClick={() => setShowModelSelector(true)}
 					text={currentModel}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
+					hidetext={props.workflows ? true : false}
 				/>
 
 				{config.pluginConfig.enable &&
@@ -500,6 +514,7 @@ export function ChatActions(props: {
 							}
 							type="dropdown"
 							dropdownItems={{ items }}
+							hidetext={props.workflows ? true : false}
 						/>
 					)}
 				{currentModel == "gpt-4-vision-preview" && (
@@ -517,6 +532,7 @@ export function ChatActions(props: {
 								ref={fileInputRef}
 							/>
 						}
+						hidetext={props.workflows ? true : false}
 					/>
 				)}
 				{showModelSelector && (
@@ -562,6 +578,7 @@ export function ChatActions(props: {
 							);
 						});
 					}}
+					hidetext={props.workflows ? true : false}
 				/>
 			</div>
 			<div>
@@ -890,6 +907,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 				}}
 				session={session}
 				index={props.index}
+				workflows={props.session?.isworkflow}
 			/>
 			<div className={styles["chat-input-panel-inner"]}>
 				<textarea

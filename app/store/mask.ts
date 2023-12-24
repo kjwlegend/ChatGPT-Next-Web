@@ -12,6 +12,7 @@ export type Mask = {
 	createdAt: number;
 	author?: string;
 	type?: string;
+	topic?: string;
 	avatar: string;
 	name: string;
 	category: string;
@@ -43,6 +44,7 @@ export const createEmptyMask = () =>
 		id: nanoid(),
 		avatar: DEFAULT_MASK_AVATAR,
 		category: "default",
+		topic: "",
 		featureMask: false,
 		name: DEFAULT_TOPIC,
 		intro: "",

@@ -30,6 +30,8 @@ export interface ChatToolMessage {
 import { createPersistStore } from "../utils/store";
 import { Session } from "inspector";
 
+import { summarizeTitle, summarizeSession } from "../chains/summarize";
+
 export type ChatMessage = RequestMessage & {
 	date: string;
 	toolMessages?: ChatToolMessage[];
@@ -191,28 +193,45 @@ export const useChatStore = createPersistStore(
 				});
 			},
 
-			moveSession(from: number, to: number) {
+			moveSession(from: number, to: number, _sessions?: any) {
 				set((state) => {
 					const { sessions, currentSessionIndex: oldIndex } = state;
 
-					// move the session
-					const newSessions = [...sessions];
-					const session = newSessions[from];
-					newSessions.splice(from, 1);
-					newSessions.splice(to, 0, session);
+					if (_sessions) {
+						// console.log("sessions: ", sessions);
+						const newSessions = [..._sessions];
+						const oldSessions = sessions.filter(
+							(session) => !newSessions.includes(session),
+						);
+						const session = newSessions[from];
+						newSessions.splice(from, 1);
+						newSessions.splice(to, 0, session);
+						// 传入sessions 时, 将新的sessions 和原本的state.sessions 进行合并
+						const mergedSessions = [...oldSessions, ...newSessions];
 
-					// modify current session id
-					let newIndex = oldIndex === from ? to : oldIndex;
-					if (oldIndex > from && oldIndex <= to) {
-						newIndex -= 1;
-					} else if (oldIndex < from && oldIndex >= to) {
-						newIndex += 1;
+						return {
+							sessions: mergedSessions,
+						};
+					} else {
+						// move the session
+						const newSessions = [...sessions];
+						const session = newSessions[from];
+						newSessions.splice(from, 1);
+						newSessions.splice(to, 0, session);
+
+						// modify current session id
+						let newIndex = oldIndex === from ? to : oldIndex;
+						if (oldIndex > from && oldIndex <= to) {
+							newIndex -= 1;
+						} else if (oldIndex < from && oldIndex >= to) {
+							newIndex += 1;
+						}
+
+						return {
+							currentSessionIndex: newIndex,
+							sessions: newSessions,
+						};
 					}
-
-					return {
-						currentSessionIndex: newIndex,
-						sessions: newSessions,
-					};
 				});
 			},
 
@@ -378,6 +397,16 @@ export const useChatStore = createPersistStore(
 
 				return session;
 			},
+			getSession(_session?: ChatSession) {
+				let session: ChatSession;
+				// 定义一个session
+				if (_session) {
+					session = _session;
+				} else {
+					session = get().currentSession();
+				}
+				return session;
+			},
 
 			onNewMessage(message: ChatMessage) {
 				get().updateCurrentSession((session) => {
@@ -385,7 +414,7 @@ export const useChatStore = createPersistStore(
 					session.lastUpdate = Date.now();
 				});
 				get().updateStat(message);
-				get().summarizeSession();
+				summarizeSession();
 			},
 
 			async onUserInput(
@@ -407,7 +436,7 @@ export const useChatStore = createPersistStore(
 					}
 					session = sessions[index];
 					// console.log("[User Input] session: ", index, session);
-					this.updateSession(sessionId, (sessionToUpdate: ChatSession) => {
+					get().updateSession(sessionId, (sessionToUpdate: ChatSession) => {
 						sessionToUpdate.responseStatus = false;
 					});
 				} else {
@@ -474,149 +503,135 @@ export const useChatStore = createPersistStore(
 						]);
 					});
 				}
-				// 检查当前插件开启状态
-				console.log(
-					"config enable",
-					config.pluginConfig.enable,
-					"\n session",
-					session.mask.usePlugins,
-					"\n AllPlugin",
-					allPlugins.length,
-					allPlugins,
+
+				get().sendChatMessage(
+					// 调用发送消息函数
+					session,
+					sendMessages,
+					get().handleChatCallbacks(
+						botMessage,
+						userMessage,
+						messageIndex,
+						session,
+					),
 				);
-				if (
-					config.pluginConfig.enable &&
+			},
+
+			// 先定义一个处理回调的函数，以便重用
+			handleChatCallbacks(
+				botMessage: ChatMessage,
+				userMessage: ChatMessage,
+				messageIndex: number,
+				session: ChatSession,
+			) {
+				return {
+					onUpdate: (message: string) => {
+						botMessage.streaming = true;
+						if (message) {
+							botMessage.content = message;
+						}
+						get().updateCurrentSession((session) => {
+							session.messages = session.messages.concat();
+						});
+					},
+					onFinish: (message: string) => {
+						botMessage.streaming = false;
+						if (message) {
+							botMessage.content = message;
+							get().onNewMessage(botMessage);
+							session.responseStatus = true;
+						}
+						ChatControllerPool.remove(session.id, botMessage.id);
+					},
+					onError: (error: Error) => {
+						const isAborted = error.message.includes("aborted");
+						botMessage.content +=
+							"\n\n" +
+							prettyObject({
+								error: true,
+								message: error.message,
+							});
+						botMessage.streaming = false;
+						userMessage.isError = !isAborted;
+						botMessage.isError = !isAborted;
+						get().updateCurrentSession((session) => {
+							session.messages = session.messages.concat();
+						});
+						ChatControllerPool.remove(
+							session.id,
+							botMessage.id ?? messageIndex,
+						);
+						console.error("[Chat] failed ", error);
+					},
+					onController: (controller: AbortController) => {
+						ChatControllerPool.addController(
+							session.id,
+							botMessage.id ?? messageIndex,
+							controller,
+						);
+					},
+				};
+			},
+
+			// 然后创建一个统一的发送消息函数
+			sendChatMessage(
+				session: ChatSession,
+				sendMessages: ChatMessage[] | RequestMessage[],
+				callbacks: {
+					onUpdate?: (message: string) => void;
+					onFinish: (message: string) => void;
+					onError?: (error: Error) => void;
+					onController?: (controller: AbortController) => void;
+				},
+				modelConfig?: ModelConfig,
+				stream?: boolean,
+			) {
+				const config = useAppConfig.getState();
+				const pluginConfig = config.pluginConfig;
+				const allPlugins = usePluginStore.getState().getAll();
+
+				if (!modelConfig) {
+					modelConfig = session.mask.modelConfig;
+				}
+
+				const chatOptions = {
+					messages: sendMessages,
+					config: { ...modelConfig, stream: stream ?? true },
+					...callbacks,
+				};
+
+				console.log("chatoptions", chatOptions);
+
+				// 根据是否启用插件使用不同的API
+				const useToolAgent =
+					pluginConfig.enable &&
 					session.mask.usePlugins &&
 					allPlugins.length > 0 &&
-					modelConfig.model != "gpt-4-vision-preview"
-				) {
+					session.mask.modelConfig.model !== "gpt-4-vision-preview";
+
+				// 检查当前插件开启状态
+				// console.log(
+				// 	"config enable",
+				// 	config.pluginConfig.enable,
+				// 	"\n session",
+				// 	session.mask.usePlugins,
+				// 	"\n AllPlugin",
+				// 	allPlugins.length,
+				// 	allPlugins,
+				// );
+
+				if (useToolAgent) {
 					console.log("[ToolAgent] start");
 					const pluginToolNames = session.mask.plugins;
 					api.llm.toolAgentChat({
-						messages: sendMessages,
-						config: { ...modelConfig, stream: true },
+						...chatOptions,
 						agentConfig: {
 							...pluginConfig,
 							useTools: pluginToolNames,
 						},
-						onUpdate(message) {
-							botMessage.streaming = true;
-							if (message) {
-								botMessage.content = message;
-							}
-							get().updateCurrentSession((session) => {
-								session.messages = session.messages.concat();
-							});
-						},
-						onToolUpdate(toolName, toolInput) {
-							botMessage.streaming = true;
-							//  根据toolName获取对应的 toolName, 并输出对应的 name
-							const tool = allPlugins.find((m) => m.toolName === toolName);
-							const name = tool?.name;
-							console.log("toolName: ", toolName, "tool: ", tool?.name);
-							if (name && toolInput) {
-								botMessage.toolMessages!.push({
-									toolName: name,
-									toolInput,
-								});
-							}
-							get().updateCurrentSession((session) => {
-								session.messages = session.messages.concat();
-							});
-						},
-						onFinish(message) {
-							botMessage.streaming = false;
-							if (message) {
-								botMessage.content = message;
-								responseStatus = session.responseStatus = true;
-								get().onNewMessage(botMessage);
-							}
-							ChatControllerPool.remove(session.id, botMessage.id);
-						},
-						onError(error) {
-							const isAborted = error.message.includes("aborted");
-							botMessage.content +=
-								"\n\n" +
-								prettyObject({
-									error: true,
-									message: error.message,
-								});
-							botMessage.streaming = false;
-							userMessage.isError = !isAborted;
-							botMessage.isError = !isAborted;
-							get().updateCurrentSession((session) => {
-								session.messages = session.messages.concat();
-							});
-							ChatControllerPool.remove(
-								session.id,
-								botMessage.id ?? messageIndex,
-							);
-
-							console.error("[Chat] failed ", error);
-						},
-						onController(controller) {
-							// collect controller for stop/retry
-							ChatControllerPool.addController(
-								session.id,
-								botMessage.id ?? messageIndex,
-								controller,
-							);
-						},
 					});
 				} else {
-					// make request
-					api.llm.chat({
-						messages: sendMessages,
-						config: { ...modelConfig, stream: true },
-						onUpdate(message) {
-							botMessage.streaming = true;
-							if (message) {
-								botMessage.content = message;
-							}
-							get().updateCurrentSession((session) => {
-								session.messages = session.messages.concat();
-							});
-						},
-						onFinish(message) {
-							botMessage.streaming = false;
-							if (message) {
-								botMessage.content = message;
-								get().onNewMessage(botMessage);
-								responseStatus = session.responseStatus = true;
-								console.log("responseStatus: ", responseStatus, session);
-							}
-							ChatControllerPool.remove(session.id, botMessage.id);
-						},
-						onError(error) {
-							const isAborted = error.message.includes("aborted");
-							botMessage.content +=
-								"\n\n" +
-								prettyObject({
-									error: true,
-									message: error.message,
-								});
-							botMessage.streaming = false;
-							userMessage.isError = !isAborted;
-							botMessage.isError = !isAborted;
-							get().updateCurrentSession((session) => {
-								session.messages = session.messages.concat();
-							});
-							ChatControllerPool.remove(
-								session.id,
-								botMessage.id ?? messageIndex,
-							);
-
-							console.error("[Chat] failed ", error);
-						},
-						onController(controller) {
-							// collect controller for stop/retry
-							ChatControllerPool.addController(
-								session.id,
-								botMessage.id ?? messageIndex,
-								controller,
-							);
-						},
-					});
+					api.llm.chat(chatOptions);
 				}
 			},
 
@@ -634,13 +649,8 @@ export const useChatStore = createPersistStore(
 			},
 
 			getMessagesWithMemory(_session?: ChatSession) {
-				let session: ChatSession;
 				// 定义一个session
-				if (_session) {
-					session = _session;
-				} else {
-					session = get().currentSession();
-				}
+				const session = get().getSession(_session);
 
 				const modelConfig = session.mask.modelConfig;
 				const clearContextIndex = session.clearContextIndex ?? 0;
@@ -742,106 +752,6 @@ export const useChatStore = createPersistStore(
 					session.messages = [];
 					session.memoryPrompt = "";
 				});
-			},
-
-			summarizeSession() {
-				const config = useAppConfig.getState();
-				const session = get().currentSession();
-
-				// remove error messages if any
-				const messages = session.messages;
-
-				// should summarize topic after chating more than 50 words
-				const SUMMARIZE_MIN_LEN = 50;
-				if (
-					config.enableAutoGenerateTitle &&
-					session.topic === DEFAULT_TOPIC &&
-					countMessages(messages) >= SUMMARIZE_MIN_LEN
-				) {
-					const topicMessages = messages.concat(
-						createMessage({
-							role: "user",
-							content: Locale.Store.Prompt.Topic,
-						}),
-					);
-					api.llm.chat({
-						messages: topicMessages,
-						config: {
-							model: getSummarizeModel(session.mask.modelConfig.model),
-						},
-						onFinish(message) {
-							get().updateCurrentSession(
-								(session) =>
-									(session.topic =
-										message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
-							);
-						},
-					});
-				}
-
-				const modelConfig = session.mask.modelConfig;
-				const summarizeIndex = Math.max(
-					session.lastSummarizeIndex,
-					session.clearContextIndex ?? 0,
-				);
-				let toBeSummarizedMsgs = messages
-					.filter((msg) => !msg.isError)
-					.slice(summarizeIndex);
-
-				const historyMsgLength = countMessages(toBeSummarizedMsgs);
-
-				if (historyMsgLength > modelConfig?.max_tokens ?? 4000) {
-					const n = toBeSummarizedMsgs.length;
-					toBeSummarizedMsgs = toBeSummarizedMsgs.slice(
-						Math.max(0, n - modelConfig.historyMessageCount),
-					);
-				}
-
-				// add memory prompt
-				toBeSummarizedMsgs.unshift(get().getMemoryPrompt());
-
-				const lastSummarizeIndex = session.messages.length;
-
-				console.log(
-					"[Chat History] ",
-					toBeSummarizedMsgs,
-					historyMsgLength,
-					modelConfig.compressMessageLengthThreshold,
-				);
-
-				if (
-					historyMsgLength > modelConfig.compressMessageLengthThreshold &&
-					modelConfig.sendMemory
-				) {
-					api.llm.chat({
-						messages: toBeSummarizedMsgs.concat(
-							createMessage({
-								role: "system",
-								content: Locale.Store.Prompt.Summarize,
-								date: "",
-							}),
-						),
-						config: {
-							...modelConfig,
-							stream: true,
-							model: getSummarizeModel(session.mask.modelConfig.model),
-						},
-						onUpdate(message) {
-							session.memoryPrompt = message;
-						},
-						onFinish(message) {
-							console.log("[Memory] ", message);
-							// session.lastSummarizeIndex = lastSummarizeIndex;
-							get().updateCurrentSession((session) => {
-								session.lastSummarizeIndex = lastSummarizeIndex;
-								session.memoryPrompt = message; // Update the memory prompt for stored it in local storage
-							});
-						},
-						onError(err) {
-							console.error("[Summarize] ", err);
-						},
-					});
-				}
 			},
 
 			updateStat(message: ChatMessage) {
