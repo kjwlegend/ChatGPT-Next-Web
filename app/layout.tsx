@@ -7,13 +7,14 @@ import { getClientConfig } from "./config/client";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { type Metadata, type Viewport } from "next";
+import { version } from "./constant";
 
 export const metadata: Metadata = {
 	title: "小光AI",
 	description:
 		"小光AI, 由专业提示词工程师打造的集成聊天, 角色扮演, 面具, 预设, 代码解释器于一体的聊天机器人",
 	authors: [{ name: "绝望的光 @ 56349014" }],
-	applicationName: "小光AI v1.2.2",
+	applicationName: "小光AI v" + version,
 };
 
 export const viewport: Viewport = {
@@ -39,10 +40,13 @@ export default function RootLayout({
 				<meta httpEquiv="expires" content="0" />
 				<link rel="manifest" href="/site.webmanifest"></link>
 
-				<script src="/serviceWorkerRegister.js?v=1.2.2" defer></script>
+				<script src={"/serviceWorkerRegister.js?v=" + version} defer></script>
 				<script
 					async
-					src="https://jic.talkingdata.com/app/h5/v1?appid=EF569EDD56B64DEEB3BF84539A707729&vn=公测版&vc=1.2.2"
+					src={
+						"https://jic.talkingdata.com/app/h5/v1?appid=EF569EDD56B64DEEB3BF84539A707729&vn=公测版&vc=" +
+						version
+					}
 				></script>
 			</head>
 			<body>
