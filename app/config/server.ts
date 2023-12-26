@@ -61,12 +61,14 @@ export const getServerSideConfig = () => {
 	}
 
 	const isAzure = !!process.env.AZURE_URL;
+	
 
 	return {
 		baseUrl: process.env.BASE_URL,
 		apiKey: process.env.OPENAI_API_KEY,
 		openaiOrgId: process.env.OPENAI_ORG_ID,
-
+		
+		environment : process.env.NODE_ENV,
 		isAzure,
 		azureUrl: process.env.AZURE_URL,
 		azureApiKey: process.env.AZURE_API_KEY,

@@ -451,9 +451,12 @@ const items = [
 					小光特地联系了小亮同学,在圣诞夜疯狂加班,
 					做出了自动生成优化提示词的功能! 为此小亮又少了13根头发{" "}
 				</div>
+				<div>
+					另: 全面将模型升级为最新版GPT4和3.5, 针对插件的使用进行了质量提升
+				</div>
 			</>
 		),
-		color: "blue",
+		color: "red",
 		className: "fade-in-element",
 	},
 ];

@@ -115,12 +115,12 @@ export const DEFAULT_MODELS = [
 	},
 	{
 		name: "gpt-3.5-turbo-1106",
-		displayName: "小光AI(1次/消息)",
+		displayName: "3.5-插件型(1次/消息)",
 		available: true,
 	},
 	{
 		name: "gpt-3.5-turbo-16k",
-		displayName: "小光AI-旧(1次/消息)",
+		displayName: "3.5-长文本(1次/消息)",
 		available: true,
 	},
 	{
@@ -132,9 +132,22 @@ export const DEFAULT_MODELS = [
 
 import { getServerSideConfig } from "@/app/config/server";
 
-export const server_url = "http://localhost:8000";
+// when it's build mode, I want the server_url to be admin.xiaoguang.fun otherwise localhost:8000
+
+export const server_url =
+	process.env.ENVIRONMENT == "PROD"
+		? "https://admin.xiaoguang.fun"
+		: "http://localhost:8000";
+
 // export const server_url = "https://admin.xiaoguang.fun";
+
+// export const server_url = "http://localhost:8000";
 export const version = "1.5.0";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
+
+console.log(process.env.ENVIRONMENT);
+console.log(process.env.ENVIRONMENT == "DEV");
+
+console.log("URL", server_url);

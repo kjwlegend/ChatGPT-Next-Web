@@ -116,3 +116,72 @@ export async function requestOpenai(req: NextRequest) {
 		clearTimeout(timeoutId);
 	}
 }
+
+// export midjourney request
+// baseurl = https://mj.xiaoguang.fun
+// path = [
+// /mj/submit/imagine
+// ]
+
+export async function requestMidjourney(req: NextRequest) {
+	const controller = new AbortController();
+
+	let baseUrl = "https://mj.xiaoguang.fun";
+	// console.log("[Proxy] ", req.nextUrl);
+	let path = `${req.nextUrl.pathname}${req.nextUrl.search}`.replaceAll(
+		"/api/midjourney/",
+		"",
+	);
+
+	if (!baseUrl.startsWith("http")) {
+		baseUrl = `https://${baseUrl}`;
+	}
+
+	if (baseUrl.endsWith("/")) {
+		baseUrl = baseUrl.slice(0, -1);
+	}
+
+	console.log("[Proxy] ", path);
+	console.log("[Base Url]", baseUrl);
+	console.log("[Org ID]", serverConfig.openaiOrgId);
+
+	const timeoutId = setTimeout(
+		() => {
+			controller.abort();
+		},
+		10 * 60 * 1000,
+	);
+
+	const fetchUrl = `${baseUrl}/${path}`;
+	const fetchOptions: RequestInit = {
+		headers: {
+			"Content-Type": "application/json",
+			"Cache-Control": "no-store",
+			"User-Info": "test",
+		},
+		method: req.method,
+		body: req.body,
+		redirect: "manual",
+		// @ts-ignore
+		duplex: "half",
+		signal: controller.signal,
+	};
+
+	try {
+		const res = await fetch(fetchUrl, fetchOptions);
+
+		// to prevent browser prompt for credentials
+		const newHeaders = new Headers(res.headers);
+		newHeaders.delete("www-authenticate");
+		// to disable nginx buffering
+		newHeaders.set("X-Accel-Buffering", "no");
+
+		return new Response(res.body, {
+			status: res.status,
+			statusText: res.statusText,
+			headers: newHeaders,
+		});
+	} finally {
+		clearTimeout(timeoutId);
+	}
+}
