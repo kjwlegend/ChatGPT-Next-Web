@@ -28,9 +28,6 @@ async function handle(
 	try {
 		const response = await requestMidjourney(req);
 
-		// list models
-		if (subpath === OpenaiPath.ListModelPath && response.status === 200) {
-		}
 
 		return response;
 	} catch (e) {

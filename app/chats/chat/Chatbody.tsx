@@ -323,7 +323,7 @@ export function Chatbody(props: {
 		const recentMessages = chatStore.getMessagesWithMemory(nextSession);
 
 		chatStore
-			.onUserInput(message, undefined, nextSessionId)
+			.onUserInput(message, undefined, nextSession)
 			.then(() => {
 				setIsLoading(false);
 
@@ -422,7 +422,7 @@ export function Chatbody(props: {
 
 		setIsLoading(true);
 		chatStore
-			.onUserInput(userMessage.content, userMessage.image_url, sessionId)
+			.onUserInput(userMessage.content, userMessage.image_url, session)
 			.then(() => setIsLoading(false));
 		inputRef.current?.focus();
 	};

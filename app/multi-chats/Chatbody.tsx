@@ -126,7 +126,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
 	// 通过sessionID 去allSessions中找到对应的session
 
-	const session = allSessions.find((s) => s.id === sessionId)!;
+	const session = props.session;
 
 	// if (!session) {
 	// 	console.log("session is null");
@@ -317,7 +317,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 
 		setIsLoading(true);
 		chatStore
-			.onUserInput(userMessage.content, sessionId)
+			.onUserInput(userMessage.content, undefined, session)
 			.then(() => setIsLoading(false));
 		inputRef.current?.focus();
 	};
@@ -370,7 +370,7 @@ export function Chatbody(props: { session: ChatSession; index: number }) {
 		const recentMessages = chatStore.getMessagesWithMemory(nextSession);
 
 		chatStore
-			.onUserInput(message, nextSessionId)
+			.onUserInput(message, undefined, nextSession)
 			.then(() => {
 				setIsLoading(false);
 

@@ -682,7 +682,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		const recentMessages = chatStore.getMessagesWithMemory();
 
 		chatStore
-			.onUserInput(userInput, userImage?.fileUrl, session.id)
+			.onUserInput(userInput, userImage?.fileUrl, session)
 			.then(() => {
 				setIsLoading(false);
 

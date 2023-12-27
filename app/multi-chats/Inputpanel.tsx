@@ -476,7 +476,7 @@ export function Inputpanel(props: { session: ChatSession; index: number }) {
 		// console.log("current session id:", session);
 		// console.log("next session:", nextSession ?? "null");
 		chatStore
-			.onUserInput(userInput, sessionId)
+			.onUserInput(userInput, undefined, session)
 			.then(() => {
 				setIsLoading(false);
 				// 构建 createChat 接口的请求参数

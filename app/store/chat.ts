@@ -28,18 +28,28 @@ export interface ChatToolMessage {
 	toolInput?: string;
 }
 import { createPersistStore } from "../utils/store";
-import { Session } from "inspector";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
 
+import {
+	imagine,
+	ImagineRes,
+	ImagineParams,
+	Mjfetch,
+	FetchRes,
+} from "../api/midjourney/tasksubmit";
+import { fail } from "assert";
+
 export type ChatMessage = RequestMessage & {
 	date: string;
-	toolMessages?: ChatToolMessage[];
-	streaming?: boolean;
-	isError?: boolean;
+
 	id: string;
 	model?: ModelType;
 	image_url?: string;
+	mjSessions?: MJMessage[];
+	toolMessages?: ChatToolMessage[];
+	streaming?: boolean;
+	isError?: boolean;
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
@@ -64,6 +74,7 @@ export interface ChatSession {
 	topic: string;
 	memoryPrompt: string;
 	messages: ChatMessage[];
+
 	stat: ChatStat;
 	lastUpdate: number;
 	lastSummarizeIndex: number;
@@ -71,6 +82,23 @@ export interface ChatSession {
 	mask: Mask;
 	responseStatus?: boolean;
 	isworkflow?: boolean;
+}
+
+export interface MJMessage {
+	action: string;
+	description: string;
+	failReason: string;
+	finishTime: number;
+	id: string;
+	imageUrl: string;
+	progress: string;
+	prompt: string;
+	promptEn: string;
+	properties: Record<string, unknown>;
+	startTime: number;
+	state: string;
+	status: string;
+	submitTime: number;
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
@@ -420,28 +448,238 @@ export const useChatStore = createPersistStore(
 			async onUserInput(
 				content: string,
 				image_url?: string,
-				sessionId?: string,
+				_session?: ChatSession,
 			) {
 				// if sessionID is not provided, use current session, else use the session with the provided ID
-				let session: ChatSession;
 
-				if (sessionId) {
-					const sessions = get().sessions;
-					const index = sessions.findIndex(
-						(session) => session.id === sessionId,
-					);
-					if (index === -1) {
-						console.error("Session ID not found");
-						return;
-					}
-					session = sessions[index];
-					// console.log("[User Input] session: ", index, session);
-					get().updateSession(sessionId, (sessionToUpdate: ChatSession) => {
-						sessionToUpdate.responseStatus = false;
+				const session = get().getSession(_session);
+
+				const sessionModel = session.mask.modelConfig.model;
+
+				if (sessionModel === "midjourney") {
+					const userMessage: ChatMessage = createMessage({
+						role: "user",
+						content: content,
+						image_url: image_url,
 					});
-				} else {
-					session = get().currentSession();
+
+					// 创建一个botMessage, 提示请求已提交
+					const imagineParams: ImagineParams = {
+						base64Array: [],
+						notifyHook: "",
+						prompt: content,
+					};
+
+					try {
+						// 调用 imagine 函数并等待结果
+						const response = await imagine(imagineParams);
+						if (response.status !== 200) {
+							throw new Error("imagine failed");
+						}
+						const res = response.data as ImagineRes;
+
+						// 获取绘画请求的描述和结果ID
+						const description = res.description;
+						const resultId = res.result; // 绘画任务的ID
+						const message =
+							"你的绘画请求: " +
+							description +
+							"\n请耐心等待，请求id: " +
+							resultId;
+
+						// 创建botMessage，提示请求已提交
+						const botMessage: ChatMessage = createMessage({
+							role: "assistant",
+							content: message,
+							image_url: image_url,
+						});
+
+						const botMessageId = botMessage.id;
+
+						get().updateSession(session.id, () => {
+							session.messages = session.messages.concat([
+								userMessage,
+								botMessage,
+							]);
+						});
+						console.log("botMessageId: ", botMessageId);
+
+						// 定义一个函数用于轮询绘画进度
+						const pollForProgress = async (
+							id: string,
+							startTime: number,
+							failureCount: number = 0,
+						) => {
+							try {
+								const res = await Mjfetch(id);
+								// 5次查询后，如果仍然没有结果，则停止轮询
+								const fetchRes = res.data as FetchRes;
+
+								let updatedBotMessage: ChatMessage = createMessage({
+									role: "assistant",
+									content: "",
+									image_url: fetchRes.imageUrl,
+								});
+
+								console.log("fetchRes: ", fetchRes);
+
+								const currentTime = Date.now();
+
+								// 计算已经过去的时间
+								const elapsedTime = currentTime - startTime;
+
+								// 如果是 IN_PROGRESS，则继续轮询
+								if (fetchRes.status === "IN_PROGRESS") {
+									// 实时更新进度
+									const progressMessage = `${message} \n 你的绘画正在绘制中，已耗时：${(
+										elapsedTime / 1000
+									).toFixed(2)}秒。 进度：${fetchRes.progress}`;
+
+									// 更新 符合 botMessageId 的消息 为 updatedBotMessage, 且继续轮询
+									get().updateSession(session.id, () => {
+										// 找到需要更新的消息
+										const messageIndex = session.messages.findIndex(
+											(m) => m.id === botMessageId,
+										);
+										if (messageIndex !== -1) {
+											// 如果找到了消息，并且内容有变化，则进行更新
+											if (
+												session.messages[messageIndex].content !==
+												progressMessage
+											) {
+												updatedBotMessage = {
+													...session.messages[messageIndex],
+													content: progressMessage,
+												};
+												// 更新消息数组
+												session.messages[messageIndex] = updatedBotMessage;
+											}
+										}
+									});
+
+									// 继续轮询
+									setTimeout(
+										() => pollForProgress(id, startTime, failureCount),
+										5000,
+									);
+									return;
+								}
+
+								if (fetchRes.status === "SUCCESS") {
+									// 绘画完成，获取 imageUrl 并更新消息
+									const finishedMessage = `你的绘画已完成！总耗时：${(
+										elapsedTime / 1000
+									).toFixed(2)}秒。\n查看结果: ![image](${fetchRes.imageUrl})`;
+
+									// 更新 符合 botMessageId 的消息
+									get().updateSession(session.id, () => {
+										// 找到需要更新的消息
+										const messageIndex = session.messages.findIndex(
+											(m) => m.id === botMessageId,
+										);
+										if (messageIndex !== -1) {
+											// 如果找到了消息，并且内容有变化，则进行更新
+											if (
+												session.messages[messageIndex].content !==
+												finishedMessage
+											) {
+												updatedBotMessage = {
+													...session.messages[messageIndex],
+													content: finishedMessage,
+													image_url: fetchRes.imageUrl,
+												};
+												// 更新消息数组
+												session.messages[messageIndex] = updatedBotMessage;
+											}
+										}
+									});
+
+									// 停止轮询
+									return;
+								}
+								if (fetchRes.status === "FAILURE" || elapsedTime > 240000) {
+									// 如果状态为 FAILURE 或超时，则停止轮询
+									const failMessage = `${message} \n 绘画任务失败或超时。总耗时：${(
+										elapsedTime / 1000
+									).toFixed(2)}秒。失败理由：${fetchRes.failReason}`;
+
+									// 更新会话消息
+									get().updateSession(session.id, () => {
+										// 找到需要更新的消息
+										const messageIndex = session.messages.findIndex(
+											(m) => m.id === botMessageId,
+										);
+										if (messageIndex !== -1) {
+											// 如果找到了消息，并且内容有变化，则进行更新
+											if (
+												session.messages[messageIndex].content !== failMessage
+											) {
+												updatedBotMessage = {
+													...session.messages[messageIndex],
+													content: failMessage,
+												};
+												// 更新消息数组
+												session.messages[messageIndex] = updatedBotMessage;
+											}
+										}
+									});
+
+									return;
+								} else {
+									// 如果状态不是 SUCCESS 或 FAILURE，并且未超时，则继续轮询
+									setTimeout(() => pollForProgress(id, startTime), 5000);
+								}
+							} catch (error) {
+								console.error("Error fetching progress:", error);
+								const newFailureCount = failureCount + 1;
+								if (newFailureCount >= 5) {
+									// 如果失败次数达到5次，则停止轮询
+									const failMessage = `${message} \n 接口调用失败超过5次。任务中止。`;
+									let updatedBotMessage: ChatMessage = createMessage({
+										role: "assistant",
+										content: "",
+									});
+
+									get().updateSession(session.id, (session) => {
+										const messageIndex = session.messages.findIndex(
+											(m) => m.id === botMessageId,
+										);
+										if (messageIndex !== -1) {
+											// 如果找到了消息，并且内容有变化，则进行更新
+											if (
+												session.messages[messageIndex].content !== failMessage
+											) {
+												updatedBotMessage = {
+													...session.messages[messageIndex],
+													content: failMessage,
+												};
+												// 更新消息数组
+												session.messages[messageIndex] = updatedBotMessage;
+											}
+										}
+									});
+								} else {
+									// 如果失败次数未达5次，则重试
+									setTimeout(
+										() => pollForProgress(id, startTime, newFailureCount),
+										5000,
+									);
+								}
+							}
+						};
+						// 获取当前时间作为开始时间
+						const startTime = Date.now();
+
+						// 开始轮询绘画进度
+						pollForProgress(resultId, startTime);
+					} catch (err) {
+						// 处理错误情况
+						console.log(err);
+					}
+
+					return;
 				}
+
 				let responseStatus = session.responseStatus;
 
 				console.log("click send: ", session.topic, responseStatus);
@@ -470,40 +708,18 @@ export const useChatStore = createPersistStore(
 				const sendMessages = recentMessages.concat(userMessage);
 				const messageIndex = get().currentSession().messages.length + 1;
 
-				const config = useAppConfig.getState();
-				const pluginConfig = useAppConfig.getState().pluginConfig;
-				const pluginStore = usePluginStore.getState();
-				const allPlugins = pluginStore
-					.getAll()
-					.filter(
-						(m) =>
-							(!getLang() ||
-								m.lang === (getLang() == "cn" ? getLang() : "en")) &&
-							m.enable,
-					);
+				const sessionId = session.id;
 
-				if (!sessionId) {
-					// save user's and bot's message
-					get().updateCurrentSession((session) => {
-						const savedUserMessage = {
-							...userMessage,
-							content,
-						};
-						session.messages.push(savedUserMessage);
-						session.messages.push(botMessage);
-					});
-				} else {
-					get().updateSession(sessionId, (session: ChatSession) => {
-						const savedUserMessage = {
-							...userMessage,
-							content,
-						};
-						session.messages = session.messages.concat([
-							savedUserMessage,
-							botMessage,
-						]);
-					});
-				}
+				get().updateSession(sessionId, (session: ChatSession) => {
+					const savedUserMessage = {
+						...userMessage,
+						content,
+					};
+					session.messages = session.messages.concat([
+						savedUserMessage,
+						botMessage,
+					]);
+				});
 
 				get().sendChatMessage(
 					// 调用发送消息函数

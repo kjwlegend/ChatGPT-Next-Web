@@ -128,6 +128,11 @@ export const DEFAULT_MODELS = [
 		available: true,
 		displayName: "(测试功能-暂不可用)",
 	},
+	{
+		name: "midjourney",
+		available: true,
+		displayName: "Midjourney",
+	},
 ] as const;
 
 import { getServerSideConfig } from "@/app/config/server";

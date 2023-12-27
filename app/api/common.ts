@@ -141,9 +141,8 @@ export async function requestMidjourney(req: NextRequest) {
 		baseUrl = baseUrl.slice(0, -1);
 	}
 
-	console.log("[Proxy] ", path);
+	console.log("[MJ Proxy] ", path);
 	console.log("[Base Url]", baseUrl);
-	console.log("[Org ID]", serverConfig.openaiOrgId);
 
 	const timeoutId = setTimeout(
 		() => {
@@ -158,6 +157,7 @@ export async function requestMidjourney(req: NextRequest) {
 			"Content-Type": "application/json",
 			"Cache-Control": "no-store",
 			"User-Info": "test",
+			"mj-api-secret": "",
 		},
 		method: req.method,
 		body: req.body,
