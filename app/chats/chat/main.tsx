@@ -49,7 +49,7 @@ import { prettyObject } from "@/app/utils/format";
 import BrainIcon from "@/app/icons/brain.svg";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 
-import styles from "./multi-chats.module.scss";
+import styles from "./chats.module.scss";
 
 import { IconButton } from "@/app/components/button";
 import {

@@ -147,16 +147,16 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 						return <a {...aProps} target={target} />;
 					},
 
-					img: (imgProps) => {
-						const src = imgProps.src || "";
-						const isInternal = /^\/#/i.test(src);
-						const target = isInternal ? "_self" : "_blank";
-						return (
-							<a target={target}>
-								<img {...imgProps} />
-							</a>
-						);
-					},
+					// img: (imgProps) => {
+					// 	const src = imgProps.src || "";
+					// 	const isInternal = /^\/#/i.test(src);
+					// 	const target = isInternal ? "_self" : "_blank";
+					// 	return (
+					// 		<a target={target}>
+					// 			<img {...imgProps} />
+					// 		</a>
+					// 	);
+					// },
 				}}
 			>
 				{escapedContent}

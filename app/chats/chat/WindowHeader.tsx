@@ -38,7 +38,7 @@ import { api } from "@/app/client/api";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "./multi-chats.module.scss";
+import styles from "./chats.module.scss";
 
 import {
 	List,

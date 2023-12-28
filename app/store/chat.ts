@@ -4,7 +4,12 @@ import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask, Mask } from "./mask";
-import { KnowledgeCutOffDate, StoreKey, SUMMARIZE_MODEL } from "../constant";
+import {
+	DEFAULT_MODELS,
+	KnowledgeCutOffDate,
+	StoreKey,
+	SUMMARIZE_MODEL,
+} from "../constant";
 
 import {
 	DEFAULT_INPUT_TEMPLATE,
@@ -37,6 +42,8 @@ import {
 	ImagineParams,
 	Mjfetch,
 	FetchRes,
+	ChangeParams,
+	change,
 } from "../api/midjourney/tasksubmit";
 import { fail } from "assert";
 
@@ -46,7 +53,7 @@ export type ChatMessage = RequestMessage & {
 	id: string;
 	model?: ModelType;
 	image_url?: string;
-	mjSessions?: MJMessage[];
+	mjSessions?: MJMessage;
 	toolMessages?: ChatToolMessage[];
 	streaming?: boolean;
 	isError?: boolean;
@@ -462,175 +469,6 @@ export const useChatStore = createPersistStore(
 				if (sessionModel === "midjourney") {
 					await this.midjourneyOnUserInput(content, image_url, session);
 					return;
-
-					// 	const userMessage: ChatMessage = createMessage({
-					// 		role: "user",
-					// 		content: content,
-					// 		image_url: image_url,
-					// 	});
-
-					// 	// 创建一个botMessage, 提示请求已提交
-					// 	const imagineParams: ImagineParams = {
-					// 		base64Array: [],
-					// 		notifyHook: "",
-					// 		prompt: content,
-					// 	};
-
-					// 	try {
-					// 		// 调用 imagine 函数并等待结果
-					// 		const response = await imagine(imagineParams);
-					// 		if (response.status !== 200) {
-					// 			throw new Error("imagine failed");
-					// 		}
-					// 		const res = response.data as ImagineRes;
-
-					// 		// 获取绘画请求的描述和结果ID
-					// 		const description = res.description;
-					// 		const resultId = res.result; // 绘画任务的ID
-					// 		const message =
-					// 			"你的绘画请求: " +
-					// 			description +
-					// 			"\n请耐心等待，请求id: " +
-					// 			resultId;
-
-					// 		// 创建botMessage，提示请求已提交
-					// 		const botMessage: ChatMessage = createMessage({
-					// 			role: "assistant",
-					// 			content: message,
-					// 			image_url: image_url,
-					// 		});
-
-					// 		const botMessageId = botMessage.id;
-
-					// 		get().updateSession(session.id, () => {
-					// 			session.messages = session.messages.concat([
-					// 				userMessage,
-					// 				botMessage,
-					// 			]);
-					// 		});
-					// 		console.log("botMessageId: ", botMessageId);
-
-					// 		// 获取当前时间作为开始时间
-					// 		const startTime = Date.now();
-
-					// 		// 开始轮询绘画进度
-					// 		pollForProgress(resultId, botMessageId, startTime);
-					// 	} catch (err) {
-					// 		// 处理错误情况
-					// 		console.log(err);
-					// 	}
-
-					// 	return;
-					// }
-
-					// // 抽象出来的更新消息函数
-					// function updateSessionMessage(
-					// 	session: ChatSession,
-					// 	botMessageId: string,
-					// 	content: string,
-					// 	imageUrl = "",
-					// ) {
-					// 	get().updateSession(session.id, () => {
-					// 		const messageIndex = session.messages.findIndex(
-					// 			(m) => m.id === botMessageId,
-					// 		);
-					// 		if (messageIndex !== -1) {
-					// 			const currentMessage = session.messages[messageIndex];
-					// 			if (
-					// 				currentMessage.content !== content ||
-					// 				currentMessage.image_url !== imageUrl
-					// 			) {
-					// 				const updatedBotMessage = {
-					// 					...currentMessage,
-					// 					content: content,
-					// 					image_url: imageUrl,
-					// 				};
-					// 				session.messages[messageIndex] = updatedBotMessage;
-					// 			}
-					// 		}
-					// 		session.lastUpdate = Date.now();
-					// 	});
-					// }
-
-					// // 定义一个函数用于轮询绘画进度
-					// async function pollForProgress(
-					// 	id: string,
-					// 	botMessageId: string,
-					// 	startTime: number,
-					// 	failureCount: number = 0,
-					// ) {
-					// 	try {
-					// 		const res = await Mjfetch(id);
-					// 		const fetchRes = res.data as FetchRes;
-					// 		const currentTime = Date.now();
-					// 		const elapsedTime = currentTime - startTime;
-
-					// 		const message = "绘画请求id: " + fetchRes.id + "\n";
-
-					// 		let content = "";
-					// 		let imageUrl = "";
-
-					// 		switch (fetchRes.status) {
-					// 			case "IN_PROGRESS":
-					// 				content =
-					// 					message +
-					// 					`绘画正在加紧绘制中, 根据画面和尺寸要求, 时间会有不同，已耗时：${(
-					// 						elapsedTime / 1000
-					// 					).toFixed(2)}秒。 进度：${fetchRes.progress}`;
-					// 				break;
-					// 			case "SUCCESS":
-					// 				content =
-					// 					message +
-					// 					`绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
-					// 						2,
-					// 					)}秒。\n查看结果: \n ![image](${fetchRes.imageUrl})`;
-					// 				imageUrl = fetchRes.imageUrl;
-					// 				break;
-					// 			case "FAILURE":
-					// 			case "TIMEOUT": // 假设这是超时的状态
-					// 				content =
-					// 					message +
-					// 					`绘画任务失败或超时。总耗时：${(elapsedTime / 1000).toFixed(
-					// 						2,
-					// 					)}秒。失败理由：${fetchRes.failReason}`;
-					// 				break;
-					// 			default:
-					// 				setTimeout(
-					// 					() =>
-					// 						pollForProgress(id, botMessageId, startTime, failureCount),
-					// 					10000,
-					// 				);
-					// 				return;
-					// 		}
-
-					// 		// 更新会话消息
-					// 		updateSessionMessage(session, botMessageId, content, imageUrl);
-
-					// 		if (fetchRes.status === "IN_PROGRESS") {
-					// 			setTimeout(
-					// 				() =>
-					// 					pollForProgress(id, botMessageId, startTime, failureCount),
-					// 				10000,
-					// 			);
-					// 		}
-					// 	} catch (error) {
-					// 		console.error("Error fetching progress:", error);
-					// 		failureCount += 1;
-					// 		if (failureCount >= 5) {
-					// 			updateSessionMessage(
-					// 				session,
-					// 				botMessageId,
-					// 				"接口调用失败超过5次。任务中止。",
-					// 			);
-					// 		} else {
-					// 			setTimeout(
-					// 				() =>
-					// 					pollForProgress(id, botMessageId, startTime, failureCount),
-					// 				10000,
-					// 			);
-					// 		}
-					// 	}
-					// }
 				}
 
 				let responseStatus = session.responseStatus;
@@ -691,6 +529,9 @@ export const useChatStore = createPersistStore(
 				content: string,
 				image_url?: string,
 				_session?: ChatSession,
+				action?: any,
+				taskId?: string,
+				index?: number,
 			) {
 				// if sessionID is not provided, use current session, else use the session with the provided ID
 
@@ -698,11 +539,43 @@ export const useChatStore = createPersistStore(
 
 				const sessionModel = session.mask.modelConfig.model;
 
-				const userMessage: ChatMessage = createMessage({
-					role: "user",
-					content: content,
-					image_url: image_url,
-				});
+				let response;
+				let newcontent = "";
+
+				const chatOptions = {
+					messages: [] as RequestMessage[],
+					config: {
+						temperature: 0.9,
+						top_p: 1,
+						model: SUMMARIZE_MODEL,
+						stream: false,
+					},
+					onUpdate: (message: string) => {
+						console.log("onUpdate: ", message);
+					},
+					onFinish: (message: string) => {
+						console.log("onFinish: ", message);
+						newcontent = message;
+					},
+					onError: (error: Error) => {
+						console.log("onError: ", error);
+					},
+					onController: (controller: AbortController) => {
+						console.log("onController: ", controller);
+					},
+				};
+
+				const positionMap: Record<number, string> = {
+					1: "左上",
+					2: "右上",
+					3: "左下",
+					4: "右下",
+				};
+
+				const actionMap: Record<string, string> = {
+					UPSCALE: "放大",
+					VARIATION: "变换",
+				};
 
 				// 创建一个botMessage, 提示请求已提交
 				const imagineParams: ImagineParams = {
@@ -711,9 +584,63 @@ export const useChatStore = createPersistStore(
 					prompt: content,
 				};
 
+				const changeParams: ChangeParams = {
+					action: action ?? "UPSCALE",
+					index: index,
+					taskId: taskId ?? "",
+				};
+
+				//  判断是否有taskId 来判断任务类型, 有的话则是 await change, 没有的话则是 imagine
+
+				if (index && taskId && content == "") {
+					// 在这个模式时 userMessage 做出变换
+					const positionLabel = positionMap[index];
+					const actionLabel = actionMap[action];
+					const origintext = `${actionLabel}请求已提交 - ${positionLabel}`;
+
+					chatOptions.messages = [
+						{
+							role: "user",
+							content:
+								"请将这个程序化的描述: {" +
+								origintext +
+								"} 用一种一种幽默风趣, 带点哲学意味的风格说出来,不超过30个字",
+						},
+					];
+
+					await api.llm.chat(chatOptions);
+					response = await change(changeParams);
+				}
+				if (!taskId && content !== "") {
+					// 将content 进行翻译 并赋值到 translateprompt
+					// 用于 imagineParams.prompt
+					chatOptions.messages = [
+						{
+							role: "user",
+							content:
+								"Translate and optimize the description into English if the content is not written in English. Do not output anything else. Here are the content ::" +
+								content,
+						},
+					];
+
+					await api.llm.chat(chatOptions);
+
+					imagineParams.prompt = newcontent;
+
+					console.log("translateprompt: ", imagineParams.prompt);
+
+					response = await imagine(imagineParams);
+
+					console.log("response: ", response);
+				}
+				const userMessage: ChatMessage = createMessage({
+					role: "user",
+					content: `原提示词: ${content} \n 翻译: ${newcontent}`,
+					image_url: image_url,
+				});
+
 				try {
 					// 调用 imagine 函数并等待结果
-					const response = await imagine(imagineParams);
 					console.log(response);
 					if (response.status !== 200) {
 						throw new Error("imagine failed");
@@ -734,7 +661,10 @@ export const useChatStore = createPersistStore(
 						role: "assistant",
 						content: message,
 						image_url: image_url,
+						mjSessions: res,
 					});
+
+					console.log("Mjsession", botMessage.mjSessions);
 
 					const botMessageId = botMessage.id;
 
@@ -757,7 +687,7 @@ export const useChatStore = createPersistStore(
 
 					const botMessage: ChatMessage = createMessage({
 						role: "assistant",
-						content: err ?? "生成失败, 请重试",
+						content: "生成失败, 请重试",
 						image_url: image_url,
 					});
 					get().updateSession(session.id, () => {
@@ -775,6 +705,7 @@ export const useChatStore = createPersistStore(
 				botMessageId: string,
 				content: string,
 				imageUrl = "",
+				mjresult?: MJMessage,
 			) {
 				get().updateSession(session.id, () => {
 					const messageIndex = session.messages.findIndex(
@@ -786,10 +717,11 @@ export const useChatStore = createPersistStore(
 							currentMessage.content !== content ||
 							currentMessage.image_url !== imageUrl
 						) {
-							const updatedBotMessage = {
+							const updatedBotMessage: ChatMessage = {
 								...currentMessage,
 								content: content,
 								image_url: imageUrl,
+								mjSessions: mjresult,
 							};
 							session.messages[messageIndex] = updatedBotMessage;
 						}
@@ -859,7 +791,13 @@ export const useChatStore = createPersistStore(
 					}
 
 					// 更新会话消息
-					this.updateSessionMessage(session, botMessageId, content, imageUrl);
+					this.updateSessionMessage(
+						session,
+						botMessageId,
+						content,
+						imageUrl,
+						fetchRes,
+					);
 
 					if (fetchRes.status === "IN_PROGRESS") {
 						setTimeout(

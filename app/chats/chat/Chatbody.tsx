@@ -44,7 +44,9 @@ import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "./multi-chats.module.scss";
+import { Button } from "antd";
+import MjActions from "./midjourney";
+import styles from "./chats.module.scss";
 
 import {
 	List,
@@ -476,6 +478,8 @@ export function Chatbody(props: {
 			{contextHolder}
 			{messages.map((message, i) => {
 				const isUser = message.role === "user";
+				const mjSessions = message.mjSessions;
+				const actions = mjSessions?.action;
 
 				const isContext = i < context.length;
 				const showActions =
@@ -624,6 +628,14 @@ export function Chatbody(props: {
 										parentRef={scrollRef}
 										defaultShow={i >= messages.length - 6}
 									/>
+									{/* 显示4个按钮, 分别是放大: 左上,右上,左下,右下 */}
+									{!isUser &&
+										mjSessions &&
+										actions &&
+										actions !== "UPSCALE" &&
+										mjSessions.status == "SUCCESS" && (
+											<MjActions session={session} taskid={mjSessions.id} />
+										)}
 								</div>
 
 								<div className={styles["chat-message-action-date"]}>
