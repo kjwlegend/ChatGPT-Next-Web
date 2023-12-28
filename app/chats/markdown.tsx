@@ -124,7 +124,7 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 
 	return (
 		<div style={{ fontSize: "inherit" }}>
-			{props.imageBase64 && <img src={props.imageBase64} alt="" />}
+			{/* {props.imageBase64 && <img src={props.imageBase64} alt="" />} */}
 			<ReactMarkdown
 				remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
 				rehypePlugins={[
@@ -145,6 +145,17 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 						const isInternal = /^\/#/i.test(href);
 						const target = isInternal ? "_self" : aProps.target ?? "_blank";
 						return <a {...aProps} target={target} />;
+					},
+
+					img: (imgProps) => {
+						const src = imgProps.src || "";
+						const isInternal = /^\/#/i.test(src);
+						const target = isInternal ? "_self" : imgProps.target ?? "_blank";
+						return (
+							<a target={target}>
+								<img {...imgProps} />
+							</a>
+						);
 					},
 				}}
 			>

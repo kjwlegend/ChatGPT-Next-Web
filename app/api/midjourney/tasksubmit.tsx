@@ -181,3 +181,4 @@ export interface FetchRes {
 export function Mjfetch(id: string): Promise<FetchRes> {
 	return request.get(`/mj/task/${id}/fetch`);
 }
+

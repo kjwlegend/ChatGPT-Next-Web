@@ -444,6 +444,9 @@ export const useChatStore = createPersistStore(
 				get().updateStat(message);
 				summarizeSession();
 			},
+			forceUpdate: () => {
+				set({});
+			},
 
 			async onUserInput(
 				content: string,
@@ -457,227 +460,177 @@ export const useChatStore = createPersistStore(
 				const sessionModel = session.mask.modelConfig.model;
 
 				if (sessionModel === "midjourney") {
-					const userMessage: ChatMessage = createMessage({
-						role: "user",
-						content: content,
-						image_url: image_url,
-					});
-
-					// 创建一个botMessage, 提示请求已提交
-					const imagineParams: ImagineParams = {
-						base64Array: [],
-						notifyHook: "",
-						prompt: content,
-					};
-
-					try {
-						// 调用 imagine 函数并等待结果
-						const response = await imagine(imagineParams);
-						if (response.status !== 200) {
-							throw new Error("imagine failed");
-						}
-						const res = response.data as ImagineRes;
-
-						// 获取绘画请求的描述和结果ID
-						const description = res.description;
-						const resultId = res.result; // 绘画任务的ID
-						const message =
-							"你的绘画请求: " +
-							description +
-							"\n请耐心等待，请求id: " +
-							resultId;
-
-						// 创建botMessage，提示请求已提交
-						const botMessage: ChatMessage = createMessage({
-							role: "assistant",
-							content: message,
-							image_url: image_url,
-						});
-
-						const botMessageId = botMessage.id;
-
-						get().updateSession(session.id, () => {
-							session.messages = session.messages.concat([
-								userMessage,
-								botMessage,
-							]);
-						});
-						console.log("botMessageId: ", botMessageId);
-
-						// 定义一个函数用于轮询绘画进度
-						const pollForProgress = async (
-							id: string,
-							startTime: number,
-							failureCount: number = 0,
-						) => {
-							try {
-								const res = await Mjfetch(id);
-								// 5次查询后，如果仍然没有结果，则停止轮询
-								const fetchRes = res.data as FetchRes;
-
-								let updatedBotMessage: ChatMessage = createMessage({
-									role: "assistant",
-									content: "",
-									image_url: fetchRes.imageUrl,
-								});
-
-								console.log("fetchRes: ", fetchRes);
-
-								const currentTime = Date.now();
-
-								// 计算已经过去的时间
-								const elapsedTime = currentTime - startTime;
-
-								// 如果是 IN_PROGRESS，则继续轮询
-								if (fetchRes.status === "IN_PROGRESS") {
-									// 实时更新进度
-									const progressMessage = `${message} \n 你的绘画正在绘制中，已耗时：${(
-										elapsedTime / 1000
-									).toFixed(2)}秒。 进度：${fetchRes.progress}`;
-
-									// 更新 符合 botMessageId 的消息 为 updatedBotMessage, 且继续轮询
-									get().updateSession(session.id, () => {
-										// 找到需要更新的消息
-										const messageIndex = session.messages.findIndex(
-											(m) => m.id === botMessageId,
-										);
-										if (messageIndex !== -1) {
-											// 如果找到了消息，并且内容有变化，则进行更新
-											if (
-												session.messages[messageIndex].content !==
-												progressMessage
-											) {
-												updatedBotMessage = {
-													...session.messages[messageIndex],
-													content: progressMessage,
-												};
-												// 更新消息数组
-												session.messages[messageIndex] = updatedBotMessage;
-											}
-										}
-									});
-
-									// 继续轮询
-									setTimeout(
-										() => pollForProgress(id, startTime, failureCount),
-										5000,
-									);
-									return;
-								}
-
-								if (fetchRes.status === "SUCCESS") {
-									// 绘画完成，获取 imageUrl 并更新消息
-									const finishedMessage = `你的绘画已完成！总耗时：${(
-										elapsedTime / 1000
-									).toFixed(2)}秒。\n查看结果: ![image](${fetchRes.imageUrl})`;
-
-									// 更新 符合 botMessageId 的消息
-									get().updateSession(session.id, () => {
-										// 找到需要更新的消息
-										const messageIndex = session.messages.findIndex(
-											(m) => m.id === botMessageId,
-										);
-										if (messageIndex !== -1) {
-											// 如果找到了消息，并且内容有变化，则进行更新
-											if (
-												session.messages[messageIndex].content !==
-												finishedMessage
-											) {
-												updatedBotMessage = {
-													...session.messages[messageIndex],
-													content: finishedMessage,
-													image_url: fetchRes.imageUrl,
-												};
-												// 更新消息数组
-												session.messages[messageIndex] = updatedBotMessage;
-											}
-										}
-									});
-
-									// 停止轮询
-									return;
-								}
-								if (fetchRes.status === "FAILURE" || elapsedTime > 240000) {
-									// 如果状态为 FAILURE 或超时，则停止轮询
-									const failMessage = `${message} \n 绘画任务失败或超时。总耗时：${(
-										elapsedTime / 1000
-									).toFixed(2)}秒。失败理由：${fetchRes.failReason}`;
-
-									// 更新会话消息
-									get().updateSession(session.id, () => {
-										// 找到需要更新的消息
-										const messageIndex = session.messages.findIndex(
-											(m) => m.id === botMessageId,
-										);
-										if (messageIndex !== -1) {
-											// 如果找到了消息，并且内容有变化，则进行更新
-											if (
-												session.messages[messageIndex].content !== failMessage
-											) {
-												updatedBotMessage = {
-													...session.messages[messageIndex],
-													content: failMessage,
-												};
-												// 更新消息数组
-												session.messages[messageIndex] = updatedBotMessage;
-											}
-										}
-									});
-
-									return;
-								} else {
-									// 如果状态不是 SUCCESS 或 FAILURE，并且未超时，则继续轮询
-									setTimeout(() => pollForProgress(id, startTime), 5000);
-								}
-							} catch (error) {
-								console.error("Error fetching progress:", error);
-								const newFailureCount = failureCount + 1;
-								if (newFailureCount >= 5) {
-									// 如果失败次数达到5次，则停止轮询
-									const failMessage = `${message} \n 接口调用失败超过5次。任务中止。`;
-									let updatedBotMessage: ChatMessage = createMessage({
-										role: "assistant",
-										content: "",
-									});
-
-									get().updateSession(session.id, (session) => {
-										const messageIndex = session.messages.findIndex(
-											(m) => m.id === botMessageId,
-										);
-										if (messageIndex !== -1) {
-											// 如果找到了消息，并且内容有变化，则进行更新
-											if (
-												session.messages[messageIndex].content !== failMessage
-											) {
-												updatedBotMessage = {
-													...session.messages[messageIndex],
-													content: failMessage,
-												};
-												// 更新消息数组
-												session.messages[messageIndex] = updatedBotMessage;
-											}
-										}
-									});
-								} else {
-									// 如果失败次数未达5次，则重试
-									setTimeout(
-										() => pollForProgress(id, startTime, newFailureCount),
-										5000,
-									);
-								}
-							}
-						};
-						// 获取当前时间作为开始时间
-						const startTime = Date.now();
-
-						// 开始轮询绘画进度
-						pollForProgress(resultId, startTime);
-					} catch (err) {
-						// 处理错误情况
-						console.log(err);
-					}
-
+					await this.midjourneyOnUserInput(content, image_url, session);
 					return;
+
+					// 	const userMessage: ChatMessage = createMessage({
+					// 		role: "user",
+					// 		content: content,
+					// 		image_url: image_url,
+					// 	});
+
+					// 	// 创建一个botMessage, 提示请求已提交
+					// 	const imagineParams: ImagineParams = {
+					// 		base64Array: [],
+					// 		notifyHook: "",
+					// 		prompt: content,
+					// 	};
+
+					// 	try {
+					// 		// 调用 imagine 函数并等待结果
+					// 		const response = await imagine(imagineParams);
+					// 		if (response.status !== 200) {
+					// 			throw new Error("imagine failed");
+					// 		}
+					// 		const res = response.data as ImagineRes;
+
+					// 		// 获取绘画请求的描述和结果ID
+					// 		const description = res.description;
+					// 		const resultId = res.result; // 绘画任务的ID
+					// 		const message =
+					// 			"你的绘画请求: " +
+					// 			description +
+					// 			"\n请耐心等待，请求id: " +
+					// 			resultId;
+
+					// 		// 创建botMessage，提示请求已提交
+					// 		const botMessage: ChatMessage = createMessage({
+					// 			role: "assistant",
+					// 			content: message,
+					// 			image_url: image_url,
+					// 		});
+
+					// 		const botMessageId = botMessage.id;
+
+					// 		get().updateSession(session.id, () => {
+					// 			session.messages = session.messages.concat([
+					// 				userMessage,
+					// 				botMessage,
+					// 			]);
+					// 		});
+					// 		console.log("botMessageId: ", botMessageId);
+
+					// 		// 获取当前时间作为开始时间
+					// 		const startTime = Date.now();
+
+					// 		// 开始轮询绘画进度
+					// 		pollForProgress(resultId, botMessageId, startTime);
+					// 	} catch (err) {
+					// 		// 处理错误情况
+					// 		console.log(err);
+					// 	}
+
+					// 	return;
+					// }
+
+					// // 抽象出来的更新消息函数
+					// function updateSessionMessage(
+					// 	session: ChatSession,
+					// 	botMessageId: string,
+					// 	content: string,
+					// 	imageUrl = "",
+					// ) {
+					// 	get().updateSession(session.id, () => {
+					// 		const messageIndex = session.messages.findIndex(
+					// 			(m) => m.id === botMessageId,
+					// 		);
+					// 		if (messageIndex !== -1) {
+					// 			const currentMessage = session.messages[messageIndex];
+					// 			if (
+					// 				currentMessage.content !== content ||
+					// 				currentMessage.image_url !== imageUrl
+					// 			) {
+					// 				const updatedBotMessage = {
+					// 					...currentMessage,
+					// 					content: content,
+					// 					image_url: imageUrl,
+					// 				};
+					// 				session.messages[messageIndex] = updatedBotMessage;
+					// 			}
+					// 		}
+					// 		session.lastUpdate = Date.now();
+					// 	});
+					// }
+
+					// // 定义一个函数用于轮询绘画进度
+					// async function pollForProgress(
+					// 	id: string,
+					// 	botMessageId: string,
+					// 	startTime: number,
+					// 	failureCount: number = 0,
+					// ) {
+					// 	try {
+					// 		const res = await Mjfetch(id);
+					// 		const fetchRes = res.data as FetchRes;
+					// 		const currentTime = Date.now();
+					// 		const elapsedTime = currentTime - startTime;
+
+					// 		const message = "绘画请求id: " + fetchRes.id + "\n";
+
+					// 		let content = "";
+					// 		let imageUrl = "";
+
+					// 		switch (fetchRes.status) {
+					// 			case "IN_PROGRESS":
+					// 				content =
+					// 					message +
+					// 					`绘画正在加紧绘制中, 根据画面和尺寸要求, 时间会有不同，已耗时：${(
+					// 						elapsedTime / 1000
+					// 					).toFixed(2)}秒。 进度：${fetchRes.progress}`;
+					// 				break;
+					// 			case "SUCCESS":
+					// 				content =
+					// 					message +
+					// 					`绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
+					// 						2,
+					// 					)}秒。\n查看结果: \n ![image](${fetchRes.imageUrl})`;
+					// 				imageUrl = fetchRes.imageUrl;
+					// 				break;
+					// 			case "FAILURE":
+					// 			case "TIMEOUT": // 假设这是超时的状态
+					// 				content =
+					// 					message +
+					// 					`绘画任务失败或超时。总耗时：${(elapsedTime / 1000).toFixed(
+					// 						2,
+					// 					)}秒。失败理由：${fetchRes.failReason}`;
+					// 				break;
+					// 			default:
+					// 				setTimeout(
+					// 					() =>
+					// 						pollForProgress(id, botMessageId, startTime, failureCount),
+					// 					10000,
+					// 				);
+					// 				return;
+					// 		}
+
+					// 		// 更新会话消息
+					// 		updateSessionMessage(session, botMessageId, content, imageUrl);
+
+					// 		if (fetchRes.status === "IN_PROGRESS") {
+					// 			setTimeout(
+					// 				() =>
+					// 					pollForProgress(id, botMessageId, startTime, failureCount),
+					// 				10000,
+					// 			);
+					// 		}
+					// 	} catch (error) {
+					// 		console.error("Error fetching progress:", error);
+					// 		failureCount += 1;
+					// 		if (failureCount >= 5) {
+					// 			updateSessionMessage(
+					// 				session,
+					// 				botMessageId,
+					// 				"接口调用失败超过5次。任务中止。",
+					// 			);
+					// 		} else {
+					// 			setTimeout(
+					// 				() =>
+					// 					pollForProgress(id, botMessageId, startTime, failureCount),
+					// 				10000,
+					// 			);
+					// 		}
+					// 	}
+					// }
 				}
 
 				let responseStatus = session.responseStatus;
@@ -732,6 +685,207 @@ export const useChatStore = createPersistStore(
 						session,
 					),
 				);
+			},
+
+			async midjourneyOnUserInput(
+				content: string,
+				image_url?: string,
+				_session?: ChatSession,
+			) {
+				// if sessionID is not provided, use current session, else use the session with the provided ID
+
+				const session = get().getSession(_session);
+
+				const sessionModel = session.mask.modelConfig.model;
+
+				const userMessage: ChatMessage = createMessage({
+					role: "user",
+					content: content,
+					image_url: image_url,
+				});
+
+				// 创建一个botMessage, 提示请求已提交
+				const imagineParams: ImagineParams = {
+					base64Array: [],
+					notifyHook: "",
+					prompt: content,
+				};
+
+				try {
+					// 调用 imagine 函数并等待结果
+					const response = await imagine(imagineParams);
+					console.log(response);
+					if (response.status !== 200) {
+						throw new Error("imagine failed");
+					}
+					const res = response.data as ImagineRes;
+
+					// 获取绘画请求的描述和结果ID
+					const description = res.description;
+					const resultId = res.result; // 绘画任务的ID
+					const message =
+						"你的绘画请求: " +
+						description +
+						"\n请耐心等待，请求id: " +
+						resultId;
+
+					// 创建botMessage，提示请求已提交
+					const botMessage: ChatMessage = createMessage({
+						role: "assistant",
+						content: message,
+						image_url: image_url,
+					});
+
+					const botMessageId = botMessage.id;
+
+					get().updateSession(session.id, () => {
+						session.messages = session.messages.concat([
+							userMessage,
+							botMessage,
+						]);
+					});
+					console.log("botMessageId: ", botMessageId);
+
+					// 获取当前时间作为开始时间
+					const startTime = Date.now();
+
+					// 开始轮询绘画进度
+					this.pollForProgress(session, resultId, botMessageId, startTime);
+				} catch (err) {
+					// 处理错误情况
+					console.log(err);
+
+					const botMessage: ChatMessage = createMessage({
+						role: "assistant",
+						content: err ?? "生成失败, 请重试",
+						image_url: image_url,
+					});
+					get().updateSession(session.id, () => {
+						session.messages = session.messages.concat([
+							userMessage,
+							botMessage,
+						]);
+					});
+				}
+			},
+
+			// 抽象出来的更新消息函数
+			updateSessionMessage(
+				session: ChatSession,
+				botMessageId: string,
+				content: string,
+				imageUrl = "",
+			) {
+				get().updateSession(session.id, () => {
+					const messageIndex = session.messages.findIndex(
+						(m) => m.id === botMessageId,
+					);
+					if (messageIndex !== -1) {
+						const currentMessage = session.messages[messageIndex];
+						if (
+							currentMessage.content !== content ||
+							currentMessage.image_url !== imageUrl
+						) {
+							const updatedBotMessage = {
+								...currentMessage,
+								content: content,
+								image_url: imageUrl,
+							};
+							session.messages[messageIndex] = updatedBotMessage;
+						}
+					}
+					session.lastUpdate = Date.now();
+				});
+			},
+
+			// 定义一个函数用于轮询绘画进度
+			async pollForProgress(
+				session: ChatSession,
+				mjtaskid: string,
+				botMessageId: string,
+				startTime: number,
+				failureCount: number = 0,
+			) {
+				try {
+					const res = await Mjfetch(mjtaskid);
+					const fetchRes = res.data as FetchRes;
+					const currentTime = Date.now();
+					const elapsedTime = currentTime - startTime;
+
+					const message = `绘画请求id:   __${fetchRes.id}__  \n"`;
+
+					let content = "";
+					let imageUrl = "";
+
+					switch (fetchRes.status) {
+						case "IN_PROGRESS":
+							content =
+								message +
+								`绘画正在加紧绘制中, 已耗时：${(elapsedTime / 1000).toFixed(
+									2,
+								)}秒。 进度：${fetchRes.progress}`;
+							break;
+						case "SUCCESS":
+							content =
+								message +
+								`绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
+									2,
+								)}秒。\n查看结果: \n [![${mjtaskid}](${fetchRes.imageUrl})](${
+									fetchRes.imageUrl
+								})`;
+							imageUrl = fetchRes.imageUrl;
+							break;
+						case "FAILURE":
+						case "TIMEOUT": // 假设这是超时的状态
+							content =
+								message +
+								`绘画任务失败或超时。总耗时：${(elapsedTime / 1000).toFixed(
+									2,
+								)}秒。失败理由：${fetchRes.failReason}`;
+							break;
+						default:
+							setTimeout(
+								() =>
+									this.pollForProgress(
+										session,
+										mjtaskid,
+										botMessageId,
+										startTime,
+										failureCount,
+									),
+								10000,
+							);
+							return;
+					}
+
+					// 更新会话消息
+					this.updateSessionMessage(session, botMessageId, content, imageUrl);
+
+					if (fetchRes.status === "IN_PROGRESS") {
+						setTimeout(
+							() =>
+								this.pollForProgress(
+									session,
+									mjtaskid,
+									botMessageId,
+									startTime,
+									failureCount,
+								),
+							10000,
+						);
+					}
+				} catch (error) {
+					console.error("Error fetching progress:", error);
+					failureCount += 1;
+					if (failureCount >= 5) {
+						this.updateSessionMessage(
+							// 更新会话消息
+							session,
+							botMessageId,
+							"接口调用失败超过5次。任务中止。",
+						);
+					}
+				}
 			},
 
 			// 先定义一个处理回调的函数，以便重用

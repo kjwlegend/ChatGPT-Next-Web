@@ -209,6 +209,7 @@ export function Chatbody(props: {
 		context,
 		isLoading,
 		session.messages,
+		session.lastUpdate,
 		userInput,
 		userImage?.fileUrl,
 	]);

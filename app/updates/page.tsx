@@ -459,6 +459,22 @@ const items = [
 		color: "red",
 		className: "fade-in-element",
 	},
+	{
+		label: "2023-12-28",
+		children: (
+			<>
+				发布 v1.6.0 版本, 小光说:
+				<div>
+					随着 Midjourney 6.0 的发布, 小光AI也绝对不能落下时代, 现在已经接入最新
+					MJ 6.0 版本, 而且改进体验模式, 不需要在输入繁琐的discord指令,
+					直接在小光AI的聊天窗口进行切换模型, 就可以直接发送提示词画图,
+					但由于官方限制, 目前不支持中文提示词
+				</div>
+			</>
+		),
+		color: "red",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
