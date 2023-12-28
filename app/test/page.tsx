@@ -15,8 +15,8 @@ import {
 } from "../api/midjourney/tasksubmit";
 
 export default function ApiTest() {
-	const [results, setResults] = useState({}); // 使用对象来存储每个测试的结果
-	const resultRefs = useRef([]); // 使用数组来引用每个结果显示区域的 div 元素
+	const [results, setResults] = useState<any>({}); // 使用对象来存储每个测试的结果
+	const resultRefs = useRef<any>([]); // 使用数组来引用每个结果显示区域的 div 元素
 	const [inputs, setInputs] = useState(Array(5).fill("")); // 创建一个长度为5的数组，用于存储每个输入框的值
 
 	const updateInput = (index: number, value: string) => {
@@ -70,11 +70,14 @@ export default function ApiTest() {
 			}
 
 			// 更新状态以显示结果
-			setResults((prevResults) => ({ ...prevResults, [testNumber]: response }));
-		} catch (error) {
+			setResults((prevResults: any) => ({
+				...prevResults,
+				[testNumber]: response,
+			}));
+		} catch (error: any) {
 			// 错误处理
 			console.error(`API call for test ${testNumber} failed:`, error);
-			setResults((prevResults) => ({
+			setResults((prevResults: any) => ({
 				...prevResults,
 				[testNumber]: error.message,
 			}));

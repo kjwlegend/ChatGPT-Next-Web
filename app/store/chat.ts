@@ -718,7 +718,7 @@ export const useChatStore = createPersistStore(
 					if (response.status !== 200) {
 						throw new Error("imagine failed");
 					}
-					const res = response.data as ImagineRes;
+					const res = response.data;
 
 					// 获取绘画请求的描述和结果ID
 					const description = res.description;
@@ -751,7 +751,7 @@ export const useChatStore = createPersistStore(
 
 					// 开始轮询绘画进度
 					this.pollForProgress(session, resultId, botMessageId, startTime);
-				} catch (err) {
+				} catch (err: any) {
 					// 处理错误情况
 					console.log(err);
 

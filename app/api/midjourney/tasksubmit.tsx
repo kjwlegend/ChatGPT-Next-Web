@@ -19,6 +19,7 @@ export interface ImagineRes {
 	description: string;
 	properties: Record<string, unknown>;
 	result: string;
+	status: number | undefined;
 }
 
 /**
@@ -42,7 +43,7 @@ export interface ImagineRes {
  * @returns
  */
 
-export function imagine(params: ImagineParams): Promise<ImagineRes> {
+export function imagine(params: ImagineParams): Promise<any> {
 	return request.post(`/mj/submit/imagine`, params);
 }
 
@@ -178,7 +179,6 @@ export interface FetchRes {
  * @param {string} id 任务ID
  * @returns
  */
-export function Mjfetch(id: string): Promise<FetchRes> {
+export function Mjfetch(id: string): Promise<any> {
 	return request.get(`/mj/task/${id}/fetch`);
 }
-
