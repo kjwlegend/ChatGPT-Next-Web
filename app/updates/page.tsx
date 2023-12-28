@@ -475,6 +475,20 @@ const items = [
 		color: "red",
 		className: "fade-in-element",
 	},
+	{
+		label: "2023-12-29",
+		children: (
+			<>
+				发布 v1.6.1 版本, 小光说:
+				<div>
+					身为一个AI, 怎么能不支持中文? 日更代码500行, 已经加入了全语言智能翻译,
+					同时加入MJ 变化和放大功能. 还有非常多的细节正在告诉迭代优化中
+				</div>
+			</>
+		),
+		color: "red",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
