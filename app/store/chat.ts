@@ -541,6 +541,13 @@ export const useChatStore = createPersistStore(
 
 				let response;
 				let newcontent = "";
+				// define initialize userMessage with empty
+				let userMessage: any = {
+					role: "user",
+					content: "",
+					image_url: image_url,
+				}
+				 
 
 				const chatOptions = {
 					messages: [] as RequestMessage[],
@@ -590,6 +597,7 @@ export const useChatStore = createPersistStore(
 					taskId: taskId ?? "",
 				};
 
+
 				//  判断是否有taskId 来判断任务类型, 有的话则是 await change, 没有的话则是 imagine
 
 				if (index && taskId && content == "") {
@@ -609,6 +617,12 @@ export const useChatStore = createPersistStore(
 					];
 
 					await api.llm.chat(chatOptions);
+					userMessage = createMessage({
+						role: "user",
+						content: ` ${newcontent}`,
+						image_url: image_url,
+					});
+	
 					response = await change(changeParams);
 				}
 				if (!taskId && content !== "") {
@@ -628,16 +642,17 @@ export const useChatStore = createPersistStore(
 					imagineParams.prompt = newcontent;
 
 					console.log("translateprompt: ", imagineParams.prompt);
+					userMessage = createMessage({
+						role: "user",
+						content: `原提示词: ${content} \n 翻译: ${newcontent}`,
+						image_url: image_url,
+					});
+	
 
 					response = await imagine(imagineParams);
 
 					console.log("response: ", response);
 				}
-				const userMessage: ChatMessage = createMessage({
-					role: "user",
-					content: `原提示词: ${content} \n 翻译: ${newcontent}`,
-					image_url: image_url,
-				});
 
 				try {
 					// 调用 imagine 函数并等待结果
