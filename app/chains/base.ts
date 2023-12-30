@@ -1,4 +1,5 @@
 import { useUserStore } from "@/app/store/user";
+import { RequestMessage, api } from "../client/api";
 
 export function getUserInfo() {
 	const user = useUserStore.getState().user;

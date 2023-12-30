@@ -12,6 +12,10 @@ export const DEFAULT_CORS_HOST = "https://ab.nextweb.fun";
 export const DEFAULT_API_HOST = `${DEFAULT_CORS_HOST}/api/proxy`;
 export const OPENAI_BASE_URL = "https://api.openai.com";
 
+export const GOOGLE_BASE_URL = "https://generativelanguage.googleapis.com";
+
+export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/";
+
 export const LAST_INPUT_IMAGE_KEY = "last-input-image";
 
 export enum Path {
@@ -81,6 +85,12 @@ export const EXPORT_MESSAGE_CLASS_NAME = "export-markdown";
 export enum ServiceProvider {
 	OpenAI = "OpenAI",
 	Azure = "Azure",
+	Google = "Google",
+}
+
+export enum ModelProvider {
+	GPT = "GPT",
+	GeminiPro = "GeminiPro",
 }
 
 export const OpenaiPath = {
@@ -91,7 +101,14 @@ export const OpenaiPath = {
 };
 
 export const Azure = {
-	ExampleEndpoint: "https://{resource-url}/openai/deployments/{deploy-id}",
+	ExampleEndpoint: "https://{resource-url}/openai/deployments",
+};
+
+export const Google = {
+	ExampleEndpoint: "https://generativelanguage.googleapis.com",
+	ChatPath: "v1/models/gemini-pro:generateContent",
+
+	// /api/openai/v1/chat/completions
 };
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo-16k";
@@ -107,26 +124,51 @@ export const DEFAULT_MODELS = [
 		name: "gpt-4",
 		displayName: "小光Pro-(5次/消息)",
 		available: true,
+		provider: {
+			id: "openai",
+			providerName: "OpenAI",
+			providerType: "openai",
+		},
 	},
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
 		displayName: "小光4.0-(5次/消息)",
+		provider: {
+			id: "openai",
+			providerName: "OpenAI",
+			providerType: "openai",
+		},
 	},
 	{
 		name: "gpt-3.5-turbo-1106",
 		displayName: "3.5-插件型(1次/消息)",
 		available: true,
+		provider: {
+			id: "openai",
+			providerName: "OpenAI",
+			providerType: "openai",
+		},
 	},
 	{
 		name: "gpt-3.5-turbo-16k",
 		displayName: "3.5-长文本(1次/消息)",
 		available: true,
+		provider: {
+			id: "openai",
+			providerName: "OpenAI",
+			providerType: "openai",
+		},
 	},
 	{
 		name: "gpt-4-vision-preview",
 		available: true,
 		displayName: "(测试功能-暂不可用)",
+		provider: {
+			id: "openai",
+			providerName: "OpenAI",
+			providerType: "openai",
+		},
 	},
 	{
 		name: "midjourney",
@@ -139,20 +181,14 @@ import { getServerSideConfig } from "@/app/config/server";
 
 // when it's build mode, I want the server_url to be admin.xiaoguang.fun otherwise localhost:8000
 
-export const server_url =
-	process.env.ENVIRONMENT == "PROD"
-		? "https://admin.xiaoguang.fun"
-		: "http://localhost:8000";
+// export const server_url = getServerSideConfig().server_url;
 
 // export const server_url = "https://admin.xiaoguang.fun";
+export const server_url = "http://localhost:8000";
 
-// export const server_url = "http://localhost:8000";
-export const version = "1.6.0";
+export const version = "1.6.2";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
 
-console.log(process.env.ENVIRONMENT);
-console.log(process.env.ENVIRONMENT == "DEV");
-
-console.log("URL", server_url);
+console.log("server_url", server_url);

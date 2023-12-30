@@ -625,3 +625,17 @@
 		bottom: 30px;
 	}
 }
+
+.chat-message-item {
+	.mj-action-button {
+		font-size: 12px;
+		width: 68px;
+		margin: 5px 10px;
+
+		&:hover {
+			color: #a52aff !important;
+			border-color: #c66fef !important;
+			background: #fbf3ff;
+		}
+	}
+}

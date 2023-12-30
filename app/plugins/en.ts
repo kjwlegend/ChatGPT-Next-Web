@@ -79,4 +79,26 @@ export const EN_PLUGINS: BuiltinPlugin[] = [
 		createdAt: 1699265115000,
 		enable: false,
 	},
+	{
+		name: "PDFBrowser",
+		toolName: "pdf-browser",
+		lang: "en",
+		description:
+			"A class designed to interact with pdf file, extract information from the URL of a PDF file or summarize its content.",
+		builtin: true,
+		createdAt: 1700907315000,
+		enable: false,
+		onlyNodeRuntime: true,
+	},
+	{
+		name: "WolframAlphaTool",
+		toolName: "wolfram_alpha",
+		lang: "en",
+		description:
+			"Useful for when you need to answer questions about Math, Science, Technology, Culture, Society and Everyday Life.",
+		builtin: true,
+		createdAt: 1703846656000,
+		enable: false,
+		onlyNodeRuntime: false,
+	},
 ];

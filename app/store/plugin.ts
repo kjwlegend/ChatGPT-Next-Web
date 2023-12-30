@@ -16,6 +16,7 @@ export type Plugin = {
 	description: string;
 	builtin: boolean;
 	enable: boolean;
+	onlyNodeRuntime?: boolean;
 };
 
 export const DEFAULT_PLUGIN_STATE = {
@@ -116,14 +117,10 @@ export const usePluginStore = create<PluginStore>()(
 			version: 3.1,
 
 			migrate(state, version) {
-				const newState = JSON.parse(
-					JSON.stringify(state),
-				) as PluginState;
+				const newState = JSON.parse(JSON.stringify(state)) as PluginState;
 
 				if (version < 3) {
-					Object.values(newState.plugins).forEach(
-						(m) => (m.id = nanoid()),
-					);
+					Object.values(newState.plugins).forEach((m) => (m.id = nanoid()));
 				}
 
 				if (version < 3.1) {

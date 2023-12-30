@@ -3,7 +3,7 @@ import { isMacOS } from "../utils";
 import { getClientConfig } from "../config/client";
 import { DEFAULT_MODELS, DEFAULT_SIDEBAR_WIDTH, StoreKey } from "../constant";
 
-import { DEFAULT_INPUT_TEMPLATE } from "../chains/default";
+import { DEFAULT_INPUT_TEMPLATE } from "../chains/base";
 import { createPersistStore } from "../utils/store";
 
 export type ModelType = (typeof DEFAULT_MODELS)[number]["name"];

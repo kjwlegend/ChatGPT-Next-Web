@@ -48,6 +48,8 @@ import { Button } from "antd";
 import MjActions from "./midjourney";
 import styles from "./chats.module.scss";
 
+import { Loading3QuartersOutlined } from "@ant-design/icons";
+
 import {
 	List,
 	ListItem,
@@ -610,6 +612,9 @@ export function Chatbody(props: {
 												<PlayIcon />
 											</button>
 										</div>
+									)}
+									{isUser && !message && (
+										<Loading3QuartersOutlined spin={true} />
 									)}
 									<Markdown
 										imageBase64={message.image_url}

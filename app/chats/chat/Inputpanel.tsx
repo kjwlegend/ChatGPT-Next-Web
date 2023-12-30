@@ -82,6 +82,8 @@ import {
 	MaskAvatar,
 	MaskConfig,
 } from "@/app/chats/mask-components";
+
+import { Radio } from "antd";
 import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
 import Image from "next/image";
@@ -345,14 +347,25 @@ export function ChatActions(props: {
 				session.mask.usePlugins = false;
 			});
 		}
-		console.log(
-			"session id",
-			session.id,
-			"usePlugins: ",
-			session.mask.usePlugins,
-			"plugin list",
-			session.mask.plugins,
-		);
+		// console.log(
+		// 	"session id",
+		// 	session.id,
+		// 	"usePlugins: ",
+		// 	session.mask.usePlugins,
+		// 	"plugin list",
+		// 	session.mask.plugins,
+		// );
+	}
+	function MjConfigChange(e: any) {
+		const sizevalue = e.target.value;
+		if (sizevalue == "0") {
+			return;
+		}
+		const size = "--ar " + sizevalue;
+		chatStore.updateSession(session.id, () => {
+			session.mjConfig.size = size;
+		});
+		console.log("session id", session.id, "mjConfig: ", session.mjConfig);
 	}
 
 	useEffect(() => {
@@ -557,29 +570,50 @@ export function ChatActions(props: {
 						}}
 					/>
 				)}
-				<ChatAction
-					text={Locale.Chat.InputActions.Clear}
-					icon={<BreakIcon />}
-					onClick={() => {
-						console.log("=-====clear====");
+				{currentModel == "midjourney" && (
+					<div className={`${styles["chat-input-action"]} `}>
+						<span>尺寸:</span>
+						<Radio.Group
+							defaultValue="a"
+							buttonStyle="solid"
+							size="small"
+							style={{ borderRadius: 25, marginLeft: 10 }}
+							onChange={MjConfigChange}
+						>
+							<Radio.Button value="1:1">1:1</Radio.Button>
+							<Radio.Button value="4:3">4:3</Radio.Button>
+							<Radio.Button value="16:9">16:9</Radio.Button>
+							<Radio.Button value="9:16">9:16</Radio.Button>
+							<Radio.Button value="0">自定义</Radio.Button>
+						</Radio.Group>
+					</div>
+				)}
 
-						chatStore.updateSession(sessionId, () => {
-							if (session.clearContextIndex === session.messages.length) {
-								session.clearContextIndex = undefined;
-							} else {
-								session.clearContextIndex = session.messages.length;
-								session.memoryPrompt = ""; // will clear memory
-							}
-							console.log(
-								"session",
-								sessionId,
-								"clearContextIndex",
-								session.clearContextIndex,
-							);
-						});
-					}}
-					hidetext={props.workflows ? true : false}
-				/>
+				{currentModel !== "midjourney" && (
+					<ChatAction
+						text={Locale.Chat.InputActions.Clear}
+						icon={<BreakIcon />}
+						onClick={() => {
+							console.log("=-====clear====");
+
+							chatStore.updateSession(sessionId, () => {
+								if (session.clearContextIndex === session.messages.length) {
+									session.clearContextIndex = undefined;
+								} else {
+									session.clearContextIndex = session.messages.length;
+									session.memoryPrompt = ""; // will clear memory
+								}
+								console.log(
+									"session",
+									sessionId,
+									"clearContextIndex",
+									session.clearContextIndex,
+								);
+							});
+						}}
+						hidetext={props.workflows ? true : false}
+					/>
+				)}
 			</div>
 			<div>
 				<div>

@@ -77,4 +77,25 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		createdAt: 1699265115000,
 		enable: true,
 	},
+	{
+		name: "PDF浏览器",
+		toolName: "pdf-browser",
+		lang: "cn",
+		description: "可以从pdf文件的url中提取信息或总结其内容。",
+		builtin: true,
+		createdAt: 1700907315000,
+		enable: false,
+		onlyNodeRuntime: true,
+	  },
+	  {
+		name: "WolframAlphaTool",
+		toolName: "wolfram_alpha",
+		lang: "cn",
+		description:
+		  "在需要回答有关数学、科学、技术、文化、社会和日常生活的问题时非常有用。",
+		builtin: true,
+		createdAt: 1703846656000,
+		enable: false,
+		onlyNodeRuntime: false,
+	  },
 ];

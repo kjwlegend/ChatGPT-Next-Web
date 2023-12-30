@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { getServerSideConfig } from "../config/server";
 import md5 from "spark-md5";
-import { ACCESS_CODE_PREFIX } from "../constant";
+import { ACCESS_CODE_PREFIX, ModelProvider } from "../constant";
 import request from "../utils/request";
 import { useAuthStore } from "../store/auth";
 import { use } from "react";
@@ -29,15 +29,19 @@ function parseApiKey(bearToken: string) {
 	};
 }
 
-export async function auth(req: NextRequest) {
+export function auth(req: NextRequest, modelProvider?: ModelProvider) {
 	const authToken = req.headers.get("Authorization") ?? "";
 	const isAuthenticated = req.cookies.get("authenticated")?.value === "true";
-
 
 	console.log("[Auth] isAuthenticated", isAuthenticated);
 
 	// check if it is openai api key or user token
-	const { accessCode, apiKey: token } = parseApiKey(authToken);
+	let { accessCode, apiKey } = parseApiKey(authToken);
+
+	if (modelProvider === ModelProvider.GeminiPro) {
+		const googleAuthToken = req.headers.get("x-goog-api-key") ?? "";
+		apiKey = googleAuthToken.trim().replaceAll("Bearer ", "").trim();
+	}
 
 	const hashedCode = md5.hash(accessCode ?? "").trim();
 
@@ -45,7 +49,7 @@ export async function auth(req: NextRequest) {
 	console.log("[Auth] allowed hashed codes: ", [...serverConfig.codes]);
 	console.log("[Auth] got access code:", accessCode);
 	console.log("[Auth] hashed access code:", hashedCode);
-	console.log("[Auth] got api key:", token);
+	console.log("[Auth] got api key:", apiKey);
 	console.log("[User IP] ", getIP(req));
 	console.log("Auth", isAuthenticated);
 	console.log("[Time] ", new Date().toLocaleString());
@@ -61,10 +65,12 @@ export async function auth(req: NextRequest) {
 
 	// if user does not provide an api key, inject system api key
 	if (isAuthenticated === true) {
-		const serverApiKey = serverConfig.isAzure
-			? serverConfig.azureApiKey
-			: serverConfig.apiKey;
-
+		const serverApiKey =
+			modelProvider === ModelProvider.GeminiPro
+				? serverConfig.googleApiKey
+				: serverConfig.isAzure
+				? serverConfig.azureApiKey
+				: serverConfig.apiKey;
 
 		if (serverApiKey) {
 			console.log("[Auth] use system api key");

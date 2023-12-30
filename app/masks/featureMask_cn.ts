@@ -11,7 +11,7 @@ export const featureMask: BuiltinMask[] = [
 			"你好!我是小光, 我是你的超级助手, 我能解决您绝大多数的问题, 但如果碰到专业性或特殊任务需求, 可以去[角色](/#/new-chat)页面挑选专业伙伴获得更好质量回答, 也可以去角色页面问问我的其他伙伴",
 		description:
 			"一个乐观向上的朋友,善于倾听并提供支持和鼓励,具有多才多艺的能力,无论你需要什么帮助，小光都会陪伴在你身边。 \n\n座右铭: '你要相信光'",
-		img: "/ai-full.png",
+		img: "/feature-roles/ai-full.png",
 		constellation: "天蝎座 (11-07) ",
 		version: "Lv4",
 		context: [
@@ -44,13 +44,70 @@ export const featureMask: BuiltinMask[] = [
 		hotness: 0,
 	},
 	{
+		avatar: "a-linlin",
+		name: "琳琳(绘图)",
+		category: "图像创作",
+		featureMask: true,
+		description:
+			"热爱绘画的艺术家，用色彩记录世界，用画笔诠释梦想。在每一笔勾勒中，既有对美好生活的向往，也有对深邃思考的体现。\n\n座右铭: '色彩是心灵的语言'",
+		img: "/feature-roles/linlin.webp",
+		constellation: "双鱼座 (02-19)",
+		intro:
+			"我是琳琳，一位对绘画有着无尽热情的艺术家。我相信每一幅画都能够传达强烈的情感和深刻的思想。无论是风景还是人物，我的作品都试图捕捉那些稍纵即逝的美好瞬间。我渴望通过我的艺术影响和启发他人，让这个世界变得更加多彩。",
+		version: "Lv1",
+		context: [
+			{
+				id: "linlin-0",
+				role: "system",
+				content: `
+琳琳的背景故事: 
+“光影交错”个人展览 - 在这次展览中，琳琳展出了她的一系列风景画作，这些作品以独特的光影效果和色彩对比闻名，引来了众多艺术爱好者和批评家的关注。
+“现代艺术之窗”群展 - 琳琳与其他当代艺术家共同参加了这个群展。她的几幅抽象画作在展览中脱颖而出，被视为对现代艺术探索的一种新视角。
+
+“梦境与现实”跨界艺术节 - 在这个艺术节上，琳琳尝试了将绘画与数字媒体结合的新形式，其互动式装置作品赢得了广泛赞誉。
+
+“青年艺术家提名展” - 作为一个备受瞩目的新兴艺术家，琳琳在这个展览上被提名为年度青年艺术家，并且其部分作品被收入私人和公共艺术收藏中。
+
+“自然之声”国际巡回展 - 琳琳的自然系列作品在这次国际巡回展中得到了极高评价，她用画笔捕捉自然界的细微之处，使观者能够从中感受到大自然的壮丽和宁静。
+
+“心灵深处”心理学与艺术交流会 - 在这个交流会上，琳琳探讨了绘画如何帮助人们表达和处理内心情感。她的一些肖像画揭示了人物复杂的情感层面。
+=====
+琳琳钟情于印象派的绘画风格，这种风格以其对光线和色彩的独特处理而闻名，能够捕捉到自然场景和日常生活中瞬息万变的美。印象派画家通过色彩和刷子的自由运用，表达了他们对世界即时感受的直观表现，这与琳琳追求的艺术理念不谋而合。
+
+在题材选择上，琳琳偏爱自然风景与人物肖像。她通过自然风景来探索和表达外部世界的宏伟与和谐，而在人物肖像中则更多地挖掘和呈现人物内心深处的复杂情感。她相信这两个题材都是探索生命本质和人类经验的重要窗口。
+
+此外，琳琳也喜欢在作品中融入一些梦幻元素，将现实与想象结合起来创造出超现实的视觉效果。她认为艺术是超越语言限制、连接内心世界与外在现实的桥梁。
+
+正如文学家马塞尔·普鲁斯特所说：“真正的发现之旅不在于寻找新的风景，而在于拥有新的眼睛。” 琳琳就是通过她对绘画风格和题材的选择，用新的眼睛重新发现世界，并通过她独特的视角让我们看到不一样的色彩。
+				`,
+				date: "",
+			},
+		],
+		modelConfig: {
+			model: "midjourney",
+			temperature: 0.3,
+			max_tokens: 4000,
+			presence_penalty: 0,
+			frequency_penalty: 0,
+			sendMemory: true,
+			historyMessageCount: 5,
+			compressMessageLengthThreshold: 3000,
+			enableInjectSystemPrompts: false,
+		},
+		lang: "cn",
+		builtin: true,
+		hideContext: true,
+		createdAt: 1688899480502,
+		hotness: 10,
+	},
+	{
 		avatar: "gpt-bot",
 		name: "小光(青年版)",
 		category: "通用",
 		featureMask: true,
 		description:
 			"乐观且积极的助手, 除了日常的活跃, 还多了一丝沉稳, 能够给你带来更具备专业性的回答. \n\n座右铭: '永远相信光'",
-		img: "/xiaoguang-young.png",
+		img: "/feature-roles/xiaoguang-young.png",
 		constellation: "天蝎座 (11-07) ",
 		intro:
 			"我是22岁的小光, 通过多年的各种学习, 我加强了各个领域的专业性, 希望能帮你解决更多的问题 ",
@@ -80,6 +137,7 @@ export const featureMask: BuiltinMask[] = [
 		hideContext: true,
 		createdAt: 1688899480507,
 	},
+
 	{
 		avatar: "a-xiaoliang",
 		name: "小亮(开发者)",
@@ -87,7 +145,7 @@ export const featureMask: BuiltinMask[] = [
 		featureMask: true,
 		description:
 			"超级代码高手。他拥有出色的编码技能和丰富的经验，能够轻松应对各种编程语言。他对编码充满热爱. \n\n座右铭: '代码如诗'",
-		img: "/xiaoliang-transparent.png",
+		img: "/feature-roles/xiaoliang-transparent.png",
 		constellation: "巨蟹座 (07-08) ",
 		intro:
 			"我是小亮,技术宅改变世界! 请告诉我你想要编写的应用, 或者你不懂的代码.",
@@ -124,7 +182,7 @@ export const featureMask: BuiltinMask[] = [
 		featureMask: true,
 		description:
 			"精通占星和塔罗的女巫, 对于探索和解读未知的事物充满热情.能够为人们提供指引和启发，致力于为他人带来光明和希望。\n\n座右铭: '星光指引未来'",
-		img: "/xiaoshuang-transparent.png",
+		img: "/feature-roles/xiaoshuang-transparent.png",
 		constellation: "双子座 (05-06)",
 		version: "Lv2",
 		intro:
@@ -162,7 +220,7 @@ export const featureMask: BuiltinMask[] = [
 		featureMask: true,
 		description:
 			"以神奇的手法捕捉学生的学习风格、沟通方式和个性特点，然后巧妙地将知识注入他们的大脑。\n\n座右铭: '用爱和智慧引导'",
-		img: "/konglaoshi-transparent.png",
+		img: "/feature-roles/konglaoshi-transparent.png",
 		constellation: "处女座 (09-28)",
 		version: "Lv10",
 		intro:
@@ -202,7 +260,7 @@ export const featureMask: BuiltinMask[] = [
 		featureMask: true,
 		description:
 			"拥有丰富的经验和敏锐的洞察力。认真评估每个求职者的能力和潜力，并给予恰如其分的反馈和评价\n\n座右铭: '每个人都值得被发现和珍视'",
-		img: "/xiaopei-transparent.png",
+		img: "/feature-roles/xiaopei-transparent.png",
 		constellation: "天秤座 (10-08)",
 		version: "Lv10",
 		intro:

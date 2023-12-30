@@ -15,7 +15,7 @@ import {
 	DEFAULT_INPUT_TEMPLATE,
 	DEFAULT_SYSTEM_TEMPLATE,
 	getDefaultSystemTemplate,
-} from "@/app/chains/default";
+} from "@/app/chains/base";
 
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
@@ -45,7 +45,6 @@ import {
 	ChangeParams,
 	change,
 } from "../api/midjourney/tasksubmit";
-import { fail } from "assert";
 
 export type ChatMessage = RequestMessage & {
 	date: string;
@@ -57,6 +56,13 @@ export type ChatMessage = RequestMessage & {
 	toolMessages?: ChatToolMessage[];
 	streaming?: boolean;
 	isError?: boolean;
+};
+
+export type MjConfig = {
+	size: string;
+	quality: string;
+	style: string;
+	model: string;
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
@@ -89,6 +95,7 @@ export interface ChatSession {
 	mask: Mask;
 	responseStatus?: boolean;
 	isworkflow?: boolean;
+	mjConfig: MjConfig;
 }
 
 export interface MJMessage {
@@ -109,6 +116,7 @@ export interface MJMessage {
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
+
 export const BOT_HELLO: ChatMessage = createMessage({
 	role: "assistant",
 	content: Locale.Store.BotHello,
@@ -129,6 +137,7 @@ function createEmptySession(): ChatSession {
 		lastSummarizeIndex: 0,
 		mask: createEmptyMask(),
 		isworkflow: false,
+		mjConfig: { size: "", quality: "", style: "", model: "" },
 	};
 }
 
@@ -546,13 +555,12 @@ export const useChatStore = createPersistStore(
 					role: "user",
 					content: "",
 					image_url: image_url,
-				}
-				 
+				};
 
 				const chatOptions = {
 					messages: [] as RequestMessage[],
 					config: {
-						temperature: 0.9,
+						temperature: 0,
 						top_p: 1,
 						model: SUMMARIZE_MODEL,
 						stream: false,
@@ -597,7 +605,6 @@ export const useChatStore = createPersistStore(
 					taskId: taskId ?? "",
 				};
 
-
 				//  判断是否有taskId 来判断任务类型, 有的话则是 await change, 没有的话则是 imagine
 
 				if (index && taskId && content == "") {
@@ -610,48 +617,47 @@ export const useChatStore = createPersistStore(
 						{
 							role: "user",
 							content:
-								"请将这个程序化的描述: {" +
-								origintext +
-								"} 用一种一种幽默风趣, 带点哲学意味的风格说出来,不超过30个字",
+								"你需要将用户输入的内容,用一种幽默, 但又有哲理的的口吻的风格说出来, 但需要保留原本的意思,不超过30个字, 用户的内容是:" +
+								origintext,
 						},
 					];
 
 					await api.llm.chat(chatOptions);
+
 					userMessage = createMessage({
 						role: "user",
 						content: ` ${newcontent}`,
 						image_url: image_url,
 					});
-	
+
 					response = await change(changeParams);
 				}
+
 				if (!taskId && content !== "") {
 					// 将content 进行翻译 并赋值到 translateprompt
 					// 用于 imagineParams.prompt
+
+					userMessage = createMessage({
+						role: "user",
+						content: content,
+						image_url: image_url,
+					});
+
 					chatOptions.messages = [
 						{
 							role: "user",
 							content:
-								"Translate and optimize the description into English if the content is not written in English. Do not output anything else. Here are the content ::" +
+								"Translate and optimize the description into English if the content is not written in English. if the original text ends with '--ar {text}'. for example '--style raw'. Do not translate '--ar {text}' part and put them at the end of translation. if the original content doesn't have '--ar {text}', do not add anythign in the end. Only output the final translation text. Here are the content ::" +
 								content,
 						},
 					];
 
 					await api.llm.chat(chatOptions);
+					const suffix = Object.values(session.mjConfig).join(" ");
 
-					imagineParams.prompt = newcontent;
-
-					console.log("translateprompt: ", imagineParams.prompt);
-					userMessage = createMessage({
-						role: "user",
-						content: `原提示词: ${content} \n 翻译: ${newcontent}`,
-						image_url: image_url,
-					});
-	
+					imagineParams.prompt = newcontent + " " + suffix;
 
 					response = await imagine(imagineParams);
-
-					console.log("response: ", response);
 				}
 
 				try {
@@ -669,7 +675,12 @@ export const useChatStore = createPersistStore(
 						"你的绘画请求: " +
 						description +
 						"\n请耐心等待，请求id: " +
-						resultId;
+						resultId +
+						"\n原提示词 : " +
+						content +
+						"\n" +
+						"翻译提示词: " +
+						imagineParams.prompt;
 
 					// 创建botMessage，提示请求已提交
 					const botMessage: ChatMessage = createMessage({
@@ -695,7 +706,13 @@ export const useChatStore = createPersistStore(
 					const startTime = Date.now();
 
 					// 开始轮询绘画进度
-					this.pollForProgress(session, resultId, botMessageId, startTime);
+					this.pollForProgress(
+						session,
+						resultId,
+						message,
+						botMessageId,
+						startTime,
+					);
 				} catch (err: any) {
 					// 处理错误情况
 					console.log(err);
@@ -749,6 +766,7 @@ export const useChatStore = createPersistStore(
 			async pollForProgress(
 				session: ChatSession,
 				mjtaskid: string,
+				message: string,
 				botMessageId: string,
 				startTime: number,
 				failureCount: number = 0,
@@ -759,8 +777,6 @@ export const useChatStore = createPersistStore(
 					const currentTime = Date.now();
 					const elapsedTime = currentTime - startTime;
 
-					const message = `绘画请求id:   __${fetchRes.id}__  \n"`;
-
 					let content = "";
 					let imageUrl = "";
 
@@ -768,25 +784,33 @@ export const useChatStore = createPersistStore(
 						case "IN_PROGRESS":
 							content =
 								message +
-								`绘画正在加紧绘制中, 已耗时：${(elapsedTime / 1000).toFixed(
+								`\n 绘画正在加紧绘制中, 已耗时：${(elapsedTime / 1000).toFixed(
 									2,
 								)}秒。 进度：${fetchRes.progress}`;
 							break;
 						case "SUCCESS":
+							let filePath = await fetch("/api/file/mjupload", {
+								method: "POST",
+								body: JSON.stringify({
+									url: fetchRes.imageUrl,
+								}),
+							})
+								.then((res) => res.json())
+								.then((res) => res.fileName);
+							console.log("filePath: ", filePath);
+
 							content =
 								message +
-								`绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
+								`\n 绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
 									2,
-								)}秒。\n查看结果: \n [![${mjtaskid}](${fetchRes.imageUrl})](${
-									fetchRes.imageUrl
-								})`;
-							imageUrl = fetchRes.imageUrl;
+								)}秒。\n查看结果: \n [![${mjtaskid}](${filePath})](${filePath})`;
+
 							break;
 						case "FAILURE":
 						case "TIMEOUT": // 假设这是超时的状态
 							content =
 								message +
-								`绘画任务失败或超时。总耗时：${(elapsedTime / 1000).toFixed(
+								`\n 绘画任务失败或超时。总耗时：${(elapsedTime / 1000).toFixed(
 									2,
 								)}秒。失败理由：${fetchRes.failReason}`;
 							break;
@@ -796,6 +820,7 @@ export const useChatStore = createPersistStore(
 									this.pollForProgress(
 										session,
 										mjtaskid,
+										message,
 										botMessageId,
 										startTime,
 										failureCount,
@@ -820,6 +845,7 @@ export const useChatStore = createPersistStore(
 								this.pollForProgress(
 									session,
 									mjtaskid,
+									message,
 									botMessageId,
 									startTime,
 									failureCount,
@@ -1152,7 +1178,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.2,
+		version: 3.3,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(
@@ -1203,6 +1229,7 @@ export const useChatStore = createPersistStore(
 			if (version < 3.2) {
 				newState.sessions.forEach((s) => {
 					s.isworkflow = false;
+					s.mjConfig = { size: "", quality: "", style: "", model: "" };
 				});
 			}
 

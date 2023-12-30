@@ -303,7 +303,7 @@ function ContextPromptItem(props: {
 	};
 
 	// 重命名函数以避免冲突，并处理异步逻辑
-	const handleGenPrompt = () => {
+	const handleGenPrompt = async () => {
 		// 获取当前textArea的值
 		const currentContent = props.prompt.content;
 
@@ -316,7 +316,7 @@ function ContextPromptItem(props: {
 		genPrompt(currentContent).then((newPrompt) => {
 			props.update({
 				...props.prompt,
-				content: newPrompt,
+				content: newPrompt as string,
 			});
 
 			setLoadings((prevLoadings) => {

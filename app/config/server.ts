@@ -23,9 +23,13 @@ declare global {
 			CUSTOM_MODELS?: string; // to control custom models
 
 			// azure only
-			AZURE_URL?: string; // https://{azure-url}/openai/deployments/{deploy-name}
+			AZURE_URL?: string; // https://{azure-url}/openai/deployments
 			AZURE_API_KEY?: string;
 			AZURE_API_VERSION?: string;
+
+			// google only
+			GOOGLE_API_KEY?: string;
+			GOOGLE_BASE_URL?: string;
 		}
 	}
 }
@@ -61,18 +65,36 @@ export const getServerSideConfig = () => {
 	}
 
 	const isAzure = !!process.env.AZURE_URL;
-	
+	const isGoogle = !!process.env.GOOGLE_API_KEY;
+
+	const env = process.env.ENVIRONMENT;
+	let server_url = "";
+
+	if (env == "PROD") {
+		console.log("PROD");
+		server_url = "https://admin.xiaoguang.fun";
+	}
+
+	if (env == "DEV") {
+		console.log("DEV");
+		server_url = "http://localhost:8000";
+	}
 
 	return {
 		baseUrl: process.env.BASE_URL,
 		apiKey: process.env.OPENAI_API_KEY,
 		openaiOrgId: process.env.OPENAI_ORG_ID,
-		
-		environment : process.env.NODE_ENV,
+		server_url,
+
+		environment: process.env.NODE_ENV,
 		isAzure,
 		azureUrl: process.env.AZURE_URL,
 		azureApiKey: process.env.AZURE_API_KEY,
 		azureApiVersion: process.env.AZURE_API_VERSION,
+
+		isGoogle,
+		googleApiKey: process.env.GOOGLE_API_KEY,
+		googleBaseUrl: process.env.GOOGLE_BASE_URL,
 
 		needCode: ACCESS_CODES.size > 0,
 		code: process.env.CODE,
