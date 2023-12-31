@@ -74,7 +74,7 @@ import {
 } from "@/app/chats/mask-components";
 
 import { useAuthStore } from "../store/auth";
-import { createChat, CreateChatData } from "../api/chat";
+import { createChat, CreateChatData } from "../api/backend/chat";
 
 import { ChatActions, ChatAction } from "./Inputpanel";
 import {

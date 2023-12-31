@@ -73,7 +73,7 @@ import { prettyObject } from "@/app/utils/format";
 import { ExportMessageModal } from "@/app/chats/exporter";
 import { getClientConfig } from "@/app/config/client";
 import { useAuthStore } from "@/app/store/auth";
-import { createChat, CreateChatData } from "@/app/api/chat";
+import { createChat, CreateChatData } from "@/app/api/backend/chat";
 import useAuth from "@/app/hooks/useAuth";
 import { message } from "antd";
 

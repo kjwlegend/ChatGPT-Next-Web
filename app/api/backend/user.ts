@@ -1,4 +1,4 @@
-import request from "../utils/request";
+import request from "@/app/utils/request";
 import { User } from "../store/user";
 
 export async function updateProfile(userId: number, userInfo: User) {
@@ -27,7 +27,12 @@ export async function getUserInfo(userId: any) {
 }
 
 // Member type 包含 normal, monthly, quarterly, yearly
-export type member_type = "normal" | "monthly" | "quarterly" | "halfyearly" | "yearly";
+export type member_type =
+	| "normal"
+	| "monthly"
+	| "quarterly"
+	| "halfyearly"
+	| "yearly";
 
 interface upgradeMemberParams {
 	user_id: number;

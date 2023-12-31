@@ -22,7 +22,7 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
-import { createChatSession } from "../api/chat";
+import { createChatSession } from "../api/backend/chat";
 import { UserStore, useUserStore } from "./user";
 import { BUILTIN_MASKS } from "../masks";
 import type { BuiltinMask } from "../masks";

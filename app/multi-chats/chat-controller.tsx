@@ -72,7 +72,7 @@ import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 import { prettyObject } from "../utils/format";
 import { getClientConfig } from "../config/client";
 import { useAuthStore } from "../store/auth";
-import { createChat, CreateChatData } from "../api/chat";
+import { createChat, CreateChatData } from "../api/backend/chat";
 import useAuth from "../hooks/useAuth";
 import { message } from "antd";
 

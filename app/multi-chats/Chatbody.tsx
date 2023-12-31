@@ -74,7 +74,7 @@ import {
 import { useAuthStore } from "../store/auth";
 import { ChatContext } from "../chats/chat/main";
 
-import { CreateChatData, createChat } from "../api/chat";
+import { CreateChatData, createChat } from "../api/backend/chat";
 import { message } from "antd";
 import useAuth from "../hooks/useAuth";
 

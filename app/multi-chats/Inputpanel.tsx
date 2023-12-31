@@ -84,7 +84,7 @@ import {
 import { useMaskStore } from "../store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "../command";
 
-import { createChat, CreateChatData } from "../api/chat";
+import { createChat, CreateChatData } from "../api/backend/chat";
 import useAuth from "../hooks/useAuth";
 import { message } from "antd";
 

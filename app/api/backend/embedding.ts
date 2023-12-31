@@ -1,4 +1,4 @@
-import request from "../utils/request";
+import request from "@/app/utils/request";
 
 export interface filemedata {
 	file: File | undefined;

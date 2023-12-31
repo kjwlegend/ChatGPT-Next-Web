@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/auth";
 import { useUserStore, User } from "../store/user";
 import { logoutAPI } from "../api/auth";
 import { Result } from "antd";
-import { getUserInfo } from "../api/user";
+import { getUserInfo } from "../api/backend/user";
 
 interface LoginParams {
 	username: string;
@@ -23,9 +23,6 @@ export default function useAuth() {
 		setUser(storedUser);
 	}, [authStore]);
 
-
-
-
 	const loginHook = async (params: LoginParams): Promise<void> => {
 		try {
 			setIsLoading(true);
@@ -34,9 +31,9 @@ export default function useAuth() {
 			// cookie
 			// const expirationDate = new Date();
 			// const expirationDate = new Date();
-			console.log("当前:" ,expirationDate);
+			console.log("当前:", expirationDate);
 			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
-			console.log("48小时后:" ,expirationDate);
+			console.log("48小时后:", expirationDate);
 			setExpirationDate(expirationDate);
 			document.cookie = `authenticated=true; user_id=${
 				result.data.user.id
@@ -87,20 +84,19 @@ export default function useAuth() {
 						authInfo.user.member_expire_date.slice(0, 10);
 				}
 				// 处理重置时间, 如果没有重置时间则显示不重置
-				if (!authInfo.user.last_refresh_date) 
-				{
+				if (!authInfo.user.last_refresh_date) {
 					authInfo.user.last_refresh_date = "不重置";
 				} else {
 					// 处理 last_refresh_date 会员重置时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
 					authInfo.user.last_refresh_date =
 						authInfo.user.last_refresh_date.slice(0, 10);
-				// 如果有重置时间,则在获取到的时间上+30天
-				const last_refresh_date = new Date(authInfo.user.last_refresh_date);
-				last_refresh_date.setDate(last_refresh_date.getDate() + 30);
-				authInfo.user.last_refresh_date = last_refresh_date.toISOString().slice(0, 10);
-
+					// 如果有重置时间,则在获取到的时间上+30天
+					const last_refresh_date = new Date(authInfo.user.last_refresh_date);
+					last_refresh_date.setDate(last_refresh_date.getDate() + 30);
+					authInfo.user.last_refresh_date = last_refresh_date
+						.toISOString()
+						.slice(0, 10);
 				}
-
 			}
 
 			authStore.login(authInfo.accessToken, authInfo.refreshToken);
@@ -150,18 +146,15 @@ export default function useAuth() {
 			}
 
 			// 处理重置时间, 如果没有重置时间则显示不重置
-			if (!user.last_refresh_date) 
-			{
+			if (!user.last_refresh_date) {
 				user.last_refresh_date = "不重置";
 			} else {
 				// 处理 last_refresh_date 会员重置时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
-				user.last_refresh_date =
-					user.last_refresh_date.slice(0, 10);
-			// 如果有重置时间,则在获取到的时间上+30天
-			const last_refresh_date = new Date(user.last_refresh_date);
-			last_refresh_date.setDate(last_refresh_date.getDate() + 30);
-			user.last_refresh_date = last_refresh_date.toISOString().slice(0, 10);
-
+				user.last_refresh_date = user.last_refresh_date.slice(0, 10);
+				// 如果有重置时间,则在获取到的时间上+30天
+				const last_refresh_date = new Date(user.last_refresh_date);
+				last_refresh_date.setDate(last_refresh_date.getDate() + 30);
+				user.last_refresh_date = last_refresh_date.toISOString().slice(0, 10);
 			}
 		}
 
@@ -179,7 +172,6 @@ export default function useAuth() {
 		authStore.logout();
 		userStore.clearUser();
 	};
-
 
 	return {
 		user,

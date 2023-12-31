@@ -4,8 +4,8 @@ import type { UploadProps } from "antd";
 import { Button, message, Upload } from "antd";
 import type { UploadFile } from "antd/lib/upload/interface";
 import { server_url } from "../constant";
-import { removeEmbedding } from "../api/embedding";
-import { getEmbedding } from "../api/embedding";
+import { removeEmbedding } from "../api/backend/embedding";
+import { getEmbedding } from "../api/backend/embedding";
 import { useUserStore } from "../store";
 
 const App: React.FC = () => {

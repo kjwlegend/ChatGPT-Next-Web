@@ -29,7 +29,7 @@ import {
 import { KnowledgeSearch } from "@/app/api/langchain-tools/doc_search";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
-import { getUserInfo } from "@/app/api/user";
+import { getUserInfo } from "@/app/api/backend/user";
 import { User, useUserStore } from "@/app/store";
 
 const serverConfig = getServerSideConfig();

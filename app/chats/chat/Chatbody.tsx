@@ -85,7 +85,7 @@ import {
 	ClearContextDivider,
 } from "./chat-controller";
 
-import { CreateChatData, createChat } from "@/app/api/chat";
+import { CreateChatData, createChat } from "@/app/api/backend/chat";
 
 import { convertTextToSpeech } from "@/app/utils/voicetotext";
 import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";

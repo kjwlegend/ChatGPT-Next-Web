@@ -12,7 +12,7 @@ import { SmileTwoTone } from "@ant-design/icons";
 import { QRCode } from "antd";
 import { useRouter } from "next/router";
 import useAuth from "../hooks/useAuth";
-import { member_type, upgradeMember } from "../api/user";
+import { member_type, upgradeMember } from "../api/backend/user";
 import { type } from "os";
 import Image from "next/image";
 

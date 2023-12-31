@@ -88,7 +88,7 @@ import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
 import Image from "next/image";
 
-import { createChat, CreateChatData } from "@/app/api/chat";
+import { createChat, CreateChatData } from "@/app/api/backend/chat";
 import useAuth from "@/app/hooks/useAuth";
 import { message } from "antd";
 

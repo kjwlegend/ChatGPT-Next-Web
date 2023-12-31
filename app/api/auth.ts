@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { getServerSideConfig } from "../config/server";
 import md5 from "spark-md5";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "../constant";
-import request from "../utils/request";
+import request from "@/app/utils/request";
 import { useAuthStore } from "../store/auth";
 import { use } from "react";
 import { useUserStore } from "../store";

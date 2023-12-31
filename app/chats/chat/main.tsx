@@ -70,7 +70,7 @@ import {
 } from "@/app/chats/mask-components";
 import { ExportMessageModal } from "@/app/chats/exporter";
 import { useAuthStore } from "@/app/store/auth";
-import { createChat, CreateChatData } from "@/app/api/chat";
+import { createChat, CreateChatData } from "@/app/api/backend/chat";
 
 import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
 import {
