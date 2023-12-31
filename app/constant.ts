@@ -122,7 +122,7 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 export const DEFAULT_MODELS = [
 	{
 		name: "gpt-4",
-		displayName: "小光Pro-(5次/消息)",
+		displayName: "小光Pro-(5积分/次)",
 		available: true,
 		provider: {
 			id: "openai",
@@ -133,7 +133,7 @@ export const DEFAULT_MODELS = [
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
-		displayName: "小光4.0-(5次/消息)",
+		displayName: "小光4.0-(5积分/次)",
 		provider: {
 			id: "openai",
 			providerName: "OpenAI",
@@ -142,7 +142,7 @@ export const DEFAULT_MODELS = [
 	},
 	{
 		name: "gpt-3.5-turbo-1106",
-		displayName: "3.5-插件型(1次/消息)",
+		displayName: "3.5-插件型(1积分/次)",
 		available: true,
 		provider: {
 			id: "openai",
@@ -152,7 +152,7 @@ export const DEFAULT_MODELS = [
 	},
 	{
 		name: "gpt-3.5-turbo-16k",
-		displayName: "3.5-长文本(1次/消息)",
+		displayName: "3.5-长文本(1积分/次)",
 		available: true,
 		provider: {
 			id: "openai",
@@ -173,7 +173,7 @@ export const DEFAULT_MODELS = [
 	{
 		name: "midjourney",
 		available: true,
-		displayName: "Midjourney",
+		displayName: "Midjourney(2积分/次)",
 	},
 ] as const;
 
