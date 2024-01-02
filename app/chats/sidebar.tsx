@@ -196,13 +196,15 @@ export function SideBar(props: { className?: string }) {
 					shadow
 				/> */}
 
-				{/* <IconButton
+				<IconButton
 					icon={<PluginIcon />}
-					text={shouldNarrow ? undefined : Locale.Plugin.Name}
+					text={shouldNarrow ? undefined : "画廊"}
 					className={styles["sidebar-bar-button"]}
-					onClick={() => navigate(Path.Plugins, { state: { fromHome: true } })}
+					onClick={() =>
+						navigate(Path.Paintings, { state: { fromHome: true } })
+					}
 					shadow
-				/> */}
+				/>
 			</div>
 
 			<div

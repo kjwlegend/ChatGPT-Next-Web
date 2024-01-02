@@ -3,6 +3,7 @@ import { useChatStore } from "@/app/store";
 import { ChatSession } from "@/app/store";
 import { useState } from "react";
 import styles from "./chats.module.scss";
+import { midjourneyOnUserInput } from "@/app/services/midjourneyService";
 
 // 定义按钮位置的类型
 // type ButtonPosition = "左上" | "右上" | "左下" | "右下";
@@ -41,7 +42,7 @@ const MjActions = (props: { session: ChatSession; taskid: string }) => {
 		const newIndex = index + 1; // 更新index
 
 		// 调用 midjourneyOnUserInput 函数，传递参数
-		await chatStore.midjourneyOnUserInput(
+		await midjourneyOnUserInput(
 			content,
 			image_url,
 			session,

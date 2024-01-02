@@ -17,6 +17,7 @@ import { BUILTIN_MASKS } from "../masks";
 import type { BuiltinMask } from "../masks";
 import { Plugin, usePluginStore } from "../store/plugin";
 
+import { sendChatMessage } from "../services/chatService";
 import {
 	useChatStore,
 	ChatMessage,
@@ -51,7 +52,7 @@ export function summarizeTitle(_session?: ChatSession) {
 				content: Locale.Store.Prompt.Topic,
 			}),
 		);
-		chatStoreState.sendChatMessage(session, topicMessages, {
+		sendChatMessage(session, topicMessages, {
 			onFinish(message) {
 				chatStoreState.updateCurrentSession(
 					(session) =>
@@ -118,7 +119,7 @@ export function summarizeSession(_session?: ChatSession) {
 		);
 
 		// 使用新的 sendChatMessage 函数
-		chatStoreState.sendChatMessage(session, summarizeMessages, {
+		sendChatMessage(session, summarizeMessages, {
 			onUpdate: (message) => {
 				session.memoryPrompt = message;
 			},

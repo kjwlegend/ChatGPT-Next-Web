@@ -1,21 +1,4 @@
 import request from "@/app/utils/request";
-import { User } from "../store/user";
-import { ModelType } from "../store/config";
-import { ChatMessage } from "../store/chat";
-
-export interface CreateChatSessionData {
-	user: number;
-	prompt_id?: string;
-	model?: ModelType;
-}
-
-export interface CreateChatData {
-	user: number;
-	chat_session: string;
-	message?: string | ChatMessage[];
-	memory?: ChatMessage[];
-	token_count?: number;
-}
 
 // get prompt category url : /api/gpt/get-prompt-categories/
 

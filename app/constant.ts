@@ -28,11 +28,13 @@ export enum Path {
 	Auth = "/auth",
 	Intro = "/intro",
 	Updates = "/updates",
+	Paintings = "/paintings",
 }
 
 export enum ApiPath {
 	Cors = "/api/cors",
 	OpenAI = "/api/openai",
+	GoogleAI = "/api/google",
 }
 
 export enum SlotID {

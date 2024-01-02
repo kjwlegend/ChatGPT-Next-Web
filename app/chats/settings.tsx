@@ -611,7 +611,7 @@ export function Settings() {
 	const [shouldShowPromptModal, setShowPromptModal] = useState(false);
 
 	const IsAuthenticated = useAuthStore((state) => state.isAuthenticated);
-	const showUsage = accessStore.isAuthorized(IsAuthenticated);
+	const showUsage = accessStore.isAuthorized();
 	useEffect(() => {
 		// checks per minutes
 		checkUpdate();

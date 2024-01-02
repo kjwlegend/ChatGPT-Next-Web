@@ -1,0 +1,39 @@
+.gallery-container {
+	overflow-y: auto;
+	height: calc(80vh - 40px);
+}
+// Masonry布局的样式
+.masonry-grid {
+	display: flex;
+	margin-left: -30px; // 间隙大小
+	width: auto;
+	// overflow: auto;
+	padding: 20px 10px 20px 30px;
+}
+.masonry-grid_column {
+	padding-left: 10px; // 间隙大小
+	background-clip: padding-box;
+}
+
+// 图片样式
+.gallery-image {
+	// 你可以在这里添加额外的样式，比如边框、阴影等
+	margin-bottom: 10px; // 图片之间的间隙
+	width: 100%; // 使图片填满容器
+	object-fit: cover; // 保持图片的纵横比
+	border-radius: 5px;
+}
+
+.gallery-image-mask {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	padding: 10px;
+	height: 100%;
+
+	.gallery-image-mask-actions {
+		display: flex;
+		justify-content: space-between;
+	}
+}

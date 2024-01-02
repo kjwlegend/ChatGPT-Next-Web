@@ -57,9 +57,12 @@ const MaskPage = dynamic(
 	},
 );
 
-const Updates = dynamic(async () => (await import("../updates/page")).default, {
-	loading: () => <Loading noLogo />,
-});
+const Paitings = dynamic(
+	async () => (await import("./paintings/main")).default,
+	{
+		loading: () => <Loading noLogo />,
+	},
+);
 
 const Plugins = dynamic(async () => (await import("./plugin")).PluginPage, {
 	loading: () => <Loading noLogo />,
@@ -165,6 +168,8 @@ function Screen() {
 						<Routes>
 							<Route path={Path.Home} element={<NewChat />} />
 							<Route path={Path.NewChat} element={<NewChat />} />
+							<Route path={Path.Paintings} element={<Paitings />} />
+
 							<Route path={Path.Masks} element={<MaskPage />} />
 							<Route path={Path.Plugins} element={<Plugins />} />
 							<Route path={Path.Chat} element={<Chat />} />

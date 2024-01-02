@@ -31,6 +31,7 @@ import { getClientConfig } from "@/app/config/client";
 import { makeAzurePath } from "@/app/azure";
 
 import { auth } from "@/app/api/auth";
+import axios from "axios";
 
 export interface OpenAIListModelResponse {
 	object: string;
@@ -99,46 +100,49 @@ export class ChatGPTApi implements LLMApi {
 	async chat(options: ChatOptions) {
 		const balance = CheckUserBalance();
 
-		// const messages: any[] = [];
-		// for (const v of options.messages) {
-		// 	let message: {
-		// 		role: string;
-		// 		content: { type: string; text?: string; image_url?: { url: string } }[];
-		// 	} = {
-		// 		role: v.role,
-		// 		content: [],
-		// 	};
-		// 	message.content.push({
-		// 		type: "text",
-		// 		text: v.content,
-		// 	});
-		// 	if (v.image_url) {
-		// 		await fetch(v.image_url)
-		// 			.then((response) => response.blob())
-		// 			.then((blob) => {
-		// 				const reader = new FileReader();
-		// 				reader.onloadend = function () {
-		// 					const base64data = reader.result;
-		// 					message.content.push({
-		// 						type: "image_url",
-		// 						image_url: {
-		// 							url: base64data,
-		// 						},
-		// 					});
-		// 				};
-		// 				reader.readAsDataURL(blob);
-		// 			})
-		// 			.catch((error) => {
-		// 				console.error(error);
-		// 			});
-		// 	}
-		// 	messages.push(message);
-		// }
-		// 老版本;
-		const messages = options.messages.map((v) => ({
-			role: v.role,
-			content: v.content,
-		}));
+		const messages: any[] = [];
+
+		const getImageBase64Data = async (url: string) => {
+			const response = await axios.get(url, { responseType: "arraybuffer" });
+			const base64 = Buffer.from(response.data, "binary").toString("base64");
+			return base64;
+		};
+		if (options.config.model === "gpt-4-vision-preview") {
+			for (const v of options.messages) {
+				let message: {
+					role: string;
+					content: {
+						type: string;
+						text?: string;
+						image_url?: { url: string };
+					}[];
+				} = {
+					role: v.role,
+					content: [],
+				};
+				message.content.push({
+					type: "text",
+					text: v.content,
+				});
+				if (v.image_url) {
+					var base64Data = await getImageBase64Data(v.image_url);
+					message.content.push({
+						type: "image_url",
+						image_url: {
+							url: `data:image/jpeg;base64,${base64Data}`,
+						},
+					});
+				}
+				messages.push(message);
+			}
+		} else {
+			options.messages.map((v) =>
+				messages.push({
+					role: v.role,
+					content: v.content,
+				}),
+			);
+		}
 
 		const modelConfig = {
 			...useAppConfig.getState().modelConfig,
@@ -568,6 +572,11 @@ export class ChatGPTApi implements LLMApi {
 			name: m.id,
 			available: true,
 			displayName: m.id,
+			provider: {
+				id: "openai",
+				providerName: "OpenAI",
+				providerType: "openai",
+			},
 		}));
 	}
 }

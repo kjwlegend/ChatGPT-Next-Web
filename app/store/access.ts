@@ -6,28 +6,8 @@ import {
 } from "../constant";
 import { getHeaders } from "../client/api";
 import { getClientConfig } from "../config/client";
-import { useAuthStore } from "./auth";
 import { createPersistStore } from "../utils/store";
 import { ensure } from "../utils/clone";
-
-// export interface AccessControlStore {
-//   accessCode: string;
-//   token: string;
-
-//   needCode: boolean;
-//   hideUserApiKey: boolean;
-//   hideBalanceQuery: boolean;
-//   disableGPT4: boolean;
-
-//   openaiUrl: string;
-
-//   updateToken: (_: string) => void;
-//   updateCode: (_: string) => void;
-//   updateOpenAiUrl: (_: string) => void;
-//   enabledAccessControl: () => boolean;
-//   isAuthorized: (isAuthenticated: boolean) => boolean;
-//   fetch: () => void;
-// }
 
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 
@@ -49,6 +29,11 @@ const DEFAULT_ACCESS_STATE = {
 	azureApiKey: "",
 	azureApiVersion: "2023-08-01-preview",
 
+	// google ai studio
+	googleBaseUrl: "",
+	googleApiKey: "",
+	googleApiVersion: "v1",
+
 	// server config
 	needCode: true,
 	hideUserApiKey: false,
@@ -69,25 +54,27 @@ export const useAccessStore = createPersistStore(
 		},
 
 		isValidOpenAI() {
-			return ensure(get(), ["openaiUrl", "openaiApiKey"]);
+			return ensure(get(), ["openaiApiKey"]);
 		},
 
 		isValidAzure() {
 			return ensure(get(), ["azureUrl", "azureApiKey", "azureApiVersion"]);
 		},
-		updateOpenAiUrl(url: string) {
-			set(() => ({ openaiUrl: url?.trim() }));
+
+		isValidGoogle() {
+			return ensure(get(), ["googleApiKey"]);
 		},
-		isAuthorized(isAuthenticated: boolean) {
+
+		isAuthorized() {
 			this.fetch();
 
 			// has token or has code or disabled access control
 			return (
 				this.isValidOpenAI() ||
 				this.isValidAzure() ||
+				this.isValidGoogle() ||
 				!this.enabledAccessControl() ||
-				(this.enabledAccessControl() && ensure(get(), ["accessCode"])) ||
-				!!isAuthenticated
+				(this.enabledAccessControl() && ensure(get(), ["accessCode"]))
 			);
 		},
 		fetch() {
@@ -122,9 +109,11 @@ export const useAccessStore = createPersistStore(
 					token: string;
 					openaiApiKey: string;
 					azureApiVersion: string;
+					googleApiKey: string;
 				};
 				state.openaiApiKey = state.token;
 				state.azureApiVersion = "2023-08-01-preview";
+				state.googleApiKey = state.token;
 			}
 
 			return persistedState as any;

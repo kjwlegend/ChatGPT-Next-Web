@@ -15,7 +15,8 @@ export interface CreateChatData {
 	message?: string | ChatMessage[];
 	memory?: ChatMessage[];
 	token_count?: number;
-	model?: any;
+	role: "user" | "assistant";
+	model: string;
 }
 
 export async function createChatSession(data: CreateChatSessionData) {

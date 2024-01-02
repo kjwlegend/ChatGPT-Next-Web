@@ -6,7 +6,6 @@ import request from "@/app/utils/request";
 import { useAuthStore } from "../store/auth";
 import { use } from "react";
 import { useUserStore } from "../store";
-import { getUserInfo } from "./user";
 import { server_url } from "../constant";
 function getIP(req: NextRequest) {
 	let ip = req.ip ?? req.headers.get("x-real-ip");

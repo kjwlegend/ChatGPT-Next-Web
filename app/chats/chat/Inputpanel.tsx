@@ -117,6 +117,7 @@ import {
 import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
 import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
+import { submitChatMessage } from "@/app/services/chatService";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -720,46 +721,23 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			.then(() => {
 				setIsLoading(false);
 
-				// 构建 createChat 接口的请求参数
-
 				const createChatData: CreateChatData = {
 					user: userStore.user.id, // 替换为实际的用户 ID
 					chat_session: session.id, // 替换为实际的聊天会话 ID
 					message: userInput, // 使用用户输入作为 message 参数
 					memory: recentMessages,
+					role: "user",
 					model: session.mask.modelConfig.model,
 				};
 				// console.log("createChatData:", createChatData);
 
-				createChat(createChatData).then((response) => {
-					// console.log("createChat response:", response);
-					const data = response.data;
-
-					if (data) {
-						console.log("createChat success:", response);
-						const newSessionId = data.chat_session;
-
-						if (session.id !== newSessionId) {
-							chatStore.updateSession(session.id, () => {
-								session.id = newSessionId;
-							});
-						}
-						updateUserInfo(createChatData.user);
-					} else {
-						if (response.code === 401) {
-							messageApi.error("登录已过期(令牌无效)，请重新登录");
-							authHook.logoutHook();
-						} else if (response.code === 4001) {
-							messageApi.error("登录已过期(令牌无效)，请重新登录");
-							authHook.logoutHook();
-						} else if (response.code === 4000) {
-							messageApi.error(
-								"当前对话出现错误, 请重新新建对话",
-								response.msg,
-							);
-						}
-					}
-				});
+				submitChatMessage(createChatData, chatStore)
+					.then((response) => {
+						console.log("submitChatMessage response:", response);
+					})
+					.catch((error) => {
+						console.log("submitChatMessage error:", error);
+					});
 			})
 			.catch((error) => {
 				setIsLoading(false);
