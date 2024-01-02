@@ -67,28 +67,13 @@ import {
 import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar, Button, Menu, Dropdown, Switch } from "antd";
 import type { MenuProps } from "antd";
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
 
-import { useAuthStore } from "../store/auth";
-import { createChat, CreateChatData } from "../api/backend/chat";
-
-import { ChatActions, ChatAction } from "./Inputpanel";
-import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "./chat-controller";
 // import WindowHeader from "./WindowHeader";
 import WindowHeader from "../chats/chat/WindowHeader";
 import { Inputpanel } from "../chats/chat/Inputpanel";
 import { ChatContext } from "../chats/chat/main";
 import { ChatItemShort } from "../chats/chat-list";
 
-import { Chatbody } from "./Chatbody";
 import { _Chat } from "../chats/chat/main";
 
 import Image from "next/image";

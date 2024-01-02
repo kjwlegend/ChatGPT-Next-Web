@@ -66,6 +66,7 @@ export type MjConfig = {
 	quality: string;
 	style: string;
 	model: string;
+	speed?: string;
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {

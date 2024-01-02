@@ -1,6 +1,6 @@
 import { StructuredTool } from "langchain/tools";
 import { z } from "zod";
-import { getResponse } from "../embedding";
+import { getResponse } from "@/app/api/backend/embedding";
 import { server_url } from "@/app/constant";
 // This is an agent that can be used to make requests to the knowledge search API.
 // It is a structured tool, so it can be used in the same way as other structured tools.

@@ -19,23 +19,30 @@ import { Button, message } from "antd";
 import { auth } from "../api/auth";
 import { Store } from "antd/es/form/interface";
 
-export const submitChatMessage = async (createChatData: CreateChatData, chatStore: Store) => {
-	console.log("createChatData trigger");
+export const submitChatMessage = async (
+	createChatData: CreateChatData,
+	chatStore: Store,
+) => {
+	// console.log("createChatData trigger");
 
 	try {
 		const response = await createChat(createChatData); // 替换为实际的API调用
 		const data = response.data;
 
 		if (data) {
-			console.log("createChat success:", response);
+			// console.log("createChat success:", response);
 			const newSessionId = data.chat_session;
 
 			if (createChatData.chat_session !== newSessionId) {
-				chatStore.updateSession(createChatData.chat_session, (session) => {
-					session.id = newSessionId;
-				});
+				chatStore.updateSession(
+					createChatData.chat_session,
+					(session: ChatSession) => {
+						session.id = newSessionId;
+					},
+				);
 			}
 		}
+		return data;
 	} catch (error) {
 		console.error("createChat error:", error);
 		throw error; // 抛出错误以供调用者处理
@@ -69,7 +76,7 @@ export function handleChatCallbacks(
 			//  根据toolName获取对应的 toolName, 并输出对应的 name
 			const tool = allPlugins.find((m) => m.toolName === toolName);
 			const name = tool?.name;
-			console.log("toolName: ", toolName, "tool: ", tool?.name);
+			// console.log("toolName: ", toolName, "tool: ", tool?.name);
 			if (name && toolInput) {
 				botMessage.toolMessages!.push({
 					toolName: name,
@@ -144,7 +151,7 @@ export function sendChatMessage(
 		...callbacks,
 	};
 
-	console.log("chatoptions", chatOptions);
+	// console.log("chatoptions", chatOptions);
 
 	// 根据是否启用插件使用不同的API
 	const useToolAgent =

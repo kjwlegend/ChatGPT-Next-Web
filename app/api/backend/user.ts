@@ -1,5 +1,5 @@
 import request from "@/app/utils/request";
-import { User } from "../store/user";
+import { User } from "@/app/store/user";
 
 export async function updateProfile(userId: number, userInfo: User) {
 	return request({

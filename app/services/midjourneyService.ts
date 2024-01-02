@@ -136,6 +136,7 @@ export async function midjourneyOnUserInput(
 		];
 
 		await api.llm.chat(chatOptions);
+		session.mjConfig.speed = "--relax";
 		const suffix = Object.values(session.mjConfig).join(" ");
 
 		imagineParams.prompt = newcontent + " " + suffix;

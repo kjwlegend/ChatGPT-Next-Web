@@ -167,7 +167,7 @@ export function Chatbody(props: {
 		session.messages.at(0)?.content !== BOT_HELLO.content
 	) {
 		const copiedHello = Object.assign({}, BOT_HELLO);
-		if (!accessStore.isAuthorized(IsAuthenticated)) {
+		if (!accessStore.isAuthorized()) {
 			copiedHello.content = Locale.Error.Unauthorized;
 		}
 
@@ -333,10 +333,11 @@ export function Chatbody(props: {
 				setIsLoading(false);
 
 				const createChatData: CreateChatData = {
-					user: userStore.user.id,
-					chat_session: session.id,
-					message: message,
+					user: userStore.user.id, // 替换为实际的用户 ID
+					chat_session: session.id, // 替换为实际的聊天会话 ID
+					message: message, // 使用用户输入作为 message 参数
 					memory: recentMessages,
+					role: "user",
 					model: session.mask.modelConfig.model,
 				};
 

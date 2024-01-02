@@ -23,7 +23,7 @@ import CloudFailIcon from "@/app/icons/cloud-fail.svg";
 
 // 导入 Masonry 和 LazyLoadImage 组件
 import Masonry from "react-masonry-css";
-import { Image, Space } from "antd";
+import { Image, MenuProps, Space, TabsProps } from "antd";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import {
@@ -117,7 +117,6 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 		1440: 4,
 		1000: 3,
 		700: 2,
-		500: 1,
 	};
 
 	const onDownload = (src: any) => {
@@ -147,7 +146,11 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 				columnClassName={styles["masonry-grid_column"]}
 			>
 				{paintings.map((painting, index) => (
-					<div key={index} style={{ maxWidth: "300px" }}>
+					<div
+						key={index}
+						style={{ maxWidth: "400px" }}
+						className={styles["masonry-grid-item"]}
+					>
 						<Image
 							src={painting.image_url}
 							alt={painting.prompt_en}
@@ -243,6 +246,7 @@ const App: React.FC = () => {
 		publicloadingRef.current = true; // 开始加载数据
 		const response: PaintingsResponse = await getPaintings({
 			page: publicPageRef.current,
+			limit: 20,
 		});
 		publicloadingRef.current = false; // 加载完成
 		const filterPaintings = response.data.filter(
@@ -261,6 +265,7 @@ const App: React.FC = () => {
 		const response: PaintingsResponse = await getPaintings({
 			page: PrivatePageRef.current,
 			user: userid,
+			limit: 20,
 		});
 		PrivateloadingRef.current = false;
 		const filterPaintings = response.data.filter(
@@ -316,12 +321,31 @@ const App: React.FC = () => {
 		[hasMorePrivate], // 移除loading依赖，因为我们使用useRef来跟踪加载状态
 	);
 
-	// Masonry布局的断点
-	const breakpointColumnsObj = {
-		default: 5, // 默认列数
-		1100: 4, // 当视口宽度小于1100px时的列数
-		700: 3, // 当视口宽度小于700px时的列数
-	};
+	// items
+	const items: TabsProps["items"] = [
+		{
+			key: "private",
+			label: "私有画廊",
+			children: (
+				<PaintingsMasonry
+					paintings={privatePaintings} // 或 publicPaintings，取决于当前标签页
+					hasMore={hasMorePrivate} // 或 hasMorePublic
+					onScroll={handlePrivateScroll} // 或 handlePublicScroll
+				/>
+			),
+		},
+		{
+			key: "public",
+			label: "公共画廊",
+			children: (
+				<PaintingsMasonry
+					paintings={publicPaintings} // 或 publicPaintings，取决于当前标签页
+					hasMore={hasMorePublic} // 或 hasMorePublic
+					onScroll={handlePublicScroll} // 或 handlePublicScroll
+				/>
+			),
+		},
+	];
 
 	return (
 		<ErrorBoundary>
@@ -342,22 +366,12 @@ const App: React.FC = () => {
 					</div>
 				</div>
 			</div>
-			<Tabs defaultActiveKey="private" onChange={onTabChange} centered>
-				<TabPane tab="私有画廊" key="private">
-					<PaintingsMasonry
-						paintings={privatePaintings} // 或 publicPaintings，取决于当前标签页
-						hasMore={hasMorePrivate} // 或 hasMorePublic
-						onScroll={handlePrivateScroll} // 或 handlePublicScroll
-					/>
-				</TabPane>
-				<TabPane tab="公共画廊" key="public">
-					<PaintingsMasonry
-						paintings={publicPaintings} // 或 publicPaintings，取决于当前标签页
-						hasMore={hasMorePublic} // 或 hasMorePublic
-						onScroll={handlePublicScroll} // 或 handlePublicScroll
-					/>
-				</TabPane>
-			</Tabs>
+			<Tabs
+				defaultActiveKey="private"
+				onChange={onTabChange}
+				centered
+				items={items}
+			></Tabs>
 		</ErrorBoundary>
 	);
 };

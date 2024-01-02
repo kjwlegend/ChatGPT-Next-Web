@@ -523,6 +523,23 @@ const items = [
 		color: "blue",
 		className: "fade-in-element",
 	},
+	{
+		label: "2023-12-30",
+		children: (
+			<>
+				发布 v1.6.4 版本, 小光说:
+				<ul>
+					<li>
+						想要欣赏别人的画作? 来画廊看一看吧! , 你所有通过 琳琳 所创作的画作,
+						都会保存在这里. 你可以随时查看, 也可以下载到本地.
+					</li>
+					<li>同时也支持快速复制好看画作的的提示词.</li>
+				</ul>
+			</>
+		),
+		color: "blue",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

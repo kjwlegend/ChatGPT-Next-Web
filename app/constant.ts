@@ -193,4 +193,4 @@ export const version = "1.6.3";
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
 
-console.log("server_url", server_url);
+// console.log("server_url", server_url);
