@@ -1,5 +1,4 @@
 import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
-import { DallEAPIWrapper } from "@/app/api/langchain-tools/dalle_image_generator";
 import { StableDiffusionWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator";
 import { BaseLanguageModel } from "langchain/dist/base_language";
 import { Calculator } from "langchain/tools/calculator";
@@ -43,18 +42,13 @@ export class EdgeTool {
 			embeddings: this.embeddings,
 		});
 		const calculatorTool = new Calculator();
-		const dallEAPITool = new DallEAPIWrapper(
-			this.apiKey,
-			this.baseUrl,
-			this.callback,
-		);
+
 		const stableDiffusionTool = new StableDiffusionWrapper();
 		const arxivAPITool = new ArxivAPIWrapper();
 		return [
 			// searchTool,
 			calculatorTool,
 			webBrowserTool,
-			dallEAPITool,
 			stableDiffusionTool,
 			arxivAPITool,
 		];

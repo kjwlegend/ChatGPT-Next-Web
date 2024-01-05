@@ -25,7 +25,7 @@ import RobotIcon from "@/app/icons/robot.svg";
 import Record from "@/app/icons/record.svg";
 import UploadIcon from "@/app/icons/upload.svg";
 import CloseIcon from "@/app/icons/close.svg";
-
+import { oss } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 
 import {
@@ -328,10 +328,10 @@ export function ChatActions(props: {
 
 	const onImageSelected = async (e: any) => {
 		const file = e.target.files[0];
-		const fileName = await api.file.upload(file);
+		const fileName = await api.file.upload(file, "upload");
 		props.imageSelected({
 			fileName,
-			fileUrl: `/api/file/${fileName}`,
+			fileUrl: `${oss}${fileName}!uploadthumbnail`,
 		});
 		e.target.value = null;
 	};
@@ -733,7 +733,11 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 
 				submitChatMessage(createChatData, chatStore)
 					.then((response) => {
-						console.log("submitChatMessage response:", response);
+						const code = response.code;
+						if (code == 4000 || code == 4001) {
+							authHook.logoutHook();
+							messageApi.error("登录已过期，请重新登录");
+						}
 					})
 					.catch((error) => {
 						console.log("submitChatMessage error:", error);

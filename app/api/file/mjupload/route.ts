@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import S3FileStorage from "@/app/utils/s3_file_storage";
+import AliOSS from "@/app/utils/alioss";
+import { oss } from "@/app/constant";
 
 // 由于你正在使用Next.js的API路由，你应该使用NextRequest和NextResponse
 // 而不是NextRequest和NextResponse，后者是用于中间件的。
@@ -8,7 +10,9 @@ async function saveImageFromUrl(url: string) {
 	const response = await fetch(url);
 	const content = await response.arrayBuffer();
 	const buffer = Buffer.from(content);
-	return await S3FileStorage.put(`${Date.now()}.png`, buffer);
+	const filename = `${Date.now()}.png`;
+	await AliOSS.put(filename, buffer, "mj");
+	return `${oss}/mj/${filename}!webp90`;
 }
 
 async function handle(req: NextRequest) {
@@ -50,4 +54,4 @@ async function handle(req: NextRequest) {
 // handle函数即可
 
 export const POST = handle;
-export const runtime = "edge";
+export const runtime = "nodejs";

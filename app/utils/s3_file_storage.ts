@@ -49,10 +49,10 @@ export default class S3FileStorage {
 		const signedUrl = await getSignedUrl(
 			getR2Client(),
 			new PutObjectCommand({
-				Bucket: S3_BUCKET ?? R2_BUCKET,
+				Bucket: R2_BUCKET,
 				Key: fileName,
 			}),
-			{ expiresIn: 600 },
+			{ expiresIn: 60 },
 		);
 
 		console.log(signedUrl);
@@ -65,7 +65,7 @@ export default class S3FileStorage {
 
 			return `/api/file/${fileName}`;
 		} catch (e) {
-			console.error("[S3]", e);
+			console.error("[R2]", e);
 			throw e;
 		}
 	}

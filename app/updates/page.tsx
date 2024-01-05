@@ -524,7 +524,7 @@ const items = [
 		className: "fade-in-element",
 	},
 	{
-		label: "2023-12-30",
+		label: "2024-1-3",
 		children: (
 			<>
 				发布 v1.6.4 版本, 小光说:
@@ -534,6 +534,19 @@ const items = [
 						都会保存在这里. 你可以随时查看, 也可以下载到本地.
 					</li>
 					<li>同时也支持快速复制好看画作的的提示词.</li>
+				</ul>
+			</>
+		),
+		color: "blue",
+		className: "fade-in-element",
+	},
+	{
+		label: "2024-1-6",
+		children: (
+			<>
+				发布 v1.6.5 版本, 小光说:
+				<ul>
+					<li>原本画廊的加载速度较慢, 我们重新更换了国内的阿里云的CDN服务.</li>
 				</ul>
 			</>
 		),

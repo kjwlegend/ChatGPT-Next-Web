@@ -23,8 +23,9 @@ import CloudFailIcon from "@/app/icons/cloud-fail.svg";
 
 // 导入 Masonry 和 LazyLoadImage 组件
 import Masonry from "react-masonry-css";
-import { Image, MenuProps, Space, TabsProps } from "antd";
+import { Image, MenuProps, Space, TabsProps, Button } from "antd";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { oss } from "@/app/constant";
 
 import {
 	DownloadOutlined,
@@ -104,11 +105,13 @@ interface PaintingsMasonryProps {
 	paintings: Painting[];
 	hasMore: boolean;
 	onScroll: (event: React.UIEvent<HTMLDivElement>) => void;
+	fetchMore: () => void;
 }
 const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 	paintings,
 	hasMore,
 	onScroll,
+	fetchMore,
 }) => {
 	// Masonry布局的断点
 	const breakpointColumnsObj = {
@@ -152,17 +155,18 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 						className={styles["masonry-grid-item"]}
 					>
 						<Image
-							src={painting.image_url}
+							src={`${oss}${painting.image_url}!thumbnail`}
+							// srcSet={`${oss}${painting.image_url}!webp90 300w`}
 							alt={painting.prompt_en}
 							style={{ width: "100%", height: "auto" }}
 							className={styles["gallery-image"]}
-							placeholder={
-								<Image
-									src={painting.image_url}
-									alt={painting.prompt_en}
-									style={{ width: "100%", filter: "blur(20px)" }}
-								/>
-							}
+							// placeholder={
+							// 	<Image
+							// 		src={`${oss}${painting.image_url}!thumbnail`}
+							// 		alt={painting.prompt_en}
+							// 		style={{ width: "100%", filter: "blur(20px)" }}
+							// 	/>
+							// }
 							preview={{
 								toolbarRender: (
 									_,
@@ -194,6 +198,7 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 										/>
 									</Space>
 								),
+								src: `${oss}${painting.image_url}!webp90`,
 
 								mask: (
 									<div className={styles["gallery-image-mask"]}>
@@ -213,13 +218,21 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 									</div>
 								),
 							}}
-							srcSet={`${painting.image_url} 300w`}
 							loading="lazy"
 						/>
 					</div>
 				))}
 			</Masonry>
-			{!hasMore && <div style={{ textAlign: "center" }}>没有更多了</div>}
+			{hasMore && (
+				<div style={{ textAlign: "center" }}>
+					<Button type="primary" onClick={fetchMore}>
+						加载更多
+					</Button>{" "}
+				</div>
+			)}
+			{!hasMore && (
+				<div style={{ textAlign: "center" }}>琳琳正在努力绘图中...</div>
+			)}
 		</div>
 	);
 };
@@ -331,6 +344,7 @@ const App: React.FC = () => {
 					paintings={privatePaintings} // 或 publicPaintings，取决于当前标签页
 					hasMore={hasMorePrivate} // 或 hasMorePublic
 					onScroll={handlePrivateScroll} // 或 handlePublicScroll
+					fetchMore={fetchPrivatePaintings}
 				/>
 			),
 		},
@@ -342,6 +356,7 @@ const App: React.FC = () => {
 					paintings={publicPaintings} // 或 publicPaintings，取决于当前标签页
 					hasMore={hasMorePublic} // 或 hasMorePublic
 					onScroll={handlePublicScroll} // 或 handlePublicScroll
+					fetchMore={fetchPublicPaintings}
 				/>
 			),
 		},
@@ -353,7 +368,7 @@ const App: React.FC = () => {
 				<div className="window-header-title">
 					<div className="window-header-main-title">画廊</div>
 					<div className="window-header-sub-title">
-						{Locale.Settings.SubTitle}
+						AI 生成的画作，来自全世界的小伙伴
 					</div>
 				</div>
 				<div className="window-actions">

@@ -181,9 +181,9 @@ export const DEFAULT_MODELS = [
 
 import { getServerSideConfig } from "@/app/config/server";
 
-// when it's build mode, I want the server_url to be admin.xiaoguang.fun otherwise localhost:8000
+export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 
-// export const server_url = getServerSideConfig().server_url;
+console.log("oss", oss);
 
 // export const server_url = "https://admin.xiaoguang.fun";
 export const server_url = "http://localhost:8000";

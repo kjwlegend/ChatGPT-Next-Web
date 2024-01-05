@@ -41,8 +41,9 @@ export const submitChatMessage = async (
 					},
 				);
 			}
+			return data;
 		}
-		return data;
+		return response;
 	} catch (error) {
 		console.error("createChat error:", error);
 		throw error; // 抛出错误以供调用者处理
