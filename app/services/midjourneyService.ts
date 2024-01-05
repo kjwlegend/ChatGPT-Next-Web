@@ -13,6 +13,7 @@ import {
 	imagine,
 	FetchRes,
 } from "../api/midjourney/tasksubmit";
+import { oss } from "../constant";
 
 import { createPaintings, updatePaintings } from "../api/backend/paintings";
 
@@ -284,7 +285,7 @@ export async function pollForProgress(
 					message +
 					`\n 绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
 						2,
-					)}秒。\n查看结果: \n [![${mjtaskid}](${filePath})](${filePath})`;
+					)}秒。\n查看结果: \n [![${mjtaskid}](${oss}${filePath})](${oss}${filePath}!webp90)`;
 
 				break;
 			case "FAILURE":

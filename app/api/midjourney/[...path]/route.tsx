@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { requestMidjourney } from "../../common";
 
+
 async function handle(
 	req: NextRequest,
 	{ params }: { params: { path: string[] } },

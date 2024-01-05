@@ -12,7 +12,7 @@ async function saveImageFromUrl(url: string) {
 	const buffer = Buffer.from(content);
 	const filename = `${Date.now()}.png`;
 	await AliOSS.put(filename, buffer, "mj");
-	return `${oss}/mj/${filename}!webp90`;
+	return `/mj/${filename}`;
 }
 
 async function handle(req: NextRequest) {
