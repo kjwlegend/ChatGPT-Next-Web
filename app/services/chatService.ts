@@ -15,8 +15,7 @@ import { prettyObject } from "../utils/format";
 import { ModelConfig } from "../store";
 import { CreateChatData, createChat } from "../api/backend/chat";
 import useAuth from "../hooks/useAuth";
-import { Button, message } from "antd";
-import { auth } from "../api/auth";
+
 import { Store } from "antd/es/form/interface";
 
 export const submitChatMessage = async (
@@ -61,6 +60,7 @@ export function handleChatCallbacks(
 	const pluginConfig = config.pluginConfig;
 	const allPlugins = usePluginStore.getState().getAll();
 	const chatStoreState = useChatStore.getState();
+	const user = useUserStore.getState().user;
 
 	return {
 		onUpdate: (message: string) => {
@@ -96,6 +96,16 @@ export function handleChatCallbacks(
 				session.responseStatus = true;
 			}
 			ChatControllerPool.remove(session.id, botMessage.id);
+
+			// // update server for bot response
+			const createChatData: CreateChatData = {
+				user: user.id,
+				chat_session: session.id,
+				message: message,
+				role: "assistant",
+				model: session.mask.modelConfig.model,
+			};
+			const botResponse = createChat(createChatData); // 替换为实际的API调用
 		},
 		onError: (error: Error) => {
 			const isAborted = error.message.includes("aborted");
@@ -161,17 +171,6 @@ export function sendChatMessage(
 		allPlugins.length > 0 &&
 		session.mask.modelConfig.model !== "gpt-4-vision-preview";
 
-	// 检查当前插件开启状态
-	// console.log(
-	// 	"config enable",
-	// 	config.pluginConfig.enable,
-	// 	"\n session",
-	// 	session.mask.usePlugins,
-	// 	"\n AllPlugin",
-	// 	allPlugins.length,
-	// 	allPlugins,
-	// );
-
 	if (useToolAgent) {
 		console.log("[ToolAgent] start");
 		const pluginToolNames = session.mask.plugins;
@@ -185,4 +184,59 @@ export function sendChatMessage(
 	} else {
 		api.llm.chat(chatOptions);
 	}
+}
+
+import { createEmptyMask } from "../store/mask";
+
+export function useUpdateChatSessions(newSessionsData: any[]) {
+	const chatStore = useChatStore();
+	console.log("newSessionsData: ", newSessionsData);
+	// 遍历接口返回的会话数据
+	newSessionsData.forEach((sessionData) => {
+		// 检查chatstore.sessions中是否已经存在该会话
+		const exists = chatStore.sessions.some(
+			(s) => s.id === sessionData.session_id,
+		);
+		console.log("exists: ", exists, "sessionData: ", sessionData);
+
+		// 如果不存在，则创建一个新的ChatSession对象并添加到chatstore.sessions中
+		if (!exists) {
+			const newSession: ChatSession = {
+				id: sessionData.session_id,
+				topic: sessionData.session_topic || "", // 如果session_topic为null，则使用空字符串
+				memoryPrompt: "", // 根据实际情况填充
+				messages: [], // 根据实际情况填充
+				stat: {
+					tokenCount: 0,
+					wordCount: 0,
+					charCount: 0,
+				}, // 根据实际情况填充
+				lastUpdate: Date.parse(sessionData.last_updated),
+				lastSummarizeIndex: 0, // 根据实际情况填充
+				clearContextIndex: undefined, // 根据实际情况填充
+				mask: createEmptyMask(), // 根据实际情况填充
+				responseStatus: undefined, // 根据实际情况填充
+				isworkflow: undefined, // 根据实际情况填充
+				mjConfig: { size: "", quality: "", style: "", model: "" },
+			};
+			chatStore.addSession(newSession);
+		}
+	});
+}
+
+export function useUpdateChatMessages(sessionId: string, messagesData: any[]) {
+	const chatStore = useChatStore();
+
+	messagesData.forEach((messageData) => {
+		const newMessage: ChatMessage = {
+			date: messageData.create_date,
+			id: messageData.id.toString(),
+			role: messageData.role, // 确保这里的转换是安全的
+			content: messageData.message,
+			// 根据需要添加其他属性
+		};
+
+		// 使用 chatStore 的方法来添加新消息
+		chatStore.addMessageToSession(sessionId, newMessage);
+	});
 }

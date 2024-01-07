@@ -734,7 +734,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 				submitChatMessage(createChatData, chatStore)
 					.then((response) => {
 						const code = response.code;
-						if (code == 4000 || code == 4001) {
+						if (code == 4000 || code == 401) {
 							authHook.logoutHook();
 							messageApi.error("登录已过期，请重新登录");
 						}

@@ -60,6 +60,7 @@ export const createEmptyMask = () =>
 		plugins: ["web-search"],
 	}) as Mask;
 
+
 export const useMaskStore = createPersistStore(
 	{ ...DEFAULT_MASK_STATE },
 

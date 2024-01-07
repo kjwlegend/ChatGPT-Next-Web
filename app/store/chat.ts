@@ -38,20 +38,8 @@ import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
 
-import {
-	imagine,
-	ImagineRes,
-	ImagineParams,
-	Mjfetch,
-	FetchRes,
-	ChangeParams,
-	change,
-} from "../api/midjourney/tasksubmit";
-import { create } from "domain";
-
 export type ChatMessage = RequestMessage & {
 	date: string;
-
 	id: string;
 	model?: ModelType;
 	image_url?: string;
@@ -362,6 +350,8 @@ export const useChatStore = createPersistStore(
 				}));
 				return session;
 			},
+			addSession: (newSession: ChatSession) =>
+				set((state) => ({ sessions: [...state.sessions, newSession] })),
 
 			nextSession(delta: number) {
 				const n = get().sessions.length;
@@ -465,6 +455,19 @@ export const useChatStore = createPersistStore(
 				get().updateStat(message);
 				summarizeSession();
 			},
+
+			addMessageToSession: (sessionId: string, newMessage: ChatMessage) =>
+				set((state) => ({
+					sessions: state.sessions.map((session) =>
+						session.id === sessionId
+							? {
+									...session,
+									messages: [...session.messages, newMessage],
+							  }
+							: session,
+					),
+				})),
+
 			forceUpdate: () => {
 				set({});
 			},

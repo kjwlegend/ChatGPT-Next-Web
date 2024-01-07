@@ -5,18 +5,25 @@ import { ChatMessage } from "../../store/chat";
 
 export interface CreateChatSessionData {
 	user: number;
+	session_topic?: string;
 	prompt_id?: string;
-	model?: ModelType;
+	hide?: boolean;
 }
 
 export interface CreateChatData {
 	user: number;
 	chat_session: string;
-	message?: string | ChatMessage[];
+	role: "user" | "assistant";
+	message: string | ChatMessage[];
 	memory?: ChatMessage[];
 	token_count?: number;
-	role: "user" | "assistant";
-	model: string;
+	model?: string;
+}
+
+export interface ChatSessionData {
+	user: number;
+	page?: number;
+	limit?: number;
 }
 
 export async function createChatSession(data: CreateChatSessionData) {
@@ -32,6 +39,37 @@ export async function createChatSession(data: CreateChatSessionData) {
 		});
 }
 
+export async function getChatSession(data: ChatSessionData) {
+	return request({
+		url: `/gpt/chat-sessions/`,
+		method: "get",
+		params: data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			// console.log(err);
+			return err.response.data;
+		});
+}
+
+export interface ChatData {
+	chat_session: string;
+	user: string;
+	[property: string]: any;
+}
+
+export async function getChat(data: ChatData) {
+	return request({
+		url: `/gpt/chats/`,
+		method: "get",
+		params: data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			// console.log(err);
+			return err.response.data;
+		});
+}
 export async function createChat(data: CreateChatData) {
 	return request({
 		url: `/gpt/chats/`,

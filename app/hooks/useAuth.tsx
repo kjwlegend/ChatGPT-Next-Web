@@ -5,11 +5,16 @@ import { useUserStore, User } from "../store/user";
 import { logoutAPI } from "../api/auth";
 import { Result } from "antd";
 import { getUserInfo } from "../api/backend/user";
+import { ChatSessionData, getChatSession } from "../api/backend/chat";
+import { updateChatSessions } from "../services/chatService";
+import { useChatStore } from "../store/chat";
 
 interface LoginParams {
 	username: string;
 	password: string;
 }
+import { ChatSession } from "../store/chat";
+import { createEmptyMask } from "../store/mask";
 
 export default function useAuth() {
 	const [user, setUser] = useState<User | null>(null);
@@ -18,10 +23,57 @@ export default function useAuth() {
 
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
+	const chatStore = useChatStore();
+
 	useEffect(() => {
-		const storedUser = authStore.isAuthenticated ? userStore.user : null;
-		setUser(storedUser);
-	}, [authStore]);
+		if (user) {
+			const fetchAndStoreSessions = async () => {
+				const param: ChatSessionData = {
+					user: user.id,
+					limit: 35,
+				};
+				try {
+					const chatSessionList = await getChatSession(param);
+					console.log("chatSessionList", chatSessionList.data);
+					// 直接使用 chatStore 的方法更新 sessions
+					chatSessionList.data.forEach((sessionData: any) => {
+						// 检查chatstore.sessions中是否已经存在该会话
+						const exists = chatStore.sessions.some(
+							(s) => s.id === sessionData.session_id,
+						);
+						// console.log("exists: ", exists, "sessionData: ", sessionData);
+
+						// 如果不存在，则创建一个新的ChatSession对象并添加到chatstore.sessions中
+						if (!exists) {
+							const newSession: ChatSession = {
+								id: sessionData.session_id,
+								topic: sessionData.session_topic || "", // 如果session_topic为null，则使用空字符串
+								memoryPrompt: "", // 根据实际情况填充
+								messages: [], // 根据实际情况填充
+								stat: {
+									tokenCount: 0,
+									wordCount: 0,
+									charCount: 0,
+								}, // 根据实际情况填充
+								lastUpdate: Date.parse(sessionData.last_updated),
+								lastSummarizeIndex: 0, // 根据实际情况填充
+								clearContextIndex: undefined, // 根据实际情况填充
+								mask: createEmptyMask(), // 根据实际情况填充
+								responseStatus: undefined, // 根据实际情况填充
+								isworkflow: undefined, // 根据实际情况填充
+								mjConfig: { size: "", quality: "", style: "", model: "" },
+							};
+							chatStore.addSession(newSession);
+						}
+					});
+				} catch (error) {
+					console.log("get chatSession list error", error);
+				}
+			};
+
+			fetchAndStoreSessions();
+		}
+	}, [user, chatStore]);
 
 	const loginHook = async (params: LoginParams): Promise<void> => {
 		try {
@@ -29,8 +81,7 @@ export default function useAuth() {
 
 			const result = await loginAPI(params);
 			// cookie
-			// const expirationDate = new Date();
-			// const expirationDate = new Date();
+
 			console.log("当前:", expirationDate);
 			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
 			console.log("48小时后:", expirationDate);
@@ -47,6 +98,7 @@ export default function useAuth() {
 			document.cookie = `member_expire_date=${
 				result.data.user.member_expire_date
 			}; expires=${expirationDate.toUTCString()}; path=/`;
+			// cookie ends
 
 			const authInfo = {
 				accessToken: result.data.access,
@@ -97,12 +149,11 @@ export default function useAuth() {
 						.toISOString()
 						.slice(0, 10);
 				}
+				authStore.login(authInfo.accessToken, authInfo.refreshToken);
+				userStore.setUser(authInfo.user);
+				setUser(authInfo.user);
 			}
 
-			authStore.login(authInfo.accessToken, authInfo.refreshToken);
-			userStore.setUser(authInfo.user);
-
-			setUser(authInfo.user);
 			setIsLoading(false);
 			return result;
 		} catch (error) {
