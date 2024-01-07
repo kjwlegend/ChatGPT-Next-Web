@@ -6,7 +6,7 @@ import { logoutAPI } from "../api/auth";
 import { Result } from "antd";
 import { getUserInfo } from "../api/backend/user";
 import { ChatSessionData, getChatSession } from "../api/backend/chat";
-import { updateChatSessions } from "../services/chatService";
+import { useUpdateChatSessions } from "../services/chatService";
 import { useChatStore } from "../store/chat";
 
 interface LoginParams {
