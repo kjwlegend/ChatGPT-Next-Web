@@ -1,4 +1,4 @@
-import { ChatSession, ChatMessage } from "../store";
+import { ChatSession, ChatMessage, DEFAULT_TOPIC } from "../store";
 import { useChatStore } from "../store";
 import { MJMessage } from "../store";
 import { useUserStore } from "../store";
@@ -92,20 +92,29 @@ export function handleChatCallbacks(
 			botMessage.streaming = false;
 			if (message) {
 				botMessage.content = message;
-				chatStoreState.onNewMessage(botMessage);
+				// console.log("message111 finish: ", message);
 				session.responseStatus = true;
+
+				const createChatData: CreateChatData = {
+					user: user.id,
+					chat_session: session.id,
+					message: message,
+					role: "assistant",
+					model: session.mask.modelConfig.model,
+				};
+				const botResponse = createChat(createChatData); // 替换为实际的API调用
+				//  botResponse 为 Promise 对象 , 获取其中的 chat_id 作为 botMessage 的 id
+				botResponse.then((res) => {
+					const data = res.data;
+					if (data) {
+						botMessage.id = data.chat_id.toString();
+						console.log("botMessage id: ", botMessage.id);
+						// 需要替换原本的message id 为新的id
+						chatStoreState.onNewMessage(botMessage);
+					}
+				});
 			}
 			ChatControllerPool.remove(session.id, botMessage.id);
-
-			// // update server for bot response
-			const createChatData: CreateChatData = {
-				user: user.id,
-				chat_session: session.id,
-				message: message,
-				role: "assistant",
-				model: session.mask.modelConfig.model,
-			};
-			const botResponse = createChat(createChatData); // 替换为实际的API调用
 		},
 		onError: (error: Error) => {
 			const isAborted = error.message.includes("aborted");
@@ -175,11 +184,13 @@ export function sendChatMessage(
 		console.log("[ToolAgent] start");
 		const pluginToolNames = session.mask.plugins;
 		api.llm.toolAgentChat({
-			...chatOptions,
+			messages: sendMessages,
+			config: { ...modelConfig, stream: stream ?? true },
 			agentConfig: {
 				...pluginConfig,
 				useTools: pluginToolNames,
 			},
+			...callbacks,
 		});
 	} else {
 		api.llm.chat(chatOptions);
@@ -188,23 +199,24 @@ export function sendChatMessage(
 
 import { createEmptyMask } from "../store/mask";
 
-export function useUpdateChatSessions(newSessionsData: any[]) {
-	const chatStore = useChatStore();
-	console.log("newSessionsData: ", newSessionsData);
+// 获取服务器对话列表
+export function UpdateChatSessions(newSessionsData: any[]) {
+	const chatStore = useChatStore.getState();
+	// console.log("newSessionsData: ", newSessionsData);
 	// 遍历接口返回的会话数据
 	newSessionsData.forEach((sessionData) => {
 		// 检查chatstore.sessions中是否已经存在该会话
 		const exists = chatStore.sessions.some(
 			(s) => s.id === sessionData.session_id,
 		);
-		console.log("exists: ", exists, "sessionData: ", sessionData);
+		// console.log("exists: ", exists, "sessionData: ", sessionData);
 
 		// 如果不存在，则创建一个新的ChatSession对象并添加到chatstore.sessions中
 		if (!exists) {
 			const newSession: ChatSession = {
 				id: sessionData.session_id,
-				topic: sessionData.session_topic || "", // 如果session_topic为null，则使用空字符串
-				memoryPrompt: "", // 根据实际情况填充
+				topic: sessionData.topic ?? DEFAULT_TOPIC, // 如果session_topic为null，则使用空字符串
+				memoryPrompt: sessionData.session_summary, // 根据实际情况填充
 				messages: [], // 根据实际情况填充
 				stat: {
 					tokenCount: 0,
@@ -212,25 +224,35 @@ export function useUpdateChatSessions(newSessionsData: any[]) {
 					charCount: 0,
 				}, // 根据实际情况填充
 				lastUpdate: Date.parse(sessionData.last_updated),
-				lastSummarizeIndex: 0, // 根据实际情况填充
+				lastSummarizeIndex: sessionData.lastSummarizeIndex, // 根据实际情况填充
 				clearContextIndex: undefined, // 根据实际情况填充
-				mask: createEmptyMask(), // 根据实际情况填充
+				mask: sessionData.mask ?? createEmptyMask(), // 根据实际情况填充
 				responseStatus: undefined, // 根据实际情况填充
-				isworkflow: undefined, // 根据实际情况填充
-				mjConfig: { size: "", quality: "", style: "", model: "" },
+				isworkflow: sessionData.isworkflow, // 根据实际情况填充
+				mjConfig: sessionData.mjConfig,
+				chat_count: sessionData.chat_count,
 			};
 			chatStore.addSession(newSession);
+			// console.log("newSession", newSession);
 		}
 	});
 }
 
-export function useUpdateChatMessages(sessionId: string, messagesData: any[]) {
-	const chatStore = useChatStore();
+// 获取服务器消息列表
+export function UpdateChatMessages(sessionId: string, messagesData: any[]) {
+	const chatStore = useChatStore.getState();
+	const session = chatStore.sessions.find((s) => s.id === sessionId);
 
-	messagesData.forEach((messageData) => {
+	messagesData.forEach((messageData, index) => {
+		// 检查是否已经存在该消息
+
+		const exists = session?.messages.some((m) => m.id === messageData.chat_id);
+		// console.log(exists, index);
+		if (exists) return;
+
 		const newMessage: ChatMessage = {
 			date: messageData.create_date,
-			id: messageData.id.toString(),
+			id: messageData.chat_id.toString(),
 			role: messageData.role, // 确保这里的转换是安全的
 			content: messageData.message,
 			// 根据需要添加其他属性

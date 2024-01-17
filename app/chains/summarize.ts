@@ -11,7 +11,11 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
-import { createChatSession } from "../api/backend/chat";
+import {
+	createChatSession,
+	updateChatSession,
+	UpdateChatSessionData,
+} from "../api/backend/chat";
 import { UserStore, useUserStore } from "@/app/store/user";
 import { BUILTIN_MASKS } from "../masks";
 import type { BuiltinMask } from "../masks";
@@ -31,7 +35,9 @@ function countMessages(msgs: ChatMessage[]) {
 	return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
 }
 
-export function summarizeTitle(_session?: ChatSession) {
+export async function summarizeTitle(
+	_session?: ChatSession,
+): Promise<String | null> {
 	const chatStoreState = useChatStore.getState();
 	const config = useAppConfig.getState();
 	const session = chatStoreState.getSession(_session);
@@ -39,7 +45,7 @@ export function summarizeTitle(_session?: ChatSession) {
 	// remove error messages if any
 	const messages = session.messages;
 
-	// should summarize topic after chating more than 50 words
+	// should summarize topic after chatting more than 50 words
 	const SUMMARIZE_MIN_LEN = 50;
 	if (
 		config.enableAutoGenerateTitle &&
@@ -52,19 +58,27 @@ export function summarizeTitle(_session?: ChatSession) {
 				content: Locale.Store.Prompt.Topic,
 			}),
 		);
-		sendChatMessage(session, topicMessages, {
-			onFinish(message) {
-				chatStoreState.updateCurrentSession(
-					(session) =>
-						(session.topic =
-							message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
-				);
-			},
+
+		// Wrap sendChatMessage in a Promise to handle the async onFinish callback
+		return new Promise((resolve) => {
+			sendChatMessage(session, topicMessages, {
+				onFinish(message) {
+					chatStoreState.updateCurrentSession(
+						(session) =>
+							(session.topic =
+								message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
+					);
+					// Resolve the Promise with the message data
+					resolve(message);
+				},
+			});
 		});
 	}
-}
 
-export function summarizeSession(_session?: ChatSession) {
+	// If conditions are not met, return null
+	return null;
+}
+export async function summarizeSession(_session?: ChatSession) {
 	const chatStoreState = useChatStore.getState();
 
 	const { getSession, updateCurrentSession } = chatStoreState;
@@ -82,8 +96,10 @@ export function summarizeSession(_session?: ChatSession) {
 		sendMemory,
 	} = modelConfig ?? {};
 
-	summarizeTitle(session);
+	const title = await summarizeTitle(session);
 	// remove error messages if any
+
+	// console.log("title: ", title);
 
 	const startIndex = Math.max(lastSummarizeIndex, clearContextIndex ?? 0);
 	let toBeSummarizedMsgs = messages
@@ -99,12 +115,12 @@ export function summarizeSession(_session?: ChatSession) {
 	toBeSummarizedMsgs.unshift(chatStoreState.getMemoryPrompt());
 	const newSummarizeIndex = messages.length;
 
-	console.log(
-		"[Chat History] ",
-		toBeSummarizedMsgs,
-		historyMsgLength,
-		compressMessageLengthThreshold,
-	);
+	// console.log(
+	// 	"[Chat History] ",
+	// 	toBeSummarizedMsgs,
+	// 	historyMsgLength,
+	// 	compressMessageLengthThreshold,
+	// );
 
 	if (
 		// historyMsgLength > compressMessageLengthThreshold &&
@@ -124,11 +140,25 @@ export function summarizeSession(_session?: ChatSession) {
 				session.memoryPrompt = message;
 			},
 			onFinish: (message) => {
-				console.log("[Memory] ", message);
+				// console.log("[Memory] ", message);
 				updateCurrentSession((session) => {
 					session.lastSummarizeIndex = newSummarizeIndex;
 					session.memoryPrompt = message; // Update the memory prompt for stored it in local storage
 				});
+
+				// 准备更新的对象
+				let updateObject: UpdateChatSessionData = {
+					session_summary: message,
+				};
+
+				// 只有当 title 有效时，才添加 topic 到更新对象中
+				if (title) {
+					updateObject.topic = title;
+				}
+
+				// 调用更新会话的接口
+				const res = updateChatSession(session.id, updateObject);
+				// console.log("updateChatSession: ", res);
 			},
 			onError: (err) => {
 				console.error("[Summarize] ", err);

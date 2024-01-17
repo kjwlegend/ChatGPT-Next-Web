@@ -51,33 +51,8 @@ import LoadingIcon from "@/app/icons/three-dots.svg";
 
 import styles from "./chats.module.scss";
 
-import { IconButton } from "@/app/components/button";
-import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "@/app/components/ui-lib";
-import { Avatar } from "@/app/components/emoji";
-import { Avatar as UserAvatar } from "antd";
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
-import { ExportMessageModal } from "@/app/chats/exporter";
-import { useAuthStore } from "@/app/store/auth";
-import { createChat, CreateChatData } from "@/app/api/backend/chat";
-
 import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
-import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "./chat-controller";
+
 import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 import Upload from "@/app/components/upload";

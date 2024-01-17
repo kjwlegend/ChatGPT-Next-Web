@@ -553,6 +553,19 @@ const items = [
 		color: "blue",
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-1-17",
+		children: (
+			<>
+				发布 v1.7.0 版本, 小光说:
+				<ul>
+					<li>开通消息多设备同步功能</li>
+				</ul>
+			</>
+		),
+		color: "red",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

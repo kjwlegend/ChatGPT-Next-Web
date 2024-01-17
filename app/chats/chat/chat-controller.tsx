@@ -25,57 +25,9 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "@/app/utils";
-
-import { api } from "@/app/client/api";
-
-import dynamic from "next/dynamic";
-
-import { ChatControllerPool } from "@/app/client/controller";
-import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
-import { IconButton } from "@/app/components/button";
 import styles from "./chats.module.scss";
-
-import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "@/app/components/ui-lib";
-import {
-	CHAT_PAGE_SIZE,
-	LAST_INPUT_KEY,
-	MAX_RENDER_MSG_COUNT,
-	Path,
-	REQUEST_TIMEOUT_MS,
-} from "@/app/constant";
-import { Avatar } from "@/app/components/emoji";
-import { Avatar as UserAvatar } from "antd";
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
-
-import { useMaskStore } from "@/app/store/mask";
-import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
-import { prettyObject } from "@/app/utils/format";
-import { ExportMessageModal } from "@/app/chats/exporter";
-import { getClientConfig } from "@/app/config/client";
-import { useAuthStore } from "@/app/store/auth";
-import { createChat, CreateChatData } from "@/app/api/backend/chat";
-import useAuth from "@/app/hooks/useAuth";
-import { message } from "antd";
 
 export function useSubmitHandler() {
 	const config = useAppConfig();

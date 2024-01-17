@@ -8,20 +8,9 @@ import React, {
 	Fragment,
 	use,
 } from "react";
-import { useDebouncedCallback } from "use-debounce";
-import dynamic from "next/dynamic";
 
 import {
-	ChatMessage,
-	SubmitKey,
 	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	DEFAULT_TOPIC,
-	ModelType,
 	useUserStore,
 	ChatSession,
 } from "../store";
@@ -29,49 +18,16 @@ import { api } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { Prompt, usePromptStore } from "../store/prompt";
 import { useMaskStore } from "../store/mask";
-import { useChatCommand, useCommand } from "../command";
-import { getClientConfig } from "../config/client";
-import useAuth from "../hooks/useAuth";
-import { getISOLang, getLang } from "../locales";
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "../utils";
-import {
-	CHAT_PAGE_SIZE,
-	LAST_INPUT_KEY,
-	MAX_RENDER_MSG_COUNT,
-	Path,
-	REQUEST_TIMEOUT_MS,
-} from "../constant";
-import { prettyObject } from "../utils/format";
+
 
 import BrainIcon from "../icons/brain.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
 import styles from "@/app/multi-chats/multi-chats.module.scss";
-
-import { IconButton } from "../components/button";
-import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "../components/ui-lib";
-import { Avatar } from "../components/emoji";
 import { Avatar as UserAvatar, Button, Menu, Dropdown, Switch } from "antd";
 import type { MenuProps } from "antd";
 
-// import WindowHeader from "./WindowHeader";
-import WindowHeader from "../chats/chat/WindowHeader";
-import { Inputpanel } from "../chats/chat/Inputpanel";
-import { ChatContext } from "../chats/chat/main";
 import { ChatItemShort } from "../chats/chat-list";
 
 import { _Chat } from "../chats/chat/main";
@@ -323,7 +279,7 @@ export default function Chat() {
 						<div className={styles["sub-title"]}>
 							在本页删除助手, 不会影响正常页的会话. 超级对话功能只在电脑端生效,
 							手机端无法使用.
-							<p>该功能于会员功能, 目前限时开放.</p>
+							<p>该功能属于会员功能, 目前限时开放.</p>
 						</div>
 						<div className={styles["actions"]}></div>
 					</div>

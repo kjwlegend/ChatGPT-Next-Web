@@ -1,3 +1,4 @@
+"use client";
 import { useDebouncedCallback } from "use-debounce";
 import React, {
 	useState,
@@ -9,6 +10,7 @@ import React, {
 	use,
 } from "react";
 import { getISOLang, getLang } from "@/app/locales";
+import { useRouter } from "next/navigation";
 
 import SendWhiteIcon from "@/app/icons/send-white.svg";
 import CopyIcon from "@/app/icons/copy.svg";
@@ -340,22 +342,22 @@ export function ChatActions(props: {
 		// based on session.mask.plugins to decide if use plugins
 
 		if (session.mask.plugins && session.mask.plugins?.length > 0) {
-			chatStore.updateSession(session.id, () => {
-				session.mask.usePlugins = true;
-			});
+			chatStore.updateSession(
+				session.id,
+				() => {
+					session.mask.usePlugins = true;
+				},
+				false,
+			);
 		} else {
-			chatStore.updateSession(session.id, () => {
-				session.mask.usePlugins = false;
-			});
+			chatStore.updateSession(
+				session.id,
+				() => {
+					session.mask.usePlugins = false;
+				},
+				false,
+			);
 		}
-		// console.log(
-		// 	"session id",
-		// 	session.id,
-		// 	"usePlugins: ",
-		// 	session.mask.usePlugins,
-		// 	"plugin list",
-		// 	session.mask.plugins,
-		// );
 	}
 	function MjConfigChange(e: any) {
 		const sizevalue = e.target.value;
@@ -369,9 +371,9 @@ export function ChatActions(props: {
 		console.log("session id", session.id, "mjConfig: ", session.mjConfig);
 	}
 
-	useEffect(() => {
-		console.log("usePlugins: ", session.mask.usePlugins);
-	}, [session.mask.plugins]);
+	// useEffect(() => {
+	// 	console.log("usePlugins: ", session.mask.usePlugins);
+	// }, [session.mask.plugins]);
 
 	const availablePlugins = usePluginStore()
 		.getAll()
@@ -398,15 +400,19 @@ export function ChatActions(props: {
 						session.mask.plugins.includes(p.toolName ?? p.name)
 					}
 					onChange={(e) => {
-						chatStore.updateSession(session.id, () => {
-							if (e.target.checked) {
-								session.mask.plugins?.push(p.toolName ?? p.name);
-							} else {
-								session.mask.plugins = session.mask.plugins?.filter(
-									(name) => name !== p.toolName,
-								);
-							}
-						});
+						chatStore.updateSession(
+							session.id,
+							() => {
+								if (e.target.checked) {
+									session.mask.plugins?.push(p.toolName ?? p.name);
+								} else {
+									session.mask.plugins = session.mask.plugins?.filter(
+										(name) => name !== p.toolName,
+									);
+								}
+							},
+							false,
+						);
 
 						switchUsePlugins();
 					}}
@@ -638,6 +644,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const authHook = useAuth();
 	const promptStore = usePromptStore();
 	const isMobileScreen = useMobileScreen();
+	const router = useRouter();
 
 	const { updateUserInfo } = authHook;
 
@@ -718,34 +725,30 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 
 		chatStore
 			.onUserInput(userInput, userImage?.fileUrl, session)
-			.then(() => {
+			.then((res) => {
 				setIsLoading(false);
-
-				const createChatData: CreateChatData = {
-					user: userStore.user.id, // 替换为实际的用户 ID
-					chat_session: session.id, // 替换为实际的聊天会话 ID
-					message: userInput, // 使用用户输入作为 message 参数
-					memory: recentMessages,
-					role: "user",
-					model: session.mask.modelConfig.model,
-				};
-				// console.log("createChatData:", createChatData);
-
-				submitChatMessage(createChatData, chatStore)
-					.then((response) => {
-						const code = response.code;
-						if (code == 4000 || code == 401) {
-							authHook.logoutHook();
-							messageApi.error("登录已过期，请重新登录");
-						}
-					})
-					.catch((error) => {
-						console.log("submitChatMessage error:", error);
-					});
+				updateUserInfo(userStore.user.id);
 			})
 			.catch((error) => {
 				setIsLoading(false);
-				console.error("chatStore.onUserInput error:", error);
+				// chatStore.clearAllData();
+				const code = error.response?.status ?? error.code;
+				const msg = error.response?.data?.message ?? error.message;
+				console.log("code:", code);
+
+				if (code == 4000 || code == 401) {
+					messageApi.error(`${msg} 2秒后将跳转到登录页面`);
+
+					setTimeout(() => {
+						authHook.logoutHook();
+						router.push("/auth/");
+					}, 2000);
+				} else {
+					messageApi.error(`${msg}`);
+				}
+
+				console.error("chatStore.onUserInput error:", msg);
+				// wait 1 sec push to login page
 			});
 		localStorage.setItem(LAST_INPUT_KEY, userInput);
 		setUserInput("");

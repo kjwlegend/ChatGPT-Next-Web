@@ -4,7 +4,7 @@ import { useUserStore } from "../store";
 import { RequestMessage, api } from "../client/api";
 import { SUMMARIZE_MODEL } from "../constant";
 import { createMessage } from "../store";
-
+import { CreateChatData } from "../api/backend/chat";
 import {
 	ImagineParams,
 	ChangeParams,
@@ -16,15 +16,22 @@ import {
 import { oss } from "../constant";
 
 import { createPaintings, updatePaintings } from "../api/backend/paintings";
+import { createChat } from "../api/backend/chat";
 
-export async function midjourneyOnUserInput(
-	content: string,
-	image_url?: string,
-	_session?: ChatSession,
-	action?: any,
-	taskId?: string,
-	index?: number,
-) {
+export interface MidJourneyInputParams {
+	content: string;
+	image_url?: string;
+	_session?: ChatSession;
+	action?: any;
+	taskId?: string;
+	index?: number;
+	chat_id?: string;
+}
+
+export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
+	const { content, image_url, _session, action, taskId, index, chat_id } =
+		params;
+
 	const chatStoreState = useChatStore.getState();
 
 	const session = chatStoreState.getSession(_session);
@@ -40,6 +47,14 @@ export async function midjourneyOnUserInput(
 		role: "user",
 		content: "",
 		image_url: image_url,
+	};
+
+	let createChatData: CreateChatData = {
+		user: userid, // 替换为实际的用户 ID
+		chat_session: session.id, // 替换为实际的聊天会话 ID
+		message: content, // 使用用户输入作为 message 参数
+		role: "user",
+		model: session.mask.modelConfig.model,
 	};
 
 	const chatOptions = {
@@ -101,14 +116,33 @@ export async function midjourneyOnUserInput(
 			{
 				role: "user",
 				content:
-					"你需要将用户输入的内容,用一种幽默, 但又有哲理的的口吻的风格说出来, 但需要保留原本的意思,不超过30个字, 用户的内容是:" +
+					"你需要将用户输入的内容,用一种不容置疑, 霸气的风格说出来, 但需要保留原本的意思,不超过30个字, 用户的内容是:" +
 					origintext,
 			},
 		];
 
 		await api.llm.chat(chatOptions);
 
+		createChatData.message = newcontent;
+
+		const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+		// if chatResponse code return 4000 or 401 , throw error
+		if (chatResponse.code === 4000 || chatResponse.code === 401) {
+			throw new Error("登录已过期，请重新登录");
+		}
+		const data = chatResponse.data;
+		const user_chat_id = data.chat_id;
+		const newSessionId = data.chat_session;
+		console.log("user_chat_id: ", user_chat_id);
+		console.log("newSessionId: ", newSessionId);
+		if (session.id !== newSessionId) {
+			chatStoreState.updateSession(session.id, (session: ChatSession) => {
+				session.id = newSessionId;
+			});
+		}
+
 		userMessage = createMessage({
+			id: user_chat_id,
 			role: "user",
 			content: ` ${newcontent}`,
 			image_url: image_url,
@@ -122,6 +156,7 @@ export async function midjourneyOnUserInput(
 		// 用于 imagineParams.prompt
 
 		userMessage = createMessage({
+			id: chat_id,
 			role: "user",
 			content: content,
 			image_url: image_url,
@@ -130,9 +165,7 @@ export async function midjourneyOnUserInput(
 		chatOptions.messages = [
 			{
 				role: "user",
-				content:
-					"Translate and optimize the description into English if the content is not written in English. if the original text ends with '--ar {text}'. for example '--style raw'. Do not translate '--ar {text}' part and put them at the end of translation. if the original content doesn't have '--ar {text}', do not add anythign in the end. Only output the final translation text. Here are the content ::" +
-					content,
+				content: `Translate the provided content into English, ensuring the translation is not only accurate but also enriched with detailed descriptions and contextual elements, if the original content is not in English. Retain any suffix command starting with '--' (e.g., '--ar {text}', '--style', '--v', etc.) and append it unchanged to the end of the translated text. Do not append any suffix if the original content does not include one. Output only the final, enhanced translation. Here is the content to be translated: " ${content} `,
 			},
 		];
 
@@ -199,10 +232,14 @@ export async function midjourneyOnUserInput(
 
 		const botMessageId = botMessage.id;
 
-		chatStoreState.updateSession(session.id, () => {
-			session.messages = session.messages.concat([userMessage, botMessage]);
-		});
-		console.log("botMessageId: ", botMessageId);
+		chatStoreState.updateSession(
+			session.id,
+			() => {
+				session.messages = session.messages.concat([userMessage, botMessage]);
+			},
+			false,
+		);
+		// console.log("botMessageId: ", botMessageId);
 
 		// 获取当前时间作为开始时间
 		const startTime = Date.now();
@@ -218,6 +255,31 @@ export async function midjourneyOnUserInput(
 			content: "生成失败, 请重试",
 			image_url: image_url,
 		});
+
+		createChatData = {
+			user: userid, // 替换为实际的用户 ID
+			chat_session: session.id, // 替换为实际的聊天会话 ID
+			message: "生成失败, 请重试", // 使用用户输入作为 message 参数
+			role: "assistant",
+			model: session.mask.modelConfig.model,
+		};
+
+		const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+		// if chatResponse code return 4000 or 401 , throw error
+		if (chatResponse.code === 4000 || chatResponse.code === 401) {
+			throw new Error("登录已过期，请重新登录");
+		}
+		const data = chatResponse.data;
+		const user_chat_id = data.chat_id;
+		const newSessionId = data.chat_session;
+		console.log("user_chat_id: ", user_chat_id);
+		console.log("newSessionId: ", newSessionId);
+		if (session.id !== newSessionId) {
+			chatStoreState.updateSession(session.id, (session: ChatSession) => {
+				session.id = newSessionId;
+			});
+		}
+
 		chatStoreState.updateSession(session.id, () => {
 			session.messages = session.messages.concat([userMessage, botMessage]);
 		});
@@ -235,6 +297,16 @@ export async function pollForProgress(
 	failureCount: number = 0,
 ) {
 	const chatStoreState = useChatStore.getState();
+	const userStore = useUserStore.getState();
+	const userid = userStore.user.id;
+
+	const createChatData: CreateChatData = {
+		user: userid, // 替换为实际的用户 ID
+		chat_session: session.id, // 替换为实际的聊天会话 ID
+		message: message, // 使用用户输入作为 message 参数
+		role: "assistant",
+		model: session.mask.modelConfig.model,
+	};
 
 	try {
 		const res = await Mjfetch(mjtaskid);
@@ -286,6 +358,23 @@ export async function pollForProgress(
 					`\n 绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
 						2,
 					)}秒。\n查看结果: \n [![${mjtaskid}](${oss}${filePath}!webp90)](${oss}${filePath}!webp90)`;
+
+				createChatData.message = content;
+				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+				// if chatResponse code return 4000 or 401 , throw error
+				if (chatResponse.code === 4000 || chatResponse.code === 401) {
+					throw new Error("登录已过期，请重新登录");
+				}
+				const data = chatResponse.data;
+				const user_chat_id = data.chat_id;
+				const newSessionId = data.chat_session;
+				console.log("user_chat_id: ", user_chat_id);
+				console.log("newSessionId: ", newSessionId);
+				if (session.id !== newSessionId) {
+					chatStoreState.updateSession(session.id, (session: ChatSession) => {
+						session.id = newSessionId;
+					});
+				}
 
 				break;
 			case "FAILURE":

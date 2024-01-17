@@ -42,14 +42,15 @@ const MjActions = (props: { session: ChatSession; taskid: string }) => {
 		const newIndex = index + 1; // 更新index
 
 		// 调用 midjourneyOnUserInput 函数，传递参数
-		await midjourneyOnUserInput(
-			content,
-			image_url,
-			session,
-			action,
-			taskId,
-			newIndex,
-		);
+		const params = {
+			content: content,
+			image_url: image_url,
+			_session: session,
+			action: action,
+			taskId: taskId,
+			index: newIndex,
+		};
+		await midjourneyOnUserInput(params);
 		setLoadings((prevLoadings) => ({
 			...prevLoadings,
 			[buttonKey]: false,

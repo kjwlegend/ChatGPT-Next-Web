@@ -110,11 +110,12 @@ export class AgentApi {
 				await writer.close();
 			},
 			async handleChainEnd(outputs, runId, parentRunId, tags) {
-				// console.log("[handleChainEnd]");
+				// console.log("[handleChainEnd]", { outputs, runId, parentRunId, tags });
 				// await writer.ready;
 				// await writer.close();
 			},
 			async handleLLMEnd() {
+				console.log("[handleLLMEnd]");
 				// await writer.ready;
 				// await writer.close();
 			},
@@ -130,7 +131,10 @@ export class AgentApi {
 				await writer.close();
 			},
 			async handleLLMStart(llm, _prompts: string[]) {
-				// console.log("handleLLMStart: I'm the second handler!!", { llm });
+				// console.log("handleLLMStart: I'm the second handler!!", {
+				// 	llm,
+				// 	_prompts,
+				// });
 			},
 			async handleChainStart(chain) {
 				// console.log("handleChainStart: I'm the second handler!!", { chain });
@@ -160,13 +164,15 @@ export class AgentApi {
 				}
 			},
 			async handleToolStart(tool, input) {
-				console.log("[handleToolStart]", { tool });
+				console.log("[handleToolStart]", { tool, input });
 			},
 			async handleToolEnd(output, runId, parentRunId, tags) {
 				// console.log("[handleToolEnd]", { output, runId, parentRunId, tags });
 			},
 			async handleAgentEnd(action, runId, parentRunId, tags) {
-				// console.log("[handleAgentEnd]");
+				// console.log("[handleAgentEnd]", { action, runId, parentRunId, tags });
+				await writer.ready;
+				await writer.close();
 			},
 		});
 	}

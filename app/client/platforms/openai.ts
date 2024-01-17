@@ -166,7 +166,7 @@ export class ChatGPTApi implements LLMApi {
 			// Please do not ask me why not send max_tokens, no reason, this param is just shit, I dont want to explain anymore.
 		};
 
-		console.log("[Request] openai payload: ", requestPayload);
+		// console.log("[Request] openai payload: ", requestPayload);
 
 		const shouldStream = !!options.config.stream;
 		const controller = new AbortController();
@@ -196,7 +196,7 @@ export class ChatGPTApi implements LLMApi {
 				function animateResponseText() {
 					if (finished || controller.signal.aborted) {
 						responseText += remainText;
-						console.log("[Response Animation] finished");
+						// console.log("[Response Animation] finished");
 						return;
 					}
 
@@ -349,7 +349,7 @@ export class ChatGPTApi implements LLMApi {
 			user: useUserStore.getState().user,
 		};
 
-		console.log("[Agent Request] openai payload: ", requestPayload);
+		// console.log("[Agent Request] openai payload: ", requestPayload);
 
 		const shouldStream = true;
 		const controller = new AbortController();
@@ -377,12 +377,15 @@ export class ChatGPTApi implements LLMApi {
 				let responseText = "";
 				let finished = false;
 
+				// console.log("agent stream start");
+
 				const finish = () => {
 					if (!finished) {
 						options.onFinish(responseText);
 						finished = true;
 					}
 				};
+
 				if (balance.error) {
 					options.onFinish(balance.msg ?? "余额不足, 请充值");
 					finished = true;
@@ -456,6 +459,7 @@ export class ChatGPTApi implements LLMApi {
 						}
 					},
 					onclose() {
+						console.log("agent close");
 						finish();
 					},
 					onerror(e) {
@@ -474,6 +478,7 @@ export class ChatGPTApi implements LLMApi {
 				const resJson = await res.json();
 				console.log("resJson", resJson);
 				const message = this.extractMessage(resJson);
+				console.log("agent message", message);
 				options.onFinish(message);
 			}
 		} catch (e) {

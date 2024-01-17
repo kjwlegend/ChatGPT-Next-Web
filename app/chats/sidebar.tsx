@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import React from "react";
 
 import styles from "./home.module.scss";
@@ -39,6 +39,10 @@ import DrawerMenu from "../components/drawer-menu";
 import UserInfo from "../components/userinfo";
 import { Divider } from "antd";
 import Upload from "@/app/components/upload";
+import { getChatSession } from "../api/backend/chat";
+import { ChatSessionData } from "../api/backend/chat";
+import { UpdateChatSessions } from "../services/chatService";
+import { useUserStore } from "../store/user";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
 	loading: () => null,
@@ -140,6 +144,7 @@ function useDragSideBar() {
 export function SideBar(props: { className?: string }) {
 	const chatStore = useChatStore();
 	const authStore = useAuthStore();
+	const userStore = useUserStore();
 
 	// drag side bar
 	const { onDragStart, shouldNarrow } = useDragSideBar();
@@ -152,6 +157,58 @@ export function SideBar(props: { className?: string }) {
 	);
 
 	useHotKey();
+
+	const [page, setPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
+	const listRef = useRef<HTMLDivElement | null>(null);
+
+	// 加载更多会话
+	const loadMoreSessions = async () => {
+		if (hasMore) {
+			const param: ChatSessionData = {
+				user: userStore.user.id,
+				limit: 20,
+				page: page, // 使用当前页码
+			};
+			try {
+				const chatSessionList = await getChatSession(param);
+				console.log("chatSessionList", chatSessionList.data);
+				UpdateChatSessions(chatSessionList.data);
+				setPage((prevPage) => prevPage + 1);
+				setHasMore(chatSessionList.is_next); // 根据返回的is_next更新是否还有更多数据
+			} catch (error) {
+				console.log("get chatSession list error", error);
+			}
+		}
+	};
+	useEffect(() => {
+		const handleScroll = (event: Event) => {
+			console.log("Scroll event triggered");
+			const target = event.target as HTMLDivElement;
+			const { scrollTop, clientHeight, scrollHeight } = target;
+			if (scrollTop + clientHeight >= scrollHeight - 100) {
+				console.log(
+					"scrollHeight",
+					scrollHeight,
+					"scrollTop",
+					scrollTop,
+					"clientHeight",
+					clientHeight,
+				);
+				loadMoreSessions();
+			}
+		};
+		const listElement = listRef.current; // 通过ref获取DOM元素
+		if (listElement) {
+			listElement.addEventListener("scroll", handleScroll);
+		}
+
+		return () => {
+			if (listElement) {
+				listElement.removeEventListener("scroll", handleScroll);
+			}
+		};
+	}, [hasMore, page]); // 依赖项数组
 
 	if (isMobileScreen && !authStore.isAuthenticated) {
 		return (
@@ -214,6 +271,7 @@ export function SideBar(props: { className?: string }) {
 						navigate(Path.Home);
 					}
 				}}
+				ref={listRef}
 			>
 				<ChatList narrow={shouldNarrow} />
 			</div>

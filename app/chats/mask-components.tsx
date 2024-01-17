@@ -284,6 +284,7 @@ function ContextPromptItem(props: {
 }) {
 	const [focusingInput, setFocusingInput] = useState(false);
 	const [loadings, setLoadings] = useState<boolean[]>([]);
+	const [value, setValue] = useState<string>(props.prompt.role);
 
 	const onChange = (e: RadioChangeEvent) => {
 		// update role
@@ -291,7 +292,10 @@ function ContextPromptItem(props: {
 			...props.prompt,
 			role: e.target.value as any,
 		});
-		console.log(`Roles checked:${e.target.value}`);
+		// update radio checked value
+		setValue(e.target.value);
+
+		// console.log(`Roles checked:${e.target.value}`);
 	};
 
 	const enterLoading = (index: number) => {
@@ -334,7 +338,11 @@ function ContextPromptItem(props: {
 					<span className={chatStyle["context-drag"]}>
 						<DragIcon />
 					</span>
-					<Radio.Group onChange={onChange} defaultValue={ROLES[0]}>
+					<Radio.Group
+						onChange={onChange}
+						defaultValue={ROLES[0]}
+						value={value}
+					>
 						{ROLES.map((r) => (
 							<Radio.Button key={r} value={r}>
 								{r}

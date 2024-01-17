@@ -1,12 +1,13 @@
 import { BUILTIN_MASKS } from "../masks";
 import { getLang, Lang } from "../locales";
-import { DEFAULT_TOPIC, ChatMessage } from "./chat";
+import { ChatMessage, DEFAULT_TOPIC } from "./chat";
 import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey, MaskCategory, MaskCategoryType } from "../constant";
 import { nanoid } from "nanoid";
 import { createPersistStore } from "../utils/store";
 import { type } from "os";
 import { Plugin } from "./plugin";
+
 export type Mask = {
 	id: string;
 	createdAt: number;
@@ -59,7 +60,6 @@ export const createEmptyMask = () =>
 		),
 		plugins: ["web-search"],
 	}) as Mask;
-
 
 export const useMaskStore = createPersistStore(
 	{ ...DEFAULT_MASK_STATE },

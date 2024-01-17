@@ -122,20 +122,20 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 };
 
 export const DEFAULT_MODELS = [
-	{
-		name: "gpt-4",
-		displayName: "小光Pro-(5积分/次)",
-		available: true,
-		provider: {
-			id: "openai",
-			providerName: "OpenAI",
-			providerType: "openai",
-		},
-	},
+	// {
+	// 	name: "gpt-4",
+	// 	displayName: "小光Pro-(5积分/次)",
+	// 	available: true,
+	// 	provider: {
+	// 		id: "openai",
+	// 		providerName: "OpenAI",
+	// 		providerType: "openai",
+	// 	},
+	// },
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
-		displayName: "小光4.0-(5积分/次)",
+		displayName: "小光Pro-(5积分/次)",
 		provider: {
 			id: "openai",
 			providerName: "OpenAI",
@@ -188,7 +188,7 @@ console.log("oss", oss);
 // export const server_url = "https://admin.xiaoguang.fun";
 export const server_url = "http://localhost:8000";
 
-export const version = "1.6.5";
+export const version = "1.7.0";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

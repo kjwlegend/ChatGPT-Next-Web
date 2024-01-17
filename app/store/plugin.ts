@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { BUILTIN_PLUGIN_STORE, BUILTIN_PLUGINS } from "../plugins";
 import { getLang, Lang } from "../locales";
-import { DEFAULT_TOPIC, ChatMessage } from "./chat";
+import { ChatMessage } from "./chat";
 import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey } from "../constant";
 import { nanoid } from "nanoid";
@@ -18,6 +18,19 @@ export type Plugin = {
 	enable: boolean;
 	onlyNodeRuntime?: boolean;
 };
+
+export function createEmptyPlugin(): Plugin {
+	return {
+		id: "",
+		createdAt: Date.now(),
+		name: "",
+		toolName: "",
+		lang: getLang(),
+		description: "",
+		builtin: false,
+		enable: true,
+	};
+}
 
 export const DEFAULT_PLUGIN_STATE = {
 	plugins: {} as Record<string, Plugin>,
@@ -35,16 +48,6 @@ type PluginStore = PluginState & {
 	get: (id?: string) => Plugin | null;
 	getAll: () => Plugin[];
 };
-
-export const createEmptyPlugin = () =>
-	({
-		id: nanoid(),
-		name: DEFAULT_TOPIC,
-		lang: getLang(),
-		builtin: false,
-		createdAt: Date.now(),
-		enable: true,
-	}) as Plugin;
 
 export const usePluginStore = create<PluginStore>()(
 	persist(

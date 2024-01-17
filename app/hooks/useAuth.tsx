@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { loginAPI } from "../api/auth";
 import { useAuthStore } from "../store/auth";
@@ -6,7 +7,7 @@ import { logoutAPI } from "../api/auth";
 import { Result } from "antd";
 import { getUserInfo } from "../api/backend/user";
 import { ChatSessionData, getChatSession } from "../api/backend/chat";
-import { useUpdateChatSessions } from "../services/chatService";
+import { UpdateChatSessions } from "../services/chatService";
 import { useChatStore } from "../store/chat";
 
 interface LoginParams {
@@ -16,6 +17,11 @@ interface LoginParams {
 import { ChatSession } from "../store/chat";
 import { createEmptyMask } from "../store/mask";
 
+// function clearAllData() {
+// 	const chatStore = useChatStore();
+// 	chatStore.clearAllData();
+// }
+
 export default function useAuth() {
 	const [user, setUser] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -23,57 +29,6 @@ export default function useAuth() {
 
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
-	const chatStore = useChatStore();
-
-	useEffect(() => {
-		if (user) {
-			const fetchAndStoreSessions = async () => {
-				const param: ChatSessionData = {
-					user: user.id,
-					limit: 35,
-				};
-				try {
-					const chatSessionList = await getChatSession(param);
-					console.log("chatSessionList", chatSessionList.data);
-					// 直接使用 chatStore 的方法更新 sessions
-					chatSessionList.data.forEach((sessionData: any) => {
-						// 检查chatstore.sessions中是否已经存在该会话
-						const exists = chatStore.sessions.some(
-							(s) => s.id === sessionData.session_id,
-						);
-						// console.log("exists: ", exists, "sessionData: ", sessionData);
-
-						// 如果不存在，则创建一个新的ChatSession对象并添加到chatstore.sessions中
-						if (!exists) {
-							const newSession: ChatSession = {
-								id: sessionData.session_id,
-								topic: sessionData.session_topic || "", // 如果session_topic为null，则使用空字符串
-								memoryPrompt: "", // 根据实际情况填充
-								messages: [], // 根据实际情况填充
-								stat: {
-									tokenCount: 0,
-									wordCount: 0,
-									charCount: 0,
-								}, // 根据实际情况填充
-								lastUpdate: Date.parse(sessionData.last_updated),
-								lastSummarizeIndex: 0, // 根据实际情况填充
-								clearContextIndex: undefined, // 根据实际情况填充
-								mask: createEmptyMask(), // 根据实际情况填充
-								responseStatus: undefined, // 根据实际情况填充
-								isworkflow: undefined, // 根据实际情况填充
-								mjConfig: { size: "", quality: "", style: "", model: "" },
-							};
-							chatStore.addSession(newSession);
-						}
-					});
-				} catch (error) {
-					console.log("get chatSession list error", error);
-				}
-			};
-
-			fetchAndStoreSessions();
-		}
-	}, [user, chatStore]);
 
 	const loginHook = async (params: LoginParams): Promise<void> => {
 		try {
@@ -222,6 +177,7 @@ export default function useAuth() {
 
 		authStore.logout();
 		userStore.clearUser();
+		// clearAllData();
 	};
 
 	return {

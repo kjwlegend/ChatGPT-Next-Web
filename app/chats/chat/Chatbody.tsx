@@ -92,6 +92,9 @@ import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
 import { ChatSession } from "@/app/store";
 import { message } from "antd";
 import useAuth from "@/app/hooks/useAuth";
+import { ChatData } from "@/app/api/backend/chat";
+import { getChat } from "@/app/api/backend/chat";
+import { UpdateChatMessages } from "@/app/services/chatService";
 
 const Markdown = dynamic(async () => (await import("../markdown")).Markdown, {
 	loading: () => <LoadingIcon />,
@@ -260,7 +263,39 @@ export function Chatbody(props: {
 			? session.clearContextIndex! + context.length - msgRenderIndex
 			: -1;
 
-	const onChatBodyScroll = (e: HTMLElement) => {
+	// 假设我们有一个状态变量 currentPage 来跟踪当前加载的页数
+	let currentPage = 1; // 通常初始页码从1开始
+
+	// let hasNextPage = true; // 这个值应该根据最新的消息加载情况进行更新
+	const [hasNextPage, setHasNextPage] = useState(true);
+
+	// 更新 getMessages 函数以接受 page 参数
+	const getMessages = async (sessionid: string, page: number) => {
+		const param = {
+			chat_session: sessionid,
+			user: userStore.user.id,
+			page: page, // 添加 page 参数
+			limit: 50,
+		};
+		try {
+			const chatSessionList = await getChat(param);
+			// console.log("chatSessionList", chatSessionList.data);
+
+			// 使用 chatStore 方法直接更新 sessions
+			UpdateChatMessages(param.chat_session, chatSessionList.data);
+
+			// 根据返回的数据更新 hasNextPage 状态
+			setHasNextPage(chatSessionList.is_next);
+		} catch (error) {
+			console.error("get chatSession list error", error);
+		}
+	};
+	// Pseudocode Plan:
+	// 1. Create a function to check if the scroll is at the bottom and there are remaining messages.
+	// 2. If the scroll is at the bottom and there are remaining messages, call the getMessages function.
+
+	// Step 1: Create a function to check if the scroll is at the bottom and there are remaining messages.
+	const checkScrollAndFetchMessages = (e: HTMLElement) => {
 		const bottomHeight = e.scrollTop + e.clientHeight;
 		const edgeThreshold = e.clientHeight;
 
@@ -269,16 +304,39 @@ export function Chatbody(props: {
 		const isHitBottom =
 			bottomHeight >= e.scrollHeight - (isMobileScreen ? 5 : 10);
 
+		return { isTouchTopEdge, isTouchBottomEdge, isHitBottom };
+	};
+
+	const onChatBodyScroll = (e: HTMLElement) => {
+		const { isTouchTopEdge, isTouchBottomEdge, isHitBottom } =
+			checkScrollAndFetchMessages(e);
+
 		const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
 		const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;
 
 		if (isTouchTopEdge && !isTouchBottomEdge) {
+			// 如果触碰到顶部，可以加载前一页的消息（如果有的话）
+			if (currentPage > 1) {
+				currentPage -= 1;
+				getMessages(sessionId, currentPage);
+			}
 			setMsgRenderIndex(prevPageMsgIndex);
-		} else if (isTouchBottomEdge) {
+		} else if (isTouchBottomEdge && isHitBottom && hasNextPage) {
+			console.log(
+				"isTouchBottomEdge",
+				isTouchBottomEdge,
+				"hasNextPage",
+				hasNextPage,
+			);
+			// 如果触碰到底部且还有下一页的消息，则加载下一页的消息
+			currentPage += 1;
+			getMessages(sessionId, currentPage);
 			setMsgRenderIndex(nextPageMsgIndex);
 		}
 
+		// 更新是否触碰到底部的状态
 		setHitBottom(isHitBottom);
+		// 更新是否自动滚动到底部的状态
 		setAutoScroll(isHitBottom);
 	};
 

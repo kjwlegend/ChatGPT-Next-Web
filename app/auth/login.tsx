@@ -4,12 +4,43 @@ import useAuth from "../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
 import { LoginResult } from "../types";
+import { use, useState, useEffect } from "react";
+import { User } from "../store";
+import { ChatSessionData, getChatSession } from "@/app/api/backend/chat";
+import { createEmptyMask } from "@/app/store/mask";
+import { useUserStore } from "../store";
+import { useChatStore } from "../store";
+import { ChatSession } from "../store";
+import { UpdateChatSessions } from "../services/chatService";
 
 export default function Login() {
 	const { loginHook } = useAuth(); // 获取登录方法
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const router = useRouter();
+
+	const userStore = useUserStore();
+	const chatStore = useChatStore();
+
+	const [user, setUser] = useState<User | null>(null);
+
+	useEffect(() => {
+		const fetchAndStoreSessions = async () => {
+			const param: ChatSessionData = {
+				user: user?.id || 0,
+				limit: 30,
+			};
+			try {
+				const chatSessionList = await getChatSession(param);
+				console.log("chatSessionList", chatSessionList.data);
+				// 直接使用 chatStore 的方法更新 sessions
+				UpdateChatSessions(chatSessionList.data);
+			} catch (error) {
+				console.log("get chatSession list error", error);
+			}
+		};
+		fetchAndStoreSessions();
+	}, [user]);
 
 	const onFinish = async (values: any) => {
 		try {
@@ -31,10 +62,14 @@ export default function Login() {
 				// 登录成功后跳转
 				messageApi.open({
 					type: "success",
-					content: "登录成功",
+					content: "登录成功, 正在跳转..",
 				});
 
-				router.push("/chats");
+				setUser(result.data.user);
+				//
+				setTimeout(() => {
+					router.push("/chats");
+				}, 1000);
 			}
 		} catch (error) {
 			// 失败提示

@@ -1,11 +1,12 @@
 import request from "@/app/utils/request";
 import { User } from "../../store/user";
 import { ModelType } from "../../store/config";
-import { ChatMessage } from "../../store/chat";
+import { ChatMessage, MjConfig } from "../../store/chat";
+import { Mask } from "@/app/store/mask";
 
 export interface CreateChatSessionData {
 	user: number;
-	session_topic?: string;
+	topic?: string;
 	prompt_id?: string;
 	hide?: boolean;
 }
@@ -51,10 +52,36 @@ export async function getChatSession(data: ChatSessionData) {
 			return err.response.data;
 		});
 }
+// update chatSession
+
+export interface UpdateChatSessionData {
+	topic?: String | null;
+	session_summary?: String;
+	mask?: Mask;
+	mjConfig?: MjConfig;
+	hide?: boolean;
+	[property: string]: any;
+}
+
+export async function updateChatSession(
+	id: string,
+	data: UpdateChatSessionData,
+) {
+	return request({
+		url: `/gpt/chat-sessions/by_session_id/${id}/`,
+		method: "put",
+		data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			// console.log(err);
+			return err.response.data;
+		});
+}
 
 export interface ChatData {
 	chat_session: string;
-	user: string;
+	user: number;
 	[property: string]: any;
 }
 

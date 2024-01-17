@@ -87,6 +87,7 @@ import {
 
 import { useMaskStore } from "@/app/store/mask";
 import { ChatSession } from "@/app/store";
+import { prop } from "cheerio/lib/api/attributes";
 
 export function SessionConfigModel(props: {
 	onClose: () => void;
@@ -112,31 +113,49 @@ export function SessionConfigModel(props: {
 				title={Locale.Context.Edit}
 				onClose={() => props.onClose()}
 				actions={[
+					// <IconButton
+					// 	key="reset"
+					// 	icon={<ResetIcon />}
+					// 	bordered
+					// 	text={Locale.Chat.Config.Reset}
+					// 	onClick={async () => {
+					// 		if (await showConfirm(Locale.Memory.ResetConfirm)) {
+					// 			chatStore.updateSession(
+					// 				sessionId,
+					// 				() => (session.memoryPrompt = ""),
+					// 			);
+					// 		}
+					// 	}}
+					// />,
+					// 保存并更新session
 					<IconButton
-						key="reset"
-						icon={<ResetIcon />}
-						bordered
-						text={Locale.Chat.Config.Reset}
-						onClick={async () => {
-							if (await showConfirm(Locale.Memory.ResetConfirm)) {
-								chatStore.updateSession(
-									sessionId,
-									() => (session.memoryPrompt = ""),
-								);
-							}
-						}}
-					/>,
-					<IconButton
-						key="copy"
+						key="save"
 						icon={<CopyIcon />}
 						bordered
-						text={Locale.Chat.Config.SaveAs}
+						text={"保存"}
 						onClick={() => {
-							setTimeout(() => {
-								maskStore.create(session.mask);
-							}, 500);
+							chatStore.updateSession(
+								sessionId,
+								() => {
+									session.mask = { ...session.mask };
+								},
+								true,
+							);
+							props.onClose();
 						}}
 					/>,
+
+					// <IconButton
+					// 	key="copy"
+					// 	icon={<CopyIcon />}
+					// 	bordered
+					// 	text={Locale.Chat.Config.SaveAs}
+					// 	onClick={() => {
+					// 		setTimeout(() => {
+					// 			maskStore.create(session.mask);
+					// 		}, 500);
+					// 	}}
+					// />,
 				]}
 			>
 				<MaskConfig
@@ -144,7 +163,11 @@ export function SessionConfigModel(props: {
 					updateMask={(updater) => {
 						const mask = { ...session.mask };
 						updater(mask);
-						chatStore.updateSession(sessionId, () => (session.mask = mask));
+						chatStore.updateSession(
+							sessionId,
+							() => (session.mask = mask),
+							false,
+						);
 					}}
 					shouldSyncFromGlobal
 					extraListItems={
