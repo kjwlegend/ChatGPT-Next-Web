@@ -188,7 +188,7 @@ console.log("oss", oss);
 // export const server_url = "https://admin.xiaoguang.fun";
 export const server_url = "http://localhost:8000";
 
-export const version = "1.7.0";
+export const version = "1.7.1";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
