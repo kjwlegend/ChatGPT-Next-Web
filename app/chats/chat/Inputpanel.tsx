@@ -359,17 +359,17 @@ export function ChatActions(props: {
 			);
 		}
 	}
-	function MjConfigChange(e: any) {
-		const sizevalue = e.target.value;
-		if (sizevalue == "0") {
-			return;
-		}
-		const size = "--ar " + sizevalue;
-		chatStore.updateSession(session.id, () => {
-			session.mjConfig.size = size;
-		});
-		console.log("session id", session.id, "mjConfig: ", session.mjConfig);
-	}
+	// function MjConfigChange(e: any) {
+	// 	const sizevalue = e.target.value;
+	// 	if (sizevalue == "0") {
+	// 		return;
+	// 	}
+	// 	const size = "--ar " + sizevalue;
+	// 	chatStore.updateSession(session.id, () => {
+	// 		session.mjConfig.size = size;
+	// 	});
+	// 	console.log("session id", session.id, "mjConfig: ", session.mjConfig);
+	// }
 
 	// useEffect(() => {
 	// 	console.log("usePlugins: ", session.mask.usePlugins);
@@ -577,7 +577,7 @@ export function ChatActions(props: {
 						}}
 					/>
 				)}
-				{currentModel == "midjourney" && (
+				{/* {currentModel == "midjourney" && (
 					<div className={`${styles["chat-input-action"]} `}>
 						<span>尺寸:</span>
 						<Radio.Group
@@ -594,7 +594,7 @@ export function ChatActions(props: {
 							<Radio.Button value="0">自定义</Radio.Button>
 						</Radio.Group>
 					</div>
-				)}
+				)} */}
 
 				{currentModel !== "midjourney" && (
 					<ChatAction

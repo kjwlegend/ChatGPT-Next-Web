@@ -52,7 +52,7 @@ export type ChatMessage = RequestMessage & {
 	id: string;
 	model?: ModelType;
 	image_url?: string;
-	mjSessions?: MJMessage;
+	mjstatus?: MJMessage;
 	toolMessages?: ChatToolMessage[];
 	streaming?: boolean;
 	isError?: boolean;
@@ -61,9 +61,10 @@ export type ChatMessage = RequestMessage & {
 export type MjConfig = {
 	size: string;
 	quality: string;
-	style: string;
+	stylize: string;
 	model: string;
 	speed?: string;
+	seed?: string;
 };
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
@@ -140,7 +141,7 @@ function createEmptySession(): ChatSession {
 		lastSummarizeIndex: 0,
 		mask: createEmptyMask(),
 		isworkflow: false,
-		mjConfig: { size: "", quality: "", style: "", model: "" },
+		mjConfig: { size: "", quality: "", stylize: "", model: "" },
 	};
 }
 
@@ -545,7 +546,7 @@ export const useChatStore = createPersistStore(
 
 				let responseStatus = session.responseStatus;
 
-				// console.log("click send: ", session.topic, responseStatus);
+				console.log("click send: ", session.topic, responseStatus);
 
 				const userContent = fillTemplateWith(content, modelConfig);
 				console.log("[User Input] after template: ", userContent);
@@ -610,7 +611,7 @@ export const useChatStore = createPersistStore(
 									...currentMessage,
 									content: content,
 									image_url: imageUrl,
-									mjSessions: mjresult,
+									mjstatus: mjresult,
 								};
 								session.messages[messageIndex] = updatedBotMessage;
 							}
@@ -857,7 +858,14 @@ export const useChatStore = createPersistStore(
 			if (version < 3.2) {
 				newState.sessions.forEach((s) => {
 					s.isworkflow = false;
-					s.mjConfig = { size: "", quality: "", style: "", model: "" };
+					s.mjConfig = {
+						size: "",
+						quality: "",
+						stylize: "",
+						model: "",
+						speed: "",
+						seed: "",
+					};
 				});
 			}
 

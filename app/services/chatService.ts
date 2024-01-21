@@ -93,7 +93,13 @@ export function handleChatCallbacks(
 			if (message) {
 				botMessage.content = message;
 				// console.log("message111 finish: ", message);
-				session.responseStatus = true;
+				chatStoreState.updateSession(
+					session.id,
+					() => {
+						session.responseStatus = true;
+					},
+					false,
+				);
 
 				const createChatData: CreateChatData = {
 					user: user.id,
@@ -255,6 +261,8 @@ export function UpdateChatMessages(sessionId: string, messagesData: any[]) {
 			id: messageData.chat_id.toString(),
 			role: messageData.role, // 确保这里的转换是安全的
 			content: messageData.message,
+			mjstatus: messageData.mjstatus,
+
 			// 根据需要添加其他属性
 		};
 

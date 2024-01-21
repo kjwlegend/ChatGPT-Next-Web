@@ -4,15 +4,15 @@ import request from "@/app/utils/request";
  * Request
  */
 export interface paintings {
-	action: string;
-	image_url: string;
-	model: string;
+	action?: string;
+	image_url?: string;
+	model?: string;
 	prompt?: string;
 	prompt_en?: string;
-	publish: boolean;
-	status: string;
-	task_id: string;
-	user: number;
+	publish?: boolean;
+	status?: string;
+	task_id?: string;
+	user?: number;
 	[property: string]: any;
 }
 

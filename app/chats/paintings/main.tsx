@@ -23,7 +23,7 @@ import CloudFailIcon from "@/app/icons/cloud-fail.svg";
 
 // 导入 Masonry 和 LazyLoadImage 组件
 import Masonry from "react-masonry-css";
-import { Image, MenuProps, Space, TabsProps, Button } from "antd";
+import { Image, MenuProps, Space, TabsProps, Button, Modal } from "antd";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { oss } from "@/app/constant";
 
@@ -70,8 +70,9 @@ import { getClientConfig } from "@/app/config/client";
 import { useSyncStore } from "@/app/store/sync";
 import { useAuthStore } from "@/app/store/auth";
 import { getPaintings } from "@/app/api/backend/paintings";
-import { Tabs } from "antd";
+import { Tabs, Switch } from "antd";
 
+import { updatePaintings } from "@/app/api/backend/paintings";
 const { TabPane } = Tabs;
 
 // 定义API返回的画作对象类型
@@ -107,19 +108,26 @@ interface PaintingsMasonryProps {
 	onScroll: (event: React.UIEvent<HTMLDivElement>) => void;
 	fetchMore: () => void;
 }
-const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
-	paintings,
-	hasMore,
-	onScroll,
-	fetchMore,
-}) => {
-	// Masonry布局的断点
-	const breakpointColumnsObj = {
-		default: 5,
-		1800: 5,
-		1440: 4,
-		1000: 3,
-		700: 2,
+
+const ImageContainer = ({ painting }: { painting: Painting }) => {
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	// const oss = "your-oss-url"; // 请替换成你的实际 OSS URL
+	const user = useUserStore((state) => state.user?.id);
+
+	const paintingParams = {
+		// 你的参数
+		model: painting.model,
+		// prompt: painting.prompt,
+		// prompt_en: painting.prompt_en,
+		// action: painting.action,
+		user: user,
+		// status: painting.status,
+	};
+
+	// 其他函数，例如 onDownload, onCopy 等
+
+	const onImagePreview = () => {
+		setIsModalVisible(true);
 	};
 
 	const onDownload = (src: any) => {
@@ -142,31 +150,37 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 	};
 
 	return (
-		<div onScroll={onScroll} className={styles["gallery-container"]}>
-			<Masonry
-				breakpointCols={breakpointColumnsObj}
-				className={styles["masonry-grid"]}
-				columnClassName={styles["masonry-grid_column"]}
+		<div
+			key={painting.id}
+			style={{ maxWidth: "400px" }}
+			className={styles["masonry-grid-item"]}
+		>
+			<Image
+				src={`${oss}${painting.image_url}!thumbnail`}
+				alt={painting.prompt_en}
+				style={{ width: "100%", height: "auto" }}
+				className={styles["gallery-image"]}
+				preview={{
+					visible: false,
+					onVisibleChange: onImagePreview,
+					mask: <IconButton icon={<EyeIcon />} onClick={onImagePreview} />,
+				}}
+				loading="lazy"
+			/>
+			<Modal
+				open={isModalVisible}
+				footer={null}
+				onCancel={() => setIsModalVisible(false)}
+				width="100%"
+				//   maxWidth="1000px"
+				className={styles["image-preview-modal"]}
 			>
-				{paintings.map((painting, index) => (
-					<div
-						key={index}
-						style={{ maxWidth: "400px" }}
-						className={styles["masonry-grid-item"]}
-					>
+				<div className={styles["modal-content"]}>
+					<div className={styles["modal-image-wrapper"]}>
 						<Image
-							src={`${oss}${painting.image_url}!thumbnail`}
-							// srcSet={`${oss}${painting.image_url}!webp90 300w`}
+							src={`${oss}${painting.image_url}!webp90`}
 							alt={painting.prompt_en}
-							style={{ width: "100%", height: "auto" }}
-							className={styles["gallery-image"]}
-							// placeholder={
-							// 	<Image
-							// 		src={`${oss}${painting.image_url}!thumbnail`}
-							// 		alt={painting.prompt_en}
-							// 		style={{ width: "100%", filter: "blur(20px)" }}
-							// 	/>
-							// }
+							// 添加你的 preview 配置
 							preview={{
 								toolbarRender: (
 									_,
@@ -218,9 +232,171 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 									</div>
 								),
 							}}
-							loading="lazy"
 						/>
 					</div>
+					<div className={styles["modal-info"]}>
+						<div className={styles["modal-info-item"]}>
+							<label className={styles["modal-info-label"]}>Prompt:</label>
+							<div className={styles["modal-info-content"]}>
+								{painting.prompt}
+							</div>
+						</div>
+						<div className={styles["modal-info-item"]}>
+							<label className={styles["modal-info-label"]}>Prompt EN:</label>
+							<div className={styles["modal-info-content"]}>
+								{painting.prompt_en}
+							</div>
+						</div>
+						<div className={styles["modal-info-action"]}>
+							{/* 当painting.user  == user时，显示编辑按钮 */}
+							{painting.user === user && (
+								<Switch
+									checkedChildren="公开"
+									unCheckedChildren="隐藏"
+									defaultChecked
+									onChange={(value) => {
+										/* 调用切换公开/隐藏的函数 */
+										console.log(value);
+										updatePaintings(painting.id, {
+											...paintingParams,
+											publish: value,
+										});
+									}}
+								/>
+							)}
+
+							<IconButton
+								icon={<CopyIcon />}
+								bordered
+								text="复制提示词"
+								onClick={(e) => {
+									e.stopPropagation();
+									onCopy(painting.prompt_en);
+								}}
+							/>
+						</div>
+					</div>
+				</div>
+			</Modal>
+		</div>
+	);
+};
+
+const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
+	paintings,
+	hasMore,
+	onScroll,
+	fetchMore,
+}) => {
+	// Masonry布局的断点
+	const breakpointColumnsObj = {
+		default: 4,
+		1800: 4,
+		1440: 3,
+		1000: 2,
+		700: 2,
+	};
+
+	const onDownload = (src: any) => {
+		fetch(src)
+			.then((response) => response.blob())
+			.then((blob) => {
+				const url = URL.createObjectURL(new Blob([blob]));
+				const link = document.createElement("a");
+				link.href = url;
+				link.download = "image.png";
+				document.body.appendChild(link);
+				link.click();
+				URL.revokeObjectURL(url);
+				link.remove();
+			});
+	};
+
+	const onCopy = (src: any) => {
+		copyToClipboard(src);
+	};
+
+	return (
+		<div onScroll={onScroll} className={styles["gallery-container"]}>
+			<Masonry
+				breakpointCols={breakpointColumnsObj}
+				className={styles["masonry-grid"]}
+				columnClassName={styles["masonry-grid_column"]}
+			>
+				{paintings.map((painting, index) => (
+					// <div
+					// 	key={index}
+					// 	style={{ maxWidth: "400px" }}
+					// 	className={styles["masonry-grid-item"]}
+					// >
+					// 	<Image
+					// 		src={`${oss}${painting.image_url}!thumbnail`}
+					// 		// srcSet={`${oss}${painting.image_url}!webp90 300w`}
+					// 		alt={painting.prompt_en}
+					// 		style={{ width: "100%", height: "auto" }}
+					// 		className={styles["gallery-image"]}
+					// 		// placeholder={
+					// 		// 	<Image
+					// 		// 		src={`${oss}${painting.image_url}!thumbnail`}
+					// 		// 		alt={painting.prompt_en}
+					// 		// 		style={{ width: "100%", filter: "blur(20px)" }}
+					// 		// 	/>
+					// 		// }
+					// 		preview={{
+					// 			toolbarRender: (
+					// 				_,
+					// 				{
+					// 					transform: { scale },
+					// 					actions: {
+					// 						onFlipY,
+					// 						onFlipX,
+					// 						onRotateLeft,
+					// 						onRotateRight,
+					// 						onZoomOut,
+					// 						onZoomIn,
+					// 					},
+					// 				},
+					// 			) => (
+					// 				<Space size={12} className="toolbar-wrapper">
+					// 					<DownloadOutlined onClick={onDownload} />
+					// 					<SwapOutlined rotate={90} onClick={onFlipY} />
+					// 					<SwapOutlined onClick={onFlipX} />
+					// 					<RotateLeftOutlined onClick={onRotateLeft} />
+					// 					<RotateRightOutlined onClick={onRotateRight} />
+					// 					<ZoomOutOutlined
+					// 						disabled={scale === 1}
+					// 						onClick={onZoomOut}
+					// 					/>
+					// 					<ZoomInOutlined
+					// 						disabled={scale === 50}
+					// 						onClick={onZoomIn}
+					// 					/>
+					// 				</Space>
+					// 			),
+					// 			src: `${oss}${painting.image_url}!webp90`,
+
+					// 			mask: (
+					// 				<div className={styles["gallery-image-mask"]}>
+					// 					<div className={styles["gallery-image-mask-title"]}>
+					// 						{painting.prompt_en}
+					// 					</div>
+					// 					<div className={styles["gallery-image-mask-actions"]}>
+					// 						<IconButton
+					// 							icon={<CopyIcon />}
+					// 							text="复制提示词"
+					// 							onClick={(e) => {
+					// 								e.stopPropagation();
+					// 								onCopy(painting.prompt_en);
+					// 							}}
+					// 						/>
+					// 					</div>
+					// 				</div>
+					// 			),
+					// 		}}
+					// 		loading="lazy"
+					// 	/>
+					// </div>
+					<ImageContainer key={index} painting={painting} />
 				))}
 			</Masonry>
 			{hasMore && (

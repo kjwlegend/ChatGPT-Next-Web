@@ -87,6 +87,7 @@ export function EditMessageModal(props: {
 	const sessionId = session.id;
 
 	const [messages, setMessages] = useState(session.messages.slice());
+	const [topic, setTopic] = useState(session.topic);
 
 	return (
 		<div className="modal-mask">
@@ -109,7 +110,8 @@ export function EditMessageModal(props: {
 						key="ok"
 						onClick={() => {
 							chatStore.updateSession(sessionId, () => {
-								session.messages = messages;
+								// session.messages = messages;
+								session.topic = topic;
 							});
 							props.onClose();
 						}}
@@ -123,11 +125,12 @@ export function EditMessageModal(props: {
 					>
 						<input
 							type="text"
-							value={session.topic}
-							onInput={(e) =>
-								chatStore.updateSession(sessionId, () => {
-									session.topic = e.currentTarget.value;
-								})
+							value={topic}
+							onInput={
+								(e) => setTopic(e.currentTarget.value)
+								// chatStore.updateSession(sessionId, () => {
+								// 	session.topic = e.currentTarget.value;
+								// })
 							}
 						></input>
 					</ListItem>

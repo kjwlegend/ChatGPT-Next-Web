@@ -28,6 +28,9 @@ import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
 import ModalPopup from "@/app/components/welcome";
+import useAuth from "../hooks/useAuth";
+import { log } from "console";
+import { useAuthStore } from "../store/auth";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -137,15 +140,44 @@ const loadAsyncGoogleFont = () => {
 
 function Screen() {
 	const config = useAppConfig();
-	const location = useLocation();
 	const isHome = location.pathname === Path.Home;
 	const isAuth = location.pathname === Path.Auth;
 	const isMobileScreen = useMobileScreen();
+	const { logoutHook } = useAuth();
+	const authStore = useAuthStore();
+	const isAuthenticated = authStore.isAuthenticated;
+
 	const shouldTightBorder =
 		getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
 
 	useEffect(() => {
 		loadAsyncGoogleFont();
+	}, []);
+
+	// 24小时后自动退出登录
+	// 获取当前时间戳
+	const currentTimeStamp = Date.now();
+	// 计算 24 小时后的时间戳
+	const logoutTimeStamp = currentTimeStamp + 24 * 60 * 60 * 1000;
+
+	useEffect(() => {
+		if (!isAuthenticated) {
+			console.log("未登录");
+			return;
+		}
+		console.log("登录状态:", isAuthenticated);
+		console.log(logoutTimeStamp, "登出系统...");
+
+		const timer = setInterval(() => {
+			// 执行定时任务
+
+			logoutHook();
+			location.reload();
+		}, logoutTimeStamp);
+
+		return () => {
+			clearInterval(timer); // 在组件卸载时清除定时器
+		};
 	}, []);
 
 	return (

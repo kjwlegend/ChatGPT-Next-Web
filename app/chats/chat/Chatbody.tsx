@@ -45,7 +45,7 @@ import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
 import { Button } from "antd";
-import MjActions from "./midjourney";
+import { MjActions, MJPanel } from "./midjourney";
 import styles from "./chats.module.scss";
 
 import { Loading3QuartersOutlined } from "@ant-design/icons";
@@ -95,6 +95,10 @@ import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
 import { getChat } from "@/app/api/backend/chat";
 import { UpdateChatMessages } from "@/app/services/chatService";
+import { useRouter } from "next/navigation";
+import { FloatButton } from "antd";
+import { UnorderedListOutlined } from "@ant-design/icons";
+import { MJFloatButton } from "./midjourney";
 
 const Markdown = dynamic(async () => (await import("../markdown")).Markdown, {
 	loading: () => <LoadingIcon />,
@@ -110,6 +114,8 @@ export function Chatbody(props: {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
 	const authHook = useAuth();
+	const router = useRouter();
+	const { updateUserInfo } = authHook;
 
 	const { _session, index, isworkflow } = props;
 
@@ -342,12 +348,10 @@ export function Chatbody(props: {
 
 	// 采用store 的方式来获取 responseState
 	let responseState = session.responseStatus;
-	// console.log("response checkkkkkk", responseState);
 	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
 		const lastMessage = session.messages.at(-1)?.content ?? "";
-		// console.log("responseState old", responseState);
-		// console.log("lastMessage", lastMessage);
+		console.log("index:", index, "responseState old", responseState);
 		if (responseState && enableAutoFlow) {
 			onNextworkflow(lastMessage);
 			// 将session 的 responseState 转为false
@@ -355,7 +359,7 @@ export function Chatbody(props: {
 				session.responseStatus = false;
 			});
 		}
-		// console.log("responseState2222 new", responseState);
+		console.log("index:", index, "responseState2222 new", responseState);
 	}, [responseState]);
 
 	const onNextworkflow = (message: string) => {
@@ -381,52 +385,32 @@ export function Chatbody(props: {
 
 		const nextSessionId = nextSession.id;
 
-		// 获取所点击的 message
-		// console.log("nextSession", nextSession, message);
-		const recentMessages = chatStore.getMessagesWithMemory(nextSession);
-
 		chatStore
 			.onUserInput(message, undefined, nextSession)
 			.then(() => {
 				setIsLoading(false);
+				updateUserInfo(userStore.user.id);
+			})
+			.catch((error) => {
+				setIsLoading(false);
+				// chatStore.clearAllData();
+				const code = error.response?.status ?? error.code;
+				const msg = error.response?.data?.message ?? error.message;
+				console.log("code:", code);
 
-				const createChatData: CreateChatData = {
-					user: userStore.user.id, // 替换为实际的用户 ID
-					chat_session: session.id, // 替换为实际的聊天会话 ID
-					message: message, // 使用用户输入作为 message 参数
-					memory: recentMessages,
-					role: "user",
-					model: session.mask.modelConfig.model,
-				};
+				if (code == 4000 || code == 401) {
+					messageApi.error(`${msg} 2秒后将跳转到登录页面`);
 
-				createChat(createChatData).then((response) => {
-					console.log("createChat response:", response);
-					const data = response.data;
+					setTimeout(() => {
+						authHook.logoutHook();
+						router.push("/auth/");
+					}, 2000);
+				} else {
+					messageApi.error(`${msg}`);
+				}
 
-					if (data) {
-						console.log("createChat success:", response);
-						const newSessionId = data.chat_session;
-
-						if (session.id !== newSessionId) {
-							chatStore.updateSession(sessionId, (session) => {
-								session.id = newSessionId;
-							});
-						}
-					} else {
-						if (response.code === 401) {
-							messageApi.error("登录已过期(令牌无效)，请重新登录");
-							authHook.logoutHook();
-						} else if (response.code === 4001) {
-							messageApi.error("登录已过期(令牌无效)，请重新登录");
-							authHook.logoutHook();
-						} else if (response.code === 4000) {
-							messageApi.error(
-								"当前对话出现错误, 请重新新建对话",
-								response.msg,
-							);
-						}
-					}
-				});
+				console.error("chatStore.onUserInput error:", msg);
+				// wait 1 sec push to login page
 			})
 			.catch((error) => {
 				setIsLoading(false);
@@ -537,10 +521,11 @@ export function Chatbody(props: {
 			}}
 		>
 			{contextHolder}
+			{session.mask.modelConfig.model == "midjourney" && <MJFloatButton />}
 			{messages.map((message, i) => {
 				const isUser = message.role === "user";
-				const mjSessions = message.mjSessions;
-				const actions = mjSessions?.action;
+				const mjstatus = message.mjstatus;
+				const actions = mjstatus?.action;
 
 				const isContext = i < context.length;
 				const showActions =
@@ -694,11 +679,11 @@ export function Chatbody(props: {
 									/>
 									{/* 显示4个按钮, 分别是放大: 左上,右上,左下,右下 */}
 									{!isUser &&
-										mjSessions &&
+										mjstatus &&
 										actions &&
 										actions !== "UPSCALE" &&
-										mjSessions.status == "SUCCESS" && (
-											<MjActions session={session} taskid={mjSessions.id} />
+										mjstatus.status == "SUCCESS" && (
+											<MjActions session={session} taskid={mjstatus.id} />
 										)}
 								</div>
 

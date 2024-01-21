@@ -1,4 +1,15 @@
 @import "@/app/styles/animation.scss";
+
+@mixin flex-column {
+	display: flex;
+	flex-direction: column;
+}
+
+@mixin flex-row {
+	display: flex;
+	flex-direction: row;
+}
+
 .gallery-container {
 	overflow-y: auto;
 	height: calc(80vh - 40px);
@@ -40,5 +51,61 @@
 	.gallery-image-mask-actions {
 		display: flex;
 		justify-content: space-between;
+	}
+}
+
+.image-preview-modal {
+	.modal-content {
+		@include flex-column; // 默认为 column 布局
+
+		@media (min-width: 768px) {
+			// PC 端使用 row 布局
+			@include flex-row;
+		}
+
+		.modal-image-wrapper {
+			flex: 2; // 图片部分占 3/4
+
+			img {
+				max-height: 70vh;
+			}
+		}
+
+		.modal-info {
+			flex: 2; // 文本信息部分占 1/4
+		}
+
+		// src/components/YourComponent.module.scss
+		.modal-info {
+			padding: 16px; // 可根据实际需求调整
+			margin: 16px 0; // 可根据实际需求调整
+
+			.modal-info-item {
+				margin-bottom: 12px; // 为每个信息项添加间距
+
+				.modal-info-label {
+					font-weight: bold; // 可根据实际需求调整
+					margin-right: 8px; // 为标签和内容添加间距
+				}
+
+				.modal-info-content {
+					display: inline-block;
+					// 可添加更多样式
+				}
+			}
+
+			.modal-info-action {
+				// 可添加按钮样式
+				display: flex;
+				align-items: center;
+
+				// 子元素之间添加间距
+				& > * + * {
+					margin-left: 10px;
+				}
+			}
+		}
+
+		// 其他样式...
 	}
 }

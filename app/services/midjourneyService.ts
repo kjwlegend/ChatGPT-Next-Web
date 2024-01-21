@@ -165,7 +165,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 		chatOptions.messages = [
 			{
 				role: "user",
-				content: `Translate the provided content into English, ensuring the translation is not only accurate but also enriched with detailed descriptions and contextual elements, if the original content is not in English. Retain any suffix command starting with '--' (e.g., '--ar {text}', '--style', '--v', etc.) and append it unchanged to the end of the translated text. Do not append any suffix if the original content does not include one. Output only the final, enhanced translation. Here is the content to be translated: " ${content} `,
+				content: `Translate the provided content into English, ensuring the translation is not only accurate but also enriched with detailed descriptions and contextual elements, if the original content is not in English. If the original content is in English, do not translate and add anything, simply output what it is. Retain any suffix command starting with '--' (e.g., '--ar {text}', '--style', '--v', etc.) and append it unchanged to the end of the translated text. Do not append any suffix if the original content does not include one. Output only the final, enhanced translation. Here is the content to be translated: " ${content} `,
 			},
 		];
 
@@ -205,15 +205,15 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 			role: "assistant",
 			content: message,
 			image_url: image_url,
-			mjSessions: res,
+			mjstatus: res,
 		});
 
-		// update mjSessions.promptInput
-		if (botMessage.mjSessions) {
-			botMessage.mjSessions.promptInput = content;
+		// update mjstatus.promptInput
+		if (botMessage.mjstatus) {
+			botMessage.mjstatus.promptInput = content;
 		}
 
-		console.log("Mjsession", botMessage.mjSessions);
+		console.log("Mjsession", botMessage.mjstatus);
 
 		const paintingsParams = {
 			action: res.action,
@@ -300,14 +300,6 @@ export async function pollForProgress(
 	const userStore = useUserStore.getState();
 	const userid = userStore.user.id;
 
-	const createChatData: CreateChatData = {
-		user: userid, // 替换为实际的用户 ID
-		chat_session: session.id, // 替换为实际的聊天会话 ID
-		message: message, // 使用用户输入作为 message 参数
-		role: "assistant",
-		model: session.mask.modelConfig.model,
-	};
-
 	try {
 		const res = await Mjfetch(mjtaskid);
 		const fetchRes = res.data as FetchRes;
@@ -316,6 +308,15 @@ export async function pollForProgress(
 
 		let content = "";
 		let imageUrl = "";
+
+		const createChatData: CreateChatData = {
+			user: userid, // 替换为实际的用户 ID
+			chat_session: session.id, // 替换为实际的聊天会话 ID
+			message: message, // 使用用户输入作为 message 参数
+			role: "assistant",
+			model: session.mask.modelConfig.model,
+			mjstatus: fetchRes,
+		};
 
 		switch (fetchRes.status) {
 			case "IN_PROGRESS":
@@ -360,6 +361,7 @@ export async function pollForProgress(
 					)}秒。\n查看结果: \n [![${mjtaskid}](${oss}${filePath}!webp90)](${oss}${filePath}!webp90)`;
 
 				createChatData.message = content;
+				createChatData.mjstatus = fetchRes;
 				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
 				// if chatResponse code return 4000 or 401 , throw error
 				if (chatResponse.code === 4000 || chatResponse.code === 401) {

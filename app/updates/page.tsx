@@ -566,6 +566,22 @@ const items = [
 		color: "red",
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-1-21",
+		children: (
+			<>
+				发布 v1.7.1 版本, 小光说:
+				<ul>
+					<li>增加了绘图设置模块, 当你使用琳琳绘图时他会显示</li>
+					<li>优化了画廊的展示, 用户可以选择是否公开自己的作画了</li>
+					<li>调整琳琳的绘制的图片大小</li>
+					<li>优化了手机版的布局</li>
+				</ul>
+			</>
+		),
+		color: "red",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

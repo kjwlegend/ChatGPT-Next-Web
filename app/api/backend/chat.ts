@@ -1,7 +1,7 @@
 import request from "@/app/utils/request";
 import { User } from "../../store/user";
 import { ModelType } from "../../store/config";
-import { ChatMessage, MjConfig } from "../../store/chat";
+import { ChatMessage, MJMessage, MjConfig } from "../../store/chat";
 import { Mask } from "@/app/store/mask";
 
 export interface CreateChatSessionData {
@@ -16,6 +16,7 @@ export interface CreateChatData {
 	chat_session: string;
 	role: "user" | "assistant";
 	message: string | ChatMessage[];
+	mjstatus?: MJMessage;
 	memory?: ChatMessage[];
 	token_count?: number;
 	model?: string;
