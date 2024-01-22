@@ -351,7 +351,6 @@ export function Chatbody(props: {
 	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
 		const lastMessage = session.messages.at(-1)?.content ?? "";
-		console.log("index:", index, "responseState old", responseState);
 		if (responseState && enableAutoFlow) {
 			onNextworkflow(lastMessage);
 			// 将session 的 responseState 转为false
@@ -359,7 +358,6 @@ export function Chatbody(props: {
 				session.responseStatus = false;
 			});
 		}
-		console.log("index:", index, "responseState2222 new", responseState);
 	}, [responseState]);
 
 	const onNextworkflow = (message: string) => {
@@ -372,12 +370,12 @@ export function Chatbody(props: {
 			(s, i) => i > index && s.isworkflow === true,
 		);
 
-		console.log(
-			"工作流, 当前session: ",
-			session,
-			"下一个session: ",
-			nextSession,
-		);
+		// console.log(
+		// 	"工作流, 当前session: ",
+		// 	session,
+		// 	"下一个session: ",
+		// 	nextSession,
+		// );
 
 		if (!nextSession) {
 			return;

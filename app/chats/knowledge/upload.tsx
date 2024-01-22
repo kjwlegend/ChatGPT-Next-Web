@@ -3,12 +3,18 @@ import { UploadOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { Button, message, Upload } from "antd";
 import type { UploadFile } from "antd/lib/upload/interface";
-import { server_url } from "../constant";
-import { removeEmbedding } from "../api/backend/embedding";
-import { getEmbedding } from "../api/backend/embedding";
-import { useUserStore } from "../store";
+import { server_url } from "../../constant";
+import { removeEmbedding } from "../../api/backend/embedding";
+import { getEmbedding } from "../../api/backend/embedding";
+import { useUserStore } from "../../store";
+import styles from "./knowledge.module.scss"; // 引入样式模块
+import { on } from "events";
 
-const App: React.FC = () => {
+interface UploadCallback {
+	onSuccess: (file: UploadFile<any>) => void;
+}
+
+const App: React.FC<UploadCallback> = ({ onSuccess }) => {
 	// 储存fileList
 	const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
 
@@ -19,7 +25,7 @@ const App: React.FC = () => {
 	const props: UploadProps = {
 		name: "file",
 		accept: ".txt, .doc, .docx, .pdf, .md , .csv, .xls, .xlsx",
-		action: `${server_url}/api/gpt/embeddings/`,
+		action: `${server_url}/api/gpt/doc-upload/`,
 		method: "post",
 		data: {
 			username: username,
@@ -67,6 +73,7 @@ const App: React.FC = () => {
 			}
 			if (info.file.status === "done") {
 				message.success(`${info.file.name} 文件上传且知识库构建成功`);
+				onSuccess(info.file);
 				// 上传成功后，对文件进行处理
 			} else if (info.file.status === "error") {
 				message.error(`${info.file.name} 文件上传或者知识库构建失败`);
@@ -103,6 +110,9 @@ const App: React.FC = () => {
 		<>
 			<Upload {...props} showUploadList={true}>
 				<Button icon={<UploadOutlined />}>上传文档</Button>
+				<span className={styles.fileInfo}>
+					文件大小不超过10MB，支持的格式：pdf, doc, docx, txt。
+				</span>
 			</Upload>
 		</>
 	);

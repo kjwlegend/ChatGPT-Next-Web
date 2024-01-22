@@ -38,7 +38,7 @@ import AuthPage from "../auth/page";
 import DrawerMenu from "../components/drawer-menu";
 import UserInfo from "../components/userinfo";
 import { Divider } from "antd";
-import Upload from "@/app/components/upload";
+import Upload from "@/app/chats/knowledge/upload";
 import { getChatSession } from "../api/backend/chat";
 import { ChatSessionData } from "../api/backend/chat";
 import { UpdateChatSessions } from "../services/chatService";
@@ -183,18 +183,17 @@ export function SideBar(props: { className?: string }) {
 	};
 	useEffect(() => {
 		const handleScroll = (event: Event) => {
-			console.log("Scroll event triggered");
 			const target = event.target as HTMLDivElement;
 			const { scrollTop, clientHeight, scrollHeight } = target;
 			if (scrollTop + clientHeight >= scrollHeight - 100) {
-				console.log(
-					"scrollHeight",
-					scrollHeight,
-					"scrollTop",
-					scrollTop,
-					"clientHeight",
-					clientHeight,
-				);
+				// console.log(
+				// 	"scrollHeight",
+				// 	scrollHeight,
+				// 	"scrollTop",
+				// 	scrollTop,
+				// 	"clientHeight",
+				// 	clientHeight,
+				// );
 				loadMoreSessions();
 			}
 		};
@@ -262,6 +261,15 @@ export function SideBar(props: { className?: string }) {
 					}
 					shadow
 				/>
+				{/* <IconButton
+					icon={<PluginIcon />}
+					text={shouldNarrow ? undefined : "文档管理"}
+					className={styles["sidebar-bar-button"]}
+					onClick={() =>
+						navigate(Path.Knowledge, { state: { fromHome: true } })
+					}
+					shadow
+				/> */}
 			</div>
 
 			<div
@@ -274,9 +282,6 @@ export function SideBar(props: { className?: string }) {
 				ref={listRef}
 			>
 				<ChatList narrow={shouldNarrow} />
-			</div>
-			<div className={styles["sidebar-upload"]}>
-				<Upload />
 			</div>
 
 			<div className={styles["sidebar-tail"]}>

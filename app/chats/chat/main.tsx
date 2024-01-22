@@ -55,7 +55,7 @@ import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
 
 import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
-import Upload from "@/app/components/upload";
+import Upload from "@/app/chats/knowledge/upload";
 import { ChatSession } from "@/app/store";
 
 interface ChatContextType {

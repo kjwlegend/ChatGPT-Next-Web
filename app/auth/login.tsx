@@ -32,7 +32,7 @@ export default function Login() {
 			};
 			try {
 				const chatSessionList = await getChatSession(param);
-				console.log("chatSessionList", chatSessionList.data);
+				// console.log("chatSessionList", chatSessionList.data);
 				// 直接使用 chatStore 的方法更新 sessions
 				UpdateChatSessions(chatSessionList.data);
 			} catch (error) {

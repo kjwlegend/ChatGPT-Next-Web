@@ -21,6 +21,7 @@ export const LAST_INPUT_IMAGE_KEY = "last-input-image";
 export enum Path {
 	Home = "/",
 	Chat = "/chat",
+	Knowledge = "/knowledge",
 	Settings = "/settings",
 	NewChat = "/new-chat",
 	Masks = "/masks",

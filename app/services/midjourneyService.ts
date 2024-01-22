@@ -175,12 +175,34 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 
 		imagineParams.prompt = newcontent + " " + suffix;
 
-		response = await imagine(imagineParams);
+		try {
+			response = await imagine(imagineParams);
+		} catch (err: any) {
+			// 处理错误情况
+			console.log(err);
+			const botMessage: ChatMessage = createMessage({
+				role: "assistant",
+				content: "由于某些原因导致生成失败, 请重试. 本次对话不消耗费用",
+				image_url: image_url,
+			});
+			createChatData = {
+				user: userid, // 替换为实际的用户 ID
+				chat_session: session.id, // 替换为实际的聊天会话 ID
+				message: "由于某些原因导致生成失败, 请重试. 本次对话不消耗费用", // 使用用户输入作为 message 参数
+				role: "assistant",
+				model: session.mask.modelConfig.model,
+			};
+			const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+
+			chatStoreState.updateSession(session.id, () => {
+				session.messages = session.messages.concat([userMessage, botMessage]);
+			});
+			return;
+		}
 	}
 
 	try {
 		// 调用 imagine 函数并等待结果
-		console.log(response);
 		if (response.status !== 200) {
 			throw new Error("imagine failed");
 		}
@@ -213,7 +235,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 			botMessage.mjstatus.promptInput = content;
 		}
 
-		console.log("Mjsession", botMessage.mjstatus);
+		// console.log("Mjsession", botMessage.mjstatus);
 
 		const paintingsParams = {
 			action: res.action,
@@ -252,14 +274,14 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 
 		const botMessage: ChatMessage = createMessage({
 			role: "assistant",
-			content: "生成失败, 请重试",
+			content: "由于某些原因导致生成失败, 请重试. 本次对话不消耗费用",
 			image_url: image_url,
 		});
 
 		createChatData = {
 			user: userid, // 替换为实际的用户 ID
 			chat_session: session.id, // 替换为实际的聊天会话 ID
-			message: "生成失败, 请重试", // 使用用户输入作为 message 参数
+			message: "由于某些原因导致生成失败, 请重试. 本次对话不消耗费用", // 使用用户输入作为 message 参数
 			role: "assistant",
 			model: session.mask.modelConfig.model,
 		};

@@ -182,7 +182,7 @@ export function ChatList(props: { narrow?: boolean }) {
 		};
 		try {
 			const chatSessionList = await getChat(param);
-			console.log("chatSessionList", chatSessionList.data);
+			// console.log("chatSessionList", chatSessionList.data);
 			// 直接使用 chatStore 的方法更新 sessions
 			UpdateChatMessages(param.chat_session, chatSessionList.data);
 		} catch (error) {

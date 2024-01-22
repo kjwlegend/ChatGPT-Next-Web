@@ -20,6 +20,7 @@ import {
 	Routes,
 	Route,
 	useLocation,
+	NavigationType,
 } from "react-router-dom";
 import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
@@ -53,6 +54,9 @@ const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
 	loading: () => <Loading noLogo />,
 });
 
+const Knowledge = dynamic(async () => await import("./knowledge/main"), {
+	loading: () => <Loading noLogo />,
+});
 const MaskPage = dynamic(
 	async () => (await import("./masklist/mask")).MaskPage,
 	{
@@ -140,15 +144,16 @@ const loadAsyncGoogleFont = () => {
 
 function Screen() {
 	const config = useAppConfig();
-	const isHome = location.pathname === Path.Home;
+	const location = useLocation();
 	const isAuth = location.pathname === Path.Auth;
+	const isHome = location.pathname === Path.Home;
 	const isMobileScreen = useMobileScreen();
 	const { logoutHook } = useAuth();
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
+	console.log("ishome", isHome);
 
-	const shouldTightBorder =
-		getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
+	getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
 
 	useEffect(() => {
 		loadAsyncGoogleFont();
@@ -172,7 +177,7 @@ function Screen() {
 			// 执行定时任务
 
 			logoutHook();
-			location.reload();
+			window.location.reload();
 		}, logoutTimeStamp);
 
 		return () => {
@@ -200,8 +205,8 @@ function Screen() {
 						<Routes>
 							<Route path={Path.Home} element={<NewChat />} />
 							<Route path={Path.NewChat} element={<NewChat />} />
+							<Route path={Path.Knowledge} element={<Knowledge />} />
 							<Route path={Path.Paintings} element={<Paitings />} />
-
 							<Route path={Path.Masks} element={<MaskPage />} />
 							<Route path={Path.Plugins} element={<Plugins />} />
 							<Route path={Path.Chat} element={<Chat />} />
