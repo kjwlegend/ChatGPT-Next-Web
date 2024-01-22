@@ -579,7 +579,20 @@ const items = [
 				</ul>
 			</>
 		),
-		color: "red",
+		color: "blue",
+		className: "fade-in-element",
+	},
+	{
+		label: "2024-1-22",
+		children: (
+			<>
+				发布 v1.7.2 版本, 小光说:
+				<ul>
+					<li>修复手机版返回按钮失效的问题</li>
+				</ul>
+			</>
+		),
+		color: "blue",
 		className: "fade-in-element",
 	},
 ];
