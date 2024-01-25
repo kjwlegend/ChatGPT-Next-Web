@@ -32,6 +32,7 @@ import ModalPopup from "@/app/components/welcome";
 import useAuth from "../hooks/useAuth";
 import { log } from "console";
 import { useAuthStore } from "../store/auth";
+import { message } from "antd";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -159,31 +160,31 @@ function Screen() {
 		loadAsyncGoogleFont();
 	}, []);
 
-	// 24小时后自动退出登录
-	// 获取当前时间戳
-	const currentTimeStamp = Date.now();
-	// 计算 24 小时后的时间戳
-	const logoutTimeStamp = currentTimeStamp + 24 * 60 * 60 * 1000;
-
+	// 检查当前的 cookie 中的 expires=xxx 是否已经过期
+	// 如果过期了，就清除掉当前的 cookie 并执行logouthook
 	useEffect(() => {
 		if (!isAuthenticated) {
-			console.log("未登录");
 			return;
 		}
-		console.log("登录状态:", isAuthenticated);
-		console.log(logoutTimeStamp, "登出系统...");
-
-		const timer = setInterval(() => {
-			// 执行定时任务
-
+		const cookie = document.cookie;
+		console.log("cookie", cookie);
+		const cookieArr = cookie.split(";");
+		const cookieObj: any = {};
+		cookieArr.forEach((item) => {
+			const itemArr = item.split("=");
+			cookieObj[itemArr[0].trim()] = itemArr[1];
+		});
+		const expires = cookieObj.expires;
+		const expiresTimeStamp = Date.parse(expires);
+		const currentTimeStamp = Date.now();
+		console.log("expiresTimeStamp", expiresTimeStamp);
+		if (currentTimeStamp > expiresTimeStamp) {
+			console.log("cookie已过期");
+			message.error("登录已过期，请重新登录");
 			logoutHook();
 			window.location.reload();
-		}, logoutTimeStamp);
-
-		return () => {
-			clearInterval(timer); // 在组件卸载时清除定时器
-		};
-	}, []);
+		}
+	});
 
 	return (
 		<div

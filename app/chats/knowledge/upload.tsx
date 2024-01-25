@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect, use } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { Button, message, Upload } from "antd";
@@ -8,7 +9,7 @@ import { removeEmbedding } from "../../api/backend/embedding";
 import { getEmbedding } from "../../api/backend/embedding";
 import { useUserStore } from "../../store";
 import styles from "./knowledge.module.scss"; // 引入样式模块
-import { on } from "events";
+import { knowledge_group } from "./main";
 
 interface UploadCallback {
 	onSuccess: (file: UploadFile<any>) => void;
@@ -25,11 +26,11 @@ const App: React.FC<UploadCallback> = ({ onSuccess }) => {
 	const props: UploadProps = {
 		name: "file",
 		accept: ".txt, .doc, .docx, .pdf, .md , .csv, .xls, .xlsx",
-		action: `${server_url}/api/gpt/doc-upload/`,
+		action: `${server_url}/api/gpt/docs/`,
 		method: "post",
 		data: {
 			username: username,
-			knowledge_group: "personal",
+			knowledge_group: knowledge_group.PERSONAL,
 		},
 		headers: {
 			authorization: "authorization-text",
@@ -53,6 +54,7 @@ const App: React.FC<UploadCallback> = ({ onSuccess }) => {
 			}
 			// max file size is 10MB
 			const isLt10M = file.size / 1024 / 1024 < 10;
+			0;
 			if (!isLt10M) {
 				message.error("文件大小不能超过10MB");
 			}

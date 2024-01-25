@@ -1,36 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSideConfig } from "@/app/config/server";
-import { auth } from "../../../auth";
 
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { BaseCallbackHandler } from "langchain/callbacks";
+import { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 
-import { AIMessage, HumanMessage, SystemMessage } from "langchain/schema";
 import { BufferMemory, ChatMessageHistory } from "langchain/memory";
-import {
-	AgentExecutor,
-	initializeAgentExecutorWithOptions,
-} from "langchain/agents";
+import { AgentExecutor } from "langchain/agents";
+
 import { ACCESS_CODE_PREFIX, ServiceProvider } from "@/app/constant";
 
-import * as langchainTools from "langchain/tools";
+// import * as langchainTools from "@langchain/core/tools";
+import * as langchainTools from "@/app/api/langchain-tools/langchian-tool-index";
 import { HttpGetTool } from "@/app/api/langchain-tools/http_get";
 import { DuckDuckGo } from "@/app/api/langchain-tools/duckduckgo_search";
-import { DynamicTool, Tool, WolframAlphaTool } from "langchain/tools";
+import {
+	DynamicTool,
+	Tool,
+	StructuredToolInterface,
+} from "@langchain/core/tools";
+import { convertToOpenAITool } from "@langchain/core/utils/function_calling";
 import {
 	AllSearch,
 	BaiduSearch,
 	GoogleSearch,
 } from "@/app/api/langchain-tools/all_search";
 import { useAccessStore } from "@/app/store";
-import { DynamicStructuredTool, formatToOpenAITool } from "langchain/tools";
+
 import { formatToOpenAIToolMessages } from "langchain/agents/format_scratchpad/openai_tools";
 import {
 	OpenAIToolsAgentOutputParser,
 	type ToolsAgentStep,
 } from "langchain/agents/openai/output_parser";
-import { RunnableSequence } from "langchain/schema/runnable";
-import { ChatPromptTemplate, MessagesPlaceholder } from "langchain/prompts";
+import { RunnableSequence } from "@langchain/core/runnables";
+import {
+	ChatPromptTemplate,
+	MessagesPlaceholder,
+} from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+import {
+	SystemMessage,
+	HumanMessage,
+	AIMessage,
+} from "@langchain/core/messages";
 
 import { KnowledgeSearch } from "@/app/api/langchain-tools/doc_search";
 import { User, useUserStore } from "@/app/store";
@@ -73,23 +83,27 @@ export class AgentApi {
 	private encoder: TextEncoder;
 	private transformStream: TransformStream;
 	private writer: WritableStreamDefaultWriter<any>;
+	private controller: AbortController;
 
 	constructor(
 		encoder: TextEncoder,
 		transformStream: TransformStream,
 		writer: WritableStreamDefaultWriter<any>,
+		controller: AbortController,
 	) {
 		this.encoder = encoder;
 		this.transformStream = transformStream;
 		this.writer = writer;
+		this.controller = controller;
 	}
 
 	async getHandler(reqBody: any) {
 		var writer = this.writer;
 		var encoder = this.encoder;
+		var controller = this.controller;
 		return BaseCallbackHandler.fromMethods({
 			async handleLLMNewToken(token: string) {
-				if (token) {
+				if (token && !controller.signal.aborted) {
 					var response = new ResponseBody();
 					response.message = token;
 					await writer.ready;
@@ -99,6 +113,12 @@ export class AgentApi {
 				}
 			},
 			async handleChainError(err, runId, parentRunId, tags) {
+				if (controller.signal.aborted) {
+					console.warn("[handleChainError]", "abort");
+					await writer.close();
+					return;
+				}
+
 				console.log("[handleChainError]", err, "writer error");
 				var response = new ResponseBody();
 				response.isSuccess = false;
@@ -120,6 +140,12 @@ export class AgentApi {
 				// await writer.close();
 			},
 			async handleLLMError(e: Error) {
+				if (controller.signal.aborted) {
+					console.warn("[handleLLMError]", "abort");
+					await writer.close();
+					return;
+				}
+
 				console.log("[handleLLMError]", e, "writer error");
 				var response = new ResponseBody();
 				response.isSuccess = false;
@@ -170,6 +196,9 @@ export class AgentApi {
 				// console.log("[handleToolEnd]", { output, runId, parentRunId, tags });
 			},
 			async handleAgentEnd(action, runId, parentRunId, tags) {
+				if (controller.signal.aborted) {
+					return;
+				}
 				// console.log("[handleAgentEnd]", { action, runId, parentRunId, tags });
 				await writer.ready;
 				await writer.close();
@@ -303,16 +332,6 @@ export class AgentApi {
 					var tool = langchainTools[
 						toolName as keyof typeof langchainTools
 					] as any;
-					if (
-						toolName === "wolfram_alpha" &&
-						process.env.WOLFRAM_ALPHA_APP_ID
-					) {
-						const tool = new WolframAlphaTool({
-							appid: process.env.WOLFRAM_ALPHA_APP_ID,
-						});
-						tools.push(tool);
-						return;
-					}
 					if (tool) {
 						tools.push(new tool());
 					}
@@ -331,14 +350,6 @@ export class AgentApi {
 					if (message.role === "assistant")
 						pastMessages.push(new AIMessage(message.content));
 				});
-
-			// const memory = new BufferMemory({
-			// 	memoryKey: "chat_history",
-			// 	returnMessages: true,
-			// 	inputKey: "input",
-			// 	outputKey: "output",
-			// 	chatHistory: new ChatMessageHistory(pastMessages),
-			// });
 
 			let llm = new ChatOpenAI(
 				{
@@ -380,7 +391,9 @@ export class AgentApi {
 				["human", "{input}"],
 				new MessagesPlaceholder("agent_scratchpad"),
 			]);
-			const modelWithTools = llm.bind({ tools: tools.map(formatToOpenAITool) });
+			const modelWithTools = llm.bind({
+				tools: tools.map(convertToOpenAITool),
+			});
 			const runnableAgent = RunnableSequence.from([
 				{
 					input: (i: { input: string; steps: ToolsAgentStep[] }) => i.input,
@@ -402,25 +415,25 @@ export class AgentApi {
 			const executor = AgentExecutor.fromAgentAndTools({
 				agent: runnableAgent,
 				tools,
+				// verbose: true,
 			});
-			// const executor = await initializeAgentExecutorWithOptions(tools, llm, {
-			// 	agentType: "openai-functions",
-			// 	// returnIntermediateSteps: reqBody.returnIntermediateSteps,
-			// 	returnIntermediateSteps: true,
 
-			// 	maxIterations: reqBody.maxIterations,
-			// 	memory: memory,
-			// 	verbose: true,
-			// });
+			executor
+				.call(
+					{
+						input: reqBody.messages.slice(-1)[0].content,
+						signal: this.controller.signal,
+					},
+					[handler],
+				)
+				.catch((error) => {
+					if (this.controller.signal.aborted) {
+						console.warn("[AgentCall]", "abort");
+					} else {
+						console.error("[AgentCall]", error);
+					}
+				});
 
-			executor.call(
-				{
-					input: reqBody.messages.slice(-1)[0].content,
-				},
-				[handler],
-			);
-
-			console.log("returning response");
 			return new Response(this.transformStream.readable, {
 				headers: { "Content-Type": "text/event-stream" },
 			});

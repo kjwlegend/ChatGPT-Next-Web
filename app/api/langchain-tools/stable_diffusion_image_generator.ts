@@ -1,4 +1,4 @@
-import { Tool } from "langchain/tools";
+import { Tool } from "@langchain/core/tools";
 import S3FileStorage from "../../utils/r2_file_storage";
 
 export class StableDiffusionWrapper extends Tool {
@@ -27,8 +27,7 @@ export class StableDiffusionWrapper extends Tool {
 			height: process.env.STABLE_DIFFUSION_HEIGHT ?? 720,
 			restore_faces: process.env.STABLE_DIFFUSION_RESTORE_FACES ?? false,
 			eta: 0,
-			sampler_index:
-				process.env.STABLE_DIFFUSION_SAMPLER_INDEX ?? "Euler a",
+			sampler_index: process.env.STABLE_DIFFUSION_SAMPLER_INDEX ?? "Euler a",
 		};
 		console.log(`[${this.name}]`, data);
 		const response = await fetch(`${url}/sdapi/v1/txt2img`, {

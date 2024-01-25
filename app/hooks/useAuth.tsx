@@ -38,22 +38,12 @@ export default function useAuth() {
 			// cookie
 
 			console.log("当前:", expirationDate);
-			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 48 小时后
-			console.log("48小时后:", expirationDate);
+			expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000); // 当前时间的 24 小时后
+			console.log("24小时后cookie过期:", expirationDate);
 			setExpirationDate(expirationDate);
-			document.cookie = `authenticated=true; user_id=${
-				result.data.user.id
-			}; expires=${expirationDate.toUTCString()}; path=/`;
-			document.cookie = `user_id=${
-				result.data.user.id
-			}; expires=${expirationDate.toUTCString()}; path=/`;
-			document.cookie = `member_type=${
-				result.data.user.member_type
-			}; expires=${expirationDate.toUTCString()}; path=/`;
-			document.cookie = `member_expire_date=${
-				result.data.user.member_expire_date
-			}; expires=${expirationDate.toUTCString()}; path=/`;
-			// cookie ends
+			document.cookie = `authenticated=true;`;
+			document.cookie = `user_id=${result.data.user.id}`;
+			document.cookie = `expires=${expirationDate.toUTCString()};`;
 
 			const authInfo = {
 				accessToken: result.data.access,
@@ -108,6 +98,7 @@ export default function useAuth() {
 				userStore.setUser(authInfo.user);
 				setUser(authInfo.user);
 			}
+			console.log("cookie", document.cookie);
 
 			setIsLoading(false);
 			return result;
@@ -170,10 +161,8 @@ export default function useAuth() {
 	const logoutHook = async () => {
 		await logoutAPI();
 		//clear cookie
-		document.cookie = `authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-		document.cookie = `user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-		document.cookie = `member_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-		document.cookie = `member_expire_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+		document.cookie = `authenticated=;`;
+		document.cookie = `expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 
 		authStore.logout();
 		userStore.clearUser();

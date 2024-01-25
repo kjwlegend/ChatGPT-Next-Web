@@ -6,8 +6,8 @@ import { WebBrowser } from "langchain/tools/webbrowser";
 import { BaiduSearch } from "@/app/api/langchain-tools/baidu_search";
 import { DuckDuckGo } from "@/app/api/langchain-tools/duckduckgo_search";
 import { GoogleSearch } from "@/app/api/langchain-tools/google_search";
-import { Tool, DynamicTool } from "langchain/tools";
-import * as langchainTools from "langchain/tools";
+import { Tool, DynamicTool } from "@langchain/core/tools";
+import * as langchainTools from "@langchain/core/tools";
 import { Embeddings } from "langchain/dist/embeddings/base.js";
 import { promises } from "dns";
 

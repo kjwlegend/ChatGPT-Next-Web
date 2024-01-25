@@ -261,7 +261,7 @@ export function SideBar(props: { className?: string }) {
 					}
 					shadow
 				/>
-				{/* <IconButton
+				<IconButton
 					icon={<PluginIcon />}
 					text={shouldNarrow ? undefined : "文档管理"}
 					className={styles["sidebar-bar-button"]}
@@ -269,7 +269,7 @@ export function SideBar(props: { className?: string }) {
 						navigate(Path.Knowledge, { state: { fromHome: true } })
 					}
 					shadow
-				/> */}
+				/>
 			</div>
 
 			<div

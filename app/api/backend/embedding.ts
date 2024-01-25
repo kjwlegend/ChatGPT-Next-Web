@@ -8,6 +8,20 @@ export interface filemedata {
 	knowledge_category?: string;
 }
 
+//  get docs
+export async function getDocs(params?: any) {
+	return request({
+		url: `/gpt/docs/`,
+		method: "get",
+		params,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			// console.log(err);
+			return err.response.data;
+		});
+}
+
 export async function getEmbedding(data: any) {
 	console.log("get embedding:", data);
 	return request({
@@ -48,8 +62,8 @@ export async function removeEmbedding(data: any) {
 	console.log("get response============:", data);
 
 	return request({
-		url: `/gpt/context-delete/`,
-		method: "post",
+		url: `/gpt/embeddings/`,
+		method: "delete",
 		data: data,
 	})
 		.then((res) => {

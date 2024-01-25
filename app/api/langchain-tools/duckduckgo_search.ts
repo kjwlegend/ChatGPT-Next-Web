@@ -1,6 +1,6 @@
 import { decode } from "html-entities";
 import { convert as htmlToText } from "html-to-text";
-import { Tool } from "langchain/tools";
+import { Tool } from "@langchain/core/tools";
 
 const SEARCH_REGEX =
 	/DDG\.pageLayout\.load\('d',(\[.+\])\);DDG\.duckbar\.load\('images'/;
@@ -487,9 +487,7 @@ function sanityCheck(options: SearchOptions) {
 
 	if (
 		options.time &&
-		!Object.values(SearchTimeType).includes(
-			options.time as SearchTimeType,
-		) &&
+		!Object.values(SearchTimeType).includes(options.time as SearchTimeType) &&
 		!/\d{4}-\d{2}-\d{2}..\d{4}-\d{2}-\d{2}/.test(options.time as string)
 	)
 		throw new TypeError(`${options.time} is an invalid search time!`);

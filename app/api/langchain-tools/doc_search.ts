@@ -1,4 +1,4 @@
-import { StructuredTool } from "langchain/tools";
+import { StructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import { getResponse } from "@/app/api/backend/embedding";
 import { server_url } from "@/app/constant";
@@ -23,10 +23,6 @@ export class KnowledgeSearch extends StructuredTool {
 			.enum(["personal", "team", "agent", "public"])
 			.default("personal")
 			.describe("knowledge group"),
-		// knowledge_category: z
-		// 	.enum(["all", "news", "wiki", "qa", "forum"])
-		// 	.default("all")
-		// 	.describe("knowledge category"),
 	});
 
 	/** @ignore */

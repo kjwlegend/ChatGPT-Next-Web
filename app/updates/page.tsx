@@ -595,6 +595,21 @@ const items = [
 		color: "blue",
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-1-25",
+		children: (
+			<>
+				发布 v1.8.0 版本, 小光说:
+				<ul>
+					<li>文件上传功能重构, 新增文档管理</li>
+					<li>优化由于token过期导致的登录失败问题</li>
+					<li>优化langchain 版本,更新到最新v.0.1.0</li>
+				</ul>
+			</>
+		),
+		color: "red",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
