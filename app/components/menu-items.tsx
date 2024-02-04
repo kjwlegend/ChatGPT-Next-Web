@@ -31,6 +31,13 @@ export const menuItems: MenuItem[] = [
 		url: "/chats/",
 	},
 	{
+		label: "ai实验室",
+		key: "double-agents",
+		icon: <UsergroupAddOutlined />,
+		disabled: false,
+		url: "/double-agents",
+	},
+	{
 		label: "超级工作流",
 		key: "multi-chats",
 		icon: <UsergroupAddOutlined />,

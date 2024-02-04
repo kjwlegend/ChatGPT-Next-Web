@@ -997,6 +997,7 @@ function _Chat() {
 								...createMessage({
 									role: "assistant",
 									content: "……",
+									image_url: "",
 								}),
 								preview: true,
 							},
@@ -1010,6 +1011,7 @@ function _Chat() {
 								...createMessage({
 									role: "user",
 									content: userInput,
+									image_url: "",
 								}),
 								preview: true,
 							},

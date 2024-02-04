@@ -56,6 +56,7 @@ export type ChatMessage = RequestMessage & {
 	toolMessages?: ChatToolMessage[];
 	streaming?: boolean;
 	isError?: boolean;
+	preview?: boolean;
 };
 
 export type MjConfig = {
@@ -74,6 +75,7 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 		toolMessages: new Array<ChatToolMessage>(),
 		role: "user",
 		content: "",
+		image_url: "",
 		...override,
 	};
 }
@@ -89,7 +91,6 @@ export interface ChatSession {
 	topic: string;
 	memoryPrompt: string;
 	messages: ChatMessage[];
-
 	stat: ChatStat;
 	lastUpdate: number;
 	lastSummarizeIndex: number;
@@ -99,6 +100,7 @@ export interface ChatSession {
 	isworkflow?: boolean;
 	mjConfig: MjConfig;
 	chat_count?: number;
+	isDoubleAgent?: boolean;
 }
 
 export interface MJMessage {
@@ -142,6 +144,7 @@ function createEmptySession(): ChatSession {
 		mask: createEmptyMask(),
 		isworkflow: false,
 		mjConfig: { size: "", quality: "", stylize: "", model: "" },
+		isDoubleAgent: false,
 	};
 }
 
@@ -557,6 +560,8 @@ export const useChatStore = createPersistStore(
 					content: userContent,
 					image_url: image_url,
 				});
+
+				console.log("[userMessage] ", userMessage);
 
 				const botMessage: ChatMessage = createMessage({
 					role: "assistant",

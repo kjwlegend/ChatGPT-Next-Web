@@ -719,6 +719,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			matchCommand.invoke();
 			return;
 		}
+		console.log(userImage);
 
 		setIsLoading(true);
 		const recentMessages = chatStore.getMessagesWithMemory();
@@ -775,6 +776,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								...createMessage({
 									role: "assistant",
 									content: "……",
+									image_url: "",
 								}),
 								preview: true,
 							},
@@ -788,6 +790,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								...createMessage({
 									role: "user",
 									content: userInput,
+									image_url: "",
 								}),
 								preview: true,
 							},

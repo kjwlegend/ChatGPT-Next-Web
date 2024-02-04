@@ -104,12 +104,7 @@ export function _Chat(props: {
 
 	// if props._session is not provided, use current session
 
-	let session;
-	if (_session) {
-		session = _session;
-	} else {
-		session = chatStore.currentSession();
-	}
+	const session = chatStore.getSession(_session);
 
 	const sessionId = session.id;
 

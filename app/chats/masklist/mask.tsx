@@ -206,6 +206,8 @@ export function ContextPrompts(props: {
 															createMessage({
 																role: "user",
 																content: "",
+																image_url: "",
+
 																date: new Date().toLocaleString(),
 															}),
 															i + 1,
@@ -237,6 +239,7 @@ export function ContextPrompts(props: {
 										role: "user",
 										content: "",
 										date: "",
+										image_url: "",
 									}),
 									props.context.length,
 								)
@@ -314,7 +317,10 @@ export function MaskPage() {
 		if (cardStyle === "roleplay" && m.type !== "roleplay") {
 			return false;
 		}
-		if (cardStyle === "assistant" &&( m.type === "roleplay" || m.type === "workflow"  )) {
+		if (
+			cardStyle === "assistant" &&
+			(m.type === "roleplay" || m.type === "workflow")
+		) {
 			return false;
 		}
 		return true;

@@ -3,6 +3,7 @@ import { User } from "../../store/user";
 import { ModelType } from "../../store/config";
 import { ChatMessage, MJMessage, MjConfig } from "../../store/chat";
 import { Mask } from "@/app/store/mask";
+import { data } from "cheerio/lib/api/attributes";
 
 export interface CreateChatSessionData {
 	user: number;
@@ -121,5 +122,31 @@ export async function getPromptHotness() {
 		.catch((err) => {
 			// console.log(err);
 			return err.response.data;
+		});
+}
+
+/**
+ * Request
+ */
+
+export interface DoubleAgentData {
+	user: number;
+	initial_input?: string;
+	iteration?: number;
+	topic?: string;
+	first_agent_setting?: Mask;
+	second_agent_setting?: Mask;
+	[property: string]: any;
+}
+
+export async function createDoubleAgentSession(data: DoubleAgentData) {
+	return request({
+		url: `/gpt/double-agent-chats/`,
+		method: "post",
+		data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.msg;
 		});
 }

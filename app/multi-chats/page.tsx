@@ -9,16 +9,11 @@ import React, {
 	use,
 } from "react";
 
-import {
-	useChatStore,
-	useUserStore,
-	ChatSession,
-} from "../store";
+import { useChatStore, useUserStore, ChatSession } from "../store";
 import { api } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { Prompt, usePromptStore } from "../store/prompt";
 import { useMaskStore } from "../store/mask";
-
 
 import BrainIcon from "../icons/brain.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -28,7 +23,7 @@ import styles from "@/app/multi-chats/multi-chats.module.scss";
 import { Avatar as UserAvatar, Button, Menu, Dropdown, Switch } from "antd";
 import type { MenuProps } from "antd";
 
-import { ChatItemShort } from "../chats/chat-list";
+import { ChatItemShort } from "../chats/sidebar/chatItem";
 
 import { _Chat } from "../chats/chat/main";
 

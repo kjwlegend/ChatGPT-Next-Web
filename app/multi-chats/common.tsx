@@ -41,13 +41,6 @@ import {
 	ChatSession,
 } from "../store";
 
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "../utils";
-
 import { api } from "../client/api";
 
 import dynamic from "next/dynamic";

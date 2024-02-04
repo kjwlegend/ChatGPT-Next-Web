@@ -1,0 +1,24 @@
+// Agent section
+
+// src/components/ChatArea/double-agents.module.scss
+.aiConfigCard {
+	// Card样式
+	.ant-card-body {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+.sliderContainer {
+	width: 100%;
+	margin: 10px 0;
+
+	p {
+		text-align: left;
+	}
+
+	.ant-slider {
+		margin: 0 12px;
+	}
+}

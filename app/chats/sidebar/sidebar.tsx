@@ -1,23 +1,26 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import React from "react";
 
-import styles from "./home.module.scss";
+import styles from "../home.module.scss";
 
-import { IconButton } from "../components/button";
-import SettingsIcon from "../icons/settings.svg";
-import GithubIcon from "../icons/github.svg";
-import ChatGptIcon from "../icons/chatgpt.svg";
-import AddIcon from "../icons/add.svg";
-import CloseIcon from "../icons/close.svg";
-import DeleteIcon from "../icons/delete.svg";
-import MaskIcon from "../icons/mask.svg";
-import PluginIcon from "../icons/plugin.svg";
-import DragIcon from "../icons/drag.svg";
-import MainNav from "../components/header";
-import Locale from "../locales";
+import { IconButton } from "../../components/button";
 
+import MainNav from "../../components/header";
+import Locale from "../../locales";
+
+import {
+	SettingsIcon,
+	GithubIcon,
+	ChatGptIcon,
+	AddIcon,
+	CloseIcon,
+	DeleteIcon,
+	MaskIcon,
+	PluginIcon,
+	DragIcon,
+} from "@/app/icons";
 import Image from "next/image";
-import { useAppConfig, useChatStore } from "../store";
+import { useAppConfig, useChatStore } from "../../store";
 
 import {
 	DEFAULT_SIDEBAR_WIDTH,
@@ -26,25 +29,25 @@ import {
 	NARROW_SIDEBAR_WIDTH,
 	Path,
 	REPO_URL,
-} from "../constant";
+} from "../../constant";
 
 import { Link, useNavigate } from "react-router-dom";
-import { isIOS, useMobileScreen } from "../utils";
+import { isIOS, useMobileScreen } from "../../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "../components/ui-lib";
-import { useAuthStore } from "../store/auth";
+import { showConfirm, showToast } from "../../components/ui-lib";
+import { useAuthStore } from "../../store/auth";
 
-import AuthPage from "../auth/page";
-import DrawerMenu from "../components/drawer-menu";
-import UserInfo from "../components/userinfo";
+import AuthPage from "../../auth/page";
+import DrawerMenu from "../../components/drawer-menu";
+import UserInfo from "../../components/userinfo";
 import { Divider } from "antd";
 import Upload from "@/app/chats/knowledge/upload";
-import { getChatSession } from "../api/backend/chat";
-import { ChatSessionData } from "../api/backend/chat";
-import { UpdateChatSessions } from "../services/chatService";
-import { useUserStore } from "../store/user";
+import { getChatSession } from "../../api/backend/chat";
+import { ChatSessionData } from "../../api/backend/chat";
+import { UpdateChatSessions } from "../../services/chatService";
+import { useUserStore } from "../../store/user";
 
-const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
+const ChatList = dynamic(async () => (await import("./chatList")).ChatList, {
 	loading: () => null,
 });
 
@@ -186,14 +189,6 @@ export function SideBar(props: { className?: string }) {
 			const target = event.target as HTMLDivElement;
 			const { scrollTop, clientHeight, scrollHeight } = target;
 			if (scrollTop + clientHeight >= scrollHeight - 100) {
-				// console.log(
-				// 	"scrollHeight",
-				// 	scrollHeight,
-				// 	"scrollTop",
-				// 	scrollTop,
-				// 	"clientHeight",
-				// 	clientHeight,
-				// );
 				loadMoreSessions();
 			}
 		};
