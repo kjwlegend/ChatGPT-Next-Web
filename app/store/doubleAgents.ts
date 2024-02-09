@@ -1,16 +1,24 @@
 // src/app/store/doubleAgent.ts
 import { Mask } from "./mask";
-import create from "zustand";
+import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand";
 import { DoubleAgentData, createDoubleAgentSession } from "../api/backend/chat";
 import { RequestMessage } from "../client/api";
+import { ChatMessage } from "./chat";
 import { nanoid } from "nanoid";
+import { estimateTokenLength } from "../utils/token";
+import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
+import { ChatToolMessage } from "./chat";
 
-type DoubleAgentChatMessage = RequestMessage & {
-	date: string;
-	id: string;
+export type DoubleAgentChatMessage = ChatMessage & {
+	// date: string;
+	// id: string;
+	// streaming?: boolean;
+	toolMessages?: ChatToolMessage[];
 	streaming?: boolean;
+	isError?: boolean;
+	preview?: boolean;
 };
 
 export type DoubleAgentChatSession = {
@@ -22,36 +30,62 @@ export type DoubleAgentChatSession = {
 	messages: DoubleAgentChatMessage[];
 	lastUpdateTime: string;
 	memory?: any; // 其他可能的会话相关状态
+	totalRounds: number; // 迭代次数
+	round: number; // 轮次
+	paused?: boolean; // 是否暂停
 };
+
+export const DEFAULT_TOPIC = "未定义话题"
 
 type StoreState = {
 	user: any; // 定义用户类型
 	currentConversationId: string; // 当前会话ID
 	firstAIConfig: Mask; // firstAI的配置
 	secondAIConfig: Mask; // secondAI的配置
-	iterations: number; // 迭代次数
+
 	conversations: DoubleAgentChatSession[]; // 会话列表
 	addUser: (userInfo: any) => void;
 	startNewConversation: (topic: string, userid: number) => Promise<string>;
 	setCurrentConversationId: (id: string) => void;
-	currentSession: () => { [key: string]: any };
+	currentSession: () => DoubleAgentChatSession;
 	setAIConfig: (
 		conversationId: string,
 		side: "left" | "right",
 		config: Mask,
 	) => void;
 	clearAIConfig: (conversationId: string, side: "left" | "right") => void;
+	clearConversation: (conversationId: string) => void;
+	updateMessages: (
+		conversationId: string,
+		message: DoubleAgentChatMessage,
+	) => void;
+	updateSingleMessage: (
+		conversationId: string,
+		messageIndex: number,
+		newMessageContent: string,
+		toolsMessage?: ChatToolMessage[],
+	) => void;
+	updateConversation: (
+		conversationId: string,
+		conversation: DoubleAgentChatSession,
+	) => void;
+	// return round
+	updateRound: (conversationId: string) => { round: number };
+	getHistory: (conversationId: string) => DoubleAgentChatMessage[];
 };
 
-function createDoubleAgentChatMessage(
+export function createDoubleAgentChatMessage(
 	override: Partial<DoubleAgentChatMessage>,
 ): DoubleAgentChatMessage {
 	return {
-		id: "",
+		id: nanoid(),
 		date: new Date().toISOString(),
 		content: "",
 		role: "user",
 		streaming: false,
+		toolMessages: [],
+		preview: false,
+
 		...override,
 	};
 }
@@ -60,7 +94,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	currentConversationId: "",
 	firstAIConfig: {} as Mask,
 	secondAIConfig: {} as Mask,
-	iterations: 0,
+
 	conversations: [],
 	addUser: (userInfo) => set((state) => ({ user: userInfo })),
 	startNewConversation: async (topic: string, userid: number) => {
@@ -70,7 +104,9 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			initialInput: "",
 			first_agent_setting: get().firstAIConfig,
 			second_agent_setting: get().secondAIConfig,
-			iterations: get().iterations,
+			totalRounds: 0,
+			round: 0,
+			pause: false,
 		};
 
 		const res = await createDoubleAgentSession(data);
@@ -82,7 +118,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				firstAIConfig: get().firstAIConfig,
 				secondAIConfig: get().secondAIConfig,
 				topic: topic,
-				initialInput: initialInput,
+				initialInput: "",
 				messages: [
 					// createDoubleAgentChatMessage({
 					// 	content: initialInput,
@@ -92,6 +128,9 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				lastUpdateTime: new Date().toISOString(),
 				memory: "",
 				// 初始化其他可能的会话相关状态
+				totalRounds: 0,
+				round: 0,
+				paused: false,
 			};
 
 			return {
@@ -106,7 +145,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		const { currentConversationId, conversations } = get();
 		return (
 			conversations.find((session) => session.id === currentConversationId) ||
-			{}
+			({} as DoubleAgentChatSession)
 		);
 	},
 	setAIConfig: (conversationId: string, side: "left" | "right", config: Mask) =>
@@ -122,6 +161,24 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				}
 				return conversation;
 			});
+			return {
+				conversations: updatedConversations,
+			};
+		}),
+	clearConversation: (conversationId: string) =>
+		set((state) => {
+			const updatedConversations = state.conversations.map((conversation) => {
+				console.log("conversation.id", conversation.id, conversationId);
+				if (conversation.id === conversationId) {
+					return {
+						...conversation,
+						round: 0,
+						messages: [],
+					};
+				}
+				return conversation;
+			});
+			console.log("updatedConversations", updatedConversations);
 			return {
 				conversations: updatedConversations,
 			};
@@ -147,6 +204,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	// new messages
 	updateMessages: (conversationId: string, message: DoubleAgentChatMessage) =>
 		set((state) => {
+			console.log("message", message);
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
 					return {
@@ -160,12 +218,131 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: updatedConversations,
 			};
 		}),
+	// update single message with index
+	updateSingleMessage: (
+		conversationId: string,
+		messageIndex: number,
+		newMessageContent: string,
+		toolsMessage?: ChatToolMessage[],
+	) =>
+		set((state) => {
+			const updatedConversations = state.conversations.map((session) => {
+				if (session.id === conversationId) {
+					// 确保消息索引在范围内
+					if (messageIndex >= 0 && messageIndex < session.messages.length) {
+						// 创建一个新的消息数组，其中包含更新后的消息
+						const updatedMessages = session.messages.map((message, index) => {
+							if (index === messageIndex) {
+								// 更新消息内容
+								return {
+									...message,
+									content: newMessageContent,
+									// 如果需要，还可以更新timestamp或其他属性
+									//如果存在 toolsMessage, 则更新
+									toolMessages:
+										toolsMessage !== undefined
+											? toolsMessage
+											: message.toolMessages,
+
+									timestamp: Date.now(),
+								};
+							}
+							return message;
+						});
+
+						// 返回更新后的会话
+						return {
+							...session,
+							messages: updatedMessages,
+						};
+					}
+				}
+				return session;
+			});
+
+			// 返回更新后的状态
+			return {
+				conversations: updatedConversations,
+			};
+		}),
+	// update conversation
+	updateConversation: (
+		conversationId: string,
+		conversation: DoubleAgentChatSession,
+	) =>
+		set((state) => {
+			const updatedConversations = state.conversations.map((session) => {
+				if (session.id === conversationId) {
+					return conversation;
+				}
+				return session;
+			});
+
+			return {
+				conversations: updatedConversations,
+			};
+		}),
+	updateRound: (conversationId: string) => {
+		set((state) => {
+			let newRound;
+			const updatedConversations = state.conversations.map((session) => {
+				if (session.id === conversationId) {
+					newRound = session.round + 1;
+					return { ...session, round: newRound };
+				}
+				return session;
+			});
+
+			return { conversations: updatedConversations };
+		});
+		// 获取更新后的会话round值并返回
+		const updatedSession = get().conversations.find(
+			(session) => session.id === conversationId,
+		);
+		return { round: updatedSession ? updatedSession.round : -1 };
+	},
+	getHistory: (conversationId: string) => {
+		// return messages
+		const MAX_TOKEN_COUNT = 3000; // 最大的token数量
+
+		const conversation = get().conversations.find(
+			(m) => m.id === conversationId,
+		);
+		if (!conversation) {
+			return []; // 如果没有找到会话，返回空数组
+		}
+
+		// 1. 获取历史消息
+		let messages = conversation.messages.slice(); // 获取会话的消息副本
+
+		// 2. 决定获取最大历史消息的数量
+		// 这里的实现取决于你如何定义最大历史消息数量，这里假设是消息数组的长度
+		let maxMessageCount = messages.length;
+
+		// 3. 取决于tokenCount 不超过3000
+		// 4. 如果超过3000，则减少获取的消息数量
+		let tokenCount = 0;
+		let historyMessages = [];
+		for (let i = maxMessageCount - 1; i >= 0; i--) {
+			const message = messages[i];
+			const messageTokenCount = estimateTokenLength(message.content); // 估算消息的token数量
+
+			if (tokenCount + messageTokenCount > MAX_TOKEN_COUNT) {
+				break; // 如果超过最大token数量，则停止添加消息
+			}
+
+			tokenCount += messageTokenCount;
+			historyMessages.push(message); // 添加消息到历史消息数组
+		}
+
+		return historyMessages; // 返回历史消息
+	},
 });
 
 const doubleAgent = create<StoreState>()(
 	persist(storeCreator, {
 		name: "double-agent-storage",
-		getStorage: () => localStorage,
+		version: 1.0,
 	}),
 );
 

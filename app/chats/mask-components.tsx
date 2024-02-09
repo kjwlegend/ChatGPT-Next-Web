@@ -60,6 +60,7 @@ import { useMobileScreen } from "../utils";
 import { Tabs, Radio, Input as AntdInput } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useAllModels } from "../utils/hooks";
 
 const { TextArea } = AntdInput;
 
@@ -91,6 +92,8 @@ export function MaskConfig(props: {
 	const isMobileScreen = useMobileScreen();
 	const [showPicker, setShowPicker] = useState(false);
 	const [tabPosition, setTabPosition] = useState<TabPosition>("left");
+
+	const allModels = useAllModels();
 
 	// set tab position to top on mobile screen
 	useEffect(() => {
@@ -159,6 +162,23 @@ export function MaskConfig(props: {
 					}
 				></input>
 			</ListItem>
+			<ListItem title={"欢迎语"}>
+				<textarea
+					value={props.mask.intro}
+					rows={3}
+					style={{
+						width: "50%",
+						border: "1px solid #d9d9d9",
+						padding: "5px",
+						borderRadius: "5px",
+					}}
+					onInput={(e) =>
+						props.updateMask((mask) => {
+							mask.intro = e.currentTarget.value;
+						})
+					}
+				></textarea>
+			</ListItem>
 			<ListItem title={Locale.Mask.Config.category}>
 				<select
 					value={props.mask.category}
@@ -175,6 +195,25 @@ export function MaskConfig(props: {
 						</option>
 					))}
 				</select>
+			</ListItem>
+			{/* show mask.ModelConfig */}
+			<ListItem title={Locale.Settings.Model}>
+				<Select
+					value={props.mask.modelConfig.model}
+					onChange={(e) => {
+						props.updateMask((mask) => {
+							mask.modelConfig.model = e.currentTarget.value;
+						});
+					}}
+				>
+					{allModels
+						.filter((v) => v.available)
+						.map((v, i) => (
+							<option value={v.name} key={i}>
+								{v.displayName}
+							</option>
+						))}
+				</Select>
 			</ListItem>
 			<ListItem
 				title={Locale.Mask.Config.HideContext.Title}

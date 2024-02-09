@@ -463,8 +463,7 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 							{/* {isUser ? renderedUserAvatar : <MaskAvatar mask={session.mask} />} */}
 						</div>
 					</div>
-					{!isUser &&
-						message.toolMessages &&
+					{message.toolMessages &&
 						message.toolMessages.map((tool, index) => (
 							<div className={styles["chat-message-tools-status"]} key={index}>
 								<div className={styles["chat-message-tools-name"]}>

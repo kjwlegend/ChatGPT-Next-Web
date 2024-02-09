@@ -7,7 +7,8 @@ import dynamic from "next/dynamic";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 import { useChatStore, useUserStore } from "@/app/store";
 import { startConversation } from "@/app/services/doubleAgentService";
-
+import { DoubleAgentWindowHeader } from "@/app/chats/chat/WindowHeader";
+import styles from "@/app/chats/home.module.scss";
 const { TextArea } = Input;
 
 const Chatbody = dynamic(
@@ -17,64 +18,32 @@ const Chatbody = dynamic(
 	},
 );
 const Inputpanel = dynamic(
-	async () => (await import("@/app/chats/chat/Inputpanel")).Inputpanel,
+	async () => (await import("@/app/chats/chat/Inputpanel")).DoubleAgentInput,
 	{
 		ssr: false,
 	},
 );
 
 const ConversationWindow: React.FC = () => {
-	const {
-		conversations,
-		startNewConversation,
-		setCurrentConversationId,
-		setAIConfig,
-		clearAIConfig,
-	} = useDoubleAgentStore();
+	const { conversations } = useDoubleAgentStore();
 	const currentConversationId = useDoubleAgentStore().currentConversationId;
+	const conversation = conversations.find(
+		(conversation) => conversation.id === currentConversationId,
+	);
 	const userid = useUserStore.getState().user.id;
 
 	useEffect(() => {
 		// 这里可以做一些初始化的工作
 	}, []);
 
-	const startConversationHandler = () => {
-		// 开始对话
-		const topic = "测试对话";
-		const userId = 1;
-		const initialinput = "你好";
-		startConversation(startNewConversation, topic, initialinput, userId);
-	};
 	return (
-		<Card
-			title={`对话窗口 ${currentConversationId}`}
-			extra={
-				<div style={{ marginTop: 16 }}>
-					<Button onClick={startConversationHandler} type="primary">
-						开始
-					</Button>
-					<Button style={{ marginLeft: 8 }}>暂停</Button>
-					<Button style={{ marginLeft: 8 }}>继续</Button>
-				</div>
-			}
-		>
+		<Card bodyStyle={{ padding: 0 }} style={{ height: "100%" }}>
+			<DoubleAgentWindowHeader session={conversation} />
 			<div style={{ marginBottom: 16 }}>
 				{/* 消息展示区域 */}
-				<div
-					style={{
-						height: "60vh",
-						overflowY: "auto",
-					}}
-				>
-					{/* 这里渲染对话内容 */}
-					<Chatbody />
-				</div>
-				{/* 控制器 */}
+				{/* 这里渲染对话内容 */}
+				<Chatbody />
 
-				{/* 自动对话轮数输入 */}
-				<div style={{ marginTop: 16 }}>
-					<Input addonBefore="轮数" defaultValue="3" />
-				</div>
 				{/* 初始输入 */}
 				<div style={{ marginTop: 16 }}>
 					<Inputpanel />

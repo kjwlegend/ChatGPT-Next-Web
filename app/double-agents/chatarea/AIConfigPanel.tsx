@@ -40,7 +40,7 @@ const GenerateMenuItems = (
 	const { conversations, setAIConfig, clearAIConfig } = useDoubleAgentStore();
 
 	const handleMaskClick = (mask: any) => {
-		console.log(mask);
+		// console.log(mask);
 		setAIConfig(currentConversationId, side, mask);
 	};
 
@@ -99,7 +99,7 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 		setAIConfig,
 		clearAIConfig,
 	} = useDoubleAgentStore();
-	console.log("currentConversationId", currentConversationId);
+	// console.log("currentConversationId", currentConversationId);
 
 	const [showModal, setShowModal] = useState(false);
 	const [sliderValue, setSliderValue] = useState(0);
@@ -182,7 +182,7 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 			) : (
 				<Card className={styles.aiConfigCard}>
 					<div className="flex-container">
-						<Avatar avatar={aiConfig.avatar} />
+						<Avatar model={aiConfig} />
 						<h3>{aiConfig.name}</h3>
 					</div>
 					<p>{aiConfig.description}</p>

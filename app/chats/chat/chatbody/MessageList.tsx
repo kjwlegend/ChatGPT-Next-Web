@@ -150,13 +150,12 @@ export const DoubleAgentMessageList: React.FC<
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const isMobileScreen = useMobileScreen();
 
-	const [messageApi, contextHolder] = message.useMessage();
 	// const [isLoading, setIsLoading] = useState(false);
 	// const [hasNextPage, setHasNextPage] = useState(true);
 
 	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
 
-	console.log("messages", messages.length, messages);
+	// console.log("messages", messages.length, messages);
 	// if messages undefined, return null
 	if (messages[0] === undefined) {
 		return null;
@@ -164,7 +163,6 @@ export const DoubleAgentMessageList: React.FC<
 
 	return (
 		<>
-			{contextHolder}
 			{messages.map((message, i) => {
 				let context: RenderMessage[] = [];
 				let clearContextIndex = -1;

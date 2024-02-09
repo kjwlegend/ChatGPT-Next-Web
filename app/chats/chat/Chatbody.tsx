@@ -8,6 +8,7 @@ import React, {
 	useCallback,
 	Fragment,
 	useContext,
+	use,
 } from "react";
 
 import { getISOLang, getLang } from "@/app/locales";
@@ -328,13 +329,13 @@ export function DoubleAgentChatbody(props: {
 	// if props._session is not provided, use current session
 	const session = _session ?? chatStore.currentSession();
 
+	useEffect(() => {
+		if (!session) {
+			return;
+		}
+	}, [session]);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const isMobileScreen = useMobileScreen();
-	console.log("session", session);
-	if (!session) {
-		return null;
-	}
-	const sessionId = session.id;
 
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -347,11 +348,12 @@ export function DoubleAgentChatbody(props: {
 		setUserInput,
 		enableAutoFlow,
 		setEnableAutoFlow,
-		scrollRef,
+		// scrollRef,
 		userImage,
 		setUserImage,
 	} = useContext(ChatContext);
 
+	const scrollRef = useRef<HTMLDivElement>(null);
 	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
 
 	const [messages, setMessages] = useState<RenderMessage[]>([]);
@@ -359,13 +361,12 @@ export function DoubleAgentChatbody(props: {
 	const [hasNextPage, setHasNextPage] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 
+	const sessionId = session.id;
+
 	useEffect(() => {
 		// 当 ChatBody 组件加载时获取第一页的消息
 		getMessages(sessionId, currentPage);
 	}, [sessionId]);
-	// useEffect(() => {
-	// 	console.log("Updated messages:", messages);
-	// }, [messages]);
 
 	const getMessages = async (sessionid: string, page: number) => {
 		setIsLoading(true);
@@ -464,34 +465,33 @@ export function DoubleAgentChatbody(props: {
 	}, [msgRenderIndex, renderMessages]);
 
 	const onChatBodyScroll = (e: HTMLElement) => {
+		// console.log("onChatBodyScroll");
 		const { isTouchTopEdge, isTouchBottomEdge, isHitBottom } =
 			checkScrollAndFetchMessages(e);
 
-		// console.log("isTouchTopEdge", isTouchTopEdge);
+		// const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
+		// const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;
 
-		const prevPageMsgIndex = msgRenderIndex - CHAT_PAGE_SIZE;
-		const nextPageMsgIndex = msgRenderIndex + CHAT_PAGE_SIZE;
-
-		if (isTouchTopEdge && !isTouchBottomEdge) {
-			// 如果触碰到顶部，可以加载前一页的消息（如果有的话）
-			if (currentPage > 1) {
-				// currentPage -= 1;
-				setCurrentPage(currentPage - 1);
-				getMessages(sessionId, currentPage);
-			}
-			setMsgRenderIndex(prevPageMsgIndex);
-		} else if (isTouchBottomEdge && isHitBottom && hasNextPage) {
-			console.log(
-				"isTouchBottomEdge",
-				isTouchBottomEdge,
-				"hasNextPage",
-				hasNextPage,
-			);
-			// 如果触碰到底部且还有下一页的消息，则加载下一页的消息
-			setCurrentPage(currentPage + 1);
-			getMessages(sessionId, currentPage);
-			setMsgRenderIndex(nextPageMsgIndex);
-		}
+		// if (isTouchTopEdge && !isTouchBottomEdge) {
+		// 	// 如果触碰到顶部，可以加载前一页的消息（如果有的话）
+		// 	if (currentPage > 1) {
+		// 		// currentPage -= 1;
+		// 		setCurrentPage(currentPage - 1);
+		// 		getMessages(sessionId, currentPage);
+		// 	}
+		// 	setMsgRenderIndex(prevPageMsgIndex);
+		// } else if (isTouchBottomEdge && isHitBottom && hasNextPage) {
+		// 	console.log(
+		// 		"isTouchBottomEdge",
+		// 		isTouchBottomEdge,
+		// 		"hasNextPage",
+		// 		hasNextPage,
+		// 	);
+		// 	// 如果触碰到底部且还有下一页的消息，则加载下一页的消息
+		// 	setCurrentPage(currentPage + 1);
+		// 	getMessages(sessionId, currentPage);
+		// 	setMsgRenderIndex(nextPageMsgIndex);
+		// }
 
 		// 更新是否触碰到底部的状态
 		setHitBottom(isHitBottom);
@@ -517,10 +517,9 @@ export function DoubleAgentChatbody(props: {
 			className={styles["chat-body"]}
 			ref={scrollRef}
 			onScroll={(e) => onChatBodyScroll(e.currentTarget)}
-			onMouseDown={() => inputRef.current?.blur()}
-			onTouchStart={() => {
-				inputRef.current?.blur();
-				setAutoScroll(false);
+			style={{
+				height: "60vh",
+				overflowY: "auto",
 			}}
 		>
 			<DoubleAgentMessageList

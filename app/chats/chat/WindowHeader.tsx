@@ -68,12 +68,14 @@ import { SessionConfigModel } from "./common";
 import { ChatContext } from "./main";
 import { index, is } from "cheerio/lib/api/traversing";
 import { Switch } from "antd";
+import doubleAgent, { DoubleAgentChatSession } from "@/app/store/doubleAgents";
 
 export function EditMessageModal(props: {
 	onClose: () => void;
 	index?: number;
 	session?: ChatSession;
 	isworkflow: boolean;
+	doubleAgent?: boolean;
 }) {
 	const chatStore = useChatStore();
 
@@ -155,9 +157,11 @@ export function PromptToast(props: {
 	isworkflow: boolean;
 	index?: number;
 	session?: ChatSession;
+	doubleAgent?: boolean;
 }) {
 	const chatStore = useChatStore();
 	let session: ChatSession;
+
 	// isworkflow = true then, session use props.session. else use currentSession
 	if (props.isworkflow && props.session) {
 		session = props.session;
@@ -200,6 +204,7 @@ type WindowHeaderTitleProps = {
 	session?: ChatSession;
 	index?: number;
 	isworkflow: boolean;
+	doubleAgent?: boolean;
 };
 
 function WindowHeaderTitle({
@@ -403,6 +408,7 @@ export default function WindowHeader(props: {
 	session?: ChatSession;
 	index?: number;
 	isworkflow: boolean;
+	doubleAgent?: boolean;
 }) {
 	const chatStore = useChatStore();
 	let session: ChatSession;
@@ -460,6 +466,73 @@ export default function WindowHeader(props: {
 				index={index}
 				isworkflow={props.isworkflow}
 			/>
+		</div>
+	);
+}
+
+function DoulbeAgentWindowHeaderTitle({
+	session,
+	index,
+	isworkflow,
+}: WindowHeaderTitleProps) {
+	const chatStore = doubleAgent();
+	const currentSession = session ?? chatStore.currentSession();
+	const sessionId = currentSession.id;
+	const config = useAppConfig();
+
+	const isMobileScreen = useMobileScreen();
+	const clientConfig = useMemo(() => getClientConfig(), []);
+	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+
+	const [isEditingMessage, setIsEditingMessage] = useState(false);
+
+	return (
+		<>
+			<div className={`window-header-title ${styles["chat-body-title"]}`}>
+				<div
+					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
+					onClickCapture={() => setIsEditingMessage(true)}
+				>
+					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
+				</div>
+				<div className="window-header-sub-title">
+					{Locale.Chat.SubTitle(currentSession.messages.length)}
+				</div>
+			</div>
+			{isEditingMessage && (
+				<EditMessageModal
+					onClose={() => {
+						setIsEditingMessage(false);
+					}}
+					isworkflow={isworkflow}
+					// session={currentSession}
+				/>
+			)}
+		</>
+	);
+}
+
+export function DoubleAgentWindowHeader(props: {
+	session?: DoubleAgentChatSession;
+}) {
+	const chatStore = doubleAgent();
+	let session = props.session ?? chatStore.currentSession();
+	const sessionId = session.id;
+	const [showExport, setShowExport] = useState(false);
+	const [isEditingMessage, setIsEditingMessage] = useState(false);
+	const isMobileScreen = useMobileScreen();
+	const clientConfig = useMemo(() => getClientConfig(), []);
+
+	return (
+		<div className="window-header" data-tauri-drag-region>
+			<div className={`window-header-title ${styles["chat-body-title"]}`}>
+				<div
+					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
+					onClickCapture={() => setIsEditingMessage(true)}
+				>
+					{!session.topic ? DEFAULT_TOPIC : session.topic}
+				</div>
+			</div>
 		</div>
 	);
 }

@@ -17,6 +17,7 @@ import {
 
 import usedoubleAgentStore from "@/app/store/doubleAgents";
 import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import { useUserStore } from "../store";
 
 // import Footer from "./components/Footer";
 
@@ -24,6 +25,7 @@ const { Header, Content, Sider, Footer } = Layout;
 
 const App: React.FC = () => {
 	const doubleagents = usedoubleAgentStore();
+	const userid = useUserStore.getState().user.id;
 
 	const { conversations, startNewConversation, setCurrentConversationId } =
 		doubleagents;
@@ -32,6 +34,8 @@ const App: React.FC = () => {
 	const [localconversations, setLocalConversations] = useState<
 		DoubleAgentChatSession[]
 	>([]);
+
+	const defaultTopic = "未定义话题";
 
 	useEffect(() => {
 		setLocalConversations(conversations);
@@ -43,7 +47,7 @@ const App: React.FC = () => {
 			<Layout>
 				{/* <Header>Header</Header> */}
 				<Sider width={250} collapsible={true} theme="light">
-					<Button onClick={() => startNewConversation("topic", 1)}>
+					<Button onClick={() => startNewConversation(defaultTopic, userid)}>
 						Start New Conversation
 					</Button>
 					{localconversations.map((conversation: any) => {
@@ -52,9 +56,10 @@ const App: React.FC = () => {
 								key={conversation.id}
 								onClick={() => {
 									setCurrentConversationId(conversation.id);
+									console.log(conversation.id);
 								}}
 							>
-								{conversation.id}
+								{conversation.topic}
 							</div>
 						);
 					})}
