@@ -23,8 +23,8 @@ import {
 } from "@/app/components/ui-lib";
 import { Card } from "antd";
 import { IconButton } from "@/app/components/button";
-import { Avatar } from "@/app/components/emoji";
-import { Avatar as BotAvatar } from "antd";
+import { BotAvatar } from "@/app/components/emoji";
+import { Avatar } from "antd";
 import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "@/app/store/mask";
 import {
 	ChatMessage,
@@ -42,9 +42,9 @@ const { Meta } = Card;
 
 export function MaskAvatar(props: { mask: Mask }) {
 	return props.mask.avatar !== DEFAULT_MASK_AVATAR ? (
-		<Avatar mask={props.mask} />
+		<BotAvatar mask={props.mask} />
 	) : (
-		<Avatar mask={props.mask} />
+		<BotAvatar mask={props.mask} />
 	);
 }
 
@@ -189,7 +189,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 				key={mask.id}
 			>
 				{/* when mask.img exists, use transparent backgroundColor , otherwise use getRandomColor*/}
-				<BotAvatar
+				<Avatar
 					style={{
 						backgroundColor: mask.img ? "transparent" : getRandomColor(),
 						fontSize: 30,
@@ -198,7 +198,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 					src={mask.img}
 				>
 					{mask.name}
-				</BotAvatar>
+				</Avatar>
 
 				<h1 className={styles["name"]}>{mask.name}</h1>
 				{/* use mask.category to create a label with background color */}

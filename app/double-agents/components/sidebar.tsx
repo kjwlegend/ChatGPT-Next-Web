@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import React from "react";
 
-import styles from "../home.module.scss";
+import styles from "@/app/chats/home.module.scss";
 
 import { IconButton } from "../../components/button";
 
@@ -39,18 +39,21 @@ import { useAuthStore } from "../../store/auth";
 
 import AuthPage from "../../auth/page";
 import DrawerMenu from "../../components/drawer-menu";
-import UserInfo from "../../components/userinfo";
-import { Divider } from "antd";
-import Upload from "@/app/chats/knowledge/upload";
+
 import { getChatSession } from "../../api/backend/chat";
 import { ChatSessionData } from "../../api/backend/chat";
 import { UpdateChatSessions } from "../../services/chatService";
 import { useUserStore } from "../../store/user";
+import useDoubleAgentStore from "@/app/store/doubleAgents";
 
-const ChatList = dynamic(async () => (await import("./chatList")).ChatList, {
-	loading: () => null,
-});
+import { message } from "antd";
 
+const DoubleAgentChatList = dynamic(
+	async () => (await import("./chatList")).DoubleAgentChatList,
+	{
+		loading: () => null,
+	},
+);
 
 function useHotKey() {
 	const chatStore = useChatStore();
@@ -145,26 +148,26 @@ function useDragSideBar() {
 	};
 }
 
-export function SideBar(props: { className?: string }) {
-	const chatStore = useChatStore();
+import { DOUBLE_AGENT_DEFAULT_TOPIC } from "@/app/store/doubleAgents";
+import { useDoubleAgentChatContext } from "../doubleAgentContext";
+export function DoubleAgentSideBar(props: { className?: string }) {
+	const chatStore = useDoubleAgentStore();
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
-
+	const userid = userStore.user.id;
+	const [messageAPi, contextholder] = message.useMessage();
 	// drag side bar
 	const { onDragStart, shouldNarrow } = useDragSideBar();
-	const navigate = useNavigate();
 	const config = useAppConfig();
 	const isMobileScreen = useMobileScreen();
-	const isIOSMobile = useMemo(
-		() => isIOS() && isMobileScreen,
-		[isMobileScreen],
-	);
-
+	const { setCurrentConversationId } = chatStore;
 	useHotKey();
 
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const listRef = useRef<HTMLDivElement | null>(null);
+
+	const { startNewConversation } = useDoubleAgentChatContext();
 
 	// 加载更多会话
 	const loadMoreSessions = async () => {
@@ -220,11 +223,11 @@ export function SideBar(props: { className?: string }) {
 			className={`${styles.sidebar}
        ${props.className} ${shouldNarrow && styles["narrow-sidebar"]}`}
 		>
+			{contextholder}
 			<div className="flex-container row m-b-20">
 				{isMobileScreen && (
 					<>
 						<DrawerMenu />
-						<UserInfo />
 					</>
 				)}
 
@@ -247,71 +250,21 @@ export function SideBar(props: { className?: string }) {
 					}}
 					shadow
 				/> */}
-
-				<IconButton
-					icon={<PluginIcon />}
-					text={shouldNarrow ? undefined : "画廊"}
-					className={styles["sidebar-bar-button"]}
-					onClick={() =>
-						navigate(Path.Paintings, { state: { fromHome: true } })
-					}
-					shadow
-				/>
-				<IconButton
-					icon={<PluginIcon />}
-					text={shouldNarrow ? undefined : "文档管理"}
-					className={styles["sidebar-bar-button"]}
-					onClick={() =>
-						navigate(Path.Knowledge, { state: { fromHome: true } })
-					}
-					shadow
-				/>
 			</div>
 
-			<div
-				className={styles["sidebar-body"]}
-				onClick={(e) => {
-					if (e.target === e.currentTarget) {
-						navigate(Path.Home);
-					}
-				}}
-				ref={listRef}
-			>
-				<ChatList narrow={shouldNarrow} />
+			<div className={styles["sidebar-body"]} ref={listRef}>
+				<DoubleAgentChatList narrow={shouldNarrow} />
 			</div>
-
 			<div className={styles["sidebar-tail"]}>
 				<div className={styles["sidebar-actions"]}>
-					<div className={styles["sidebar-action"] + " " + styles.mobile}>
+					<div>
 						<IconButton
-							icon={<CloseIcon />}
-							onClick={async () => {
-								if (await showConfirm(Locale.Home.DeleteChat)) {
-									chatStore.deleteSession(chatStore.currentSessionIndex);
-								}
-							}}
+							icon={<AddIcon />}
+							text={shouldNarrow ? undefined : Locale.Home.NewChat}
+							onClick={() => startNewConversation()}
+							shadow
 						/>
 					</div>
-					<div className={styles["sidebar-action"]}>
-						<Link to={Path.Settings}>
-							<IconButton icon={<SettingsIcon />} shadow />
-						</Link>
-					</div>
-				</div>
-				<div>
-					<IconButton
-						icon={<AddIcon />}
-						text={shouldNarrow ? undefined : Locale.Home.NewChat}
-						onClick={() => {
-							if (config.dontShowMaskSplashScreen) {
-								chatStore.newSession();
-								navigate(Path.Chat);
-							} else {
-								navigate(Path.NewChat);
-							}
-						}}
-						shadow
-					/>
 				</div>
 			</div>
 

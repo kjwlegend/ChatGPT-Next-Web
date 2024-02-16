@@ -161,8 +161,6 @@ export default function useAuth() {
 	const logoutHook = async () => {
 		await logoutAPI();
 		//clear cookie
-		document.cookie = `authenticated=;`;
-		document.cookie = `expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 
 		authStore.logout();
 		userStore.clearUser();

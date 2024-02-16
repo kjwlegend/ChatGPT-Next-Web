@@ -1,10 +1,21 @@
 "use client";
 // src/components/ChatArea/AIConfigPanel.tsx
 // src/components/ChatArea/AIConfigPanel.tsx
-import React from "react";
-import { Card, Button, Slider, Tooltip, Tag, Dropdown } from "antd";
-import { Avatar } from "@/app/chats/emoji";
-import useDoubleAgentStore from "@/app/store/doubleAgents";
+import React, { useRef } from "react";
+import {
+	Card,
+	Button,
+	Slider,
+	Tooltip,
+	Tag,
+	Dropdown,
+	Avatar,
+	Checkbox,
+} from "antd";
+import { BotAvatar as MaskAvatar } from "@/app/components/emoji";
+import useDoubleAgentStore, {
+	DoubleAgentChatSession,
+} from "@/app/store/doubleAgents";
 import styles from "../double-agents.module.scss";
 import { Mask } from "@/app/store/mask";
 import { ChatSession } from "@/app/store/chat";
@@ -15,6 +26,24 @@ import { MenuProps } from "antd/lib/menu";
 import { use, useEffect, useState } from "react";
 import { Modal } from "@/app/components/ui-lib";
 import { MaskConfig } from "@/app/chats/mask-components";
+import { useMobileScreen } from "@/app/utils";
+import {
+	PlusCircleFilled,
+	PlusCircleOutlined,
+	PlusCircleTwoTone,
+	SettingOutlined,
+	SwitcherOutlined,
+	UserOutlined,
+	ThunderboltTwoTone,
+	ApiTwoTone,
+} from "@ant-design/icons";
+import Locale from "@/app/locales";
+import { useMemo } from "react";
+import { usePluginStore } from "@/app/store/plugin";
+
+import { getLang, getISOLang } from "@/app/locales";
+import { IconButton } from "@/app/components/button";
+import { useDoubleAgentChatContext } from "../doubleAgentContext";
 
 interface AIConfigPanelProps {
 	side: "left" | "right";
@@ -94,12 +123,16 @@ const GenerateMenuItems = (
 const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 	const {
 		conversations,
-
 		currentConversationId,
 		setAIConfig,
 		clearAIConfig,
+		updateConversation,
 	} = useDoubleAgentStore();
 	// console.log("currentConversationId", currentConversationId);
+
+	const availablePlugins = usePluginStore()
+		.getAll()
+		.filter((p) => getLang() === p.lang);
 
 	const [showModal, setShowModal] = useState(false);
 	const [sliderValue, setSliderValue] = useState(0);
@@ -107,21 +140,88 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 		currentConversationId,
 		side,
 	);
+	const session = conversations.find(
+		(c: DoubleAgentChatSession) => c.id === currentConversationId,
+	);
+	// 使用 useMemo 来缓存 conversations 中的 AI 配置
+	const firstAIConfig = useMemo(() => {
+		const session = conversations.find(
+			(c: DoubleAgentChatSession) => c.id === currentConversationId,
+		);
+		return session?.firstAIConfig;
+	}, [conversations, currentConversationId]);
 
+	const secondAIConfig = useMemo(() => {
+		const session = conversations.find(
+			(c: DoubleAgentChatSession) => c.id === currentConversationId,
+		);
+		return session?.secondAIConfig;
+	}, [conversations, currentConversationId]);
+
+	// 初始化 aiConfig 在 useEffect 中
 	useEffect(() => {
-		// 这里可以做一些初始化的工作
-	}, []);
-
-	let firstAIConfig = conversations.find((c) => c.id === currentConversationId)
-		?.firstAIConfig;
-	let secondAIConfig = conversations.find((c) => c.id === currentConversationId)
-		?.secondAIConfig;
+		let aiConfig = side === "left" ? firstAIConfig : secondAIConfig;
+		if (!aiConfig) {
+			return;
+		}
+		// 这里可以初始化 aiConfig 或者执行其他初始化操作
+	}, [side, firstAIConfig, secondAIConfig]);
 
 	const aiConfig = side === "left" ? firstAIConfig : secondAIConfig;
-
 	if (!aiConfig) {
-		return null;
+		return;
 	}
+
+	if (!conversations) {
+		return;
+	}
+
+	if (!session) {
+		return;
+	}
+
+	if (!aiConfig.plugins) {
+		aiConfig.plugins = [];
+	}
+
+	const plugins: MenuProps["items"] = availablePlugins.map((p) => {
+		return {
+			key: p.name,
+			label: (
+				<Checkbox
+					checked={
+						aiConfig.plugins && aiConfig.plugins.includes(p.toolName ?? p.name)
+					}
+					onChange={(e) => {
+						updatePlugins(e, p);
+					}}
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
+				>
+					{p.name}
+				</Checkbox>
+			),
+		};
+	});
+
+	const updatePlugins = (e: any, p: any) => {
+		const updateSession = {
+			...session,
+			[side === "left" ? "firstAIConfig" : "secondAIConfig"]: {
+				...aiConfig,
+				plugins: e.target.checked
+					? aiConfig.plugins
+						? [...aiConfig.plugins, p.toolName ?? p.name]
+						: [p.toolName ?? p.name]
+					: aiConfig.plugins?.filter(
+							(plugin) => plugin !== p.toolName ?? p.name,
+					  ),
+			},
+		};
+
+		updateConversation(currentConversationId, updateSession);
+	};
 
 	const handleSliderChange = (value: number) => {
 		setSliderValue(value);
@@ -173,20 +273,76 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 		<>
 			{!aiConfig.modelConfig ? (
 				<Card className={styles.aiConfigCard}>
+					<Avatar
+						size={65}
+						icon={<UserOutlined style={{ color: "darkgrey" }} />}
+						style={{
+							backgroundColor: "white",
+							border: "1px dashed darkgrey",
+						}}
+					/>
+					<h4>未配置AI</h4>
 					<Dropdown menu={{ items }}>
 						<a onClick={(e) => e.preventDefault()}>
-							<Button type="primary">添加 Agent</Button>
+							<Button icon={<PlusCircleOutlined />}>添加 Agent</Button>
 						</a>
 					</Dropdown>
 				</Card>
 			) : (
-				<Card className={styles.aiConfigCard}>
-					<div className="flex-container">
-						<Avatar model={aiConfig} />
+				<Card
+					key={aiConfig.id}
+					className={styles.aiConfigCard}
+					actions={[
+						<Button
+							key={aiConfig.id + "setting"}
+							onClick={() => {
+								setShowModal(true);
+							}}
+							icon={<SettingOutlined />}
+						>
+							配置
+						</Button>,
+						<Button
+							key={aiConfig.id + "delete"}
+							danger
+							onClick={handleDeleteAI}
+							icon={<PlusCircleOutlined />}
+						>
+							删除
+						</Button>,
+						<Dropdown menu={{ items }} key={aiConfig.id + "replace"}>
+							<a onClick={(e) => e.preventDefault()}>
+								<Button icon={<SwitcherOutlined />}>替换</Button>
+							</a>
+						</Dropdown>,
+					]}
+				>
+					<div className="flex-container column">
+						<MaskAvatar mask={aiConfig} size={55} />
 						<h3>{aiConfig.name}</h3>
 					</div>
 					<p>{aiConfig.description}</p>
 					<Tag>模型: {aiConfig.modelConfig.model}</Tag>
+
+					{aiConfig.modelConfig.model != "gpt-4-vision-preview" && (
+						<Dropdown menu={{ items: plugins }}>
+							<Button
+								icon={
+									aiConfig.plugins.length > 0 ? (
+										<ThunderboltTwoTone />
+									) : (
+										<ApiTwoTone />
+									)
+								}
+								onClick={(e) => e.preventDefault()}
+							>
+								{aiConfig.plugins.length > 0
+									? Locale.Chat.InputActions.DisablePlugins
+									: Locale.Chat.InputActions.EnablePlugins}
+							</Button>
+						</Dropdown>
+					)}
+
 					{renderSlider(
 						"多样性（Temperature）",
 						"temperature",
@@ -219,22 +375,6 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 						1,
 						"限制重复主题的频率",
 					)}
-					<Button
-						type="primary"
-						onClick={() => {
-							setShowModal(true);
-						}}
-					>
-						配置修改
-					</Button>
-					<Dropdown menu={{ items }}>
-						<a onClick={(e) => e.preventDefault()}>
-							<Button>选择AI</Button>
-						</a>
-					</Dropdown>
-					<Button danger onClick={handleDeleteAI}>
-						删除AI
-					</Button>
 				</Card>
 			)}
 			{showModal && (

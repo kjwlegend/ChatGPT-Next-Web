@@ -182,8 +182,15 @@ function Screen() {
 		if (currentTimeStamp > expiresTimeStamp) {
 			console.log("cookie已过期");
 			message.error("登录已过期，请重新登录");
-			logoutHook();
-			window.location.reload();
+			logoutHook()
+				.then(() => {
+					window.location.reload();
+				})
+				.catch((e) => {
+					console.log("logout error", e);
+				});
+
+			// window.location.reload();
 		}
 	});
 

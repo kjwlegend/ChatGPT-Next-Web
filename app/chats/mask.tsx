@@ -31,7 +31,6 @@ import {
 	Select,
 	showConfirm,
 } from "../components/ui-lib";
-import { Avatar } from "../components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
 import { MaskCategory } from "../constant";
 import { useNavigate } from "react-router-dom";

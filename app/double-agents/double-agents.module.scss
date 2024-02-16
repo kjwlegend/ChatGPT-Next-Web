@@ -22,3 +22,39 @@
 		margin: 0 12px;
 	}
 }
+
+.background {
+	background: linear-gradient(
+		267deg,
+		#ffffff -2.16%,
+		#9586f53b 42%,
+		#edf9ff 100.31%
+	);
+}
+
+.welcome-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	flex-direction: column;
+}
+.title {
+	margin: 20px auto;
+	font:
+		500 24px/29px "Roboto",
+		sans-serif;
+	color: #1e425d;
+}
+.sub-title {
+	text-align: center;
+	font:
+		400 16px/19px "Roboto",
+		sans-serif;
+	color: #1e425d;
+}
+.actions {
+	.action-button {
+		margin: 10px;
+	}
+}

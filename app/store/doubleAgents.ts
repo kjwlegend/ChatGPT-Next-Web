@@ -10,15 +10,10 @@ import { nanoid } from "nanoid";
 import { estimateTokenLength } from "../utils/token";
 import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
 import { ChatToolMessage } from "./chat";
+import { contextSummarize } from "../chains/summarize";
 
 export type DoubleAgentChatMessage = ChatMessage & {
-	// date: string;
-	// id: string;
-	// streaming?: boolean;
-	toolMessages?: ChatToolMessage[];
-	streaming?: boolean;
-	isError?: boolean;
-	preview?: boolean;
+	agentNum?: number;
 };
 
 export type DoubleAgentChatSession = {
@@ -35,7 +30,7 @@ export type DoubleAgentChatSession = {
 	paused?: boolean; // 是否暂停
 };
 
-export const DEFAULT_TOPIC = "未定义话题"
+export const DOUBLE_AGENT_DEFAULT_TOPIC = "未定义话题";
 
 type StoreState = {
 	user: any; // 定义用户类型
@@ -69,9 +64,11 @@ type StoreState = {
 		conversationId: string,
 		conversation: DoubleAgentChatSession,
 	) => void;
+	deleteConversation: (conversationId: string) => void;
 	// return round
 	updateRound: (conversationId: string) => { round: number };
 	getHistory: (conversationId: string) => DoubleAgentChatMessage[];
+	summarizeSession: (conversationId: string) => Promise<any>;
 };
 
 export function createDoubleAgentChatMessage(
@@ -130,7 +127,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				// 初始化其他可能的会话相关状态
 				totalRounds: 0,
 				round: 0,
-				paused: false,
+				paused: true,
 			};
 
 			return {
@@ -204,7 +201,6 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	// new messages
 	updateMessages: (conversationId: string, message: DoubleAgentChatMessage) =>
 		set((state) => {
-			console.log("message", message);
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
 					return {
@@ -212,8 +208,10 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 						messages: [...session.messages, message],
 					};
 				}
+
 				return session;
 			});
+
 			return {
 				conversations: updatedConversations,
 			};
@@ -230,6 +228,13 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				if (session.id === conversationId) {
 					// 确保消息索引在范围内
 					if (messageIndex >= 0 && messageIndex < session.messages.length) {
+						const currentMessage = session.messages[messageIndex];
+						// 检查新旧消息内容是否一致
+						if (currentMessage.content === newMessageContent) {
+							// 消息内容没有变化，无需更新
+							return session;
+						}
+
 						// 创建一个新的消息数组，其中包含更新后的消息
 						const updatedMessages = session.messages.map((message, index) => {
 							if (index === messageIndex) {
@@ -275,19 +280,36 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				if (session.id === conversationId) {
 					return conversation;
 				}
+				// 如果会话ID不匹配，则返回原始会话
 				return session;
 			});
 
 			return {
+				// 返回更新后的会话
 				conversations: updatedConversations,
 			};
 		}),
+	deleteConversation: (conversationId: string) =>
+		set((state) => {
+			const updatedConversations = state.conversations.filter(
+				(session) => session.id !== conversationId,
+			);
+			return {
+				conversations: updatedConversations,
+			};
+		}),
+
 	updateRound: (conversationId: string) => {
 		set((state) => {
-			let newRound;
+			let newRound: number = 0;
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
-					newRound = session.round + 1;
+					const newRound = session.round + 1;
+					// Check if the newRound is greater than or equal to totalRounds to pause
+					if (newRound >= session.totalRounds) {
+						console.log("pause", newRound, session.totalRounds);
+						return { ...session, round: newRound, paused: true };
+					}
 					return { ...session, round: newRound };
 				}
 				return session;
@@ -336,6 +358,55 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		}
 
 		return historyMessages; // 返回历史消息
+	},
+	summarizeSession: async (conversationId: string) => {
+		// 获取会话
+		const session = get().conversations.find(
+			(session) => session.id === conversationId,
+		);
+		if (!session) {
+			return; // 如果会话不存在，则返回
+		}
+
+		// 获取历史消息
+		const historyMessages = get().getHistory(conversationId).reverse();
+		//  获取会话并转换成字符串
+		const historyMessageString = historyMessages
+			.map((m) => m.content)
+			.join("\n");
+		// 计算会话 token, 小于1000时则不进行summarize
+		if (estimateTokenLength(historyMessageString) < 1000) {
+			console.log(
+				"historyMessageString",
+				historyMessageString,
+				"token length",
+				estimateTokenLength(historyMessageString),
+				"记忆长度小于1000，不进行summarize",
+			);
+			return "";
+		}
+
+		// 获取会话的摘要
+		const summary = await contextSummarize(historyMessages, session.memory);
+		console.log("memory in store", summary);
+
+		// 更新会话的摘要
+		set((state) => {
+			const updatedConversations = state.conversations.map((session) => {
+				if (session.id === conversationId) {
+					return {
+						...session,
+						memory: summary,
+					};
+				}
+				return session;
+			});
+
+			return {
+				conversations: updatedConversations,
+			};
+		});
+		return summary || "";
 	},
 });
 

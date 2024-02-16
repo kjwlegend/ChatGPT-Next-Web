@@ -193,26 +193,56 @@ export class ChatGPTApi implements LLMApi {
 				let finished = false;
 
 				// animate response to make it looks smooth
-				function animateResponseText() {
-					if (finished || controller.signal.aborted) {
-						responseText += remainText;
-						// console.log("[Response Animation] finished");
+				function animateResponseText(count: number) {
+					// if (finished || controller.signal.aborted) {
+					// 	responseText += remainText;
+					// 	// finish();
+					// 	return;
+					// }
+					// // console.log("responsetext", responseText, "remain", remainText);
+
+					// if (remainText.length > 0) {
+					// 	const fetchCount = Math.max(1, Math.round(remainText.length / 60));
+					// 	const fetchText = remainText.slice(0, fetchCount);
+					// 	responseText += fetchText;
+					// 	remainText = remainText.slice(fetchCount);
+					// 	options.onUpdate?.(responseText, fetchText);
+					// 	// 使用setTimeout来限制调用频率
+					// 	// setTimeout(animateResponseText, 500); // 例如，每100毫秒更新一次
+					// }
+					// requestAnimationFrame(animateResponseText);
+
+					// // setTimeout(() => {
+					// // }, 10);
+
+					if (controller.signal.aborted) {
+						// 如果动画被中止，则立即退出
 						return;
 					}
 
+					// 定义每次动画帧要添加的固定字符数
+					const fetchCount = count; // 你可以根据需要调整这个值
+
 					if (remainText.length > 0) {
-						const fetchCount = Math.max(1, Math.round(remainText.length / 60));
 						const fetchText = remainText.slice(0, fetchCount);
 						responseText += fetchText;
 						remainText = remainText.slice(fetchCount);
 						options.onUpdate?.(responseText, fetchText);
 					}
 
-					requestAnimationFrame(animateResponseText);
+					if (!finished || remainText.length > 0) {
+						// 如果动画未完成或仍有剩余文本，继续动画
+						setTimeout(() => {
+							requestAnimationFrame(animateResponseText.bind(null, 10));
+						}, 10); // 你可以根据需要调整这个时间间隔
+					} else {
+						// 如果动画完成且没有剩余文本，可以在这里调用结束回调
+						// finish();
+					}
 				}
 
 				// start animaion
-				animateResponseText();
+				animateResponseText(2);
 
 				const finish = () => {
 					if (!finished) {

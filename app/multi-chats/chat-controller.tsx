@@ -25,47 +25,10 @@ import {
 	useUserStore,
 } from "../store";
 
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "../utils";
-
-import { api } from "../client/api";
-
-import dynamic from "next/dynamic";
-
-import { ChatControllerPool } from "../client/controller";
-import { Prompt, usePromptStore } from "../store/prompt";
 import Locale from "../locales";
 
 import { IconButton } from "../components/button";
 import styles from "@/app/multi-chats/multi-chats.module.scss";
-
-import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "../components/ui-lib";
-import {
-	CHAT_PAGE_SIZE,
-	LAST_INPUT_KEY,
-	MAX_RENDER_MSG_COUNT,
-	Path,
-	REQUEST_TIMEOUT_MS,
-} from "../constant";
-import { Avatar } from "../components/emoji";
-import { Avatar as UserAvatar } from "antd";
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
 
 export function useSubmitHandler() {
 	const config = useAppConfig();

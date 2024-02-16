@@ -1,9 +1,13 @@
 import { useUserStore } from "@/app/store/user";
 import { RequestMessage, api } from "../client/api";
 import { SUMMARIZE_MODEL } from "../constant";
-
+import { ChatMessage } from "../store";
+import { DoubleAgentChatMessage } from "../store/doubleAgents";
 // 定义一个公共函数，它接受 prompt 作为参数
-export function strictLLMResult(prompt: RequestMessage[]): Promise<string> {
+export function strictLLMResult(
+	prompt: RequestMessage[] | any,
+): Promise<string> {
+	// console.log("strictLLMResult: ", prompt);
 	const chatOptions = {
 		messages: prompt,
 		config: {
@@ -18,7 +22,7 @@ export function strictLLMResult(prompt: RequestMessage[]): Promise<string> {
 		api.llm.chat({
 			...chatOptions,
 			onFinish: (message: string) => {
-				console.log("onFinish: ", message);
+				// console.log("onFinish: ", message);
 				resolve(message); // 使用 resolve 来解析 Promise
 			},
 			onError: (error: Error) => {

@@ -415,7 +415,7 @@ export class AgentApi {
 			const executor = AgentExecutor.fromAgentAndTools({
 				agent: runnableAgent,
 				tools,
-				verbose: true,
+				// verbose: true,
 			});
 
 			executor

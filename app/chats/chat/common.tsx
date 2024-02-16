@@ -77,7 +77,7 @@ import {
 	Path,
 	REQUEST_TIMEOUT_MS,
 } from "@/app/constant";
-import { Avatar } from "@/app/components/emoji";
+import { BotAvatar } from "@/app/components/emoji";
 import { Avatar as UserAvatar } from "antd";
 import {
 	ContextPrompts,

@@ -30,6 +30,7 @@ import {
 	ChatSession,
 	DEFAULT_TOPIC,
 } from "../store";
+import { DoubleAgentChatMessage } from "../store/doubleAgents";
 
 function countMessages(msgs: ChatMessage[]) {
 	return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
@@ -165,4 +166,32 @@ export async function summarizeSession(_session?: ChatSession) {
 			},
 		});
 	}
+}
+
+import { strictLLMResult } from "./basic";
+
+export async function contextSummarize(
+	message: ChatMessage[] | DoubleAgentChatMessage[],
+	historysummary: string,
+) {
+	// 将历史消息的内容和历史消息的摘要传入, 调用sendchatmessage函数 进行内容总结,并直接返回新的 summary
+	// summary messages 包含, prompt, historysummary, message
+
+	const summaryMessages = [
+		createMessage({
+			role: "system",
+			content: "这是我们之前讨论的要点摘要，请仔细阅读：" + historysummary,
+		}),
+		createMessage({
+			role: "system",
+			content:
+				"请基于刚才的对话内容和提供的摘要，精炼出一个新的总结，用于指导后续的对话。总结应简洁明了，控制在200字以内。如果现有信息不足以形成一个全面的总结，请输出'当前无足够信息提供记忆上下文'。",
+		}),
+	];
+	const newmessage = message.reverse().concat(summaryMessages);
+	console.log("newmessage: ", newmessage);
+
+	const summary = await strictLLMResult(newmessage);
+	// console.log("summary: ", summary);
+	return summary;
 }

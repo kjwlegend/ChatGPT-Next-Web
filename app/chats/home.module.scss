@@ -247,7 +247,11 @@
 	// margin-top: 8px;
 	animation: slide-in ease 0.3s;
 }
-
+.chat-item-date {
+	color: rgb(166, 166, 166);
+	font-size: 12px;
+	animation: slide-in ease 0.3s;
+}
 .chat-item-count,
 .chat-item-date {
 	overflow: hidden;

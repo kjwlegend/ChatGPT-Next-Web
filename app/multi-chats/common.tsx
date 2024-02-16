@@ -68,8 +68,7 @@ import {
 	Path,
 	REQUEST_TIMEOUT_MS,
 } from "../constant";
-import { Avatar } from "../components/emoji";
-import { Avatar as UserAvatar } from "antd";
+
 import {
 	ContextPrompts,
 	MaskAvatar,

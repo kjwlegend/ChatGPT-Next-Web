@@ -32,7 +32,7 @@ import {
 	Select,
 	showConfirm,
 } from "@/app/components/ui-lib";
-import { Avatar } from "@/app/components/emoji";
+import { BotAvatar } from "@/app/components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "@/app/locales";
 import { MaskCategory, maskCategories, MaskCategoryType } from "@/app/constant";
 
@@ -72,9 +72,9 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
 
 export function MaskAvatar(props: { mask: Mask }) {
 	return props.mask.avatar !== DEFAULT_MASK_AVATAR ? (
-		<Avatar mask={props.mask} />
+		<BotAvatar mask={props.mask} />
 	) : (
-		<Avatar mask={props.mask} />
+		<BotAvatar mask={props.mask} />
 	);
 }
 

@@ -21,6 +21,10 @@ export interface CreateChatData {
 	memory?: ChatMessage[];
 	token_count?: number;
 	model?: string;
+	round?: number;
+	agent_num?: number;
+	is_double_agent?: boolean;
+	[property: string]: any;
 }
 
 export interface ChatSessionData {
@@ -111,6 +115,18 @@ export async function createChat(data: CreateChatData) {
 			return err;
 		});
 }
+export async function createAgentChat(data: CreateChatData) {
+	return request({
+		url: `/gpt/agent-chats/`,
+		method: "post",
+		data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			// console.log(err);
+			return err;
+		});
+}
 
 // get prompthotness
 export async function getPromptHotness() {
@@ -141,8 +157,25 @@ export interface DoubleAgentData {
 
 export async function createDoubleAgentSession(data: DoubleAgentData) {
 	return request({
-		url: `/gpt/double-agent-chats/`,
+		url: `/gpt/doubleagent-chat-sessions/`,
 		method: "post",
+		data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.msg;
+		});
+}
+
+// update double agent chatSession
+
+export async function uploadDoubleAgentSession(
+	id: string,
+	data: UpdateChatSessionData,
+) {
+	return request({
+		url: `/gpt/doubleagent-chat-sessions/by_session_id/${id}/`,
+		method: "put",
 		data,
 	})
 		.then((res) => res.data)

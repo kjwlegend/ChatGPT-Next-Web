@@ -8,7 +8,6 @@ import dynamic from "next/dynamic";
 import { startConversation } from "@/app/services/doubleAgentService";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 import { useChatStore, useUserStore } from "@/app/store";
-// import AIConfigPanel from "./AIConfigPanel";
 
 const AIConfigPanel = dynamic(async () => await import("./AIConfigPanel"), {
 	ssr: false,
@@ -22,7 +21,6 @@ const ConversationWindow = dynamic(
 
 const ChatArea: React.FC = () => {
 	useEffect(() => {}, []);
-
 	return (
 		<Row gutter={16}>
 			<Col span={6}>
@@ -35,6 +33,7 @@ const ChatArea: React.FC = () => {
 				<AIConfigPanel side="right" key={"right"} />
 			</Col>
 		</Row>
+		// </>
 	);
 };
 

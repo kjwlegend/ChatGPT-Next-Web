@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useRouter } from "next/navigation";
+import { logoutAPI } from "../api/auth";
 
 export interface AuthState {
 	isAuthenticated: boolean;
@@ -25,8 +26,11 @@ export const useAuthStore = create<AuthState>()(
 					refreshToken,
 				});
 			},
-			logout: () => {
+			logout: async () => {
+				await logoutAPI();
 				set({ isAuthenticated: false, accessToken: null, refreshToken: null });
+				document.cookie = `authenticated=;`;
+				document.cookie = `expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 			},
 			getAccessToken: () => {
 				return get().accessToken;

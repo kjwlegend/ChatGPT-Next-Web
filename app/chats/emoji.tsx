@@ -34,7 +34,9 @@ export function Avatar(props: { model?: Mask; avatar?: string }) {
 		return (
 			<div className="no-dark">
 				{props.model.avatar?.startsWith("a-") ? (
-					<CustomAvatar src={`/avatars/${props.avatar}.png`} />
+					<CustomAvatar src={`/avatars/${props.avatar}.png`}>
+						{props.model.name}
+					</CustomAvatar>
 				) : (
 					<BotIcon className="user-avatar" />
 				)}

@@ -610,6 +610,23 @@ const items = [
 		color: "red",
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-02-15",
+		children: (
+			<>
+				发布 v2.0.0 版本, 小光说:
+				<ul>
+					<li>发布了AI 实验室, 开启了双AI Agent 时代!</li>
+					<li>
+						当两个AI开始进行对话时, 他们会互相学习, 互相提升,
+						到底能产生什么样的火花?
+					</li>
+				</ul>
+			</>
+		),
+		color: "red",
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

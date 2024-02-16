@@ -34,7 +34,7 @@ import {
 	Select,
 	showConfirm,
 } from "../components/ui-lib";
-import { Avatar } from "../components/emoji";
+import { BotAvatar } from "../components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
 import { MaskCategory } from "../constant";
 import { useNavigate } from "react-router-dom";
@@ -74,9 +74,9 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
 
 export function MaskAvatar(props: { mask: Mask }) {
 	return props.mask.avatar !== DEFAULT_MASK_AVATAR ? (
-		<Avatar mask={props.mask} />
+		<BotAvatar mask={props.mask} />
 	) : (
-		<Avatar mask={props.mask} />
+		<BotAvatar mask={props.mask} />
 	);
 }
 
@@ -202,7 +202,7 @@ export function MaskConfig(props: {
 					value={props.mask.modelConfig.model}
 					onChange={(e) => {
 						props.updateMask((mask) => {
-							mask.modelConfig.model = e.currentTarget.value;
+							mask.modelConfig.model = e.currentTarget.value as any;
 						});
 					}}
 				>
