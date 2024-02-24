@@ -107,6 +107,12 @@ export interface RegisterResult {
 	data: object;
 }
 
+interface ChangePasswordParams {
+	email: string;
+	reset_code: string;
+	new_password: string;
+}
+
 export async function register(params: any): Promise<any> {
 	return request
 		.post("/gpt/register/", params)
@@ -125,6 +131,36 @@ interface LoginParams {
 export async function loginAPI(params: LoginParams) {
 	return request({
 		url: "/gpt/login/",
+		method: "post",
+		data: params,
+	})
+		.then((res) => {
+			return res.data;
+		})
+		.catch((err) => {
+			// console.log(err);
+			return err;
+		});
+}
+
+export async function resetPasswordAPI(params: any) {
+	return request({
+		url: "/gpt/reset-password/",
+		method: "post",
+		data: params,
+	})
+		.then((res) => {
+			return res.data;
+		})
+		.catch((err) => {
+			// console.log(err);
+			return err.response.data;
+		});
+}
+
+export async function changePasswordAPI(params: ChangePasswordParams) {
+	return request({
+		url: "/gpt/reset-password-confirm/",
 		method: "post",
 		data: params,
 	})

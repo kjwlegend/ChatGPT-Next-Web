@@ -64,7 +64,7 @@ import { FloatButton } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { MJFloatButton } from "./midjourney";
 
-import { DoubleAgentMessageList, MessageList } from "./chatbody/MessageList";
+import { MessageList } from "./chatbody/MessageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import styles from "./chats.module.scss";
 

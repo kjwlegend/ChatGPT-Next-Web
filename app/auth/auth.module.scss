@@ -27,3 +27,12 @@
 	display: flex;
 	justify-content: space-around;
 }
+
+.modal-actions {
+	display: flex;
+	justify-content: center;
+
+	button {
+		margin-left: 20px;
+	}
+}

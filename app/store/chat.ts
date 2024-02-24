@@ -475,9 +475,17 @@ export const useChatStore = createPersistStore(
 					),
 				}));
 			},
+			sortSession() {
+				// sort sessions by lastUpdate
+				set((state) => ({
+					sessions: state.sessions.sort((a, b) => b.lastUpdate - a.lastUpdate),
+				}));
+				console.log("sortSession", get().sessions);
+			},
 
 			addSession(newSession: ChatSession) {
 				set((state) => ({ sessions: [...state.sessions, newSession] }));
+				get().sortSession();
 			},
 
 			forceUpdate: () => {
@@ -633,7 +641,7 @@ export const useChatStore = createPersistStore(
 				return {
 					role: "system",
 					content:
-						session.memoryPrompt.length > 0
+						session.memoryPrompt?.length > 0
 							? Locale.Store.Prompt.History(session.memoryPrompt)
 							: "",
 					date: "",

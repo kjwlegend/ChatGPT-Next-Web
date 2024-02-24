@@ -130,6 +130,7 @@ import {
 	OnDragUpdateResponder,
 } from "@hello-pangea/dnd";
 import { useWorkflowStore } from "../store/workflow";
+import { useAuthStore } from "../store/auth";
 
 function SessionList() {
 	const [selectIndex, setSelectIndex] = useState(0);
@@ -216,6 +217,7 @@ function SessionList() {
 export default function Chat() {
 	const chatStore = useChatStore();
 	const sessions = chatStore.sessions.filter((session) => session.isworkflow);
+	const isAuth = useAuthStore().isAuthenticated;
 
 	const items: MenuProps["items"] = GenerateMenuItems();
 
@@ -232,7 +234,35 @@ export default function Chat() {
 		<>
 			<SessionList />
 			<div className={styles["chats-container"]}>
-				{sessions.length !== 0 ? (
+				{!isAuth ? (
+					<div className={styles["welcome-container"]}>
+						<div className={styles["logo"]}>
+							<Image
+								className={styles["logo-image"]}
+								src="/logo-2.png"
+								alt="Logo"
+								width={200}
+								height={253}
+							/>
+						</div>
+						<div className={styles["title"]}>
+							您还未登录, 请登录后开启该功能
+						</div>
+
+						<div className={styles["actions"]}>
+							<Button
+								type="default"
+								className={styles["action-button"]}
+								icon={<PlusCircleOutlined />}
+								onClick={() => {
+									window.location.href = "/auth/";
+								}}
+							>
+								登录
+							</Button>
+						</div>
+					</div>
+				) : sessions.length !== 0 ? (
 					sessions.map((session, index) => (
 						<_Chat
 							key={index}

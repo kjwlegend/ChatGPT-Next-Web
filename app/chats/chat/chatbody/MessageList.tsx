@@ -31,13 +31,6 @@ interface ChatMessageListProps {
 	getMessages: (sessionId: string, page: number) => void;
 }
 
-interface DoubleAgentChatMessageListProps {
-	messages: ChatMessage[];
-	isLoading: boolean;
-	hasNextPage: boolean;
-	getMessages: (sessionId: string, page: number) => void;
-}
-
 export const MessageList: React.FC<ChatMessageListProps> = ({
 	session,
 	messages,
@@ -120,63 +113,6 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 							onDelete={handleDelete}
 							onPinMessage={handlePinMessage}
 							onPlayAudio={handlePlayAudio}
-						/>
-					</Fragment>
-				);
-			})}
-		</>
-	);
-};
-
-export const DoubleAgentMessageList: React.FC<
-	DoubleAgentChatMessageListProps
-> = ({ messages, isLoading, hasNextPage, getMessages }) => {
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		scrollRef,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
-
-	let session: any = null;
-
-	const inputRef = useRef<HTMLTextAreaElement>(null);
-	const isMobileScreen = useMobileScreen();
-
-	// const [isLoading, setIsLoading] = useState(false);
-	// const [hasNextPage, setHasNextPage] = useState(true);
-
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
-
-	// console.log("messages", messages.length, messages);
-	// if messages undefined, return null
-	if (messages[0] === undefined) {
-		return null;
-	}
-
-	return (
-		<>
-			{messages.map((message, i) => {
-				let context: RenderMessage[] = [];
-				let clearContextIndex = -1;
-
-				return (
-					<Fragment key={message.id}>
-						<AgentMessageItem
-							key={message.id}
-							i={i}
-							session={session}
-							isMobileScreen={isMobileScreen}
-							context={context}
-							clearContextIndex={clearContextIndex}
-							message={message}
 						/>
 					</Fragment>
 				);

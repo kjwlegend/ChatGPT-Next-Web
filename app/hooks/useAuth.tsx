@@ -103,11 +103,8 @@ export default function useAuth() {
 			setIsLoading(false);
 			return result;
 		} catch (error) {
-			setIsLoading(false);
-			const result = await loginAPI(params);
-			console.log(result);
-
-			throw new Error(result.msg);
+			error = "用户名或密码错误";
+			throw error;
 		}
 	};
 	const updateUserInfo = async (id: number): Promise<void> => {

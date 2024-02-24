@@ -1,5 +1,5 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, Modal } from "antd";
 import useAuth from "../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
@@ -12,6 +12,8 @@ import { useUserStore } from "../store";
 import { useChatStore } from "../store";
 import { ChatSession } from "../store";
 import { UpdateChatSessions } from "../services/chatService";
+import PasswordResetModal from "./PasswordResetModal";
+// 登录页面
 
 export default function Login() {
 	const { loginHook } = useAuth(); // 获取登录方法
@@ -23,6 +25,17 @@ export default function Login() {
 	const chatStore = useChatStore();
 
 	const [user, setUser] = useState<User | null>(null);
+
+	//  a modal to show password reset box
+	const [showResetPassword, setShowResetPassword] = useState(false);
+
+	const showModal = () => {
+		setShowResetPassword(true);
+	};
+
+	const handleCancel = () => {
+		setShowResetPassword(false);
+	};
 
 	useEffect(() => {
 		const fetchAndStoreSessions = async () => {
@@ -97,7 +110,7 @@ export default function Login() {
 			>
 				<Input
 					prefix={<UserOutlined className="site-form-item-icon" />}
-					placeholder="用户名"
+					placeholder="支持用户名或者11位手机号登录"
 				/>
 			</Form.Item>
 			<Form.Item
@@ -126,6 +139,20 @@ export default function Login() {
 					登录
 				</Button>
 			</Form.Item>
+			{/* 忘记密码 link */}
+			<Form.Item>
+				{/* 点击后会显示model */}
+				<Button type="link" onClick={showModal}>
+					忘记密码?
+				</Button>
+
+				{/* 重置密码的model */}
+				<PasswordResetModal
+					visible={showResetPassword}
+					onCancel={handleCancel}
+				/>
+			</Form.Item>
+
 			{contextHolder}
 		</Form>
 	);

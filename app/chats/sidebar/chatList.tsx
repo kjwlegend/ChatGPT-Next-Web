@@ -27,14 +27,18 @@ import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem, ChatItemShort } from "./chatItem";
 
 export function ChatList(props: { narrow?: boolean }) {
-	const [sessions, selectedIndex, selectSession, moveSession] = useChatStore(
-		(state) => [
+	const [sessions, selectedIndex, selectSession, moveSession, sortSession] =
+		useChatStore((state) => [
 			state.sessions,
 			state.currentSessionIndex,
 			state.selectSession,
 			state.moveSession,
-		],
-	);
+			state.sortSession,
+		]);
+
+	useEffect(() => {
+		sortSession();
+	}, []);
 	const chatStore = useChatStore();
 	const workflowStore = useWorkflowStore();
 	const navigate = useNavigate();
@@ -117,4 +121,3 @@ export function ChatList(props: { narrow?: boolean }) {
 		</DragDropContext>
 	);
 }
-
