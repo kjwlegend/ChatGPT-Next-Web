@@ -16,15 +16,6 @@ import CopyIcon from "../icons/copy.svg";
 import PromptIcon from "../icons/prompt.svg";
 
 import ResetIcon from "../icons/reload.svg";
-import BreakIcon from "../icons/break.svg";
-import SettingsIcon from "../icons/chat-settings.svg";
-
-import LightIcon from "../icons/light.svg";
-import DarkIcon from "../icons/dark.svg";
-import AutoIcon from "../icons/auto.svg";
-import BottomIcon from "../icons/bottom.svg";
-import StopIcon from "../icons/pause.svg";
-import RobotIcon from "../icons/robot.svg";
 
 import {
 	ChatMessage,
@@ -50,7 +41,7 @@ import { Prompt, usePromptStore } from "../store/prompt";
 import Locale from "../locales";
 
 import { IconButton } from "../components/button";
-import styles from "./multi-chats.module.scss";
+import styles from "./workflow-chats.module.scss";
 
 import {
 	List,

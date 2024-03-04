@@ -93,7 +93,7 @@ if (mode !== "export") {
         ],
       },
       {
-        source: '/multi-chats',
+        source: '/workflow-chats',
         headers: [
           {
             key: 'Cache-Control',

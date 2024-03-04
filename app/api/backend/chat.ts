@@ -183,3 +183,79 @@ export async function uploadDoubleAgentSession(
 			return err.response.msg;
 		});
 }
+
+// get / post / put / delete Workflow-sessions
+
+export interface WorkflowSessionData {
+	user: number;
+	topic?: string;
+	chat_session?: string;
+	page?: number;
+	limit?: number;
+}
+
+export async function getWorkflowSession(data: WorkflowSessionData) {
+	return request({
+		url: `/gpt/workflow-sessions/`,
+		method: "get",
+		params: data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.msg;
+		});
+}
+
+export interface CreateWorkflowSessionData {
+	user: number;
+	topic?: string;
+	chat_session?: string;
+}
+
+export async function createWorkflowSession(data: CreateWorkflowSessionData) {
+	return request({
+		url: `/gpt/workflow-sessions/`,
+		method: "post",
+		data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.msg;
+		});
+}
+
+// update workflow session
+
+export interface UpdateWorkflowSessionData {
+	topic?: string;
+	chat_session?: string;
+	[property: string]: any;
+}
+
+export async function updateWorkflowSession(
+	id: string,
+	data: UpdateWorkflowSessionData,
+) {
+	return request({
+		url: `/gpt/workflow-sessions/${id}/`,
+		method: "put",
+		data,
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.msg;
+		});
+}
+
+// delete workflow session
+
+export async function deleteWorkflowSession(id: string) {
+	return request({
+		url: `/gpt/workflow-sessions/${id}/`,
+		method: "delete",
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.response.msg;
+		});
+}

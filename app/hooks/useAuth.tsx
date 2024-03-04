@@ -159,8 +159,11 @@ export default function useAuth() {
 		await logoutAPI();
 		//clear cookie
 
-		authStore.logout();
-		userStore.clearUser();
+		setTimeout(() => {
+			authStore.logout();
+			userStore.clearUser();
+		}, 1000);
+
 		// clearAllData();
 	};
 

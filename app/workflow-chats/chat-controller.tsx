@@ -28,7 +28,7 @@ import {
 import Locale from "../locales";
 
 import { IconButton } from "../components/button";
-import styles from "@/app/multi-chats/multi-chats.module.scss";
+import styles from "@/app/workflow-chats/workflow-chats.module.scss";
 
 export function useSubmitHandler() {
 	const config = useAppConfig();

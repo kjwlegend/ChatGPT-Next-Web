@@ -9,6 +9,7 @@ import Footer from "./components/footer";
 import { type Metadata, type Viewport } from "next";
 import { version } from "./constant";
 
+import Script from "next/script";
 export const metadata: Metadata = {
 	title: "小光AI",
 	description:
@@ -48,6 +49,20 @@ export default function RootLayout({
 						version
 					}
 				></script>
+
+				<script
+					async
+					src="https://www.googletagmanager.com/gtag/js?id=G-2RS8HX8937"
+				></script>
+				<Script id="google-analytics" strategy="afterInteractive">
+					{`
+						window.dataLayer = window.dataLayer || [];
+						function gtag(){dataLayer.push(arguments);}
+						gtag('js', new Date());
+
+						gtag('config', 'G-2RS8HX8937');
+						`}
+				</Script>
 			</head>
 			<body>
 				<section className="appcontainer">
@@ -56,6 +71,11 @@ export default function RootLayout({
 					<Footer />
 				</section>
 			</body>
+
+			<script
+				async
+				src="https://www.googletagmanager.com/gtag/js?id=G-2RS8HX8937"
+			></script>
 		</html>
 	);
 }

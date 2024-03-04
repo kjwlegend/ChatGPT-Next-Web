@@ -67,6 +67,7 @@ import { MJFloatButton } from "./midjourney";
 import { MessageList } from "./chatbody/MessageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import styles from "./chats.module.scss";
+import { useAuthStore } from "@/app/store/auth";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -78,6 +79,7 @@ export function Chatbody(props: {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
 	const authHook = useAuth();
+	const { isAuthenticated } = useAuthStore();
 	const router = useRouter();
 	const { updateUserInfo } = authHook;
 
@@ -129,6 +131,7 @@ export function Chatbody(props: {
 
 	const getMessages = async (sessionid: string, page: number) => {
 		setIsLoading(true);
+		if (!isAuthenticated) return;
 		try {
 			const param = {
 				chat_session: sessionid,
@@ -265,14 +268,14 @@ export function Chatbody(props: {
 			);
 			// 如果触碰到底部且还有下一页的消息，则加载下一页的消息
 			setCurrentPage(currentPage + 1);
-			getMessages(sessionId, currentPage);
+			// getMessages(sessionId, currentPage);
 			setMsgRenderIndex(nextPageMsgIndex);
 		}
 
-		// 更新是否触碰到底部的状态
-		setHitBottom(isHitBottom);
-		// 更新是否自动滚动到底部的状态
-		setAutoScroll(isHitBottom);
+		// // 更新是否触碰到底部的状态
+		// setHitBottom(isHitBottom);
+		// // 更新是否自动滚动到底部的状态
+		// setAutoScroll(isHitBottom);
 	};
 	const checkScrollAndFetchMessages = (e: HTMLElement) => {
 		const bottomHeight = e.scrollTop + e.clientHeight;

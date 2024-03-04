@@ -108,7 +108,7 @@ import {
 } from "./chat-controller";
 import WindowHeaer from "./WindowHeader";
 import { ChatContext } from "./main";
-// import { ChatContext } from "@/app/multi-chats/context";
+// import { ChatContext } from "@/app/workflow-chats/context";
 import {
 	startSpeechToText,
 	convertTextToSpeech,

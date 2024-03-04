@@ -39,10 +39,10 @@ export const menuItems: MenuItem[] = [
 	},
 	{
 		label: "超级工作流",
-		key: "multi-chats",
+		key: "workflow-chats",
 		icon: <UsergroupAddOutlined />,
 		disabled: false,
-		url: "/multi-chats",
+		url: "/workflow-chats",
 	},
 
 	{
