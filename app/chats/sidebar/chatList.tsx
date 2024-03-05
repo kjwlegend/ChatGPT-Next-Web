@@ -1,4 +1,5 @@
 import BotIcon from "../icons/bot.png";
+import { useMemo } from "react";
 
 import { DeleteIcon } from "@/app/icons";
 
@@ -39,6 +40,12 @@ export function ChatList(props: { narrow?: boolean }) {
 	useEffect(() => {
 		sortSession();
 	}, []);
+
+	const filteredSessions = useMemo(() => {
+		//  exlude workflow chat
+		return sessions.filter((session) => session.isworkflow == false);
+	}, [sessions]);
+	// console.log("filteredSessions", filteredSessions);
 	const chatStore = useChatStore();
 	const workflowStore = useWorkflowStore();
 	const navigate = useNavigate();
@@ -86,7 +93,7 @@ export function ChatList(props: { narrow?: boolean }) {
 							ref={provided.innerRef}
 							{...provided.droppableProps}
 						>
-							{sessions.map((item, i) => (
+							{filteredSessions.map((item, i) => (
 								<ChatItem
 									title={item.topic}
 									time={new Date(item.lastUpdate).toLocaleString()}
@@ -106,7 +113,6 @@ export function ChatList(props: { narrow?: boolean }) {
 											(await showConfirm(Locale.Home.DeleteChat))
 										) {
 											chatStore.deleteSession(i, userStore);
-											workflowStore.deleteSession(item.id);
 										}
 									}}
 									narrow={props.narrow}

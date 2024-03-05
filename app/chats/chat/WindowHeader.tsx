@@ -170,7 +170,7 @@ export function PromptToast(props: {
 	}
 	const sessionId = session.id;
 
-	const context = session.mask.context;
+	const context = session.mask?.context;
 
 	return (
 		<div className={styles["prompt-toast"]} key="prompt-toast">
@@ -234,7 +234,7 @@ function WindowHeaderTitle({
 					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
 				</div>
 				<div className="window-header-sub-title">
-					{Locale.Chat.SubTitle(currentSession.messages.length)}
+					{Locale.Chat.SubTitle(currentSession.messages?.length ?? 0)}
 				</div>
 			</div>
 			{isEditingMessage && (

@@ -179,12 +179,12 @@ function Screen() {
 		const expiresTimeStamp = Date.parse(expires);
 		const currentTimeStamp = Date.now();
 		console.log("expiresTimeStamp", expiresTimeStamp);
-		if (currentTimeStamp > expiresTimeStamp) {
+		if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
 			console.log("cookie已过期");
 			message.error("登录已过期，请重新登录");
 			logoutHook()
 				.then(() => {
-					window.location.reload();
+					// window.location.reload();
 				})
 				.catch((e) => {
 					console.log("logout error", e);

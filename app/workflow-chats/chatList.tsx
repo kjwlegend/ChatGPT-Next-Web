@@ -32,20 +32,8 @@ import usedoubleAgent, {
 import { useWorkflowContext } from "./workflowContext";
 
 export function WorkflowChatList(props: { narrow?: boolean }) {
-	const {
-		conversations,
-		currentConversationId,
-		startNewConversation,
-		setCurrentConversationId,
-		deleteConversation,
-	} = usedoubleAgent();
-
-	const { workflowGroup, selectedIndex, deleteWorkflowGroup } =
+	const { workflowGroup, selectedId, setselectedId, deleteWorkflowGroup } =
 		useWorkflowContext();
-
-	const [sortedSessions, setSortedSessions] = useState<
-		DoubleAgentChatSession[]
-	>([]);
 
 	// 将conversations 排序 并更新到 sortedSessions
 	// 排序 workflowGroup 中的会话
@@ -73,7 +61,7 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 	// };
 
 	const itemClickHandler = (item: any) => {
-		setCurrentConversationId(item.id);
+		setselectedId(item.id);
 		// getMessages(item.id);
 		console.log("item", item);
 	};
@@ -109,7 +97,7 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 									key={item.id}
 									id={item.id}
 									index={i}
-									selected={item.id === currentConversationId}
+									selected={item.id === selectedId}
 									onClick={() => {
 										itemClickHandler(item);
 									}}
@@ -122,7 +110,6 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 										}
 									}}
 									narrow={props.narrow}
-									mask={item.sessions[0]?.mask ?? {}}
 								/>
 							))}
 							{provided.placeholder}

@@ -17,7 +17,11 @@ import { useMaskStore } from "../store/mask";
 import BrainIcon from "../icons/brain.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { WorkflowContext, WorkflowProvider } from "./workflowContext";
+import {
+	WorkflowContext,
+	WorkflowProvider,
+	useWorkflowContext,
+} from "./workflowContext";
 
 import styles from "@/app/workflow-chats/workflow-chats.module.scss";
 import styles2 from "@/app/chats/home.module.scss";
@@ -35,6 +39,16 @@ import type { MenuProps } from "antd";
 import { ChatItemShort } from "../chats/sidebar/chatItem";
 
 import { _Chat } from "../chats/chat/main";
+import {
+	DragDropContext,
+	Droppable,
+	Draggable,
+	OnDragEndResponder,
+	OnDragUpdateResponder,
+} from "@hello-pangea/dnd";
+import { useWorkflowStore } from "../store/workflow";
+import { useAuthStore } from "../store/auth";
+import { WorkflowSidebar } from "./sidebar";
 
 import Image from "next/image";
 
@@ -57,28 +71,18 @@ const GenerateMenuItems = () => {
 	const userStore = useUserStore();
 	const maskStore = useMaskStore().getAll();
 
+	const { selectedId, addSessionToGroup } = useWorkflowStore();
+
 	const _isworkflow = true;
 
-	function setworkflow(_session: ChatSession) {
-		chatStore.setworkflow(_session, _isworkflow);
-	}
-
-	const allSessions = chatStore.sessions;
-
-	const sessionItems = allSessions.map((item) => ({
-		key: item.id,
-		label: item.topic,
-		onClick: () => {
-			setworkflow(item);
-		},
-	}));
-
-	const handleMaskClick = (mask: any) => {
-		const newsession: ChatSession = chatStore.newSession(
+	const handleMaskClick = async (mask: any) => {
+		const newsession: ChatSession = await chatStore.newSession(
 			mask,
 			userStore,
 			_isworkflow,
 		);
+
+		addSessionToGroup(selectedId, newsession.id);
 	};
 
 	const maskItems = Object.values(maskStore).reduce(
@@ -122,34 +126,35 @@ const GenerateMenuItems = () => {
 	return [
 		{
 			key: "1",
-			label: "选择已有对话",
-			children: sessionItems,
-		},
-		{
-			key: "2",
-			label: "新建其他助手",
+			label: "选择助手",
 			children: maskItems,
 		},
 	];
 };
 
-import {
-	DragDropContext,
-	Droppable,
-	Draggable,
-	OnDragEndResponder,
-	OnDragUpdateResponder,
-} from "@hello-pangea/dnd";
-import { useWorkflowStore } from "../store/workflow";
-import { useAuthStore } from "../store/auth";
-import { WorkflowSidebar } from "./sidebar";
-
 function AgentList() {
 	const [selectIndex, setSelectIndex] = useState(0);
-	const { moveSession, setworkflow } = useChatStore();
-	const chatStore = useChatStore();
-	const sessions = chatStore.sessions.filter((session) => session.isworkflow);
-	// console.log("sessions", sessions);
+	const { selectedId, workflowGroup, deleteSessionFromGroup, moveSession } =
+		useWorkflowContext();
+	const chatstore = useChatStore();
+	const sessionIds = workflowGroup[selectedId]?.sessions;
+	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
+
+	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
+
+	useEffect(() => {
+		// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
+		const updatedSessions =
+			sessionIds
+				?.map((sessionId) =>
+					chatstore.sessions.find((session) => session.id === sessionId),
+				)
+				.filter((session): session is ChatSession => session !== undefined) ??
+			[]; // 使用类型保护来过滤 undefined 值
+
+		setOrderedSessions(updatedSessions);
+		console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
+	}, [sessionIds, chatstore.sessions]); // 添加 chatstore.sessions 作为依赖项
 
 	const items: MenuProps["items"] = GenerateMenuItems();
 
@@ -166,45 +171,56 @@ function AgentList() {
 		) {
 			return;
 		}
-		moveSession(source.index, destination.index, sessions);
+		moveSession(selectedId, source.index, destination.index);
 		setSelectIndex(destination.index);
 	};
 
+	const itemClickHandler = (item: any, i: number) => {
+		console.log("item", item);
+		setSelectIndex(i);
+	};
+
+	const itemDeleteHandler = async (item: any) => {
+		console.log("item", item);
+		deleteSessionFromGroup(selectedId, item.id);
+	};
+
 	return (
-		<>
+		<WorkflowProvider>
 			<div className={styles["session-container"]}>
-				<DragDropContext onDragEnd={onDragEnd}>
-					<Droppable droppableId="chat-list" direction="horizontal">
-						{(provided) => (
-							<div
-								className={styles["session-list"]}
-								ref={provided.innerRef}
-								{...provided.droppableProps}
-							>
-								{sessions.map((item, i) => (
-									<ChatItemShort
-										title={item.topic}
-										time={new Date(item.lastUpdate).toLocaleString()}
-										count={item.messages.length}
-										key={item.id}
-										id={item.id}
-										index={i}
-										selected={i === selectIndex}
-										onClick={() => {
-											setSelectIndex(i);
-											console.log("setSelectIndex", i);
-										}}
-										onDelete={async () => {
-											setworkflow(item, false);
-										}}
-										mask={item.mask}
-									/>
-								))}
-								{provided.placeholder}
-							</div>
-						)}
-					</Droppable>
-				</DragDropContext>
+				{orderedSessions && (
+					<DragDropContext onDragEnd={onDragEnd}>
+						<Droppable droppableId="chat-list" direction="horizontal">
+							{(provided) => (
+								<div
+									className={styles["session-list"]}
+									ref={provided.innerRef}
+									{...provided.droppableProps}
+								>
+									{orderedSessions.map((item, i) => (
+										<ChatItemShort
+											title={item.topic}
+											time={new Date(item.lastUpdate).toLocaleString()}
+											count={item.messages.length}
+											key={item.id}
+											id={item.id}
+											index={i}
+											selected={i === selectIndex}
+											onClick={() => {
+												itemClickHandler(item, i);
+											}}
+											onDelete={async () => {
+												itemDeleteHandler(item);
+											}}
+											mask={item.mask}
+										/>
+									))}
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+					</DragDropContext>
+				)}
 
 				{/* button 样式 新增session */}
 
@@ -222,13 +238,33 @@ function AgentList() {
 					</a>
 				</Dropdown>
 			</div>
-		</>
+		</WorkflowProvider>
 	);
 }
 
 export default function Chat() {
 	const chatStore = useChatStore();
-	const sessions = chatStore.sessions.filter((session) => session.isworkflow);
+
+	const { selectedId, workflowGroup } = useWorkflowStore();
+	const sessionIds = workflowGroup[selectedId]?.sessions;
+
+	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
+
+	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
+
+	useEffect(() => {
+		// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
+		const updatedSessions =
+			sessionIds
+				?.map((sessionId) =>
+					chatStore.sessions.find((session) => session.id === sessionId),
+				)
+				.filter((session): session is ChatSession => session !== undefined) ??
+			[]; // 使用类型保护来过滤 undefined 值
+
+		setOrderedSessions(updatedSessions);
+		console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
+	}, [sessionIds, chatStore.sessions]); // 添加 chatstore.sessions 作为依赖项
 	const isAuth = useAuthStore().isAuthenticated;
 
 	const items: MenuProps["items"] = GenerateMenuItems();
@@ -279,8 +315,8 @@ export default function Chat() {
 									</Button>
 								</div>
 							</div>
-						) : sessions.length !== 0 ? (
-							sessions.map((session, index) => (
+						) : orderedSessions.length !== 0 ? (
+							orderedSessions.map((session, index) => (
 								<_Chat
 									key={index}
 									_session={session}

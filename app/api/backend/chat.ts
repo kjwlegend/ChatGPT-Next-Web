@@ -58,6 +58,20 @@ export async function getChatSession(data: ChatSessionData) {
 			return err.response.data;
 		});
 }
+
+//  get single session
+export async function getSingleChatSession(id: string) {
+	return request({
+		url: `/gpt/chat-sessions/by_session_id/${id}/`,
+		method: "get",
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			// console.log(err);
+			return err.response.data;
+		});
+}
+
 // update chatSession
 
 export interface UpdateChatSessionData {
@@ -228,7 +242,7 @@ export async function createWorkflowSession(data: CreateWorkflowSessionData) {
 
 export interface UpdateWorkflowSessionData {
 	topic?: string;
-	chat_session?: string;
+	chat_session?: string[];
 	[property: string]: any;
 }
 

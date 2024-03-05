@@ -208,14 +208,16 @@ import { createEmptyMask } from "../store/mask";
 // 获取服务器对话列表
 export function UpdateChatSessions(newSessionsData: any[]) {
 	const chatStore = useChatStore.getState();
-	// console.log("newSessionsData: ", newSessionsData);
+	console.log("newSessionsData: ", newSessionsData);
 	// 遍历接口返回的会话数据
+
 	newSessionsData.forEach((sessionData) => {
 		// 检查chatstore.sessions中是否已经存在该会话
+
 		const exists = chatStore.sessions.some(
 			(s) => s.id === sessionData.session_id,
 		);
-		// console.log("exists: ", exists, "sessionData: ", sessionData);
+		console.log("exists: ", exists, "sessionData: ", sessionData);
 
 		// 如果不存在，则创建一个新的ChatSession对象并添加到chatstore.sessions中
 		if (!exists) {

@@ -16,7 +16,7 @@ import Locale from "../../locales";
 import { Link, useNavigate } from "react-router-dom";
 import { Path } from "../../constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
-import { Mask } from "../../store/mask";
+import { DEFAULT_MASK_AVATAR, Mask, createEmptyMask } from "../../store/mask";
 import { useRef, useEffect, useState, useCallback } from "react";
 
 export function ChatItem(props: {
@@ -29,9 +29,17 @@ export function ChatItem(props: {
 	id: string;
 	index: number;
 	narrow?: boolean;
-	mask: Mask;
+	mask?: Mask;
 }) {
 	const draggableRef = useRef<HTMLDivElement | null>(null);
+
+	let mask: Mask;
+	if (!props.mask) {
+		mask = createEmptyMask();
+	} else {
+		mask = props.mask;
+	}
+
 	useEffect(() => {
 		if (props.selected && draggableRef.current) {
 			draggableRef.current?.scrollIntoView({
@@ -60,7 +68,7 @@ export function ChatItem(props: {
 					{props.narrow ? (
 						<div className={styles["chat-item-narrow"]}>
 							<div className={styles["chat-item-avatar"] + " no-dark"}>
-								<MaskAvatar mask={props.mask} />
+								<MaskAvatar mask={mask} />
 							</div>
 						</div>
 					) : (

@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ChatSession } from "./chat";
-import { createWorkflowSession } from "../api/backend/chat";
+import {
+	createWorkflowSession,
+	deleteWorkflowSession,
+	updateWorkflowSession,
+} from "../api/backend/chat";
 import { useUserStore } from "./user";
 import { nanoid } from "nanoid";
 
@@ -11,35 +15,35 @@ type State = {
 			id: string;
 			name: string;
 			lastUpdateTime: string;
-			sessions: ChatSession[];
+			sessions: string[];
 		};
 	};
-	selectedIndex: number;
-	setSelectedIndex: (index: number) => void;
-	addWorkflowGroup: (userid: number, groupName: string) => void;
+	selectedId: string;
+	setselectedId: (index: string) => void;
+	addWorkflowGroup: (groupId: string, groupName: string) => void;
+	updateWorkflowGroup: (
+		groupId: string,
+		groupName: string,
+		lastUpdateTime: string,
+		sessions: string[],
+	) => void;
 	deleteWorkflowGroup: (groupId: string) => void;
-	addSessionToGroup: (groupId: string, session: ChatSession) => void;
+	addSessionToGroup: (groupId: string, session: string) => Promise<void>;
 	moveSession: (
 		groupId: string,
 		sourceIndex: number,
 		destinationIndex: number,
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
+	getWorkflowSessionId: (groupId: string) => string[];
 };
 export const useWorkflowStore = create<State>()(
 	persist(
 		(set, get) => ({
 			workflowGroup: {},
-			selectedIndex: 0,
-			setSelectedIndex: (index) => set({ selectedIndex: index }),
-			addWorkflowGroup: async (userid, groupName) => {
-				const res = await createWorkflowSession({
-					user: userid,
-					topic: groupName,
-				});
-
-				const groupId = res.data.id || nanoid();
-
+			selectedId: "",
+			setselectedId: (index) => set({ selectedId: index }),
+			addWorkflowGroup: (groupId, groupName) => {
 				set((state) => ({
 					workflowGroup: {
 						...state.workflowGroup,
@@ -51,8 +55,23 @@ export const useWorkflowStore = create<State>()(
 						},
 					},
 				}));
+
+				get().setselectedId(groupId);
 			},
-			deleteWorkflowGroup: (groupId) =>
+			updateWorkflowGroup: (groupId, groupName, lastUpdateTime, sessions) => {
+				set((state) => ({
+					workflowGroup: {
+						...state.workflowGroup,
+						[groupId]: {
+							id: groupId,
+							name: groupName,
+							lastUpdateTime: lastUpdateTime,
+							sessions: sessions,
+						},
+					},
+				}));
+			},
+			deleteWorkflowGroup: (groupId) => {
 				set((state) => ({
 					workflowGroup: Object.keys(state.workflowGroup)
 						.filter((key) => key !== groupId)
@@ -60,8 +79,9 @@ export const useWorkflowStore = create<State>()(
 							(obj, key) => ({ ...obj, [key]: state.workflowGroup[key] }),
 							{},
 						),
-				})),
-			addSessionToGroup: (groupId, session) =>
+				}));
+			},
+			addSessionToGroup: async (groupId, session) => {
 				set((state) => ({
 					workflowGroup: {
 						...state.workflowGroup,
@@ -70,8 +90,18 @@ export const useWorkflowStore = create<State>()(
 							sessions: [...state.workflowGroup[groupId].sessions, session],
 						},
 					},
-				})),
-			moveSession: (groupId, sourceIndex, destinationIndex) =>
+				}));
+
+				const newSessions = get().getWorkflowSessionId(groupId);
+				const res = await updateWorkflowSession(groupId, {
+					chat_sessions: newSessions,
+					user: useUserStore.getState().user.id,
+				});
+				if (res.code === 401) {
+					throw new Error("登录状态已过期, 请重新登录");
+				}
+			},
+			moveSession: async (groupId, sourceIndex, destinationIndex) => {
 				set((state) => {
 					const group = state.workflowGroup[groupId];
 					const newSessions = [...group.sessions];
@@ -83,12 +113,13 @@ export const useWorkflowStore = create<State>()(
 							[groupId]: { ...group, sessions: newSessions },
 						},
 					};
-				}),
-			deleteSessionFromGroup: (groupId, sessionId) =>
+				});
+			},
+			deleteSessionFromGroup: (groupId, sessionId) => {
 				set((state) => {
 					const group = state.workflowGroup[groupId];
 					const newSessions = group.sessions.filter(
-						(session) => session.id !== sessionId,
+						(session) => session !== sessionId,
 					);
 					return {
 						workflowGroup: {
@@ -96,7 +127,14 @@ export const useWorkflowStore = create<State>()(
 							[groupId]: { ...group, sessions: newSessions },
 						},
 					};
-				}),
+				});
+			},
+			getWorkflowSessionId: (groupId: string) => {
+				// get all sessions id from one group and return as a list
+				const group = get().workflowGroup[groupId];
+				const sessions = group ? group.sessions : [];
+				return sessions;
+			},
 		}),
 		{
 			name: "workflow-store",

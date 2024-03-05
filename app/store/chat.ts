@@ -286,9 +286,14 @@ export const useChatStore = createPersistStore(
 				});
 			},
 
-			newSession(mask?: Mask, userStore?: UserStore, isworkflow?: boolean) {
+			async newSession(
+				mask?: Mask,
+				userStore?: UserStore,
+				isworkflow?: boolean,
+			) {
 				const config = useAppConfig.getState();
 				const session = createEmptySession();
+				const userId = useUserStore.getState().user.id;
 				const globalModelConfig = config.modelConfig;
 
 				// 使用类型守卫来检查 'id' 属性是否存在
@@ -317,7 +322,6 @@ export const useChatStore = createPersistStore(
 
 				// 处理 userStore 相关逻辑
 				if (userStore) {
-					const userId = userStore.user.id;
 					const promptId = isCustomMask ? "100000" : session.mask.id;
 					const data = {
 						user: userId,
@@ -331,13 +335,19 @@ export const useChatStore = createPersistStore(
 					};
 
 					// 使用 async/await 优化异步请求处理
-					createChatSession(data)
-						.then((res) => {
-							session.id = res.data.session_id;
-						})
-						.catch((err) => {
-							console.error("Failed to create chat session", err);
-						});
+					const res = await createChatSession(data);
+
+					// 如果 res.code 为 4000 或 401，抛出错误
+					if (res.code === 4000 || res.code === 401) {
+						const response = {
+							code: res.code,
+							message: res.msg,
+						};
+
+						throw response;
+					}
+
+					session.id = res.data.session_id || nanoid();
 				}
 
 				set((state) => ({
@@ -480,7 +490,7 @@ export const useChatStore = createPersistStore(
 				set((state) => ({
 					sessions: state.sessions.sort((a, b) => b.lastUpdate - a.lastUpdate),
 				}));
-				console.log("sortSession", get().sessions);
+				// console.log("sortSession", get().sessions);
 			},
 
 			addSession(newSession: ChatSession) {

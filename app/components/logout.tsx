@@ -19,7 +19,7 @@ const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
 		auth.logoutHook();
 		// router.push("/about");
 		// chatStore.clearChatData();
-		router.push("/chats");
+		// router.push("/chats");
 		// location.reload();
 	};
 

@@ -170,46 +170,54 @@ export function WorkflowSidebar(props: { className?: string }) {
 	const [hasMore, setHasMore] = useState(true);
 	const listRef = useRef<HTMLDivElement | null>(null);
 
-	const { addWorkflowGroup, deleteWorkflowGroup } = useWorkflowContext();
+	const { addWorkflowGroup, deleteWorkflowGroup, getworkFlowSessions } =
+		useWorkflowContext();
 
-	// 加载更多会话
-	// const loadMoreSessions = async () => {
-	// 	if (hasMore) {
-	// 		const param: ChatSessionData = {
-	// 			user: userStore.user.id,
-	// 			limit: 20,
-	// 			page: page, // 使用当前页码
-	// 		};
-	// 		try {
-	// 			const chatSessionList = await getChatSession(param);
-	// 			console.log("chatSessionList", chatSessionList.data);
-	// 			UpdateChatSessions(chatSessionList.data);
-	// 			setPage((prevPage) => prevPage + 1);
-	// 			setHasMore(chatSessionList.is_next); // 根据返回的is_next更新是否还有更多数据
-	// 		} catch (error) {
-	// 			console.log("get chatSession list error", error);
-	// 		}
-	// 	}
-	// };
+	let prevPage = page;
+	const loadMoreSessions = async () => {
+		if (hasMore) {
+			const param: ChatSessionData = {
+				user: userStore.user.id,
+				limit: 15,
+				page: prevPage, // 使用当前页码
+			};
+			try {
+				const chatSessionList = await getworkFlowSessions(param);
+				// UpdateChatSessions(chatSessionList.data);
+				if (chatSessionList.is_next) {
+					setPage(prevPage + 1);
+					console.log("page", page);
+					setHasMore(chatSessionList.is_next); // 根据返回的is_next更新是否还有更多数据
+				} else {
+					setHasMore(false);
+				}
+			} catch (error) {
+				console.log("get chatSession list error", error);
+			}
+		}
+	};
+
 	useEffect(() => {
+		// 取消注释掉 loadMoreSessions 调用
+		loadMoreSessions();
 		const handleScroll = (event: Event) => {
 			const target = event.target as HTMLDivElement;
 			const { scrollTop, clientHeight, scrollHeight } = target;
 			if (scrollTop + clientHeight >= scrollHeight - 100) {
-				// loadMoreSessions();
+				loadMoreSessions();
 			}
 		};
 		const listElement = listRef.current; // 通过ref获取DOM元素
 		if (listElement) {
 			listElement.addEventListener("scroll", handleScroll);
 		}
-
+		// 返回一个函数来移除事件监听器
 		return () => {
-			if (listElement) {
+			if (listElement && listElement.removeEventListener) {
 				listElement.removeEventListener("scroll", handleScroll);
 			}
 		};
-	}, [hasMore, page]); // 依赖项数组
+	}, [page]); // 移除了 hasMore，因为它的值在组件挂载后不会改变
 
 	if (isMobileScreen && !authStore.isAuthenticated) {
 		return (
