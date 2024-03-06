@@ -324,7 +324,7 @@ export default function Chat() {
 									isworkflow={true}
 								/>
 							))
-						) : (
+						) : workflowGroup && orderedSessions.length == 0 ? (
 							<div className={styles["welcome-container"]}>
 								<div className={styles["logo"]}>
 									<Image
@@ -360,6 +360,37 @@ export default function Chat() {
 									<p>该功能属于会员功能, 目前限时开放.</p>
 								</div>
 								<div className={styles["actions"]}></div>
+							</div>
+						) : (
+							//  点击新增对话
+
+							<div className={styles["welcome-container"]}>
+								<div className={styles["logo"]}>
+									<Image
+										className={styles["logo-image"]}
+										src="/logo-2.png"
+										alt="Logo"
+										width={200}
+										height={253}
+									/>
+								</div>
+								<div className={styles["title"]}>
+									<Dropdown
+										menu={{ items }}
+										autoAdjustOverflow={true}
+										autoFocus={true}
+									>
+										<a onClick={(e) => e.preventDefault()}>
+											<Button
+												type="dashed"
+												className={styles["plus"]}
+												icon={<PlusCircleOutlined />}
+											>
+												新增对话
+											</Button>
+										</a>
+									</Dropdown>{" "}
+								</div>
 							</div>
 						)}
 					</div>
