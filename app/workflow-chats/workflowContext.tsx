@@ -13,7 +13,7 @@ import {
 import { group } from "console";
 import { UpdateChatSessions } from "../services/chatService";
 
-const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
+export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
 // 定义WorkflowContext接口
 interface WorkflowContextType {

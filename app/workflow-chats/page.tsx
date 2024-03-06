@@ -13,6 +13,19 @@ import { useChatStore, useUserStore, ChatSession } from "../store";
 import { ChatControllerPool } from "../client/controller";
 import { Prompt, usePromptStore } from "../store/prompt";
 import { useMaskStore } from "../store/mask";
+import Locale from "../locales";
+
+import {
+	SettingsIcon,
+	GithubIcon,
+	ChatGptIcon,
+	AddIcon,
+	CloseIcon,
+	DeleteIcon,
+	MaskIcon,
+	PluginIcon,
+	DragIcon,
+} from "@/app/icons";
 
 import BrainIcon from "../icons/brain.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -22,6 +35,8 @@ import {
 	WorkflowProvider,
 	useWorkflowContext,
 } from "./workflowContext";
+
+import { createWorkflowSession } from "../api/backend/chat";
 
 import styles from "@/app/workflow-chats/workflow-chats.module.scss";
 import styles2 from "@/app/chats/home.module.scss";
@@ -49,9 +64,10 @@ import {
 import { useWorkflowStore } from "../store/workflow";
 import { useAuthStore } from "../store/auth";
 import { WorkflowSidebar } from "./sidebar";
-
+import { message } from "antd";
 import Image from "next/image";
-
+import { IconButton } from "../components/button";
+import { WORKFLOW_DEFAULT_TITLE } from "./workflowContext";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -245,12 +261,15 @@ function AgentList() {
 export default function Chat() {
 	const chatStore = useChatStore();
 
-	const { selectedId, workflowGroup } = useWorkflowStore();
+	const { selectedId, workflowGroup, addWorkflowGroup } = useWorkflowStore();
 	const sessionIds = workflowGroup[selectedId]?.sessions;
 
 	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
 
+	const [messageApi, contextHolder] = message.useMessage();
+
 	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
+	// checkout workflowGoup is not an empty object
 
 	useEffect(() => {
 		// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
@@ -266,8 +285,32 @@ export default function Chat() {
 		console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
 	}, [sessionIds, chatStore.sessions]); // 添加 chatstore.sessions 作为依赖项
 	const isAuth = useAuthStore().isAuthenticated;
+	const userid = useUserStore.getState().user.id;
 
 	const items: MenuProps["items"] = GenerateMenuItems();
+
+	const addWorkflowGroupHandler = useCallback(async () => {
+		messageApi.open({
+			content: "工作流组创建中",
+			type: "loading",
+		});
+		try {
+			const res = await createWorkflowSession({
+				user: userid,
+				topic: WORKFLOW_DEFAULT_TITLE,
+			});
+
+			if (res.code === 401) {
+				throw new Error("登录状态已过期, 请重新登录");
+			}
+
+			await addWorkflowGroup(res.data.id, WORKFLOW_DEFAULT_TITLE);
+			messageApi.destroy();
+			messageApi.success("工作流组创建成功");
+		} catch (error: any) {
+			messageApi.error(`工作流组创建失败: ${error}`);
+		}
+	}, [addWorkflowGroup]);
 
 	if (!useHasHydrated()) {
 		return (
@@ -285,7 +328,7 @@ export default function Chat() {
 				<Layout
 					className={`${styles2["window-content"]} ${styles["background"]}`}
 				>
-					<AgentList />
+					{selectedId != "" && <AgentList />}
 					<div className={styles["chats-container"]}>
 						{!isAuth ? (
 							<div className={styles["welcome-container"]}>
@@ -324,7 +367,8 @@ export default function Chat() {
 									isworkflow={true}
 								/>
 							))
-						) : workflowGroup && orderedSessions.length == 0 ? (
+						) : Object.keys(workflowGroup).length != 0 &&
+						  orderedSessions.length == 0 ? (
 							<div className={styles["welcome-container"]}>
 								<div className={styles["logo"]}>
 									<Image
@@ -375,21 +419,16 @@ export default function Chat() {
 									/>
 								</div>
 								<div className={styles["title"]}>
-									<Dropdown
-										menu={{ items }}
-										autoAdjustOverflow={true}
-										autoFocus={true}
+									您还没有建立对话, 点击{" "}
+									<Button
+										type="dashed"
+										className={styles["plus"]}
+										icon={<PlusCircleOutlined />}
+										onClick={() => addWorkflowGroupHandler()}
 									>
-										<a onClick={(e) => e.preventDefault()}>
-											<Button
-												type="dashed"
-												className={styles["plus"]}
-												icon={<PlusCircleOutlined />}
-											>
-												新增对话
-											</Button>
-										</a>
-									</Dropdown>{" "}
+										新建对话
+									</Button>
+									按钮开始
 								</div>
 							</div>
 						)}

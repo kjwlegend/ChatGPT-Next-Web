@@ -80,6 +80,15 @@ export const useWorkflowStore = create<State>()(
 							{},
 						),
 				}));
+				// when delete the last workflow group, set selectedId to empty
+				if (Object.keys(get().workflowGroup).length === 0) {
+					get().setselectedId("");
+				}
+				// when delete the selected workflow group, set selectedId to the first group
+				if (get().selectedId === groupId) {
+					const firstGroup = Object.keys(get().workflowGroup)[0];
+					get().setselectedId(firstGroup);
+				}
 			},
 			addSessionToGroup: async (groupId, session) => {
 				set((state) => ({
