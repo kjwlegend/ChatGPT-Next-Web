@@ -661,6 +661,30 @@ const items = [
 			</>
 		),
 	},
+	{
+		label: "2024-03-08",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.1.1 版本, 小光说:
+				<ul>
+					<li>修复普通对话列表的bug</li>
+				</ul>
+			</>
+		),
+	},
+	{
+		label: "2024-03-10",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.1.2 版本, 小光说:
+				<ul>
+					<li>增加工作流对话的标题和描述更新</li>
+				</ul>
+			</>
+		),
+	},
 ];
 
 const Log = () => {

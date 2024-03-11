@@ -17,7 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Path } from "../constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
 import { Mask } from "../store/mask";
-import { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { showConfirm } from "@/app/components/ui-lib";
 import { useUserStore } from "../store";
 import { useWorkflowStore } from "../store/workflow";
@@ -25,11 +25,13 @@ import { useMobileScreen } from "../utils";
 import { ChatData, getChat } from "../api/backend/chat";
 import { UpdateChatMessages } from "../services/chatService";
 import { ChatItem } from "../double-agents/components/chatItem";
-
+import { Modal } from "@/app/components/ui-lib";
 import usedoubleAgent, {
 	DoubleAgentChatSession,
 } from "@/app/store/doubleAgents";
+import { workflowGroup } from "../store/workflow";
 import { useWorkflowContext } from "./workflowContext";
+import { WorkflowModalConfig } from "./modal";
 
 export function WorkflowChatList(props: { narrow?: boolean }) {
 	const { workflowGroup, selectedId, setselectedId, deleteWorkflowGroup } =
@@ -44,26 +46,9 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 	});
 	const isMobileScreen = useMobileScreen();
 
-	// const getMessages = async (sessionid: string) => {
-	// 	const param: ChatData = {
-	// 		chat_session: sessionid,
-	// 		user: userStore.user.id,
-	// 		limit: 60,
-	// 	};
-	// 	try {
-	// 		const chatSessionList = await getChat(param);
-	// 		// console.log("chatSessionList", chatSessionList.data);
-	// 		// 直接使用 chatStore 的方法更新 sessions
-	// 		UpdateChatMessages(param.chat_session, chatSessionList.data);
-	// 	} catch (error) {
-	// 		console.log("get chatSession list error", error);
-	// 	}
-	// };
-
 	const itemClickHandler = (item: any) => {
 		setselectedId(item.id);
 		// getMessages(item.id);
-		console.log("item", item);
 	};
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
@@ -77,6 +62,14 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 		) {
 			return;
 		}
+	};
+
+	// add the workflow modal, and trigger the modal when the add button is clicked
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [modalContent, setModalContent] = useState<any>(null);
+	const showModal = (item: any) => {
+		setIsModalVisible(true);
+		setModalContent(item);
 	};
 
 	return (
@@ -109,9 +102,19 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 											deleteWorkflowGroup(item.id);
 										}
 									}}
+									onEdit={() => {
+										// 打开编辑对话框
+										showModal(item);
+									}}
 									narrow={props.narrow}
 								/>
 							))}
+							{isModalVisible && (
+								<WorkflowModalConfig
+									onClose={() => setIsModalVisible(false)}
+									workflow={modalContent}
+								/>
+							)}
 							{provided.placeholder}
 						</div>
 					);

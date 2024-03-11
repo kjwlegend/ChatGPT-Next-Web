@@ -218,6 +218,7 @@ function fillTemplateWith(input: string, modelConfig: ModelConfig) {
 const DEFAULT_CHAT_STATE = {
 	sessions: [createEmptySession()],
 	currentSessionIndex: 0,
+	currentSessionId: "",
 };
 
 export const useChatStore = createPersistStore(
@@ -241,7 +242,16 @@ export const useChatStore = createPersistStore(
 			selectSession(index: number) {
 				set({
 					currentSessionIndex: index,
+					currentSessionId: get().sessions[index].id,
 				});
+			},
+			selectSessionById(id: string) {
+				const index = get().sessions.findIndex((s) => s.id === id);
+				if (index !== -1) {
+					get().selectSession(index);
+				}
+
+				set(() => ({ currentSessionId: id }));
 			},
 
 			moveSession(from: number, to: number, _sessions?: any) {

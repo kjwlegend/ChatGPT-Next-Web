@@ -9,11 +9,20 @@ import {
 import { useUserStore } from "./user";
 import { nanoid } from "nanoid";
 
+export interface workflowGroup {
+	id: string;
+	name: string;
+	description: string;
+	lastUpdateTime: string;
+	sessions: string[];
+}
+
 type State = {
 	workflowGroup: {
 		[groupId: string]: {
 			id: string;
 			name: string;
+			description: string;
 			lastUpdateTime: string;
 			sessions: string[];
 		};
@@ -23,10 +32,13 @@ type State = {
 	addWorkflowGroup: (groupId: string, groupName: string) => void;
 	updateWorkflowGroup: (
 		groupId: string,
-		groupName: string,
-		lastUpdateTime: string,
-		sessions: string[],
+		updates: {
+			groupName?: string;
+			lastUpdateTime?: string;
+			sessions?: string[];
+		},
 	) => void;
+
 	deleteWorkflowGroup: (groupId: string) => void;
 	addSessionToGroup: (groupId: string, session: string) => Promise<void>;
 	moveSession: (
@@ -50,6 +62,7 @@ export const useWorkflowStore = create<State>()(
 						[groupId]: {
 							id: groupId,
 							name: groupName,
+							description: "等待你创作无限的可能",
 							lastUpdateTime: new Date().toISOString(),
 							sessions: [],
 						},
@@ -58,18 +71,19 @@ export const useWorkflowStore = create<State>()(
 
 				get().setselectedId(groupId);
 			},
-			updateWorkflowGroup: (groupId, groupName, lastUpdateTime, sessions) => {
-				set((state) => ({
-					workflowGroup: {
-						...state.workflowGroup,
+			updateWorkflowGroup: (groupId, updates) => {
+				set((state) => {
+					const { workflowGroup } = state;
+					// 创建一个新对象，包含传入的更新
+					const updatedWorkflowGroup = {
+						...workflowGroup,
 						[groupId]: {
-							id: groupId,
-							name: groupName,
-							lastUpdateTime: lastUpdateTime,
-							sessions: sessions,
+							...workflowGroup[groupId],
+							...updates,
 						},
-					},
-				}));
+					};
+					return { workflowGroup: updatedWorkflowGroup };
+				});
 			},
 			deleteWorkflowGroup: (groupId) => {
 				set((state) => ({

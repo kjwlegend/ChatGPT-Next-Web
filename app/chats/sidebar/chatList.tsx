@@ -28,22 +28,32 @@ import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem, ChatItemShort } from "./chatItem";
 
 export function ChatList(props: { narrow?: boolean }) {
-	const [sessions, selectedIndex, selectSession, moveSession, sortSession] =
-		useChatStore((state) => [
-			state.sessions,
-			state.currentSessionIndex,
-			state.selectSession,
-			state.moveSession,
-			state.sortSession,
-		]);
+	const [
+		sessions,
+		currentSessionId,
+		selectSession,
+		selectSessionsById,
+		moveSession,
+		sortSession,
+	] = useChatStore((state) => [
+		state.sessions,
+		state.currentSessionId,
+		state.selectSession,
+		state.selectSessionById,
+		state.moveSession,
+		state.sortSession,
+	]);
 
 	useEffect(() => {
 		sortSession();
-	}, []);
+	}, [sessions]);
 
 	const filteredSessions = useMemo(() => {
 		//  exlude workflow chat
-		return sessions.filter((session) => session.isworkflow == false);
+		const newSessions = sessions.filter(
+			(session) => session.isworkflow == false,
+		);
+		return newSessions;
 	}, [sessions]);
 	// console.log("filteredSessions", filteredSessions);
 	const chatStore = useChatStore();
@@ -101,10 +111,11 @@ export function ChatList(props: { narrow?: boolean }) {
 									key={item.id}
 									id={item.id}
 									index={i}
-									selected={i === selectedIndex}
+									selected={item.id === currentSessionId}
 									onClick={() => {
 										navigate(Path.Chat);
-										selectSession(i);
+										selectSessionsById(item.id);
+										console.log(i);
 										getMessages(item.id);
 									}}
 									onDelete={async () => {

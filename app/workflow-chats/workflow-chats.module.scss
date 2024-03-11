@@ -10,6 +10,28 @@
 .background {
 	background-color: #fff;
 }
+//================= modal =======================
+.agent-list {
+	height: 500px;
+	overflow: auto;
+	padding: 0 16px;
+	border-left: 1px solid rgba(140, 140, 140, 0.35);
+	border-radius: 4px;
+
+	:global .ant-list-items {
+		.ant-list-item-meta {
+			.ant-list-item-meta-title {
+				font-size: 14px;
+				font-weight: 500;
+				color: rgba(0, 0, 0, 0.88);
+			}
+			.ant-list-item-meta-description {
+				font-size: 12px;
+				color: rgba(0, 0, 0, 0.45);
+			}
+		}
+	}
+}
 //================= session list =======================
 .session-container {
 	display: flex;

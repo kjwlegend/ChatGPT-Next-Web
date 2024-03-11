@@ -1,6 +1,6 @@
 import BotIcon from "../icons/bot.png";
 
-import { DeleteIcon } from "@/app/icons";
+import { DeleteIcon, EditIcon } from "@/app/icons";
 
 import styles from "@/app/chats/home.module.scss";
 import {
@@ -22,6 +22,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 export function ChatItem(props: {
 	onClick?: () => void;
 	onDelete?: () => void;
+	onEdit?: () => void;
 	title: string;
 	count: number;
 	time: string;
@@ -93,6 +94,20 @@ export function ChatItem(props: {
 					>
 						<DeleteIcon />
 					</div>
+
+					{/* Edit icon */}
+					{props.onEdit && (
+						<div
+							className={styles["chat-item-edit"]}
+							onClickCapture={(e) => {
+								props.onEdit?.();
+								e.preventDefault();
+								e.stopPropagation();
+							}}
+						>
+							<EditIcon />
+						</div>
+					)}
 				</div>
 			)}
 		</Draggable>

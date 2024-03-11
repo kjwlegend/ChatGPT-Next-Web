@@ -37,6 +37,7 @@ interface WorkflowContextType {
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
+	updateSingleWorkflowGroup: (groupId: string, newGroup: any) => void;
 }
 
 // 创建上下文
@@ -194,13 +195,45 @@ export const WorkflowProvider = ({
 
 		// 更新workflowGroup
 		if (res.data) {
-			updateWorkfflowGroup(res.data);
+			updateWorkflowGroupHandler(res.data);
 		}
 
 		return res;
 	}, []);
 
-	const updateWorkfflowGroup = (newData: any) => {
+	const updateSingleWorkflowGroup = async (groupId: string, newGroup: any) => {
+		//  including messageapi and updateworkflowsession
+
+		// 更新workflowGroup
+
+		messageApi.open({
+			content: "内容更新中",
+			type: "loading",
+		});
+
+		const { chat_sessions, ...rest } = newGroup;
+
+		const workflowGroupData = {
+			chat_sessions: chat_sessions,
+			...rest,
+		};
+
+		try {
+			const res = await updateWorkflowSession(groupId, workflowGroupData);
+
+			if (res.code === 401) {
+				throw new Error("登录状态已过期, 请重新登录");
+			}
+			messageApi.destroy();
+			updateWorkflowGroup(groupId, workflowGroupData);
+
+			messageApi.success("内容更新成功");
+		} catch (error: any) {
+			messageApi.error(`内容更新失败: ${error.message}`);
+		}
+	};
+
+	const updateWorkflowGroupHandler = (newData: any) => {
 		// 更新workflowGroup
 
 		// 遍历新的数据，更新workflowGroup
@@ -230,9 +263,17 @@ export const WorkflowProvider = ({
 			}
 			//  更新会话到chatstore
 			UpdateChatSessions(sessions);
+
 			// 更新workflowGroup
-			updateWorkflowGroup(groupId, name, lastUpdateTime, sessionIds);
-			// 将新的会话添加到workflowGroup中的对应group
+
+			const newGroup = {
+				id: groupId,
+				name: name,
+				lastUpdateTime: lastUpdateTime,
+				sessions: sessionIds,
+			};
+
+			updateWorkflowGroup(groupId, newGroup);
 		});
 	};
 
@@ -249,6 +290,7 @@ export const WorkflowProvider = ({
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
 				getworkFlowSessions: getworkFlowSessions,
+				updateSingleWorkflowGroup,
 			}}
 		>
 			{contextHolder}
