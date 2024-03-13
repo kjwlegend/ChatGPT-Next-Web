@@ -1,0 +1,57 @@
+// 基础样式
+.tarot-card {
+	position: relative;
+	width: 150px;
+	height: 250px;
+	margin: 10px;
+	perspective: 1000px; // 为子元素的 3D 转换提供透视效果
+	cursor: pointer;
+}
+
+.tarot-card-face {
+	position: relative; // 修改为 relative 以便正常显示
+	width: 100%;
+	height: 100%;
+	background-color: #e6e6e6;
+	// backface-visibility: hidden; // 隐藏翻转后的背面
+	border-radius: 10px;
+	transition: transform 0.6s; // 将翻转动画应用于卡面
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 10px;
+	}
+}
+
+// 逆位卡牌样式
+.reversed {
+	transform: rotate(180deg);
+}
+
+// 翻转动画
+.flipped {
+	transform: rotateY(180deg); // Y 轴旋转 180 度来实现翻转效果
+	cursor: default; // 翻转后隐藏鼠标指针
+}
+
+// 卡牌内容样式
+.tarot-card-content {
+	padding: 10px;
+	text-align: center;
+
+	// 文字样式
+	.tarot-card-name,
+	.tarot-card-chinese-name,
+	.tarot-card-meaning {
+		margin: 5px 0;
+	}
+
+	// 翻转按钮样式
+	.tarot-card-flip-button {
+		margin-top: 10px;
+		padding: 5px 10px;
+		cursor: pointer;
+	}
+}
