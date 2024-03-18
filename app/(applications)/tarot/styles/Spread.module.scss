@@ -1,0 +1,29 @@
+.tarotSpread {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	// 可以根据需要添加更多样式，例如背景、边框等
+
+	h2 {
+		text-align: center;
+		// 标题样式
+	}
+
+	.tarotSpreadPositions {
+		// 设置一个容器以保持所有卡片位置
+		min-height: 80vh;
+		max-width: 800px;
+		margin: 0 auto;
+		position: relative;
+
+		.tarotSpreadPosition {
+			position: absolute;
+			// 确保卡片位置使用绝对定位
+			// 可以添加卡片位置的宽度和高度
+			// 例如:
+			// width: 150px;
+			// height: 260px;
+			// 这些尺寸应该根据卡片的实际尺寸来设置
+		}
+	}
+}

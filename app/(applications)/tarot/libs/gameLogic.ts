@@ -7,6 +7,10 @@ import { TarotPosition } from "./TarotPosition";
 import { TarotCardType } from "../types/TarotCard";
 
 import { TAROT_SPREADS } from "../constants/tarotSpreads";
+import {
+	interpretTarotCard,
+	interpretTarotSpread,
+} from "../services/InterpretService";
 
 export class TarotGame {
 	deck: TarotDeck;
@@ -17,7 +21,7 @@ export class TarotGame {
 	constructor() {
 		this.deck = new TarotDeck();
 		this.spreads = TAROT_SPREADS; // 假设 TAROT_SPREADS 已经是 TarotSpread 实例的数组
-		this.currentSpread = this.spreads[0];
+		this.currentSpread = this.spreads[1];
 		this.deck.shuffle();
 		this.remainingDraws = this.currentSpread.cardCount;
 	}
@@ -68,9 +72,51 @@ export class TarotGame {
 		this.remainingDraws = this.currentSpread.cardCount; // 重置剩余抽牌数
 	}
 
-	interpretSpread(): string {
-		// 这里可以添加逻辑来解释牌阵
-		// 例如，根据每个位置的牌和其含义来生成解释
-		return "Your tarot spread interpretation goes here...";
+	resetGame(): void {
+		this.deck.reset(); // 重置牌组
+		this.resetSpread(); // 重置牌阵
+	}
+
+	// 修改后的interpretCard方法
+	async interpretCard(
+		spreadName: string,
+		position: TarotPosition,
+		userQuestion: string,
+		language: string,
+	) {
+		if (!position.card) {
+			return "No card found in this position.";
+		}
+		// 使用LLM服务获取解释
+
+		const interpretation = await interpretTarotCard(
+			spreadName,
+			position.meaning,
+			position.card,
+			userQuestion,
+			language,
+		);
+		return (
+			interpretation ||
+			"No interpretation found for this card in the given context."
+		);
+	}
+	// 修改后的interpretSpread方法
+	async interpretSpread(
+		tarotSpread: TarotSpread,
+		userQuestion: string,
+		language: string = "zh",
+	) {
+		if (!tarotSpread) {
+			return "No spread found.";
+		}
+		// 调用interpretTarotSpread函数获取整个牌阵的解释
+		const spreadInterpretation = await interpretTarotSpread(
+			tarotSpread,
+			userQuestion,
+			language,
+		);
+		console.log("class part", spreadInterpretation);
+		return spreadInterpretation;
 	}
 }

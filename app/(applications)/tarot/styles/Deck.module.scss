@@ -1,7 +1,49 @@
+/* src/styles/Deck.module.css */
 .tarotDeck {
+	position: relative;
+	width: 70vw; /* 容器宽度 */
+	height: 260px; /* 容器高度，根据需要调整 */
+	// overflow: hidden; /* 隐藏超出容器的部分 */
+	margin: 0 auto; /* 水平居中 */
+
 	.tarotCards {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
+		position: relative;
+		// bottom: 0; /* 卡片从底部开始排列 */
+		// left: 50%; /* 水平居中 */
+		transform: translateX(9%) translateY(-12%);
+		height: 100%;
+		width: 100%;
+	}
+
+	.tarotCard {
+		position: absolute;
+		bottom: 0; /* 卡片底部对齐 */
+		transform: rotate(var(--rotate-angle)); /* 悬浮时上移，保持旋转角度 */
+
+		transition: transform 0.3s ease;
+		transform-origin: bottom center; /* 旋转中心点设置在卡片底部中心 */
+	}
+
+	.tarotCard:hover {
+		transform: translateY(-20px) rotate(var(--rotate-angle)) scale(1.1); /* 悬浮时上移，保持旋转角度 */
+		z-index: 10; /* 确保高亮的卡片在顶层 */
+		animation: transform 0.1s ease-in;
+	}
+
+	.drawButton {
+		position: absolute;
+		bottom: 10px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+.shuffleContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.shuffleCard {
+		margin: 0 -58px;
 	}
 }

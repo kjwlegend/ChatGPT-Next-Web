@@ -1,0 +1,75 @@
+.flexcontainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin: 20px auto;
+}
+
+.welcomeText {
+	font-size: 1.2rem;
+	margin: 20px 0;
+	text-align: center;
+	background: -webkit-linear-gradient(white, #38495a);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+
+	.title {
+		font-size: 1.5rem;
+	}
+}
+.questionInput {
+	// width: 200px;
+	width: 400px;
+
+	:global .ant-input {
+		background-color: transparent;
+		border: none;
+		border-bottom: 1px solid #fff;
+		color: #fff;
+	}
+	// input placeholder color
+	:global .ant-input::placeholder {
+		color: rgba(255, 255, 255, 0.5);
+	}
+	// input focus color
+	:global .ant-input:focus {
+		border-color: #fff;
+		box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+	}
+}
+
+.welcomeText,
+.questionInput,
+.submitButton {
+	opacity: 0;
+	transition: opacity 2s ease-in;
+}
+
+.responseText {
+	font-size: 1.2rem;
+	margin: 20px 0;
+	text-align: center;
+	background: -webkit-linear-gradient(white, #49545f);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.fadeIn {
+	animation: fadeInAnimation 2s forwards;
+}
+
+@keyframes fadeInAnimation {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.submitButton {
+	// Add styles for the submit button
+}

@@ -5342,6 +5342,13 @@ formstream@^1.1.0:
     mime "^2.5.2"
     pause-stream "~0.0.11"
 
+framer-motion@^11.0.14:
+  version "11.0.14"
+  resolved "https://registry.npmjs.org/framer-motion/-/framer-motion-11.0.14.tgz#621218e48c25847abd5bf3ee168919b2cab7a113"
+  integrity sha512-RFjo2hB1MTW0EWsHQaXgVn0AEUDGxAs0ZL2vVjTTJJu3N7wFiLkmqTn5ysLjL+qKZ9jvfpKXDb9waN9AyLqk8g==
+  dependencies:
+    tslib "^2.4.0"
+
 fs-minipass@^2.0.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/fs-minipass/-/fs-minipass-2.1.0.tgz"
