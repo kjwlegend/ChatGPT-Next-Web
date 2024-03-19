@@ -10,12 +10,12 @@ import {
 } from "../services/TarotSpreadSelector";
 import { stringify } from "querystring";
 import { useUserStore } from "@/app/store";
-
+import { Stages } from "../store/tarot";
 const QuestionInputComponent = () => {
 	const TarotStore = useTarotStore();
 	const UserStore = useUserStore();
 	const nickname = UserStore.user.nickname;
-	const { setStage, questions, setQuestions } = TarotStore;
+	const { setStage, questions, setQuestions, stage } = TarotStore;
 	const [question, setQuestion] = useState("");
 	const [questiontype, setQuestionType] = useState("");
 	const [response, setResponse] = useState("");
@@ -26,6 +26,29 @@ const QuestionInputComponent = () => {
 		1000,
 	);
 
+	const [showInput, setShowInput] = useState(stage === Stages.UserInput);
+	const [animationClass, setAnimationClass] = useState("");
+
+	useEffect(() => {
+		if (stage === Stages.UserInput) {
+			setShowInput(true);
+			setAnimationClass("");
+		} else {
+			setAnimationClass(styles.fadeOut);
+			const timeoutId = setTimeout(() => setShowInput(false), 2500); // 500ms 是动画时长
+			return () => clearTimeout(timeoutId);
+		}
+	}, [stage]);
+
+	useEffect(() => {
+		// 当 stage 不等于 0 时，添加 hidden 类
+		if (stage !== Stages.UserInput) {
+			console.log("stage", stage);
+		}
+	}, [stage]);
+
+	const [isLoading, setIsLoading] = useState(false);
+
 	useEffect(() => {
 		console.log("questions updated", questions);
 	}, [questions]); // 这个 useEffect 会在 `questions` 状态变化后执行
@@ -35,6 +58,7 @@ const QuestionInputComponent = () => {
 		// TODO: Trigger question type classification
 		// TODO: Display crystal ball and tarot spread selection
 
+		setIsLoading(true);
 		const res = await classifyQuestion(question);
 		if (!res) {
 			console.error("Failed to classify question");
@@ -84,9 +108,12 @@ const QuestionInputComponent = () => {
 			spreadUsage: spreadUsage,
 		};
 
+		setIsLoading(false);
+
+		// update store
 		setQuestions(updateStoreInfo);
 
-		setStage("question");
+		setStage(Stages.Question);
 	};
 
 	return (
@@ -97,33 +124,51 @@ const QuestionInputComponent = () => {
 				}`}
 			>
 				<p className={styles.title}>欢迎你 {nickname} 来到神秘的塔罗世界</p>
-				<p>希望你的问题能在这里找到答案</p>
-				<p>请尽可能详细的输入你的问题</p>
+				<p className={`${styles.subtitle} ${animationClass} `}>
+					希望你的问题能在这里找到答案
+				</p>
+				<p className={`${styles.subtitle} ${animationClass} `}>
+					请尽可能详细的输入你的问题
+				</p>
 			</div>
 			<div
-				className={`${animationStates.input ? styles.fadeIn : ""} ${
-					styles.questionInput
-				}`}
+				className={`${animationStates.input ? styles.fadeIn : ""} 
+				${stage !== Stages.UserInput ? styles.fadeOut : ""} ${styles.questionInput}`}
 			>
-				<Input
-					type="text"
-					placeholder="请输入您的问题..."
-					onChange={(e) => setQuestion(e.target.value)}
-					onPressEnter={handleQuestionSubmit}
-					width={"100%"}
-					size="large"
-					className={``}
-				/>
+				{showInput && (
+					<Input
+						type="text"
+						placeholder="请输入您的问题..."
+						onChange={(e) => setQuestion(e.target.value)}
+						onPressEnter={handleQuestionSubmit}
+						// width={"100%"}
+						size="large"
+						className={``}
+					/>
+				)}
 			</div>
+			{question && stage !== Stages.UserInput && (
+				<div className={`${styles.fadeIn} ${styles.responseText}`}>
+					你的问题是: {question}
+				</div>
+			)}
 
-			<button
-				className={`${styles.submitButton} ${
-					animationStates.button ? styles.fadeIn : ""
-				}`}
-				onClick={handleQuestionSubmit}
-			>
-				提交
-			</button>
+			{showInput && (
+				<button
+					className={`${styles.submitButton} ${
+						animationStates.button ? styles.fadeIn : ""
+					} ${animationClass}`}
+					onClick={handleQuestionSubmit}
+				>
+					提交
+				</button>
+			)}
+
+			{isLoading && (
+				<div className={`${styles.fadeIn} ${styles.responseText}`}>
+					正在为你寻找答案...
+				</div>
+			)}
 
 			{questiontype && (
 				<div className={`${styles.fadeIn} ${styles.responseText}`}>

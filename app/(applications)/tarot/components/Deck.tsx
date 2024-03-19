@@ -8,6 +8,8 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import styles from "../styles/Deck.module.scss";
 import { useTarotStore } from "../store/tarot";
 
+import { Stages } from "../store/tarot";
+
 interface ShuffleAnimationComponentProps {
 	onShuffleComplete?: () => void;
 	cards: TarotCardType[];
@@ -99,7 +101,7 @@ const Deck: React.FC = () => {
 		setTimeout(() => {
 			setShowDeck(true);
 		}, 1000); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
-		setStage("draw");
+		setStage(Stages.Shuffle);
 	};
 
 	// 淡出动画变体

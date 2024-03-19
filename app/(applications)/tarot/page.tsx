@@ -18,6 +18,8 @@ const Index: React.FC = () => {
 	const { game, resetGame, stage, remainingDraws } = TarotStore;
 	const [cardsDealt, setCardsDealt] = useState<TarotCardType[]>([]);
 
+	console.log("state", stage, remainingDraws, game);
+
 	const reset = useCallback(() => {
 		resetGame();
 	}, []);
@@ -33,7 +35,7 @@ const Index: React.FC = () => {
 			<div className={styles.stars2}></div>
 			<div className={styles.stars3}></div>
 			<div className={`${styles.tarotcontainer}`}>
-				{stage == "question" && <QuestionInputComponent />}
+				{<QuestionInputComponent />}
 				{game.remainingDraws > 0 && <Deck />}
 				<Spread />
 			</div>

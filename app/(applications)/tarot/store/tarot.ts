@@ -15,9 +15,18 @@ interface QuestionsState {
 	spreadUsage: string;
 }
 
+export enum Stages {
+	UserInput,
+	Question,
+	Shuffle,
+	Draw,
+	Interpretation,
+	Restart,
+}
+
 export type TarotState = {
 	game: TarotGame;
-	stage: string;
+	stage: Stages;
 	spreadIndex: number;
 	cards: any[];
 	interpretation: string | null;
@@ -33,7 +42,7 @@ export type TarotState = {
 	resetGame: () => void;
 	interpretCard: (position: TarotPosition) => Promise<string>;
 	interpretSpread: () => void;
-	setStage: (stage: string) => void;
+	setStage: (stage: Stages) => void;
 	setQuestions: (questions: object) => void;
 };
 export const useTarotStore = create<TarotState>((set, get) => ({
@@ -41,7 +50,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 	spreadIndex: 0, // 用于存储当前选择的牌阵索引
 	cards: [], // 用于存储抽到的牌
 	interpretation: null, // 用于存储牌阵解释
-	stage: "question", // 游戏阶段，例如 'question', 'shuffle', 'draw', 'interpretation', 'restart'
+	stage: Stages.UserInput, // 游戏阶段，'question', 'shuffle', 'draw', 'interpretation', 'restart'
 	// 获取当前游戏状态
 	remainingDraws: null,
 	remainingCards: [],
@@ -116,7 +125,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 			const newGame = new TarotGame();
 			return {
 				game: newGame,
-				stage: "question",
+				stage: Stages.UserInput,
 				spreadIndex: 0,
 				interpretation: null,
 				remainingDraws: null,
@@ -175,7 +184,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 		console.log("store outpu", get().interpretation);
 	},
 	// 设置游戏阶段
-	setStage: (stage) => {
+	setStage: (stage: Stages) => {
 		set({ stage });
 	},
 }));
