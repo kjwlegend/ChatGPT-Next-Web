@@ -6,6 +6,7 @@ import { DoubleAgentChatMessage } from "../store/doubleAgents";
 // 定义一个公共函数，它接受 prompt 作为参数
 export function strictLLMResult(
 	prompt: RequestMessage[] | any,
+	model?: string,
 ): Promise<string> {
 	// console.log("strictLLMResult: ", prompt);
 	const chatOptions = {
@@ -13,7 +14,7 @@ export function strictLLMResult(
 		config: {
 			temperature: 0.1,
 			top_p: 1,
-			model: SUMMARIZE_MODEL, // 假设 SUMMARIZE_MODEL 是一个已定义的常量
+			model: model ?? SUMMARIZE_MODEL, // 假设 SUMMARIZE_MODEL 是一个已定义的常量
 			stream: false,
 		},
 	};
