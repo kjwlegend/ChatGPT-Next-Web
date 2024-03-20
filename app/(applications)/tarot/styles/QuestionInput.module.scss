@@ -62,14 +62,18 @@
 	transition: all 2s ease-in;
 }
 
-.responseText {
+.responseText,
+.responseTextSmall {
 	font-size: 1.2rem;
-	margin: 20px 0;
+	margin: 10px 0;
 	text-align: center;
 	background: -webkit-linear-gradient(white, #8f8f8f);
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+}
+.responseTextSmall {
+	font-size: 1.1rem;
 }
 
 .fadeIn {

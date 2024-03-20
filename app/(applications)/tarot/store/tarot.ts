@@ -19,6 +19,7 @@ export enum Stages {
 	UserInput,
 	Question,
 	Shuffle,
+    Shuffling,
 	Draw,
 	Interpretation,
 	Restart,

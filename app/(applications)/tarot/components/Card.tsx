@@ -9,11 +9,19 @@ import { on } from "events";
 interface CardProps {
 	card: TarotCardType;
 	onClick?: () => void;
-	className?: string;
+	classNameString?: string;
 	style?: any;
+	positionMeaning?: string;
+	size?: "small" | "large";
 }
 
-const Card: React.FC<CardProps> = ({ card, onClick }) => {
+const Card: React.FC<CardProps> = ({
+	card,
+	onClick,
+	positionMeaning,
+	classNameString,
+	style,
+}) => {
 	const [flipped, setFlipped] = useState<boolean>(false); // 默认为背面状态
 
 	const handleFlip = () => {
@@ -21,11 +29,11 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
 			setFlipped(true); // 从背面翻到正面
 			onClick && onClick();
 		}
-		// 正面状态下不允许再次翻转
+		// 正面状态下不允许再次翻转ssssszc
 	};
 
 	return (
-		<div className={styles["tarot-card"]}>
+		<div className={`${styles["tarot-card"]} ${classNameString}`} style={style}>
 			<div
 				className={`${styles["tarot-card-face"]} ${
 					flipped ? styles.flipped : ""
@@ -49,6 +57,7 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
 								{card.chineseName}
 								{card.isReversed ? "(逆位)" : ""}
 							</div>
+							<div className={styles["positionMeaning"]}>{positionMeaning}</div>
 						</div>
 					</>
 				}
@@ -59,11 +68,16 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
 	);
 };
 
-const DeckCard: React.FC<CardProps> = ({ card, onClick, className, style }) => {
+const DeckCard: React.FC<CardProps> = ({
+	card,
+	onClick,
+	classNameString,
+	style,
+}) => {
 	const [flipped, setFlipped] = useState<boolean>(true); // 默认为背面状态
 
 	return (
-		<div className={`${styles["tarot-card"]} ${className}`} style={style}>
+		<div className={`${styles["tarot-card"]} ${classNameString}`} style={style}>
 			<div
 				className={`${styles["tarot-card-face"]} ${
 					flipped ? "" : styles.flipped

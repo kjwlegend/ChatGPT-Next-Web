@@ -113,7 +113,7 @@ const QuestionInputComponent = () => {
 		// update store
 		setQuestions(updateStoreInfo);
 
-		setStage(Stages.Question);
+		setStage(Stages.Shuffle);
 	};
 
 	return (
@@ -170,14 +170,16 @@ const QuestionInputComponent = () => {
 				</div>
 			)}
 
-			{questiontype && (
+			{questiontype && stage < Stages.Shuffling && (
 				<div className={`${styles.fadeIn} ${styles.responseText}`}>
 					{response}
 				</div>
 			)}
 
-			{spreadName && (
-				<div className={`${styles.fadeIn} ${styles.responseText}`}>
+			{spreadName && stage < Stages.Draw && (
+				<div
+					className={`${styles.fadeIn} ${styles.responseTextSmall} ${styles.Small}`}
+				>
 					我即将使用 {spreadName} 来帮你完成这次占卜, {spreadUsage}
 				</div>
 			)}

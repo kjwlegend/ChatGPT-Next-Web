@@ -2,19 +2,13 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
+	display: flex;
 	// 可以根据需要添加更多样式，例如背景、边框等
-
-	h2 {
-		text-align: center;
-		// 标题样式
-	}
 
 	.tarotSpreadPositions {
 		// 设置一个容器以保持所有卡片位置
-		min-height: 80vh;
-		max-width: 800px;
+
 		margin: 0 auto;
-		position: relative;
 
 		.tarotSpreadPosition {
 			position: absolute;
@@ -24,6 +18,36 @@
 			// width: 150px;
 			// height: 260px;
 			// 这些尺寸应该根据卡片的实际尺寸来设置
+		}
+	}
+	.interpretation {
+		flex-basis: 35%;
+		margin: 10px;
+		padding: 10px;
+		// background: rgb(18 14 14 / 45%);
+		background: radial-gradient(
+			ellipse at center,
+			rgb(123 37 177 / 48%) 0%,
+			rgb(14 12 12 / 45%) 100%
+		);
+		box-shadow: 9px 5px 20px 9px rgb(187 104 239 / 58%);
+		backdrop-filter: blur(5px);
+		overflow-y: scroll;
+		scrollbar-base-color: beige;
+		scrollbar-width: thin;
+
+		.interpretationTitle {
+			font-size: 1.2rem;
+			margin-bottom: 10px;
+			margin: inherit;
+			padding: inherit;
+		}
+
+		.interpretationText {
+			font-size: 0.875rem;
+			white-space: pre-line;
+			margin: inherit;
+			padding: inherit;
 		}
 	}
 }

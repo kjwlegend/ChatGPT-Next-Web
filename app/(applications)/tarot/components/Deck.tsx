@@ -9,6 +9,7 @@ import styles from "../styles/Deck.module.scss";
 import { useTarotStore } from "../store/tarot";
 
 import { Stages } from "../store/tarot";
+import { TarotSpread } from "../types/TarotSpread";
 
 interface ShuffleAnimationComponentProps {
 	onShuffleComplete?: () => void;
@@ -20,11 +21,16 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 	cards,
 }) => {
 	const [isShuffling, setIsShuffling] = useState(false);
+	const TarotStore = useTarotStore();
+	const [countdown, setCountdown] = useState(5);
+	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
+		TarotStore;
 
 	const shuffleVariants: Variants = {
 		start: (i: number) => ({
-			x: [0, 90, -110, 120, -100, 35, -50, 5, 0, 0],
-			y: [0, 5, -5, 5, -5, 0, 0],
+			x: [0, 60, -70, 80, -60, 55, -55, 44, -10, 0],
+			y: [0, 5, -5, 5, -5, 5, 0],
+			rotate: [0, 50, 180, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360],
 			transition: {
 				duration: 2,
 				repeat: Infinity,
@@ -36,6 +42,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 		stop: {
 			x: 0,
 			y: 0,
+			rotate: 0,
 			transition: {
 				duration: 2,
 				ease: "easeOut",
@@ -43,20 +50,94 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 		},
 	};
 
+	const fadeInVariants: Variants = {
+		hidden: { opacity: 0 },
+		visible: { opacity: 1, transition: { duration: 0.5, delay: 0.5 } },
+	};
+
+	const fadeOutVariants: Variants = {
+		hidden: { opacity: 0, transition: { duration: 0.5 } },
+		visible: { opacity: 1 },
+	};
+
+	const countdownVariants: Variants = {
+		// zoom in each number
+		hidden: { scale: 0 },
+		visible: { scale: 5, opacity: 0.3, transition: { duration: 1 } },
+	};
+
 	const startShuffle = () => {
 		setIsShuffling(true);
+		setStage(Stages.Shuffling);
+
 		setTimeout(() => {
 			setIsShuffling(false);
 			if (onShuffleComplete) {
 				onShuffleComplete();
+				setStage(Stages.Draw);
 			}
-		}, 5000);
+		}, countdown * 1000); // 5秒后停止洗牌
 	};
 
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+		if (isShuffling && countdown > 0) {
+			interval = setInterval(() => {
+				setCountdown((prevCountdown) => prevCountdown - 1);
+			}, 1000);
+		} else if (countdown === 0) {
+			setIsShuffling(false);
+			if (onShuffleComplete) {
+				onShuffleComplete();
+				setStage(Stages.Draw);
+			}
+		}
+		return () => clearInterval(interval);
+	}, [isShuffling, countdown, onShuffleComplete, setStage]);
+
 	return (
-		<div>
-			<button onClick={startShuffle}>Shuffle Cards</button>
-			<div className={styles.shuffleContainer}>
+		<div className={styles.shuffleContainer}>
+			<AnimatePresence>
+				{
+					<div className={styles.shuffleCountdown}>
+						{!isShuffling && (
+							<motion.button
+								initial="visible"
+								exit="hidden"
+								variants={fadeOutVariants}
+								onClick={startShuffle}
+							>
+								点击洗牌
+							</motion.button>
+						)}
+
+						{isShuffling && (
+							<>
+								<motion.p
+									initial="hidden"
+									animate="visible"
+									variants={fadeInVariants}
+								>
+									请耐心的等待洗牌结束,在洗牌期间默念着你的问题,你的专注度越高,
+									答案就愈加准确.
+								</motion.p>
+								<motion.div
+									key={countdown}
+									initial="hidden"
+									animate="visible"
+									exit="hidden"
+									variants={countdownVariants}
+									className={styles.countdown}
+								>
+									{countdown}
+								</motion.div>
+							</>
+						)}
+					</div>
+				}
+			</AnimatePresence>
+
+			<div className={styles.shuffleCardsContainer}>
 				<AnimatePresence>
 					{cards.map((card, index) => (
 						<motion.div
@@ -67,7 +148,11 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 							className={styles.shuffleCard}
 						>
 							{/* Render tarot card image here */}
-							<DeckCard key={index} card={card} className={styles.tarotCard} />
+							<DeckCard
+								key={index}
+								card={card}
+								classNameString={styles.tarotCard}
+							/>
 						</motion.div>
 					))}
 				</AnimatePresence>
@@ -95,13 +180,20 @@ const Deck: React.FC = () => {
 	const [showText, setShowText] = useState(false);
 	const [showDeck, setShowDeck] = useState(false);
 
+	const [spread, setSpread] = useState<TarotSpread | null>(currentSpread);
+
+	useEffect(() => {
+		setSpread(currentSpread);
+		console.log("currentSpread", spread?.positions);
+	}, [currentSpread, setSpread]);
+
 	const handleShuffleComplete = () => {
 		setIsShuffling(false);
 		setShowText(true);
 		setTimeout(() => {
 			setShowDeck(true);
-		}, 1000); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
-		setStage(Stages.Shuffle);
+		}, 2000); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
+		setStage(Stages.Draw);
 	};
 
 	// 淡出动画变体
@@ -121,7 +213,7 @@ const Deck: React.FC = () => {
 		if (showText && !showDeck) {
 			timerId = setTimeout(() => {
 				setShowDeck(true);
-			}, 1000);
+			}, 2000);
 		}
 		return () => {
 			if (timerId) {
@@ -147,7 +239,7 @@ const Deck: React.FC = () => {
 	return (
 		<>
 			<AnimatePresence>
-				{isShuffling && (
+				{(stage == Stages.Shuffle || stage == Stages.Shuffling) && (
 					<motion.div
 						initial="visible"
 						animate="visible"
@@ -167,7 +259,13 @@ const Deck: React.FC = () => {
 					animate="visible"
 					variants={fadeInVariants}
 				>
-					<p>你已经完成洗牌，现在开始点击牌堆抽牌，每次只抽一张。</p>
+					<p className={styles.drawCards}>
+						你已经完成洗牌，现在开始点击牌堆抽牌，一共需要抽{" "}
+						<span className={styles.totalCards}> {spread?.cardCount}</span>
+						张牌, 还剩下
+						<span className={styles.remainingCards}>{game.remainingDraws}</span>
+						张未抽
+					</p>
 				</motion.div>
 			)}
 			<AnimatePresence>
@@ -189,6 +287,7 @@ const Deck: React.FC = () => {
 									// transform: `rotate(${angle}deg)  `, // 应用旋转角度
 									left: `${left}px`,
 									transition: "transform 0.5s",
+									// "--var-width": "50px",
 								};
 								return (
 									<>
@@ -196,13 +295,14 @@ const Deck: React.FC = () => {
 											key={index}
 											card={card}
 											style={style}
-											className={styles.tarotCard}
+											classNameString={styles.tarotCard}
 											onClick={() => dealCards()}
 										/>
 									</>
 								);
 							})}
 						</div>
+						<h2>{currentSpread?.name}</h2>
 					</motion.div>
 				)}
 			</AnimatePresence>

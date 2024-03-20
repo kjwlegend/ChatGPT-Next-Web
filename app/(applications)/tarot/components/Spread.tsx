@@ -16,6 +16,7 @@ const Spread: React.FC = () => {
 	if (!currentSpread) {
 		return null;
 	}
+	let fullInterpretations = [];
 	const handleCardClick = async (position: TarotPosition) => {
 		try {
 			const cardInterpretation = await interpretCard(position);
@@ -24,9 +25,13 @@ const Spread: React.FC = () => {
 			console.error("解读卡片时出错:", error);
 		}
 	};
+
+	const handleInterpretationClick = async () => {
+		const spreadInterpretation = await interpretSpread();
+	};
+
 	return (
 		<div className={styles.tarotSpread}>
-			<h2>{currentSpread.name}</h2>
 			<div className={styles.tarotSpreadPositions}>
 				{currentSpread.positions.map((position, index) => (
 					<div
@@ -38,22 +43,29 @@ const Spread: React.FC = () => {
 						}}
 					>
 						{position.card && (
-							<Card
-								card={position.card}
-								onClick={() => handleCardClick(position)}
-							/>
+							<>
+								<Card
+									card={position.card}
+									onClick={() => handleCardClick(position)}
+									positionMeaning={position.meaning}
+									style={{
+										"--var-width": "75px",
+									}}
+								/>
+							</>
 						)}
 					</div>
 				))}
 			</div>
-			<button onClick={interpretSpread}>Interpret</button>
 
-			{interpretation && (
+			{
 				<div className={styles.interpretation}>
-					<h3>Interpretation</h3>
-					<div>{interpretation}</div>
+					<h3 className={styles.interpretationTitle}>解牌</h3>
+					<button onClick={handleInterpretationClick}>全牌阵解读</button>
+
+					<div className={styles.interpretationText}>{interpretation}</div>
 				</div>
-			)}
+			}
 		</div>
 	);
 };
