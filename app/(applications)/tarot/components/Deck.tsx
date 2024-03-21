@@ -167,7 +167,7 @@ const Deck: React.FC = () => {
 	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
 		TarotStore;
 	const cardsRemaining = remainingCards;
-	console.log("cardsRemaining", cardsRemaining);
+	// console.log("cardsRemaining", cardsRemaining);
 
 	const totalDegrees = 120; // 卡片总共覆盖的角度，可以根据需要调整
 	const angleStep = totalDegrees / (cardsRemaining.length - 1 || 1); // 每张卡片的旋转角度步长
@@ -192,25 +192,25 @@ const Deck: React.FC = () => {
 		setShowText(true);
 		setTimeout(() => {
 			setShowDeck(true);
-		}, 2000); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
+		}, 1500); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
 		setStage(Stages.Draw);
 	};
 
 	// 淡出动画变体
 	const fadeOutVariants = {
-		hidden: { opacity: 0, transition: { duration: 0.5 } },
-		visible: { opacity: 1 },
+		stop: { opacity: 0, height: 0, transition: { duration: 1 } },
+		start: { opacity: 1 },
 	};
 
 	// 渐入动画变体
 	const fadeInVariants = {
-		hidden: { opacity: 0 },
-		visible: { opacity: 1, transition: { duration: 0.5, delay: 0.5 } },
+		start: { opacity: 0 },
+		stop: { opacity: 1, transition: { duration: 1, delay: 0.5 } },
 	};
 
 	useEffect(() => {
 		let timerId: NodeJS.Timeout | null = null;
-		if (showText && !showDeck) {
+		if (showText && !showDeck && stage != Stages.Interpretation) {
 			timerId = setTimeout(() => {
 				setShowDeck(true);
 			}, 2000);
@@ -221,6 +221,22 @@ const Deck: React.FC = () => {
 			}
 		};
 	}, [showText, showDeck]);
+	useEffect(() => {
+		if (game.remainingDraws === 0) {
+			setStage(Stages.Interpretation); // 直接设置stage为Interpretation
+			// 不设置延时，因为我们将在动画完成后改变showDeck
+			console.log("game stage", stage);
+
+			const timer = setTimeout(() => {
+				setShowDeck(false);
+			}, 2000);
+
+			// 返回一个清理函数
+			return () => {
+				clearTimeout(timer); // 清理计时器
+			};
+		}
+	}, [game.remainingDraws, setStage]);
 
 	useEffect(() => {
 		// 获取卡片堆的宽度
@@ -271,9 +287,12 @@ const Deck: React.FC = () => {
 			<AnimatePresence>
 				{showDeck && (
 					<motion.div
-						initial="hidden"
-						animate="visible"
-						variants={fadeInVariants}
+						key={stage}
+						initial="start"
+						animate="stop"
+						variants={
+							stage === Stages.Interpretation ? fadeOutVariants : fadeInVariants
+						}
 						className={styles.tarotDeck}
 					>
 						<div className={styles.tarotCards} ref={deckRef}>
@@ -287,7 +306,6 @@ const Deck: React.FC = () => {
 									// transform: `rotate(${angle}deg)  `, // 应用旋转角度
 									left: `${left}px`,
 									transition: "transform 0.5s",
-									// "--var-width": "50px",
 								};
 								return (
 									<>

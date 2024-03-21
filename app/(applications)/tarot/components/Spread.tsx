@@ -16,11 +16,16 @@ const Spread: React.FC = () => {
 	if (!currentSpread) {
 		return null;
 	}
-	let fullInterpretations = [];
+	let fullInterpretations = {
+		cards: [] as string[],
+		spreads: "" as string | undefined,
+	};
 	const handleCardClick = async (position: TarotPosition) => {
 		try {
 			const cardInterpretation = await interpretCard(position);
 			console.log("卡片解读:", cardInterpretation);
+			// push interpretation to fullInterpretations.cards
+			fullInterpretations.cards.push(cardInterpretation);
 		} catch (error) {
 			console.error("解读卡片时出错:", error);
 		}
@@ -28,45 +33,57 @@ const Spread: React.FC = () => {
 
 	const handleInterpretationClick = async () => {
 		const spreadInterpretation = await interpretSpread();
+
+		fullInterpretations.spreads = spreadInterpretation;
 	};
 
 	return (
-		<div className={styles.tarotSpread}>
-			<div className={styles.tarotSpreadPositions}>
-				{currentSpread.positions.map((position, index) => (
-					<div
-						key={index}
-						className={styles.tarotSpreadPosition}
-						style={{
-							left: `${position.coordinates.x}px`,
-							top: `${position.coordinates.y}px`,
-						}}
-					>
-						{position.card && (
-							<>
-								<Card
-									card={position.card}
-									onClick={() => handleCardClick(position)}
-									positionMeaning={position.meaning}
-									style={{
-										"--var-width": "75px",
-									}}
-								/>
-							</>
-						)}
-					</div>
-				))}
+		<>
+			<div>
+				请依次点击每张卡, 来获取单卡解读, 或者直接点击
+				<button onClick={handleInterpretationClick}>全牌阵解读</button>
 			</div>
 
-			{
-				<div className={styles.interpretation}>
-					<h3 className={styles.interpretationTitle}>解牌</h3>
-					<button onClick={handleInterpretationClick}>全牌阵解读</button>
-
-					<div className={styles.interpretationText}>{interpretation}</div>
+			<div className={styles.tarotSpread}>
+				<div className={styles.tarotSpreadPositions}>
+					{currentSpread.positions.map((position, index) => (
+						<div
+							key={index}
+							className={styles.tarotSpreadPosition}
+							style={{
+								left: `${position.coordinates.x}px`,
+								top: `${position.coordinates.y}px`,
+							}}
+						>
+							{position.card && (
+								<>
+									<Card
+										card={position.card}
+										onClick={() => handleCardClick(position)}
+										positionMeaning={position.meaning}
+										style={{
+											"--var-width": "75px",
+										}}
+									/>
+								</>
+							)}
+						</div>
+					))}
 				</div>
-			}
-		</div>
+
+				{
+					<div className={styles.interpretation}>
+						<h3 className={styles.interpretationTitle}>解牌</h3>
+
+						<div className={styles.interpretationText}>
+							{fullInterpretations.cards.map((cardInterpretation, index) => (
+								<p key={index}>{cardInterpretation}</p>
+							))}
+						</div>
+					</div>
+				}
+			</div>
+		</>
 	);
 };
 

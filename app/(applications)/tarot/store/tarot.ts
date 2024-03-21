@@ -19,7 +19,7 @@ export enum Stages {
 	UserInput,
 	Question,
 	Shuffle,
-    Shuffling,
+	Shuffling,
 	Draw,
 	Interpretation,
 	Restart,
@@ -42,7 +42,7 @@ export type TarotState = {
 	resetSpread: () => void;
 	resetGame: () => void;
 	interpretCard: (position: TarotPosition) => Promise<string>;
-	interpretSpread: () => void;
+	interpretSpread: () => Promise<string | undefined>;
 	setStage: (stage: Stages) => void;
 	setQuestions: (questions: object) => void;
 };
@@ -154,7 +154,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 		return interpretation;
 	},
 	// 解释牌阵
-	interpretSpread: () => {
+	interpretSpread: async () => {
 		const { currentSpread, game, questions } = get(); // 获取当前状态
 
 		// 如果当前没有牌阵，则不执行任何操作
@@ -173,6 +173,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 				);
 				// 异步操作完成后，同步更新状态
 				set({ game, interpretation });
+				return interpretation;
 			} catch (error) {
 				console.error("Error interpreting the spread:", error);
 				// 如果发生错误，也同步更新状态，可能是清除解释或保留原有状态
@@ -181,8 +182,9 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 		};
 
 		// 调用异步函数
-		doInterpretSpread();
-		console.log("store outpu", get().interpretation);
+		const result = await doInterpretSpread();
+		// 返回异步结果
+		return result;
 	},
 	// 设置游戏阶段
 	setStage: (stage: Stages) => {

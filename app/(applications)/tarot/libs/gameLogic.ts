@@ -43,6 +43,7 @@ export class TarotGame {
 				dealtCards.push(card);
 				this.remainingDraws--;
 			} else {
+				this.remainingDraws = 0;
 				break; // 如果没有足够的牌或达到牌阵限制，停止发牌
 			}
 		}

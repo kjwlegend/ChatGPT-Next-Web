@@ -10,7 +10,7 @@ import { TarotSpread } from "./types/TarotSpread";
 import { TarotGame } from "./libs/gameLogic";
 import QuestionInputComponent from "./components/QuestionInput";
 import { useTarotStore } from "./store/tarot";
-
+import { Stages } from "./store/tarot";
 import styles from "./styles/layout.module.scss";
 
 const Index: React.FC = () => {
@@ -36,8 +36,8 @@ const Index: React.FC = () => {
 			<div className={styles.stars3}></div>
 			<div className={`${styles.tarotcontainer}`}>
 				{<QuestionInputComponent />}
-				{game.remainingDraws > 0 && <Deck />}
-				<Spread />
+				{<Deck />}
+				{stage == Stages.Interpretation && <Spread />}
 			</div>
 		</>
 	);
