@@ -1,3 +1,5 @@
+@import "common.module.scss";
+
 .flexcontainer {
 	display: flex;
 	flex-direction: column;
@@ -56,12 +58,19 @@
 }
 
 .welcomeText,
-.questionInput,
-.submitButton {
+.questionInput {
 	opacity: 0;
-	transition: all 2s ease-in;
+	transition: opacity 2s ease-in;
 }
 
+.tarotButtonPrimary {
+	opacity: 0;
+	transition:
+		opacity 2s ease-in,
+		background-color 0.5s,
+		color 0.5s,
+		box-shadow 0.5s;
+}
 .responseText,
 .responseTextSmall {
 	font-size: 1.2rem;
@@ -104,8 +113,4 @@
 		height: 0;
 		margin: 0;
 	}
-}
-
-.submitButton {
-	// Add styles for the submit button
 }

@@ -1,5 +1,5 @@
 //  import styles from current folder
-@import "Card.module.scss";
+
 @import "@/app/styles/animation.scss";
 
 // export styles
@@ -8,7 +8,7 @@
 	// flex-direction: column;
 	// align-items: center;
 	// justify-content: center;
-	height: calc(var(--window-height) - var(--footer-height));
+	min-height: calc(var(--window-height) - var(--footer-height));
 	padding: 3rem 7rem;
 	box-sizing: border-box;
 	background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);

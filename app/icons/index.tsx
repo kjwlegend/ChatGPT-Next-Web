@@ -23,7 +23,7 @@ import CloseIcon from "./close.svg";
 import MaskIcon from "./mask.svg";
 import PluginIcon from "./plugin.svg";
 import DragIcon from "../icons/drag.svg";
-
+import LoadingIcon2 from "./loading.svg";
 
 export {
 	CopyIcon,
@@ -43,5 +43,6 @@ export {
 	CloseIcon,
 	MaskIcon,
 	PluginIcon,
-    DragIcon,
+	DragIcon,
+	LoadingIcon2,
 };

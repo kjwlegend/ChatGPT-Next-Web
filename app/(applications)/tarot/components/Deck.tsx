@@ -56,7 +56,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 	};
 
 	const fadeOutVariants: Variants = {
-		hidden: { opacity: 0, transition: { duration: 0.5 } },
+		hidden: { opacity: 0, height: 0, transition: { duration: 0.5 } },
 		visible: { opacity: 1 },
 	};
 
@@ -192,7 +192,7 @@ const Deck: React.FC = () => {
 		setShowText(true);
 		setTimeout(() => {
 			setShowDeck(true);
-		}, 1500); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
+		}, 1000); // 2秒后显示tarotDeck，您可以根据需要调整这个时间
 		setStage(Stages.Draw);
 	};
 

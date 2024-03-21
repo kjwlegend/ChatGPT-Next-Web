@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/QuestionInput.module.scss";
+
 import useFadeInAnimation from "../hooks/useFadeInAnimation";
 import { Input } from "antd";
 import { classifyQuestion } from "../services/QuestionTypeClassifier";
@@ -11,6 +12,7 @@ import {
 import { stringify } from "querystring";
 import { useUserStore } from "@/app/store";
 import { Stages } from "../store/tarot";
+
 const QuestionInputComponent = () => {
 	const TarotStore = useTarotStore();
 	const UserStore = useUserStore();
@@ -121,7 +123,9 @@ const QuestionInputComponent = () => {
 			<div
 				className={`${styles.welcomeText} ${
 					animationStates.welcome ? styles.fadeIn : ""
-				}`}
+				}
+				${stage === Stages.Interpretation ? styles.fadeOut : ""}
+				`}
 			>
 				<p className={styles.title}>欢迎你 {nickname} 来到神秘的塔罗世界</p>
 				<p className={`${styles.subtitle} ${animationClass} `}>
@@ -157,7 +161,7 @@ const QuestionInputComponent = () => {
 				<button
 					className={`${styles.submitButton} ${
 						animationStates.button ? styles.fadeIn : ""
-					} ${animationClass}`}
+					} ${animationClass} ${styles.tarotButtonPrimary}`}
 					onClick={handleQuestionSubmit}
 				>
 					提交

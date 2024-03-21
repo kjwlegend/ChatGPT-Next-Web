@@ -1,7 +1,13 @@
-.tarotSpread {
+@import "common.module.scss";
+
+.spreadHeader {
+	text-align: center;
+}
+.tarotSpreadContainer {
 	position: relative;
 	width: 100%;
 	height: 100%;
+	min-height: 550px;
 	display: flex;
 	// 可以根据需要添加更多样式，例如背景、边框等
 
@@ -33,14 +39,36 @@
 		box-shadow: 9px 5px 20px 9px rgb(187 104 239 / 58%);
 		backdrop-filter: blur(5px);
 		overflow-y: scroll;
-		scrollbar-base-color: beige;
-		scrollbar-width: thin;
 
-		.interpretationTitle {
-			font-size: 1.2rem;
-			margin-bottom: 10px;
+		.interpretationHeader {
 			margin: inherit;
 			padding: inherit;
+			margin-bottom: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+
+			p {
+				padding: 0;
+				margin: 0;
+			}
+			.interpretationSwitchText {
+				font-size: 0.875rem;
+				color: #fff;
+				margin: 0 7px;
+			}
+
+			.interpretationSwitch {
+				background-color: #ae96c2;
+
+				&.ant-switch.ant-switch-checked {
+					background-color: red;
+				}
+			}
+			.interpretationTitle {
+				font-size: 1.2rem;
+				padding: 0;
+			}
 		}
 
 		.interpretationText {
@@ -48,6 +76,34 @@
 			white-space: pre-line;
 			margin: inherit;
 			padding: inherit;
+		}
+
+		.interpretationCollapse {
+			color: #fff;
+
+			:global .ant-collapse-item {
+				background: transparent;
+				// border: none;
+				color: #fff;
+
+				.ant-collapse-header {
+					color: #fff;
+				}
+				.ant-collapse-expand-icon {
+					color: #fff;
+				}
+				.ant-collapse-content {
+					background: rgba(255, 255, 255, 0.1);
+					-webkit-backdrop-filter: blur(10px);
+					backdrop-filter: blur(79px);
+					border-radius: 7px;
+					color: #fff;
+				}
+			}
+		}
+		svg path,
+		svg rect {
+			fill: #b660fc;
 		}
 	}
 }
