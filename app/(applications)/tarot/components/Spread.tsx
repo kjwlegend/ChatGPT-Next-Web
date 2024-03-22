@@ -5,8 +5,7 @@ import { Card } from "./Card";
 import { TAROT_BACK_IMAGE } from "../constants/tarotCards";
 import styles from "../styles/Spread.module.scss";
 import { useTarotStore } from "../store/tarot";
-import { TarotCardType } from "../types/TarotCard";
-import { TarotPosition } from "../types/TarotPosition";
+import { TarotPosition } from "../libs/TarotPosition";
 import { Collapse, Switch } from "antd";
 import { CollapseProps } from "antd/lib/collapse";
 import { LoadingIcon2 } from "@/app/icons";
@@ -105,7 +104,7 @@ const Spread: React.FC = () => {
 										onClick={() => handleCardClick(position, index)}
 										positionMeaning={position.meaning}
 										style={{
-											"--var-width": "75px",
+											"--var-width": "80px",
 										}}
 									/>
 								</>

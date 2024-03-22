@@ -30,7 +30,11 @@ const Index: React.FC = () => {
 	}, []);
 
 	return (
-		<>
+		<div
+			style={{
+				overflow: "hidden",
+			}}
+		>
 			<div className={styles.stars}></div>
 			<div className={styles.stars2}></div>
 			<div className={styles.stars3}></div>
@@ -39,7 +43,7 @@ const Index: React.FC = () => {
 				{<Deck />}
 				{stage == Stages.Interpretation && <Spread />}
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -5,9 +5,10 @@
 }
 .tarotSpreadContainer {
 	position: relative;
-	width: 100%;
-	height: 100%;
-	min-height: 550px;
+	// width: 100%;
+	// height: 100%;
+	min-height: 650px;
+	max-height: 650px;
 	display: flex;
 	// 可以根据需要添加更多样式，例如背景、边框等
 
@@ -19,11 +20,6 @@
 		.tarotSpreadPosition {
 			position: absolute;
 			// 确保卡片位置使用绝对定位
-			// 可以添加卡片位置的宽度和高度
-			// 例如:
-			// width: 150px;
-			// height: 260px;
-			// 这些尺寸应该根据卡片的实际尺寸来设置
 		}
 	}
 	.interpretation {
@@ -38,6 +34,8 @@
 		);
 		box-shadow: 9px 5px 20px 9px rgb(187 104 239 / 58%);
 		backdrop-filter: blur(5px);
+		max-height: inherit;
+		border-radius: 15px;
 		overflow-y: scroll;
 
 		.interpretationHeader {

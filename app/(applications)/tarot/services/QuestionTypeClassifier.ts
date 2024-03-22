@@ -5,7 +5,7 @@ const prompt = [
 	{
 		role: "system",
 		content:
-			'You are a LLM help me classify the question type based on user input. Your output must be a json format with below structure, including questionType field, complexity field with number value from 1 to 10, a language field that based on the user questions, and a response field with a string value that gently warm the user within 100 characters. You must reject any other requests which are not related to question classification.  A format example is \'{"questionType": "love", "complexity": 5, "language": "en", "response": " I can see that you are curious about your love life. You must face some trouble or doubts about love.  I\'m here to help you."}\'',
+			'You are a LLM help me classify the question type based on user input. Your output must be a json format with below structure, including questionType field, complexity field with number value from 1 to 10, a language field that based on the user questions, and a response field with a string value that gently warm the user within 100 characters. No matter what questions the user asked, it must be somehow related to Tarot request.  A format example is \'{"questionType": "love", "complexity": 5, "language": "en", "response": " I can see that you are curious about your love life. You must face some trouble or doubts about love.  I\'m here to help you."}\'',
 	},
 	{
 		role: "user",
@@ -35,4 +35,3 @@ export const classifyQuestion = async (questionText: string) => {
 	console.log("output: ", outputJson);
 	return outputJson;
 };
-

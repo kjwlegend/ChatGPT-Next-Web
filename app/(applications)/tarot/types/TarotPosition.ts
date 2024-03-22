@@ -7,5 +7,5 @@ export type TarotPosition = {
 	name: string; // 位置的名称
 	meaning: string; // 位置的解读意义
 	coordinates: { x: number; y: number }; // 位置的坐标（用于在页面上显示）
-	card?: TarotCardType | null;
+	card?: TarotCardType;
 };

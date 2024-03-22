@@ -1,0 +1,30 @@
+"filename", "language", "TypeScript", "SCSS", "Markdown", "TypeScript JSX", "comment", "blank", "total"
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\Card.tsx", "TypeScript JSX", 0, 0, 0, 88, 2, 8, 98
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\Deck.tsx", "TypeScript JSX", 0, 0, 0, 298, 11, 30, 339
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\QuestionInput.tsx", "TypeScript JSX", 0, 0, 0, 165, 7, 26, 198
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\Spread.tsx", "TypeScript JSX", 0, 0, 0, 134, 5, 17, 156
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\constants\tarotCards.ts", "TypeScript", 975, 0, 0, 0, 63, 56, 1094
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\constants\tarotSpreads.ts", "TypeScript", 948, 0, 0, 0, 2, 12, 962
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\hooks\useFadeInAnimation.ts", "TypeScript", 20, 0, 0, 0, 0, 6, 26
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotCard.ts", "TypeScript", 20, 0, 0, 0, 21, 3, 44
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotDeck.ts", "TypeScript", 50, 0, 0, 0, 5, 10, 65
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotPosition.ts", "TypeScript", 22, 0, 0, 0, 2, 3, 27
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotSpread.ts", "TypeScript", 18, 0, 0, 0, 2, 2, 22
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\gameLogic.ts", "TypeScript", 106, 0, 0, 0, 5, 13, 124
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\notes.md", "Markdown", 0, 0, 22, 0, 0, 13, 35
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\page.tsx", "TypeScript JSX", 0, 0, 0, 41, 2, 8, 51
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\services\InterpretService.ts", "TypeScript", 71, 0, 0, 0, 13, 8, 92
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\services\QuestionTypeClassifier.ts", "TypeScript", 31, 0, 0, 0, 1, 6, 38
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\services\TarotSpreadSelector.ts", "TypeScript", 63, 0, 0, 0, 2, 16, 81
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\store\tarot.ts", "TypeScript", 168, 0, 0, 0, 18, 8, 194
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\Card.module.scss", "SCSS", 0, 60, 0, 0, 8, 10, 78
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\Deck.module.scss", "SCSS", 0, 77, 0, 0, 4, 11, 92
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\QuestionInput.module.scss", "SCSS", 0, 101, 0, 0, 4, 12, 117
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\Spread.module.scss", "SCSS", 0, 88, 0, 0, 7, 13, 108
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\common.module.scss", "SCSS", 0, 19, 0, 0, 0, 2, 21
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\layout.module.scss", "SCSS", 0, 75, 0, 0, 8, 8, 91
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotCard.ts", "TypeScript", 15, 0, 0, 0, 1, 1, 17
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotDeck.ts", "TypeScript", 6, 0, 0, 0, 1, 2, 9
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotPosition.ts", "TypeScript", 8, 0, 0, 0, 2, 2, 12
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotSpread.ts", "TypeScript", 7, 0, 0, 0, 1, 2, 10
+"Total", "-", 2528, 420, 22, 726, 197, 308, 4201

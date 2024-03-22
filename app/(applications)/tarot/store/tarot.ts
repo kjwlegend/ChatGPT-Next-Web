@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { TarotGame } from "../libs/gameLogic";
 import { TarotSpread } from "../libs/TarotSpread";
 import { TarotCardType } from "../types/TarotCard";
-import { TarotPosition } from "../types/TarotPosition";
+import { TarotPosition } from "../libs/TarotPosition";
 
 // 这是questions对象的类型声明
 interface QuestionsState {

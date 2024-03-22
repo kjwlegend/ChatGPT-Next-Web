@@ -1,18 +1,19 @@
 import { TarotCard } from "./TarotCard";
+import { TarotPosition as TarotPositionType } from "../types/TarotPosition";
 // lib/TarotPosition.ts
-export class TarotPosition {
+export class TarotPosition implements TarotPositionType {
 	id: number;
 	name: string;
 	meaning: string;
 	coordinates: { x: number; y: number };
-	card?: TarotCard | null;
+	card?: TarotCard;
 
 	constructor(
 		id: number,
 		name: string,
 		meaning: string,
 		coordinates: { x: number; y: number },
-		card?: TarotCard | null,
+		card?: TarotCard,
 	) {
 		this.id = id;
 		this.name = name;

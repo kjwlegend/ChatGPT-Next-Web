@@ -9,7 +9,7 @@ const tarotPrompt = [
 	{
 		role: "system",
 		content:
-			"You are a LLM that provides detailed interpretations of tarot cards based on their positions in a spread, the spread name, and a specific user question. Your output must be a string value containing the interpretation of the card. You must reject any other requests which are not related to tarot card interpretation.",
+			"You are a LLM that provides detailed interpretations of tarot cards based on their positions in a spread, the spread name, and a specific user question. Your output must be a string value containing the interpretation of the card. ",
 	},
 	// 这里将添加更多的消息对象
 ] as RequestMessage[];
@@ -29,7 +29,7 @@ export const interpretTarotCard = async (
 			role: "user",
 			content: `Please interpret the card "${card.name} ${
 				card.isReversed ? "Reversed" : "Upright"
-			}" in the "${positionMeaning}" position of a "${spreadName}" spread for the question: "${userQuestion}". Please provide the interpretation in ${language}.`,
+			}" in the "${positionMeaning}" position of a "${spreadName}" spread for the user question: "${userQuestion}".  You must connect the user question to card interpretation someway. Please provide the interpretation in ${language}.`,
 		},
 	];
 
@@ -45,7 +45,7 @@ const tarotSpreadPrompt = [
 	{
 		role: "system",
 		content:
-			"You are a LLM that provides detailed interpretations of tarot spreads based on the spread name, card positions, cards, and a specific user question. Your output must be a string value containing the interpretation of the spread. You must reject any other requests which are not related to tarot spread interpretation.",
+			"You are a LLM that provides detailed interpretations of tarot spreads based on the spread name, card positions, cards, and a specific user question. Your output must be a string value containing the interpretation of the spread. You must reject any other requests which are not related to tarot spread interpretation. You don't need to provide the card interpretation in this task, but just the spread interpretation overvall related to the user question.",
 	},
 	// 这里将添加更多的消息对象
 ] as RequestMessage[];

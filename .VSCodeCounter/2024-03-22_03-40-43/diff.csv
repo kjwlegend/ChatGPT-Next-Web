@@ -1,0 +1,166 @@
+"filename", "language", "TypeScript", "SCSS", "Markdown", "TypeScript JSX", "TypeScript React", "XML", "comment", "blank", "total"
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\Card.tsx", "TypeScript JSX", 0, 0, 0, 88, 0, 0, 2, 8, 98
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\Deck.tsx", "TypeScript JSX", 0, 0, 0, 298, 0, 0, 11, 30, 339
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\QuestionInput.tsx", "TypeScript JSX", 0, 0, 0, 165, 0, 0, 7, 26, 198
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\components\Spread.tsx", "TypeScript JSX", 0, 0, 0, 134, 0, 0, 5, 17, 156
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\constants\tarotCards.ts", "TypeScript", 975, 0, 0, 0, 0, 0, 63, 56, 1094
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\constants\tarotSpreads.ts", "TypeScript", 948, 0, 0, 0, 0, 0, 2, 12, 962
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\hooks\useFadeInAnimation.ts", "TypeScript", 20, 0, 0, 0, 0, 0, 0, 6, 26
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotCard.ts", "TypeScript", 20, 0, 0, 0, 0, 0, 21, 3, 44
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotDeck.ts", "TypeScript", 50, 0, 0, 0, 0, 0, 5, 10, 65
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotPosition.ts", "TypeScript", 22, 0, 0, 0, 0, 0, 2, 3, 27
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\TarotSpread.ts", "TypeScript", 18, 0, 0, 0, 0, 0, 2, 2, 22
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\libs\gameLogic.ts", "TypeScript", 106, 0, 0, 0, 0, 0, 5, 13, 124
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\notes.md", "Markdown", 0, 0, 22, 0, 0, 0, 0, 13, 35
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\page.tsx", "TypeScript JSX", 0, 0, 0, 41, 0, 0, 2, 8, 51
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\services\InterpretService.ts", "TypeScript", 71, 0, 0, 0, 0, 0, 13, 8, 92
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\services\QuestionTypeClassifier.ts", "TypeScript", 31, 0, 0, 0, 0, 0, 1, 6, 38
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\services\TarotSpreadSelector.ts", "TypeScript", 63, 0, 0, 0, 0, 0, 2, 16, 81
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\store\tarot.ts", "TypeScript", 168, 0, 0, 0, 0, 0, 18, 8, 194
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\Card.module.scss", "SCSS", 0, 60, 0, 0, 0, 0, 8, 10, 78
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\Deck.module.scss", "SCSS", 0, 77, 0, 0, 0, 0, 4, 11, 92
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\QuestionInput.module.scss", "SCSS", 0, 101, 0, 0, 0, 0, 4, 12, 117
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\Spread.module.scss", "SCSS", 0, 88, 0, 0, 0, 0, 7, 13, 108
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\common.module.scss", "SCSS", 0, 19, 0, 0, 0, 0, 0, 2, 21
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\styles\layout.module.scss", "SCSS", 0, 75, 0, 0, 0, 0, 8, 8, 91
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotCard.ts", "TypeScript", 15, 0, 0, 0, 0, 0, 1, 1, 17
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotDeck.ts", "TypeScript", 6, 0, 0, 0, 0, 0, 1, 2, 9
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotPosition.ts", "TypeScript", 8, 0, 0, 0, 0, 0, 2, 2, 12
+"d:\codes\ChatGPT-Next-Web\app\(applications)\tarot\types\TarotSpread.ts", "TypeScript", 7, 0, 0, 0, 0, 0, 1, 2, 10
+"d:\codes\ChatGPT-Next-Web\app\api\auth.ts", "TypeScript", -51, 0, 0, 0, 0, 0, -2, -13, -66
+"d:\codes\ChatGPT-Next-Web\app\api\common.ts", "TypeScript", -74, 0, 0, 0, 0, 0, -4, -16, -94
+"d:\codes\ChatGPT-Next-Web\app\api\config\route.ts", "TypeScript", -18, 0, 0, 0, 0, 0, -2, -8, -28
+"d:\codes\ChatGPT-Next-Web\app\api\openai\[...path]\route.ts", "TypeScript", -43, 0, 0, 0, 0, 0, 0, -10, -53
+"d:\codes\ChatGPT-Next-Web\app\client\api.ts", "TypeScript", -117, 0, 0, 0, 0, 0, -3, -26, -146
+"d:\codes\ChatGPT-Next-Web\app\client\controller.ts", "TypeScript", -30, 0, 0, 0, 0, 0, -1, -7, -38
+"d:\codes\ChatGPT-Next-Web\app\client\platforms\openai.ts", "TypeScript", -205, 0, 0, 0, 0, 0, -1, -31, -237
+"d:\codes\ChatGPT-Next-Web\app\command.ts", "TypeScript", -59, 0, 0, 0, 0, 0, 0, -13, -72
+"d:\codes\ChatGPT-Next-Web\app\components\auth.module.scss", "SCSS", 0, -29, 0, 0, 0, 0, 0, -9, -38
+"d:\codes\ChatGPT-Next-Web\app\components\auth.tsx", "TypeScript React", 0, 0, 0, 0, -49, 0, 0, -8, -57
+"d:\codes\ChatGPT-Next-Web\app\components\button.module.scss", "SCSS", 0, -69, 0, 0, 0, 0, 0, -15, -84
+"d:\codes\ChatGPT-Next-Web\app\components\button.tsx", "TypeScript React", 0, 0, 0, 0, -47, 0, 0, -5, -52
+"d:\codes\ChatGPT-Next-Web\app\components\chat-list.tsx", "TypeScript React", 0, 0, 0, 0, -151, 0, 0, -11, -162
+"d:\codes\ChatGPT-Next-Web\app\components\chat.module.scss", "SCSS", 0, -403, 0, 0, 0, 0, 0, -77, -480
+"d:\codes\ChatGPT-Next-Web\app\components\chat.tsx", "TypeScript React", 0, 0, 0, 0, -940, 0, -28, -96, -1064
+"d:\codes\ChatGPT-Next-Web\app\components\code-login.tsx", "TypeScript React", 0, 0, 0, 0, -51, 0, 0, -7, -58
+"d:\codes\ChatGPT-Next-Web\app\components\emoji.tsx", "TypeScript React", 0, 0, 0, 0, -52, 0, 0, -8, -60
+"d:\codes\ChatGPT-Next-Web\app\components\error.tsx", "TypeScript React", 0, 0, 0, 0, -66, 0, -3, -7, -76
+"d:\codes\ChatGPT-Next-Web\app\components\exporter.module.scss", "SCSS", 0, -182, 0, 0, 0, 0, 0, -36, -218
+"d:\codes\ChatGPT-Next-Web\app\components\exporter.tsx", "TypeScript React", 0, 0, 0, 0, -489, 0, 0, -40, -529
+"d:\codes\ChatGPT-Next-Web\app\components\footer.module.scss", "SCSS", 0, -14, 0, 0, 0, 0, 0, -3, -17
+"d:\codes\ChatGPT-Next-Web\app\components\footer.tsx", "TypeScript React", 0, 0, 0, 0, -19, 0, 0, -6, -25
+"d:\codes\ChatGPT-Next-Web\app\components\header.module.scss", "SCSS", 0, -106, 0, 0, 0, 0, -4, -12, -122
+"d:\codes\ChatGPT-Next-Web\app\components\header.tsx", "TypeScript React", 0, 0, 0, 0, -113, 0, -4, -14, -131
+"d:\codes\ChatGPT-Next-Web\app\components\home.module.scss", "SCSS", 0, -279, 0, 0, 0, 0, -2, -51, -332
+"d:\codes\ChatGPT-Next-Web\app\components\home.tsx", "TypeScript React", 0, 0, 0, 0, -149, 0, 0, -30, -179
+"d:\codes\ChatGPT-Next-Web\app\components\input-range.module.scss", "SCSS", 0, -12, 0, 0, 0, 0, 0, -2, -14
+"d:\codes\ChatGPT-Next-Web\app\components\input-range.tsx", "TypeScript React", 0, 0, 0, 0, -35, 0, 0, -3, -38
+"d:\codes\ChatGPT-Next-Web\app\components\intro.module.scss", "SCSS", 0, -164, 0, 0, 0, 0, 0, -32, -196
+"d:\codes\ChatGPT-Next-Web\app\components\intro.tsx", "TypeScript React", 0, 0, 0, 0, -489, 0, -20, -25, -534
+"d:\codes\ChatGPT-Next-Web\app\components\login.tsx", "TypeScript React", 0, 0, 0, 0, -52, 0, 0, -4, -56
+"d:\codes\ChatGPT-Next-Web\app\components\markdown.tsx", "TypeScript React", 0, 0, 0, 0, -191, 0, -4, -18, -213
+"d:\codes\ChatGPT-Next-Web\app\components\mask.module.scss", "SCSS", 0, -91, 0, 0, 0, 0, 0, -18, -109
+"d:\codes\ChatGPT-Next-Web\app\components\mask.tsx", "TypeScript React", 0, 0, 0, 0, -472, 0, -5, -36, -513
+"d:\codes\ChatGPT-Next-Web\app\components\message-selector.module.scss", "SCSS", 0, -61, 0, 0, 0, 0, 0, -16, -77
+"d:\codes\ChatGPT-Next-Web\app\components\message-selector.tsx", "TypeScript React", 0, 0, 0, 0, -192, 0, -3, -21, -216
+"d:\codes\ChatGPT-Next-Web\app\components\model-config.tsx", "TypeScript React", 0, 0, 0, 0, -189, 0, 0, -7, -196
+"d:\codes\ChatGPT-Next-Web\app\components\new-chat.module.scss", "SCSS", 0, -152, 0, 0, 0, 0, -2, -24, -178
+"d:\codes\ChatGPT-Next-Web\app\components\new-chat.tsx", "TypeScript React", 0, 0, 0, 0, -155, 0, -1, -28, -184
+"d:\codes\ChatGPT-Next-Web\app\components\register.tsx", "TypeScript React", 0, 0, 0, 0, -163, 0, 0, -13, -176
+"d:\codes\ChatGPT-Next-Web\app\components\settings.module.scss", "SCSS", 0, -59, 0, 0, 0, 0, -1, -13, -73
+"d:\codes\ChatGPT-Next-Web\app\components\settings.tsx", "TypeScript React", 0, 0, 0, 0, -636, 0, -5, -51, -692
+"d:\codes\ChatGPT-Next-Web\app\components\sidebar.tsx", "TypeScript React", 0, 0, 0, 0, -169, 0, -12, -26, -207
+"d:\codes\ChatGPT-Next-Web\app\components\ui-lib.module.scss", "SCSS", 0, -215, 0, 0, 0, 0, 0, -36, -251
+"d:\codes\ChatGPT-Next-Web\app\components\ui-lib.tsx", "TypeScript React", 0, 0, 0, 0, -352, 0, -1, -41, -394
+"d:\codes\ChatGPT-Next-Web\app\config\build.ts", "TypeScript", -38, 0, 0, 0, 0, 0, 0, -7, -45
+"d:\codes\ChatGPT-Next-Web\app\config\client.ts", "TypeScript", -21, 0, 0, 0, 0, 0, -2, -5, -28
+"d:\codes\ChatGPT-Next-Web\app\config\server.ts", "TypeScript", -47, 0, 0, 0, 0, 0, 0, -6, -53
+"d:\codes\ChatGPT-Next-Web\app\constant.ts", "TypeScript", -54, 0, 0, 0, 0, 0, 0, -13, -67
+"d:\codes\ChatGPT-Next-Web\app\global.d.ts", "TypeScript", -15, 0, 0, 0, 0, 0, 0, -3, -18
+"d:\codes\ChatGPT-Next-Web\app\icons\add.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\auto.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\black-bot.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\bot.svg", "XML", 0, 0, 0, 0, 0, -9, 0, -1, -10
+"d:\codes\ChatGPT-Next-Web\app\icons\bottom.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\brain.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\break.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\cancel.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\chat-settings.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\chat.svg", "XML", 0, 0, 0, 0, 0, -27, 0, 0, -27
+"d:\codes\ChatGPT-Next-Web\app\icons\chatgpt.svg", "XML", 0, 0, 0, 0, 0, -16, 0, 0, -16
+"d:\codes\ChatGPT-Next-Web\app\icons\clear.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\close.svg", "XML", 0, 0, 0, 0, 0, -21, 0, 0, -21
+"d:\codes\ChatGPT-Next-Web\app\icons\confirm.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\copy.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\dark.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\delete.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\down.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\download.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\edit.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\export.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\eye-off.svg", "XML", 0, 0, 0, 0, 0, -4, 0, 0, -4
+"d:\codes\ChatGPT-Next-Web\app\icons\eye.svg", "XML", 0, 0, 0, 0, 0, -4, 0, 0, -4
+"d:\codes\ChatGPT-Next-Web\app\icons\github.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\left.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\light.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\lightning.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\mask.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\max.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\menu.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\min.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\pause.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\pin.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\plugin.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\prompt.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\reload.svg", "XML", 0, 0, 0, 0, 0, -24, 0, 0, -24
+"d:\codes\ChatGPT-Next-Web\app\icons\rename.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\return.svg", "XML", 0, 0, 0, 0, 0, -21, 0, 0, -21
+"d:\codes\ChatGPT-Next-Web\app\icons\robot.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\icons\send-white.svg", "XML", 0, 0, 0, 0, 0, -21, 0, 0, -21
+"d:\codes\ChatGPT-Next-Web\app\icons\settings.svg", "XML", 0, 0, 0, 0, 0, -21, 0, 0, -21
+"d:\codes\ChatGPT-Next-Web\app\icons\share.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\three-dots.svg", "XML", 0, 0, 0, 0, 0, -1, 0, 0, -1
+"d:\codes\ChatGPT-Next-Web\app\icons\upload.svg", "XML", 0, 0, 0, 0, 0, -1, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\layout.tsx", "TypeScript React", 0, 0, 0, 0, -42, 0, -1, -3, -46
+"d:\codes\ChatGPT-Next-Web\app\locales\ar.ts", "TypeScript", -286, 0, 0, 0, 0, 0, 0, -5, -291
+"d:\codes\ChatGPT-Next-Web\app\locales\cn.ts", "TypeScript", -321, 0, 0, 0, 0, 0, 0, -10, -331
+"d:\codes\ChatGPT-Next-Web\app\locales\cs.ts", "TypeScript", -232, 0, 0, 0, 0, 0, 0, -5, -237
+"d:\codes\ChatGPT-Next-Web\app\locales\de.ts", "TypeScript", -236, 0, 0, 0, 0, 0, 0, -5, -241
+"d:\codes\ChatGPT-Next-Web\app\locales\en.ts", "TypeScript", -320, 0, 0, 0, 0, 0, 0, -6, -326
+"d:\codes\ChatGPT-Next-Web\app\locales\es.ts", "TypeScript", -234, 0, 0, 0, 0, 0, 0, -5, -239
+"d:\codes\ChatGPT-Next-Web\app\locales\fr.ts", "TypeScript", -236, 0, 0, 0, 0, 0, 0, -6, -242
+"d:\codes\ChatGPT-Next-Web\app\locales\index.ts", "TypeScript", -96, 0, 0, 0, 0, 0, -1, -19, -116
+"d:\codes\ChatGPT-Next-Web\app\locales\it.ts", "TypeScript", -235, 0, 0, 0, 0, 0, 0, -5, -240
+"d:\codes\ChatGPT-Next-Web\app\locales\jp.ts", "TypeScript", -259, 0, 0, 0, 0, 0, 0, -4, -263
+"d:\codes\ChatGPT-Next-Web\app\locales\ko.ts", "TypeScript", -229, 0, 0, 0, 0, 0, 0, -6, -235
+"d:\codes\ChatGPT-Next-Web\app\locales\no.ts", "TypeScript", -161, 0, 0, 0, 0, 0, 0, -4, -165
+"d:\codes\ChatGPT-Next-Web\app\locales\ru.ts", "TypeScript", -238, 0, 0, 0, 0, 0, 0, -5, -243
+"d:\codes\ChatGPT-Next-Web\app\locales\tr.ts", "TypeScript", -235, 0, 0, 0, 0, 0, 0, -5, -240
+"d:\codes\ChatGPT-Next-Web\app\locales\tw.ts", "TypeScript", -225, 0, 0, 0, 0, 0, 0, -4, -229
+"d:\codes\ChatGPT-Next-Web\app\locales\vi.ts", "TypeScript", -230, 0, 0, 0, 0, 0, 0, -5, -235
+"d:\codes\ChatGPT-Next-Web\app\masks\cn.ts", "TypeScript", -470, 0, 0, 0, 0, 0, 0, -2, -472
+"d:\codes\ChatGPT-Next-Web\app\masks\en.ts", "TypeScript", -121, 0, 0, 0, 0, 0, 0, -2, -123
+"d:\codes\ChatGPT-Next-Web\app\masks\index.ts", "TypeScript", -22, 0, 0, 0, 0, 0, 0, -5, -27
+"d:\codes\ChatGPT-Next-Web\app\masks\typing.ts", "TypeScript", -6, 0, 0, 0, 0, 0, 0, -2, -8
+"d:\codes\ChatGPT-Next-Web\app\page.tsx", "TypeScript React", 0, 0, 0, 0, -23, 0, 0, -3, -26
+"d:\codes\ChatGPT-Next-Web\app\polyfill.ts", "TypeScript", -18, 0, 0, 0, 0, 0, -4, -6, -28
+"d:\codes\ChatGPT-Next-Web\app\store\access.ts", "TypeScript", -92, 0, 0, 0, 0, 0, -1, -12, -105
+"d:\codes\ChatGPT-Next-Web\app\store\chat.ts", "TypeScript", -517, 0, 0, 0, 0, 0, -26, -83, -626
+"d:\codes\ChatGPT-Next-Web\app\store\config.ts", "TypeScript", -180, 0, 0, 0, 0, 0, 0, -22, -202
+"d:\codes\ChatGPT-Next-Web\app\store\index.ts", "TypeScript", -4, 0, 0, 0, 0, 0, 0, -1, -5
+"d:\codes\ChatGPT-Next-Web\app\store\mask.ts", "TypeScript", -105, 0, 0, 0, 0, 0, 0, -10, -115
+"d:\codes\ChatGPT-Next-Web\app\store\prompt.ts", "TypeScript", -148, 0, 0, 0, 0, 0, -1, -27, -176
+"d:\codes\ChatGPT-Next-Web\app\store\sync.ts", "TypeScript", -72, 0, 0, 0, 0, 0, 0, -16, -88
+"d:\codes\ChatGPT-Next-Web\app\store\update.ts", "TypeScript", -109, 0, 0, 0, 0, 0, 0, -21, -130
+"d:\codes\ChatGPT-Next-Web\app\styles\animation.scss", "SCSS", 0, -20, 0, 0, 0, 0, 0, -4, -24
+"d:\codes\ChatGPT-Next-Web\app\styles\globals.scss", "SCSS", 0, -299, 0, 0, 0, 0, -4, -61, -364
+"d:\codes\ChatGPT-Next-Web\app\styles\highlight.scss", "SCSS", 0, -91, 0, 0, 0, 0, -8, -17, -116
+"d:\codes\ChatGPT-Next-Web\app\styles\layout.scss", "SCSS", 0, -10, 0, 0, 0, 0, 0, 0, -10
+"d:\codes\ChatGPT-Next-Web\app\styles\markdown.scss", "SCSS", 0, -957, 0, 0, 0, 0, 0, -176, -1133
+"d:\codes\ChatGPT-Next-Web\app\styles\window.scss", "SCSS", 0, -30, 0, 0, 0, 0, 0, -7, -37
+"d:\codes\ChatGPT-Next-Web\app\typing.ts", "TypeScript", -1, 0, 0, 0, 0, 0, 0, -1, -2
+"d:\codes\ChatGPT-Next-Web\app\utils.ts", "TypeScript", -143, 0, 0, 0, 0, 0, 0, -33, -176
+"d:\codes\ChatGPT-Next-Web\app\utils\format.ts", "TypeScript", -13, 0, 0, 0, 0, 0, 0, -1, -14
+"d:\codes\ChatGPT-Next-Web\app\utils\merge.ts", "TypeScript", -9, 0, 0, 0, 0, 0, 0, -1, -10
+"d:\codes\ChatGPT-Next-Web\app\utils\token.ts", "TypeScript", -16, 0, 0, 0, 0, 0, -3, -4, -23
+"Total", "-", -4063, -2823, 22, 726, -5286, -202, 38, -1332, -12920

@@ -10,6 +10,7 @@ import { useTarotStore } from "../store/tarot";
 
 import { Stages } from "../store/tarot";
 import { TarotSpread } from "../types/TarotSpread";
+import { random } from "nanoid";
 
 interface ShuffleAnimationComponentProps {
 	onShuffleComplete?: () => void;
@@ -22,26 +23,30 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 }) => {
 	const [isShuffling, setIsShuffling] = useState(false);
 	const TarotStore = useTarotStore();
-	const [countdown, setCountdown] = useState(5);
+	const [countdown, setCountdown] = useState(25);
 	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
 		TarotStore;
 
 	const shuffleVariants: Variants = {
 		start: (i: number) => ({
-			x: [0, 60, -70, 80, -60, 55, -55, 44, -10, 0],
-			y: [0, 5, -5, 5, -5, 5, 0],
-			rotate: [0, 50, 180, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360],
+			x: [0, 60, 140, -80, -60, 55, -55, 44, -10, 0],
+			y: [0, 15, -15, 25, -15, 5, 0],
+			rotate: [
+				0, 50, 60, 180, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360,
+			],
+			// zIndex: i % 2 == 1 ? i : i - 1,
 			transition: {
-				duration: 2,
-				repeat: Infinity,
-				repeatType: "loop", // 确保 repeatType 是 'loop' | 'reverse' | 'mirror' | undefined 中的一个
-				ease: "linear",
+				duration: 3.5,
+				repeat: 3,
+				repeatType: "reverse", // 确保 repeatType 是 'loop' | 'reverse' | 'mirror' | undefined 中的一个
+				ease: "easeInOut",
 				delay: i * 0.1, // Stagger the animation of each card
 			},
 		}),
 		stop: {
 			x: 0,
 			y: 0,
+			zIndex: 0,
 			rotate: 0,
 			transition: {
 				duration: 2,
@@ -106,6 +111,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 								exit="hidden"
 								variants={fadeOutVariants}
 								onClick={startShuffle}
+								className={styles.tarotButtonPrimary}
 							>
 								点击洗牌
 							</motion.button>
@@ -149,7 +155,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 						>
 							{/* Render tarot card image here */}
 							<DeckCard
-								key={index}
+								key={"shuffling" + index}
 								card={card}
 								classNameString={styles.tarotCard}
 							/>
@@ -306,11 +312,12 @@ const Deck: React.FC = () => {
 									// transform: `rotate(${angle}deg)  `, // 应用旋转角度
 									left: `${left}px`,
 									transition: "transform 0.5s",
+									"--var-width": "80px",
 								};
 								return (
 									<>
 										<DeckCard
-											key={index}
+											key={"draw" + index}
 											card={card}
 											style={style}
 											classNameString={styles.tarotCard}

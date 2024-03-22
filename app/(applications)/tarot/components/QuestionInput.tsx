@@ -129,7 +129,10 @@ const QuestionInputComponent = () => {
 			>
 				<p className={styles.title}>欢迎你 {nickname} 来到神秘的塔罗世界</p>
 				<p className={`${styles.subtitle} ${animationClass} `}>
-					希望你的问题能在这里找到答案
+					采用金色黎明Golden Dawn正统神秘学释义, 最专业的塔罗占卜
+				</p>
+				<p className={`${styles.subtitle} ${animationClass} `}>
+					所有占卜记录及结果均不会被保存, 请放心使用
 				</p>
 				<p className={`${styles.subtitle} ${animationClass} `}>
 					请尽可能详细的输入你的问题

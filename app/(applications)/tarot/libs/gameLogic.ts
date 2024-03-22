@@ -50,7 +50,7 @@ export class TarotGame {
 		return dealtCards;
 	}
 
-	addCardToNextEmptyPosition(card: TarotCardType): void {
+	addCardToNextEmptyPosition(card: TarotCard): void {
 		for (const position of this.currentSpread.positions) {
 			if (!position.card) {
 				position.card = card;
