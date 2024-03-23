@@ -21,18 +21,37 @@
 		font-size: 1.5rem;
 		height: 40px;
 		margin: 10px 0;
+
+		@media screen and (max-width: 768px) {
+			font-size: 1.2rem;
+		}
 	}
 	.subtitle {
 		height: 40px;
 		margin: 10px 0;
 
 		transition: all 2s ease-in;
+
+		@media screen and (max-width: 768px) {
+			font-size: 1rem;
+		}
 	}
 }
 .questionInput {
 	// width: 200px;
 	width: 80%;
-	height: 40px;
+	height: 60px;
+
+	@media screen and (max-width: 768px) {
+		width: 100%;
+	}
+
+	.errortext {
+		color: rgb(236, 179, 179);
+		font-size: 0.8rem;
+		margin: 5px 0;
+		text-align: center;
+	}
 
 	:global .ant-input {
 		background-color: transparent;
@@ -44,6 +63,10 @@
 		display: block;
 		transition: width 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
 		text-overflow: ellipsis;
+
+		@media screen and (max-width: 768px) {
+			width: 80%;
+		}
 	}
 	// input placeholder color
 	:global .ant-input::placeholder {
@@ -53,7 +76,11 @@
 	:global .ant-input:focus {
 		border-color: #fff;
 		width: 80%;
-		box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+		box-shadow: 0px 4px 20px 14px rgba(255, 255, 255, 0.2);
+
+		@media screen and (max-width: 768px) {
+			width: 100%;
+		}
 	}
 }
 
@@ -80,9 +107,17 @@
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+
+	@media screen and (max-width: 768px) {
+		font-size: 1rem;
+	}
 }
 .responseTextSmall {
 	font-size: 1.1rem;
+
+	@media screen and (max-width: 768px) {
+		font-size: 0.9rem;
+	}
 }
 
 .fadeIn {

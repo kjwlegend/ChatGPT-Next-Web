@@ -94,20 +94,22 @@ export default function MainNav() {
 		<>
 			{isMobileScreen ? (
 				<Header className={styles.header}>
+					<DrawerMenu />
 					<div className={styles.logo}>
 						{/* <img
 							className={styles["logo-image"]}
 							src="/logo-2.png"
 							alt="Logo"
 						/> */}
-						<Image
-							src={"/logo-2.png"}
-							alt="logo"
-							fill={true}
-							objectFit="contain"
-							style={{ left: -50 }}
-						/>
-						<Link href="/">
+						<Link href="/chats">
+							<Image
+								src={"/logo-2.png"}
+								alt="logo"
+								fill={true}
+								objectFit="contain"
+								style={{ left: -50 }}
+							/>
+
 							<div className={styles["logo-text"]}>
 								<p className={styles["headline"]}>小光AI</p>
 							</div>

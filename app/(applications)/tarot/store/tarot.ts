@@ -140,6 +140,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 					response: "",
 					spreadUsage: "",
 				},
+				 
 			};
 		});
 	},

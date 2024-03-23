@@ -51,6 +51,8 @@ const QuestionInputComponent = () => {
 
 	const [isLoading, setIsLoading] = useState(false);
 
+	const [errorText, setErrorText] = useState("");
+
 	useEffect(() => {
 		console.log("questions updated", questions);
 	}, [questions]); // 这个 useEffect 会在 `questions` 状态变化后执行
@@ -59,6 +61,13 @@ const QuestionInputComponent = () => {
 		console.log("Question submitted:", question);
 		// TODO: Trigger question type classification
 		// TODO: Display crystal ball and tarot spread selection
+
+		// if no question, show error text
+		if (!question) {
+			setErrorText("请输入问题");
+			return;
+		}
+		setErrorText("");
 
 		setIsLoading(true);
 		const res = await classifyQuestion(question);
@@ -143,15 +152,18 @@ const QuestionInputComponent = () => {
 				${stage !== Stages.UserInput ? styles.fadeOut : ""} ${styles.questionInput}`}
 			>
 				{showInput && (
-					<Input
-						type="text"
-						placeholder="请输入您的问题..."
-						onChange={(e) => setQuestion(e.target.value)}
-						onPressEnter={handleQuestionSubmit}
-						// width={"100%"}
-						size="large"
-						className={``}
-					/>
+					<>
+						<Input
+							type="text"
+							placeholder="请输入您的问题..."
+							onChange={(e) => setQuestion(e.target.value)}
+							onPressEnter={handleQuestionSubmit}
+							// width={"100%"}
+							size="large"
+							className={``}
+						/>
+						<p className={styles.errortext}>{errorText}</p>
+					</>
 				)}
 			</div>
 			{question && stage !== Stages.UserInput && (

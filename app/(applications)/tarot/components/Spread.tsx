@@ -9,16 +9,19 @@ import { TarotPosition } from "../libs/TarotPosition";
 import { Collapse, Switch } from "antd";
 import { CollapseProps } from "antd/lib/collapse";
 import { LoadingIcon2 } from "@/app/icons";
+import { useMobileScreen } from "@/app/utils";
 
 const Spread: React.FC = () => {
 	const TarotStore = useTarotStore();
+	const isMobileScreen = useMobileScreen();
 
-	const { currentSpread, interpretCard, interpretSpread, interpretation } =
-		TarotStore;
-
-	if (!currentSpread) {
-		return null;
-	}
+	const {
+		currentSpread,
+		interpretCard,
+		interpretSpread,
+		interpretation,
+		resetGame,
+	} = TarotStore;
 
 	const [fullInterpretations, setFullInterpretations] = useState({
 		cards: [] as CollapseProps["items"],
@@ -29,6 +32,20 @@ const Spread: React.FC = () => {
 	const [interpretationType, setInterpretationType] = useState<
 		"single" | "spread"
 	>("single");
+
+	const mobileSpaceReduce = 30;
+
+	const [isOpen, setIsOpen] = useState(false);
+
+	const toggleDrawer = () => {
+		setIsOpen(!isOpen);
+	};
+
+	const resetHandler = () => {
+		resetGame();
+		// reload
+		window.location.reload();
+	};
 
 	const handleInterpretationSwitch = (checked: boolean) => {
 		setInterpretationType(checked ? "spread" : "single");
@@ -74,6 +91,10 @@ const Spread: React.FC = () => {
 		setIsInterpreting(false);
 	};
 
+	if (!currentSpread) {
+		return null;
+	}
+
 	return (
 		<>
 			<div className={styles.spreadHeader}>
@@ -84,6 +105,14 @@ const Spread: React.FC = () => {
 				>
 					全牌阵解读
 				</button>
+				{isMobileScreen && (
+					<button onClick={toggleDrawer} className={styles.tarotButtonPrimary}>
+						{isOpen ? "关闭" : "开启"}解读
+					</button>
+				)}
+				<button onClick={resetHandler} className={styles.tarotButtonPrimary}>
+					重新开始
+				</button>
 			</div>
 
 			<div className={styles.tarotSpreadContainer}>
@@ -93,7 +122,7 @@ const Spread: React.FC = () => {
 							key={index}
 							className={styles.tarotSpreadPosition}
 							style={{
-								left: `${position.coordinates.x}px`,
+								left: `${position.coordinates.x - mobileSpaceReduce}px`,
 								top: `${position.coordinates.y}px`,
 							}}
 						>
@@ -114,9 +143,14 @@ const Spread: React.FC = () => {
 				</div>
 
 				{
-					<div className={styles.interpretation}>
+					<div
+						className={`${styles.interpretation} ${
+							isOpen ? styles.drawer + " " + styles.open : ""
+						}`}
+					>
 						<div className={styles.interpretationHeader}>
 							<p className={styles.interpretationTitle}>解牌</p>
+
 							<p>
 								<span className={styles.interpretationSwitchText}>单牌</span>
 								<Switch
@@ -152,4 +186,83 @@ const Spread: React.FC = () => {
 	);
 };
 
-export { Spread };
+//  牌阵测试:
+interface TestSpreadProps {
+	spread: TarotSpread | null;
+}
+
+const TestSpread: React.FC<TestSpreadProps> = ({ spread }) => {
+	let currentSpread = spread;
+
+	const [isOpen, setIsOpen] = useState(false);
+
+	const toggleDrawer = () => {
+		setIsOpen(!isOpen);
+	};
+
+	const defaultcard = {
+		id: "0",
+		name: "The Fool",
+		chineseName: "愚者",
+		front: "fool.jpg",
+		meaningPositive: "新的开始，无限可能",
+		meaningReversed: "不成熟，冒险",
+		flipped: false,
+		isReversed: false,
+		flip: () => {},
+	};
+
+	if (!currentSpread) {
+		return null;
+	}
+	return (
+		<>
+			<div className={styles.tarotSpreadContainer}>
+				<div className={styles.tarotSpreadPositions}>
+					{currentSpread.positions.map((position, index) => (
+						<div
+							key={index}
+							className={styles.tarotSpreadPosition}
+							style={{
+								left: `${position.coordinates.x}px`,
+								top: `${position.coordinates.y}px`,
+							}}
+						>
+							<>
+								<Card
+									card={defaultcard}
+									positionMeaning={position.meaning}
+									style={{
+										"--var-width": "80px",
+									}}
+								/>
+							</>
+						</div>
+					))}
+				</div>
+
+				{
+					<div
+						className={`${styles.interpretation} ${styles.drawer} ${styles.open}`}
+					>
+						<div className={styles.interpretationHeader}>
+							<p className={styles.interpretationTitle}>{currentSpread.name}</p>
+							<p>
+								<span className={styles.interpretationSwitchText}>单牌</span>
+								<Switch
+									// defaultChecked
+									className={styles.interpretationSwitch}
+									size="small"
+								/>
+								<span className={styles.interpretationSwitchText}>牌阵</span>
+							</p>
+						</div>
+						<div className={styles.interpretationText}>abcdefg</div>
+					</div>
+				}
+			</div>
+		</>
+	);
+};
+
+export { Spread, TestSpread };

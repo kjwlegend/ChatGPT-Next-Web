@@ -1,6 +1,6 @@
 // constants/tarotCards.ts
 import { TarotCardType } from "../types/TarotCard";
-export const TAROT_BACK_IMAGE = "/tarots/back.webp"; // 所有卡牌背面的图片路径
+export const TAROT_BACK_IMAGE = "/tarots/back.jpg"; // 所有卡牌背面的图片路径
 
 // 设定一个default state 状态, 用于TAROT_CARDS 的初始化
 // flipped: boolean;
@@ -26,7 +26,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 0,
 		name: "The Fool",
-		front: "fool-front.png",
+		front: "fool.jpg",
 		meaningPositive:
 			"精神的纯洁性，新的开始，自由，原始的力量，无拘无束的探索，直觉。",
 		meaningReversed: "愚蠢，失去方向，疏忽，不负责任，轻率的决策，不切实际。",
@@ -40,7 +40,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 1,
 		name: "The Magician",
-		front: "magician-front.png",
+		front: "magician.jpg",
 		meaningPositive: "意志力，创造力，自信，灵巧，将潜能转化为实际成果。",
 		meaningReversed: "潜力未发挥，意志薄弱，缺乏方向，欺骗，操纵。",
 		chineseName: "魔术师",
@@ -53,7 +53,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 2,
 		name: "The High Priestess",
-		front: "high-priestess-front.png",
+		front: "high-priestess.jpg",
 		meaningPositive: "直觉，神秘知识，深层意识，内在智慧，沉思。",
 		meaningReversed: "隐藏的障碍或秘密，未被揭露的真相，表面知识，忽视直觉。",
 		chineseName: "女祭司",
@@ -66,7 +66,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 3,
 		name: "The Empress",
-		front: "empress-front.png",
+		front: "empress.jpg",
 		meaningPositive: "丰饶，创造力，生育，美丽，大自然，母性。",
 		meaningReversed: "缺乏增长，创造力受阻，家庭纷争，依赖性，财务问题。",
 		chineseName: "女皇",
@@ -79,7 +79,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 4,
 		name: "The Emperor",
-		front: "emperor-front.png",
+		front: "emperor.jpg",
 		meaningPositive: "权威，稳定，结构，控制，父性。",
 		meaningReversed: "专制，顽固，缺乏灵活性，滥用权力。",
 		chineseName: "皇帝",
@@ -92,7 +92,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 5,
 		name: "The Hierophant",
-		front: "hierophant-front.png",
+		front: "hierophant.jpg",
 		meaningPositive: "传统，精神指导，宗教信仰，教育，组织。",
 		meaningReversed: "独断，狗matism，不宽容，对传统的挑战。",
 		chineseName: "教皇",
@@ -105,7 +105,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 6,
 		name: "The Lovers",
-		front: "lovers-front.png",
+		front: "lovers.jpg",
 		meaningPositive: "爱情，和谐，关系，价值选择，决策。",
 		meaningReversed: "不和，分离，道德困境，价值观冲突。",
 		chineseName: "恋人们",
@@ -118,7 +118,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 7,
 		name: "The Chariot",
-		front: "chariot-front.png",
+		front: "chariot.jpg",
 		meaningPositive: "胜利，意志力，自我控制，勇气，决断。",
 		meaningReversed: "失败，缺乏方向，无法控制，侵略性，冲动。",
 		chineseName: "战车",
@@ -132,7 +132,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 8,
 		name: "Strength",
-		front: "strength-front.png",
+		front: "strength.jpg",
 		meaningPositive: "勇气，力量，坚韧，激情，内在力量。",
 		meaningReversed: "自我怀疑，缺乏自制力，内在的恐惧。",
 		chineseName: "力量",
@@ -145,7 +145,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 9,
 		name: "The Hermit",
-		front: "the-hermit-front.png",
+		front: "the-hermit.jpg",
 		meaningPositive: "内省，寻求知识，智慧，独处，指导。",
 		meaningReversed: "孤立，过度内省，拒绝帮助，隐居。",
 		chineseName: "隐士",
@@ -158,7 +158,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 10,
 		name: "Wheel of Fortune",
-		front: "wheel-of-fortune-front.png",
+		front: "wheel-of-fortune.jpg",
 		meaningPositive: "命运转变，机遇，周期，重大改变。",
 		meaningReversed: "不好的运气，抵抗改变，周期的负面影响。",
 		chineseName: "命运之轮",
@@ -172,7 +172,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 11,
 		name: "Justice",
-		front: "justice-front.png",
+		front: "justice.jpg",
 		meaningPositive: "公正，真理，法律，因果律，清晰。",
 		meaningReversed: "不公，误判，不诚实，逃避责任。",
 		chineseName: "正义",
@@ -185,7 +185,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 12,
 		name: "The Hanged Man",
-		front: "the-hanged-man-front.png",
+		front: "the-hanged-man.jpg",
 		meaningPositive: "自我牺牲，新视角，等待，内省。",
 		meaningReversed: "无谓的牺牲，停滞，无法前进。",
 		chineseName: "倒吊人",
@@ -198,7 +198,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 13,
 		name: "Death",
-		front: "death-front.png",
+		front: "death.jpg",
 		meaningPositive: "转变，结束，转折点，新开始。",
 		meaningReversed: "抵抗改变，未完成的事情，无法释怀。",
 		chineseName: "死神",
@@ -211,7 +211,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 14,
 		name: "Temperance",
-		front: "temperance-front.png",
+		front: "temperance.jpg",
 		meaningPositive: "平衡，和谐，耐心，适度，自我控制。",
 		meaningReversed: "极端，失衡，缺乏耐心，过度自信。",
 		chineseName: "节制",
@@ -224,7 +224,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 15,
 		name: "The Devil",
-		front: "the-devil-front.png",
+		front: "the-devil.jpg",
 		meaningPositive: "面对自己的阴影面，解放，认识到束缚。",
 		meaningReversed: "依赖，束缚，物质主义过度，失去控制。",
 		chineseName: "恶魔",
@@ -237,7 +237,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 16,
 		name: "The Tower",
-		front: "the-tower-front.png",
+		front: "the-tower.jpg",
 		meaningPositive: "突然的变化，精神觉醒，释放束缚，必要的破坏。",
 		meaningReversed: "持续的混乱，恐惧变化，灾难的影响，内在的冲突。",
 		chineseName: "塔",
@@ -250,7 +250,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 17,
 		name: "The Star",
-		front: "the-star-front.png",
+		front: "the-star.jpg",
 		meaningPositive: "希望，灵感，宁静，精神的指导。",
 		meaningReversed: "失望，缺乏信心，创意受阻。",
 		chineseName: "星星",
@@ -263,7 +263,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 18,
 		name: "The Moon",
-		front: "the-moon-front.png",
+		front: "the-moon.jpg",
 		meaningPositive: "直觉，梦境，内在的启示，面对恐惧。",
 		meaningReversed: "混乱，不安，欺骗，幻觉。",
 		chineseName: "月亮",
@@ -276,7 +276,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 19,
 		name: "The Sun",
-		front: "the-sun-front.png",
+		front: "the-sun.jpg",
 		meaningPositive: "活力，成功，幸福，清晰。",
 		meaningReversed: "悲观，缺乏自信，不成功。",
 		chineseName: "太阳",
@@ -289,7 +289,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 20,
 		name: "Judgement",
-		front: "judgement-front.png",
+		front: "judgement.jpg",
 		meaningPositive: "觉醒，复兴，自我反省，救赎。",
 		meaningReversed: "自我怀疑，内疚，拒绝接受过去。",
 		chineseName: "审判",
@@ -302,7 +302,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: 21,
 		name: "The World",
-		front: "the-world-front.png",
+		front: "the-world.jpg",
 		meaningPositive: "完成，整合，旅程的结束，庆祝。",
 		meaningReversed: "未完成，缺乏闭环，延迟。",
 		chineseName: "世界",
@@ -316,7 +316,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "King of Wands",
 		name: "King of Wands",
-		front: "king-of-wands-front.png",
+		front: "king-of-wands.jpg",
 		meaningPositive: "领导力，魅力，掌控力，创造力。",
 		meaningReversed: "暴躁，专横，不成熟。",
 		chineseName: "权杖王",
@@ -330,7 +330,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Queen of Wands",
 		name: "Queen of Wands",
-		front: "queen-of-wands-front.png",
+		front: "queen-of-wands.jpg",
 		meaningPositive: "热情，独立，社交能力，吸引力。",
 		meaningReversed: "自私，易怒，控制欲。",
 		chineseName: "权杖皇后",
@@ -344,7 +344,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Knight of Wands",
 		name: "Knight of Wands",
-		front: "knight-of-wands-front.png",
+		front: "knight-of-wands.jpg",
 		meaningPositive: "能量，激情，冒险精神，行动。",
 		meaningReversed: "鲁莽，冲动，缺乏方向。",
 		chineseName: "权杖骑士",
@@ -358,7 +358,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Page of Wands",
 		name: "Page of Wands",
-		front: "page-of-wands-front.png",
+		front: "page-of-wands.jpg",
 		meaningPositive: "好奇心，探索，新的想法，创造力。",
 		meaningReversed: "缺乏方向，失望，未能实现的想法。",
 		chineseName: "权杖侍从",
@@ -371,7 +371,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ace of Wands",
 		name: "Ace of Wands",
-		front: "ace-of-wands-front.png",
+		front: "ace-of-wands.jpg",
 		meaningPositive: "新的开始，创造力，激情，动力。",
 		meaningReversed: "缺乏动力，延迟，挫败感，浪费的潜力。",
 		chineseName: "权杖王牌",
@@ -384,7 +384,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Two of Wands",
 		name: "Two of Wands",
-		front: "two-of-wands-front.png",
+		front: "two-of-wands.jpg",
 		meaningPositive: "规划未来，个人力量，目标设定。",
 		meaningReversed: "恐惧未知，缺乏规划，决策迟疑。",
 		chineseName: "权杖二",
@@ -398,7 +398,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Three of Wands",
 		name: "Three of Wands",
-		front: "three-of-wands-front.png",
+		front: "three-of-wands.jpg",
 		meaningPositive: "展望，增长，扩展视野。",
 		meaningReversed: "挫折，延迟，未达预期。",
 		chineseName: "权杖三",
@@ -412,7 +412,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Four of Wands",
 		name: "Four of Wands",
-		front: "four-of-wands-front.png",
+		front: "four-of-wands.jpg",
 		meaningPositive: "庆祝，稳定，社区。",
 		meaningReversed: "缺乏支持，不稳定，家庭冲突。",
 		chineseName: "权杖四",
@@ -426,7 +426,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Five of Wands",
 		name: "Five of Wands",
-		front: "five-of-wands-front.png",
+		front: "five-of-wands.jpg",
 		meaningPositive: "竞争，挑战，小冲突。",
 		meaningReversed: "避免冲突，压力减轻，寻求解决方案。",
 		chineseName: "权杖五",
@@ -440,7 +440,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Six of Wands",
 		name: "Six of Wands",
-		front: "six-of-wands-front.png",
+		front: "six-of-wands.jpg",
 		meaningPositive: "胜利，成就，荣誉。",
 		meaningReversed: "失败，缺乏认可，自负。",
 		chineseName: "权杖六",
@@ -454,7 +454,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Seven of Wands",
 		name: "Seven of Wands",
-		front: "seven-of-wands-front.png",
+		front: "seven-of-wands.jpg",
 		meaningPositive: "防御，挑战，坚持。",
 		meaningReversed: "疲惫，放弃，被压倒。",
 		chineseName: "权杖七",
@@ -468,7 +468,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Eight of Wands",
 		name: "Eight of Wands",
-		front: "eight-of-wands-front.png",
+		front: "eight-of-wands.jpg",
 		meaningPositive: "快速行动，进展，消息。",
 		meaningReversed: "延迟，挫折，耐心。",
 		chineseName: "权杖八",
@@ -482,7 +482,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Nine of Wands",
 		name: "Nine of Wands",
-		front: "nine-of-wands-front.png",
+		front: "nine-of-wands.jpg",
 		meaningPositive: "坚韧，持久，警惕。",
 		meaningReversed: "疲惫，防御过度，悲观。",
 		chineseName: "权杖九",
@@ -496,7 +496,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ten of Wands",
 		name: "Ten of Wands",
-		front: "ten-of-wands-front.png",
+		front: "ten-of-wands.jpg",
 		meaningPositive: "负担，责任，努力。",
 		meaningReversed: "卸下负担，释放压力，寻求帮助。",
 		chineseName: "权杖十",
@@ -510,7 +510,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Page of Cups",
 		name: "Page of Cups",
-		front: "page-of-cups-front.png",
+		front: "page-of-cups.jpg",
 		meaningPositive: "情感消息，直觉，创造性的机会。",
 		meaningReversed: "情绪不成熟，失望，缺乏直觉。",
 		chineseName: "圣杯侍者",
@@ -524,7 +524,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Knight of Cups",
 		name: "Knight of Cups",
-		front: "knight-of-cups-front.png",
+		front: "knight-of-cups.jpg",
 		meaningPositive: "浪漫追求者，魅力，理想主义。",
 		meaningReversed: "不切实际，情绪化，逃避现实。",
 		chineseName: "圣杯骑士",
@@ -538,7 +538,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Queen of Cups",
 		name: "Queen of Cups",
-		front: "queen-of-cups-front.png",
+		front: "queen-of-cups.jpg",
 		meaningPositive: "情感理解，同情心，直觉敏锐。",
 		meaningReversed: "情感依赖，心灵封闭，易受伤害。",
 		chineseName: "圣杯皇后",
@@ -552,7 +552,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "King of Cups",
 		name: "King of Cups",
-		front: "king-of-cups-front.png",
+		front: "king-of-cups.jpg",
 		meaningPositive: "情感稳定，慈爱的领导，外交。",
 		meaningReversed: "情绪波动，避免冲突，情感操控。",
 		chineseName: "圣杯国王",
@@ -565,7 +565,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ace of Cups",
 		name: "Ace of Cups",
-		front: "ace-of-cups-front.png",
+		front: "ace-of-cups.jpg",
 		meaningPositive: "新的感情，情感满足，爱情的开始。",
 		meaningReversed: "情感上的阻滞，内心封闭，失落的爱。",
 		chineseName: "圣杯王牌",
@@ -579,7 +579,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Two of Cups",
 		name: "Two of Cups",
-		front: "two-of-cups-front.png",
+		front: "two-of-cups.jpg",
 		meaningPositive: "伙伴关系，深情的连接，和谐。",
 		meaningReversed: "关系失衡，分离，情感冲突。",
 		chineseName: "圣杯二",
@@ -593,7 +593,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Three of Cups",
 		name: "Three of Cups",
-		front: "three-of-cups-front.png",
+		front: "three-of-cups.jpg",
 		meaningPositive: "庆祝，友谊，社交活动。",
 		meaningReversed: "过度放纵，社交疲劳，疏远。",
 		chineseName: "圣杯三",
@@ -607,7 +607,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Four of Cups",
 		name: "Four of Cups",
-		front: "four-of-cups-front.png",
+		front: "four-of-cups.jpg",
 		meaningPositive: "冥想，重新评估，不满。",
 		meaningReversed: "新的机会，动力复苏，接受。",
 		chineseName: "圣杯四",
@@ -621,7 +621,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Five of Cups",
 		name: "Five of Cups",
-		front: "five-of-cups-front.png",
+		front: "five-of-cups.jpg",
 		meaningPositive: "失落，悲伤，后悔。",
 		meaningReversed: "接受，放下过去，愈合。",
 		chineseName: "圣杯五",
@@ -635,7 +635,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Six of Cups",
 		name: "Six of Cups",
-		front: "six-of-cups-front.png",
+		front: "six-of-cups.jpg",
 		meaningPositive: "怀旧，旧友重逢，无忧无虑。",
 		meaningReversed: "被过去束缚，成长，放下。",
 		chineseName: "圣杯六",
@@ -649,7 +649,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Seven of Cups",
 		name: "Seven of Cups",
-		front: "seven-of-cups-front.png",
+		front: "seven-of-cups.jpg",
 		meaningPositive: "选择，幻想，愿望。",
 		meaningReversed: "决断，现实，清晰的选择。",
 		chineseName: "圣杯七",
@@ -663,7 +663,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Eight of Cups",
 		name: "Eight of Cups",
-		front: "eight-of-cups-front.png",
+		front: "eight-of-cups.jpg",
 		meaningPositive: "寻求更深层次的意义，放弃，离开。",
 		meaningReversed: "迷茫，恐惧改变，停滞。",
 		chineseName: "圣杯八",
@@ -677,7 +677,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Nine of Cups",
 		name: "Nine of Cups",
-		front: "nine-of-cups-front.png",
+		front: "nine-of-cups.jpg",
 		meaningPositive: "满足，愿望成真，幸福。",
 		meaningReversed: "不满足，物质主义，自满。",
 		chineseName: "圣杯九",
@@ -691,7 +691,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ten of Cups",
 		name: "Ten of Cups",
-		front: "ten-of-cups-front.png",
+		front: "ten-of-cups.jpg",
 		meaningPositive: "家庭幸福，和谐，情感的充实。",
 		meaningReversed: "家庭冲突，不和谐，情感的失落。",
 		chineseName: "圣杯十",
@@ -704,7 +704,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Page of Swords",
 		name: "Page of Swords",
-		front: "page-of-swords-front.png",
+		front: "page-of-swords.jpg",
 		meaningPositive: "好奇心，求知欲，新的想法。",
 		meaningReversed: "诡计，不成熟的行为，谣言。",
 		chineseName: "宝剑侍者",
@@ -718,7 +718,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Knight of Swords",
 		name: "Knight of Swords",
-		front: "knight-of-swords-front.png",
+		front: "knight-of-swords.jpg",
 		meaningPositive: "行动，决断力，直面挑战。",
 		meaningReversed: "鲁莽，冲动，缺乏方向。",
 		chineseName: "宝剑骑士",
@@ -732,7 +732,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Queen of Swords",
 		name: "Queen of Swords",
-		front: "queen-of-swords-front.png",
+		front: "queen-of-swords.jpg",
 		meaningPositive: "智慧，清晰的沟通，独立。",
 		meaningReversed: "尖酸刻薄，冷漠，误解。",
 		chineseName: "宝剑皇后",
@@ -746,7 +746,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "King of Swords",
 		name: "King of Swords",
-		front: "king-of-swords-front.png",
+		front: "king-of-swords.jpg",
 		meaningPositive: "权威，战略思维，公正。",
 		meaningReversed: "专横，冷酷，操控。",
 		chineseName: "宝剑国王",
@@ -759,7 +759,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ace of Swords",
 		name: "Ace of Swords",
-		front: "ace-of-swords-front.png",
+		front: "ace-of-swords.jpg",
 		meaningPositive: "新的思想，突破，清晰的认识。",
 		meaningReversed: "混乱，虚假的开始，误解。",
 		chineseName: "宝剑王牌",
@@ -773,7 +773,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Two of Swords",
 		name: "Two of Swords",
-		front: "two-of-swords-front.png",
+		front: "two-of-swords.jpg",
 		meaningPositive: "决策，平衡，僵局。",
 		meaningReversed: "信息不足，避免决策，压力。",
 		chineseName: "宝剑二",
@@ -787,7 +787,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Three of Swords",
 		name: "Three of Swords",
-		front: "three-of-swords-front.png",
+		front: "three-of-swords.jpg",
 		meaningPositive: "心碎，失望，分离。",
 		meaningReversed: "愈合，释放，向前看。",
 		chineseName: "宝剑三",
@@ -801,7 +801,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Four of Swords",
 		name: "Four of Swords",
-		front: "four-of-swords-front.png",
+		front: "four-of-swords.jpg",
 		meaningPositive: "休息，恢复，沉思。",
 		meaningReversed: "活动恢复，准备，压力。",
 		chineseName: "宝剑四",
@@ -815,7 +815,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Five of Swords",
 		name: "Five of Swords",
-		front: "five-of-swords-front.png",
+		front: "five-of-swords.jpg",
 		meaningPositive: "冲突，胜利，不道德的胜利。",
 		meaningReversed: "和解，避免冲突，悔恨。",
 		chineseName: "宝剑五",
@@ -829,7 +829,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Six of Swords",
 		name: "Six of Swords",
-		front: "six-of-swords-front.png",
+		front: "six-of-swords.jpg",
 		meaningPositive: "过渡，改善，释放负担。",
 		meaningReversed: "停滞，无法前进，未解决的问题。",
 		chineseName: "宝剑六",
@@ -843,7 +843,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Seven of Swords",
 		name: "Seven of Swords",
-		front: "seven-of-swords-front.png",
+		front: "seven-of-swords.jpg",
 		meaningPositive: "策略，隐秘行动，欺诈。",
 		meaningReversed: "坦诚，揭露真相，良心的呼唤。",
 		chineseName: "宝剑七",
@@ -857,7 +857,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Eight of Swords",
 		name: "Eight of Swords",
-		front: "eight-of-swords-front.png",
+		front: "eight-of-swords.jpg",
 		meaningPositive: "限制，困境，自我设限。",
 		meaningReversed: "解放，找到出路，自我接受。",
 		chineseName: "宝剑八",
@@ -871,7 +871,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Nine of Swords",
 		name: "Nine of Swords",
-		front: "nine-of-swords-front.png",
+		front: "nine-of-swords.jpg",
 		meaningPositive: "焦虑，噩梦，内心的痛苦。",
 		meaningReversed: "希望，开始愈合，释放恐惧。",
 		chineseName: "宝剑九",
@@ -885,7 +885,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ten of Swords",
 		name: "Ten of Swords",
-		front: "ten-of-swords-front.png",
+		front: "ten-of-swords.jpg",
 		meaningPositive: "结束，背叛，痛苦的结局。",
 		meaningReversed: "复苏，结束痛苦，接受现实。",
 		chineseName: "宝剑十",
@@ -899,7 +899,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Page of Pentacles",
 		name: "Page of Pentacles",
-		front: "page-of-pentacles-front.png",
+		front: "page-of-pentacles.jpg",
 		meaningPositive: "学习，机会，财务计划。",
 		meaningReversed: "缺乏重点，挥霍，懒惰。",
 		chineseName: "金币侍者",
@@ -913,7 +913,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Knight of Pentacles",
 		name: "Knight of Pentacles",
-		front: "knight-of-pentacles-front.png",
+		front: "knight-of-pentacles.jpg",
 		meaningPositive: "勤奋，可靠，稳健。",
 		meaningReversed: "停滞，缺乏动力，固执。",
 		chineseName: "金币骑士",
@@ -927,7 +927,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Queen of Pentacles",
 		name: "Queen of Pentacles",
-		front: "queen-of-pentacles-front.png",
+		front: "queen-of-pentacles.jpg",
 		meaningPositive: "慷慨，照顾他人，实际。",
 		meaningReversed: "物质主义，忽视他人，过度担忧。",
 		chineseName: "金币皇后",
@@ -941,7 +941,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "King of Pentacles",
 		name: "King of Pentacles",
-		front: "king-of-pentacles-front.png",
+		front: "king-of-pentacles.jpg",
 		meaningPositive: "成功，财富，商业头脑。",
 		meaningReversed: "贪婪，固执，不愿冒险。",
 		chineseName: "金币国王",
@@ -955,7 +955,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ace of Pentacles",
 		name: "Ace of Pentacles",
-		front: "ace-of-pentacles-front.png",
+		front: "ace-of-pentacles.jpg",
 		meaningPositive: "新的财务开始，机会，繁荣。",
 		meaningReversed: "错失机会，财务困难，不实际的期望。",
 		chineseName: "金币王牌",
@@ -969,7 +969,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Two of Pentacles",
 		name: "Two of Pentacles",
-		front: "two-of-pentacles-front.png",
+		front: "two-of-pentacles.jpg",
 		meaningPositive: "平衡，多任务处理，适应性。",
 		meaningReversed: "失去平衡，压力，过度承诺。",
 		chineseName: "金币二",
@@ -983,7 +983,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Three of Pentacles",
 		name: "Three of Pentacles",
-		front: "three-of-pentacles-front.png",
+		front: "three-of-pentacles.jpg",
 		meaningPositive: "团队合作，技能，实现目标。",
 		meaningReversed: "缺乏团队合作，无视细节，职业不满。",
 		chineseName: "金币三",
@@ -997,7 +997,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Four of Pentacles",
 		name: "Four of Pentacles",
-		front: "four-of-pentacles-front.png",
+		front: "four-of-pentacles.jpg",
 		meaningPositive: "稳定，储蓄，安全感。",
 		meaningReversed: "贪婪，过度节俭，恐惧失去。",
 		chineseName: "金币四",
@@ -1011,7 +1011,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Five of Pentacles",
 		name: "Five of Pentacles",
-		front: "five-of-pentacles-front.png",
+		front: "five-of-pentacles.jpg",
 		meaningPositive: "财务困难，孤独，外部挑战。",
 		meaningReversed: "恢复，找到帮助，克服困难。",
 		chineseName: "金币五",
@@ -1025,7 +1025,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Six of Pentacles",
 		name: "Six of Pentacles",
-		front: "six-of-pentacles-front.png",
+		front: "six-of-pentacles.jpg",
 		meaningPositive: "慷慨，分享，公平交易。",
 		meaningReversed: "不平等，自私，债务。",
 		chineseName: "金币六",
@@ -1039,7 +1039,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Seven of Pentacles",
 		name: "Seven of Pentacles",
-		front: "seven-of-pentacles-front.png",
+		front: "seven-of-pentacles.jpg",
 		meaningPositive: "耐心等待，长期投资，收获。",
 		meaningReversed: "失望，缺乏长远规划，浪费努力。",
 		chineseName: "金币七",
@@ -1053,7 +1053,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Eight of Pentacles",
 		name: "Eight of Pentacles",
-		front: "eight-of-pentacles-front.png",
+		front: "eight-of-pentacles.jpg",
 		meaningPositive: "工作勤奋，精湛技艺，专注。",
 		meaningReversed: "缺乏专注，低质量工作，不努力。",
 		chineseName: "金币八",
@@ -1067,7 +1067,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Nine of Pentacles",
 		name: "Nine of Pentacles",
-		front: "nine-of-pentacles-front.png",
+		front: "nine-of-pentacles.jpg",
 		meaningPositive: "独立，财务自足，享受成果。",
 		meaningReversed: "财务依赖，缺乏自制力，放纵。",
 		chineseName: "金币九",
@@ -1081,7 +1081,7 @@ export const TAROT_CARDS: TarotCardType[] = [
 	createTarotCard({
 		id: "Ten of Pentacles",
 		name: "Ten of Pentacles",
-		front: "ten-of-pentacles-front.png",
+		front: "ten-of-pentacles.jpg",
 		meaningPositive: "家庭财富，遗产，稳定。",
 		meaningReversed: "财务问题，家庭冲突，不稳定。",
 		chineseName: "金币十",

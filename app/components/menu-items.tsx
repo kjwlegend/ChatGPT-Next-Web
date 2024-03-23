@@ -3,6 +3,7 @@ import {
 	UsergroupAddOutlined,
 	HighlightOutlined,
 	ContainerOutlined,
+	BookOutlined,
 } from "@ant-design/icons";
 import { ReactNode } from "react";
 
@@ -29,6 +30,13 @@ export const menuItems: MenuItem[] = [
 		key: "chat",
 		icon: <AliwangwangOutlined />,
 		url: "/chats/",
+	},
+	{
+		label: "塔罗",
+		title: "塔罗",
+		key: "tarot",
+		icon: <BookOutlined />,
+		url: "/tarot/",
 	},
 	{
 		label: "ai实验室",

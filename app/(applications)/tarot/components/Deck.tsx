@@ -11,6 +11,8 @@ import { useTarotStore } from "../store/tarot";
 import { Stages } from "../store/tarot";
 import { TarotSpread } from "../types/TarotSpread";
 import { random } from "nanoid";
+import { useMobileScreen } from "@/app/utils";
+import { is } from "cheerio/lib/api/traversing";
 
 interface ShuffleAnimationComponentProps {
 	onShuffleComplete?: () => void;
@@ -173,11 +175,13 @@ const Deck: React.FC = () => {
 	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
 		TarotStore;
 	const cardsRemaining = remainingCards;
-	// console.log("cardsRemaining", cardsRemaining);
 
+	const isMobileScreen = useMobileScreen();
 	const totalDegrees = 120; // 卡片总共覆盖的角度，可以根据需要调整
 	const angleStep = totalDegrees / (cardsRemaining.length - 1 || 1); // 每张卡片的旋转角度步长
-	const cardWidth = 150; // 卡片宽度
+
+	const cardGap = 150; // 卡片宽度
+	const cardWidth = isMobileScreen ? "65px" : "85px";
 
 	const deckRef = useRef<HTMLDivElement>(null);
 	const [deckWidth, setDeckWidth] = useState(0);
@@ -305,14 +309,14 @@ const Deck: React.FC = () => {
 							{cardsRemaining.map((card, index: number) => {
 								const angle = -totalDegrees / 2 + angleStep * index;
 								const spacing =
-									(deckWidth - cardWidth) / (cardsRemaining.length - 1 || 1); // 计算卡片之间的间距
+									(deckWidth - cardGap) / (cardsRemaining.length - 1 || 1); // 计算卡片之间的间距
 								const left = spacing * index - 50; // 根据间距动态计算left值
 								const style = {
 									"--rotate-angle": `${angle}deg`,
 									// transform: `rotate(${angle}deg)  `, // 应用旋转角度
 									left: `${left}px`,
 									transition: "transform 0.5s",
-									"--var-width": "80px",
+									"--var-width": cardWidth,
 								};
 								return (
 									<>

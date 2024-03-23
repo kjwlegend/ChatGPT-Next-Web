@@ -50,6 +50,9 @@ const nextConfig = {
       },
     ],
   },
+  // server: {
+  //   host: '0.0.0.0', // 允许外部访问
+  // },
   experimental: {
     forceSwcTransforms: true,
   },
