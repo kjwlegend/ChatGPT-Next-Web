@@ -38,7 +38,7 @@ export const interpretTarotCard = async (
 	// 调用LLM服务
 	const output = await strictLLMResult(userInput, model);
 	// 输出结果
-	console.log("Tarot card interpretation: ", output);
+	// console.log("Tarot card interpretation: ", output);
 	return output;
 };
 
@@ -88,6 +88,6 @@ Please provide the interpretation in ${language}.
 	// 调用LLM服务
 	const output = await strictLLMResult(userInput, model);
 	// 输出结果
-	console.log("Tarot spread interpretation: ", output);
+	// console.log("Tarot spread interpretation: ", output);
 	return output;
 };

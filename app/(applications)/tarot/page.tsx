@@ -27,7 +27,7 @@ const Index: React.FC = () => {
 
 	const { isAuthenticated } = authStore;
 
-	console.log("state", stage, remainingDraws, game);
+	// console.log("state", stage, remainingDraws, game);
 
 	const reset = useCallback(() => {
 		resetGame();

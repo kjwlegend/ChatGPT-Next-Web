@@ -96,7 +96,7 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 	dealCards: () => {
 		set((state) => {
 			const cards = state.game.dealCards();
-			console.log(cards);
+			// console.log(cards);
 
 			return {
 				game: state.game,
@@ -140,7 +140,6 @@ export const useTarotStore = create<TarotState>((set, get) => ({
 					response: "",
 					spreadUsage: "",
 				},
-				 
 			};
 		});
 	},

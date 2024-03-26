@@ -28,7 +28,9 @@ const Spread: React.FC = () => {
 		spreads: "" as string | undefined,
 	});
 
-	const [isInterpreting, setIsInterpreting] = useState(false);
+	const [isSingleInterpreting, setIsSingleInterpreting] = useState(false);
+	const [isSpreadInterpreting, setIsSpreadInterpreting] = useState(false);
+
 	const [interpretationType, setInterpretationType] = useState<
 		"single" | "spread"
 	>("single");
@@ -53,7 +55,7 @@ const Spread: React.FC = () => {
 
 	const handleCardClick = async (position: TarotPosition, index: number) => {
 		try {
-			setIsInterpreting(true);
+			setIsSingleInterpreting(true);
 			const cardInterpretation = await interpretCard(position);
 			console.log("卡片解读:", cardInterpretation);
 			// push interpretation to fullInterpretations.cards
@@ -72,7 +74,7 @@ const Spread: React.FC = () => {
 				...prevInterpretations,
 				cards: [...(prevInterpretations.cards || []), cardData],
 			}));
-			setIsInterpreting(false);
+			setIsSingleInterpreting(false);
 		} catch (error) {
 			console.error("解读卡片时出错:", error);
 		}
@@ -80,7 +82,7 @@ const Spread: React.FC = () => {
 
 	const handleInterpretationClick = async () => {
 		// interpret spread
-		setIsInterpreting(true);
+		setIsSpreadInterpreting(true);
 		const spreadInterpretation = await interpretSpread();
 
 		setFullInterpretations((prevInterpretations) => ({
@@ -88,7 +90,7 @@ const Spread: React.FC = () => {
 			spreads: spreadInterpretation,
 		}));
 
-		setIsInterpreting(false);
+		setIsSpreadInterpreting(false);
 	};
 
 	if (!currentSpread) {
@@ -110,9 +112,6 @@ const Spread: React.FC = () => {
 						{isOpen ? "关闭" : "开启"}解读
 					</button>
 				)}
-				<button onClick={resetHandler} className={styles.tarotButtonPrimary}>
-					重新开始
-				</button>
 			</div>
 
 			<div className={styles.tarotSpreadContainer}>
@@ -142,45 +141,78 @@ const Spread: React.FC = () => {
 					))}
 				</div>
 
-				{
-					<div
-						className={`${styles.interpretation} ${
-							isOpen ? styles.drawer + " " + styles.open : ""
-						}`}
-					>
-						<div className={styles.interpretationHeader}>
-							<p className={styles.interpretationTitle}>解牌</p>
+				<div
+					className={`${styles.interpretation} ${
+						isOpen ? styles.drawer + " " + styles.open : styles.close
+					}`}
+				>
+					<div className={styles.interpretationHeader}>
+						<p className={styles.interpretationTitle}>解牌</p>
 
-							<p>
-								<span className={styles.interpretationSwitchText}>单牌</span>
-								<Switch
-									// defaultChecked
-									className={styles.interpretationSwitch}
-									size="small"
-									onChange={handleInterpretationSwitch}
-								/>
-								<span className={styles.interpretationSwitchText}>牌阵</span>
-							</p>
-						</div>
-						<div className={styles.interpretationText}>
-							{interpretationType === "single" ? (
+						<p>
+							<span className={styles.interpretationSwitchText}>单牌</span>
+							<Switch
+								// defaultChecked
+								className={styles.interpretationSwitch}
+								size="small"
+								onChange={handleInterpretationSwitch}
+							/>
+							<span className={styles.interpretationSwitchText}>牌阵</span>
+						</p>
+					</div>
+					<div className={styles.interpretationText}>
+						{interpretationType === "single" && (
+							<>
 								<Collapse
 									items={fullInterpretations.cards}
 									ghost={false}
 									className={styles.interpretationCollapse}
 								/>
+								{isSingleInterpreting && (
+									<div style={{ textAlign: "center", margin: "5px" }}>
+										<p>
+											单牌解读正在生成, 为了给您更完整的解答, 大约需要30秒,
+											请耐心等待
+										</p>
+										<LoadingIcon2 />
+									</div>
+								)}
+							</>
+						)}
+						{interpretationType === "spread" &&
+							(!fullInterpretations.spreads ? (
+								<div>
+									<p>
+										您还没有生成全牌阵解读, 请点击下方按钮获取,
+										全牌阵解读耗费时间较长, 请勿重复点击或离开页面
+									</p>
+									<button
+										className={styles.tarotButtonPrimary}
+										onClick={handleInterpretationClick}
+									>
+										全牌阵解读
+									</button>
+
+									{isSpreadInterpreting && (
+										<div style={{ textAlign: "center", margin: "5px" }}>
+											<p>
+												牌阵解读正在生成, 为了给您更完整的解答, 大约需要30秒,
+												请耐心等待
+											</p>
+											<LoadingIcon2 />
+										</div>
+									)}
+								</div>
 							) : (
 								<p>{fullInterpretations.spreads}</p>
-							)}
-
-							{isInterpreting && (
-								<div style={{ textAlign: "center", margin: "5px" }}>
-									<LoadingIcon2 />
-								</div>
-							)}
-						</div>
+							))}
 					</div>
-				}
+				</div>
+			</div>
+			<div className={styles.spreadFooter}>
+				<button className={styles.tarotButtonPrimary} onClick={resetHandler}>
+					重新开始
+				</button>
 			</div>
 		</>
 	);

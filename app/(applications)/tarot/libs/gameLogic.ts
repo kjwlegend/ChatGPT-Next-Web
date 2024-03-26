@@ -117,7 +117,7 @@ export class TarotGame {
 			userQuestion,
 			language,
 		);
-		console.log("class part", spreadInterpretation);
+		// console.log("class part", spreadInterpretation);
 		return spreadInterpretation;
 	}
 }

@@ -69,7 +69,7 @@ export const classifySpread = async (spreadText: string) => {
 
 	const outputJson = JSON.parse(output);
 
-	console.log("output: ", outputJson);
+	// console.log("output: ", outputJson);
 	return outputJson;
 };
 

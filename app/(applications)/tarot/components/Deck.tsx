@@ -25,10 +25,10 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 }) => {
 	const [isShuffling, setIsShuffling] = useState(false);
 	const TarotStore = useTarotStore();
-	const [countdown, setCountdown] = useState(25);
+	const [countdown, setCountdown] = useState(1);
 	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
 		TarotStore;
-
+	const isMobileScreen = useMobileScreen();
 	const shuffleVariants: Variants = {
 		start: (i: number) => ({
 			x: [0, 60, 140, -80, -60, 55, -55, 44, -10, 0],
@@ -72,6 +72,8 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 		hidden: { scale: 0 },
 		visible: { scale: 5, opacity: 0.3, transition: { duration: 1 } },
 	};
+
+	const cardWidth = isMobileScreen ? "70px" : "";
 
 	const startShuffle = () => {
 		setIsShuffling(true);
@@ -160,6 +162,9 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 								key={"shuffling" + index}
 								card={card}
 								classNameString={styles.tarotCard}
+								style={{
+									"--var-width": cardWidth,
+								}}
 							/>
 						</motion.div>
 					))}
@@ -235,7 +240,7 @@ const Deck: React.FC = () => {
 		if (game.remainingDraws === 0) {
 			setStage(Stages.Interpretation); // 直接设置stage为Interpretation
 			// 不设置延时，因为我们将在动画完成后改变showDeck
-			console.log("game stage", stage);
+			// console.log("game stage", stage);
 
 			const timer = setTimeout(() => {
 				setShowDeck(false);
@@ -279,7 +284,7 @@ const Deck: React.FC = () => {
 					</motion.div>
 				)}
 			</AnimatePresence>
-			{showText && (
+			{showText && stage == Stages.Draw && (
 				<motion.div
 					initial="hidden"
 					animate="visible"

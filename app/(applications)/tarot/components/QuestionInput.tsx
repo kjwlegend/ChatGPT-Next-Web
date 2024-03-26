@@ -45,7 +45,7 @@ const QuestionInputComponent = () => {
 	useEffect(() => {
 		// 当 stage 不等于 0 时，添加 hidden 类
 		if (stage !== Stages.UserInput) {
-			console.log("stage", stage);
+			// console.log("stage", stage);
 		}
 	}, [stage]);
 
@@ -58,7 +58,7 @@ const QuestionInputComponent = () => {
 	}, [questions]); // 这个 useEffect 会在 `questions` 状态变化后执行
 
 	const handleQuestionSubmit = async () => {
-		console.log("Question submitted:", question);
+		// console.log("Question submitted:", question);
 		// TODO: Trigger question type classification
 		// TODO: Display crystal ball and tarot spread selection
 
@@ -88,7 +88,7 @@ const QuestionInputComponent = () => {
 
 		// concact userInput into a string
 		const classifySpreadInput = JSON.stringify(questionOutput);
-		console.log("classifySpreadInput", classifySpreadInput);
+		// console.log("classifySpreadInput", classifySpreadInput);
 
 		const spread = await classifySpread(classifySpreadInput);
 		if (!spread) {
