@@ -18,6 +18,11 @@
 		font-size: 14px;
 		margin: 10px;
 	}
+
+	&.disabled {
+		pointer-events: none;
+		opacity: 0.5;
+	}
 }
 
 .tarotButtonPrimary:hover {

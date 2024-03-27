@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/QuestionInput.module.scss";
 
-import { Modal, List } from "antd";
+import { Modal, List, message } from "antd";
 import { resetTarotBalance } from "@/app/api/backend/user";
 import { useUserStore } from "@/app/store";
+import { QRCode } from "antd/lib";
 
 interface GetMoreDrawsModalProps {
 	visible: boolean;
@@ -27,26 +28,53 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 	const userStore = useUserStore();
 
 	const { user, updateUser } = userStore;
+	const { invite_code } = user;
+
+	const [buttonDisabled, setButtonDisabled] = useState(false);
+	const [buttonText, setButtonText] = useState("立即领取");
+	const [showQR, setShowQR] = useState(false);
+
+	const baseUrl = new URL(window.location.href).origin;
+
+	const inviteLink = `${baseUrl}/auth?i=${invite_code}`;
+
+	const handleCopyLink = () => {
+		navigator.clipboard.writeText(inviteLink);
+	};
+
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const data = [
 		{
-			title: "普通用户每日获得1次占卜机会, 0点刷新 ",
+			title: "普通用户每日获得1次占卜机会 ",
 			actions: [
 				{
-					className: "tarotButtonPrimary small",
-					text: "立即领取",
-					onClick: async () => {
+					className: `tarotButtonPrimary small ${
+						buttonDisabled ? "disabled" : ""
+					}`,
+					text: buttonText,
+					onClick: async (index: number) => {
+						messageApi.loading("领取中");
 						const balance = await resetTarotBalance(user.id);
-						if (balance) {
+						if (balance.data) {
 							const tarot_balance = balance.data.balance;
 							updateUser({ ...user, tarot_balance });
+							messageApi.success({
+								content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
+							});
+						} else {
+							setButtonDisabled(true);
+							setButtonText("已领取");
+							messageApi.info({
+								content: balance.message,
+							});
 						}
 					},
 				},
 			],
 		},
 		{
-			title: "VIP用户每日额外获得5次占卜机会, 0点刷新 ",
+			title: "VIP用户每日额外获得5次占卜机会 ",
 			actions: [
 				{
 					className: "tarotButtonPrimary small",
@@ -54,9 +82,20 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					onClick: () => {},
 				},
 				{
-					className: "tarotButtonPrimary small",
-					text: "立即领取",
-					onClick: () => {},
+					className: `tarotButtonPrimary small ${
+						buttonDisabled ? "disabled" : ""
+					}`,
+					text: buttonText,
+					onClick: async (index: number) => {
+						const balance = await resetTarotBalance(user.id);
+						if (balance.data) {
+							const tarot_balance = balance.data.balance;
+							updateUser({ ...user, tarot_balance });
+						} else {
+							setButtonDisabled(true);
+							setButtonText("已领取");
+						}
+					},
 				},
 			],
 		},
@@ -65,13 +104,17 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 			actions: [
 				{
 					className: "tarotButtonPrimary small",
-					text: "分二维码",
-					onClick: () => {},
+					text: "二维码",
+					onClick: () => {
+						setShowQR(true);
+					},
 				},
 				{
 					className: "tarotButtonPrimary small",
 					text: "复制链接",
-					onClick: () => {},
+					onClick: (index: number) => {
+						handleCopyLink();
+					},
 				},
 			],
 		},
@@ -87,6 +130,7 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 			className={styles.getDrawsModal}
 			classNames={classNames}
 		>
+			{contextHolder}
 			<List
 				className={styles.drawList}
 				itemLayout="horizontal"
@@ -118,6 +162,24 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					return <List.Item actions={actionButtons}>{item.title}</List.Item>;
 				}}
 			/>
+			<Modal
+				open={showQR}
+				onCancel={() => setShowQR(false)}
+				centered
+				footer={null}
+				classNames={classNames}
+				className={styles.getDrawsModal}
+			>
+				<div className="flex-container column">
+					<QRCode
+						errorLevel="H"
+						value={inviteLink}
+						color="#fff"
+						icon="https://xiaoguang.fun/bot.png"
+					/>
+					<p>您的专属二维码</p>
+				</div>
+			</Modal>
 		</Modal>
 	);
 };

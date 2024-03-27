@@ -94,7 +94,6 @@ const QuestionInputComponent = () => {
 			return;
 		}
 
-		setErrorText("");
 		setIsLoading(true);
 
 		const res = await classifyQuestion(question);
@@ -218,16 +217,14 @@ const QuestionInputComponent = () => {
 						{/* 展示剩余提问机会次数, 每天一次, 并提示可升级会员获得3次提问 */}
 						您今日还有 {tarot_balance} 次提问机会.
 					</div>
-					{tarot_balance === 0 && (
-						<button
-							className={`${styles.tarotButtonPrimary} ${
-								animationStates.button ? styles.fadeIn : ""
-							} ${animationClass} ${styles.hide}`}
-							onClick={() => handleOpenGetMoreDraws()}
-						>
-							获取占卜次数
-						</button>
-					)}
+					<button
+						className={`${styles.tarotButtonPrimary} ${
+							animationStates.button ? styles.fadeIn : ""
+						} ${animationClass} ${styles.hide}`}
+						onClick={() => handleOpenGetMoreDraws()}
+					>
+						获取占卜次数
+					</button>
 					<GetMoreDrawsModal
 						visible={isGetMoreDrawsVisible}
 						onClose={handleCloseGetMoreDraws}
