@@ -54,5 +54,14 @@ export async function upgradeMember(params: upgradeMemberParams) {
 		});
 }
 
-
-
+export async function resetTarotBalance(userId: number) {
+	return request({
+		url: `/gpt/reset-tarot/`,
+		method: "post",
+		data: { userid: userId },
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.message;
+		});
+}

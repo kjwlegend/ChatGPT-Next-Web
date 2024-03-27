@@ -12,10 +12,18 @@ import {
 import { stringify } from "querystring";
 import { useUserStore } from "@/app/store";
 import { Stages } from "../store/tarot";
+import useAuth from "@/app/hooks/useAuth";
+import GetMoreDrawsModal from "./GetDraws";
 
 const QuestionInputComponent = () => {
 	const TarotStore = useTarotStore();
 	const UserStore = useUserStore();
+	const userAuth = useAuth();
+
+	const { updateUserInfo } = userAuth;
+
+	const { tarot_balance, id } = UserStore.user;
+
 	const nickname = UserStore.user.nickname;
 	const { setStage, questions, setQuestions, stage } = TarotStore;
 	const [question, setQuestion] = useState("");
@@ -30,6 +38,16 @@ const QuestionInputComponent = () => {
 
 	const [showInput, setShowInput] = useState(stage === Stages.UserInput);
 	const [animationClass, setAnimationClass] = useState("");
+
+	const [isGetMoreDrawsVisible, setIsGetMoreDrawsVisible] = useState(false);
+
+	const handleOpenGetMoreDraws = () => {
+		setIsGetMoreDrawsVisible(true);
+	};
+
+	const handleCloseGetMoreDraws = () => {
+		setIsGetMoreDrawsVisible(false);
+	};
 
 	useEffect(() => {
 		if (stage === Stages.UserInput) {
@@ -61,15 +79,24 @@ const QuestionInputComponent = () => {
 		// console.log("Question submitted:", question);
 		// TODO: Trigger question type classification
 		// TODO: Display crystal ball and tarot spread selection
-
+		try {
+			const user = await updateUserInfo(id);
+		} catch (error) {
+			setErrorText("提交失败，请重试");
+		}
 		// if no question, show error text
+		if (tarot_balance === 0) {
+			setErrorText("您的提问次数不足");
+			return;
+		}
 		if (!question) {
 			setErrorText("请输入问题");
 			return;
 		}
-		setErrorText("");
 
+		setErrorText("");
 		setIsLoading(true);
+
 		const res = await classifyQuestion(question);
 		if (!res) {
 			console.error("Failed to classify question");
@@ -173,14 +200,40 @@ const QuestionInputComponent = () => {
 			)}
 
 			{showInput && (
-				<button
-					className={`${styles.submitButton} ${
-						animationStates.button ? styles.fadeIn : ""
-					} ${animationClass} ${styles.tarotButtonPrimary}`}
-					onClick={handleQuestionSubmit}
-				>
-					提交
-				</button>
+				<>
+					<button
+						className={`${styles.submitButton} ${
+							animationStates.button ? styles.fadeIn : ""
+						} ${animationClass} ${styles.tarotButtonPrimary} ${styles.hide}`}
+						onClick={handleQuestionSubmit}
+					>
+						提交
+					</button>
+
+					<div
+						className={`${
+							animationStates.button ? styles.fadeIn : ""
+						} ${animationClass} ${styles.hide}`}
+					>
+						{/* 展示剩余提问机会次数, 每天一次, 并提示可升级会员获得3次提问 */}
+						您今日还有 {tarot_balance} 次提问机会.
+					</div>
+					{tarot_balance === 0 && (
+						<button
+							className={`${styles.tarotButtonPrimary} ${
+								animationStates.button ? styles.fadeIn : ""
+							} ${animationClass} ${styles.hide}`}
+							onClick={() => handleOpenGetMoreDraws()}
+						>
+							获取占卜次数
+						</button>
+					)}
+					<GetMoreDrawsModal
+						visible={isGetMoreDrawsVisible}
+						onClose={handleCloseGetMoreDraws}
+						onConfirm={handleCloseGetMoreDraws}
+					/>
+				</>
 			)}
 
 			{isLoading && (

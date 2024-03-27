@@ -85,13 +85,14 @@
 }
 
 .welcomeText,
-.questionInput {
+.questionInput,
+.hide {
 	opacity: 0;
 	transition: opacity 2s ease-in;
 }
 
 .tarotButtonPrimary {
-	opacity: 0;
+	// opacity: 0;
 	transition:
 		opacity 2s ease-in,
 		background-color 0.5s,

@@ -11,10 +11,68 @@
 	margin: 20px;
 	color: #ffffff;
 	font-size: 16px;
+	cursor: pointer;
+
+	&.small {
+		padding: 5px 10px;
+		font-size: 14px;
+		margin: 10px;
+	}
 }
 
 .tarotButtonPrimary:hover {
 	background-color: #fff;
 	color: #000;
 	box-shadow: 0 0 20px 11px rgb(255 255 255 / 20%);
+}
+
+.getDrawsModal {
+	// background-color: red;
+	border: #fff 1px solid;
+	border-radius: 8px;
+	background-color: rgba(0, 0, 0, 0.2);
+	backdrop-filter: blur(2px);
+	color: #fff;
+
+	.draw-modal-body,
+	.draw-modal-header,
+	.draw-modal-content,
+	.draw-modal-mask {
+		// background-color: blue;
+		// color: #fff;
+		background-color: inherit;
+	}
+
+	.draw-modal-content {
+		:global .ant-modal-close {
+			color: #fff;
+			background-color: transparent;
+			transition: all 0.5s;
+
+			&:hover {
+				color: #101010;
+				background-color: aliceblue;
+				box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
+			}
+		}
+	}
+
+	.draw-modal-header {
+		color: #fff;
+		:global .ant-modal-title {
+			color: inherit;
+		}
+	}
+
+	.drawList {
+		color: #fff;
+
+		:global .ant-list-item {
+			color: inherit;
+			border-block-start: 1px dashed rgba(255, 255, 255, 0.56);
+		}
+		:global .ant-list-split.ant-list-item {
+			border-block-end: 1px solid rgba(255, 255, 255, 0.56);
+		}
+	}
 }

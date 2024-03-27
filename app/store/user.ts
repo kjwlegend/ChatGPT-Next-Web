@@ -21,6 +21,8 @@ export interface User {
 	chat_balance: number;
 	draw_balance: number;
 	xgb_balance: number;
+	tarot_balance: number;
+	tarot_total: number;
 }
 
 export interface UserStore {
@@ -54,6 +56,8 @@ export const useUserStore = create<UserStore>()(
 				chat_balance: 0,
 				draw_balance: 0,
 				xgb_balance: 0,
+				tarot_balance: 0,
+				tarot_total: 0,
 			},
 
 			updateNickname: (nickname) => {
@@ -99,6 +103,13 @@ export const useUserStore = create<UserStore>()(
 						member_type: "",
 						phone_number: null,
 						username: "",
+						member_expire_date: "",
+						last_refresh_date: "",
+						chat_balance: 0,
+						draw_balance: 0,
+						xgb_balance: 0,
+						tarot_balance: 0,
+						tarot_total: 0,
 					},
 				}));
 			},
