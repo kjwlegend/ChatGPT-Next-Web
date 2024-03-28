@@ -324,15 +324,14 @@ const Deck: React.FC = () => {
 									"--var-width": cardWidth,
 								};
 								return (
-									<>
-										<DeckCard
-											key={"draw" + index}
-											card={card}
-											style={style}
-											classNameString={styles.tarotCard}
-											onClick={() => dealCards()}
-										/>
-									</>
+									<DeckCard
+										key={"draw" + index}
+										card={card}
+										style={style}
+										classNameString={styles.tarotCard}
+										onClick={() => dealCards()}
+										index={index}
+									/>
 								);
 							})}
 						</div>

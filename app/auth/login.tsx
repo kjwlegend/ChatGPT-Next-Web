@@ -81,7 +81,9 @@ export default function Login() {
 				setUser(result.data.user);
 				//
 				setTimeout(() => {
-					router.push("/chats");
+					// router.push("/chats");
+					// push to the previous page
+					router.back();
 				}, 1000);
 			}
 		} catch (error) {

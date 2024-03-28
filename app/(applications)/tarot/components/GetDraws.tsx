@@ -6,6 +6,7 @@ import { Modal, List, message } from "antd";
 import { resetTarotBalance } from "@/app/api/backend/user";
 import { useUserStore } from "@/app/store";
 import { QRCode } from "antd/lib";
+import { useRouter } from "next/navigation";
 
 interface GetMoreDrawsModalProps {
 	visible: boolean;
@@ -26,6 +27,7 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 	onClose,
 }) => {
 	const userStore = useUserStore();
+	const router = useRouter();
 
 	const { user, updateUser } = userStore;
 	const { invite_code } = user;
@@ -55,19 +57,24 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					text: buttonText,
 					onClick: async (index: number) => {
 						messageApi.loading("领取中");
-						const balance = await resetTarotBalance(user.id);
-						if (balance.data) {
-							const tarot_balance = balance.data.balance;
-							updateUser({ ...user, tarot_balance });
-							messageApi.success({
-								content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
-							});
-						} else {
-							setButtonDisabled(true);
-							setButtonText("已领取");
-							messageApi.info({
-								content: balance.message,
-							});
+						try {
+							const balance = await resetTarotBalance(user.id);
+							if (balance.data) {
+								const tarot_balance = balance.data.balance;
+								updateUser({ ...user, tarot_balance });
+								messageApi.success({
+									content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
+								});
+							} else {
+								setButtonDisabled(true);
+								setButtonText("已领取");
+								messageApi.info({
+									content: balance.message,
+								});
+							}
+						} catch (error) {
+							//
+							messageApi.info("出错了, 稍后再试吧");
 						}
 					},
 				},
@@ -79,7 +86,9 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 				{
 					className: "tarotButtonPrimary small",
 					text: "升级会员",
-					onClick: () => {},
+					onClick: () => {
+						router.push("/profile#2");
+					},
 				},
 				{
 					className: `tarotButtonPrimary small ${
@@ -87,13 +96,25 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					}`,
 					text: buttonText,
 					onClick: async (index: number) => {
-						const balance = await resetTarotBalance(user.id);
-						if (balance.data) {
-							const tarot_balance = balance.data.balance;
-							updateUser({ ...user, tarot_balance });
-						} else {
-							setButtonDisabled(true);
-							setButtonText("已领取");
+						messageApi.loading("领取中");
+						try {
+							const balance = await resetTarotBalance(user.id);
+							if (balance.data) {
+								const tarot_balance = balance.data.balance;
+								updateUser({ ...user, tarot_balance });
+								messageApi.success({
+									content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
+								});
+							} else {
+								setButtonDisabled(true);
+								setButtonText("已领取");
+								messageApi.info({
+									content: balance.message,
+								});
+							}
+						} catch (error) {
+							//
+							messageApi.info("出错了, 稍后再试吧");
 						}
 					},
 				},
@@ -114,6 +135,7 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					text: "复制链接",
 					onClick: (index: number) => {
 						handleCopyLink();
+						messageApi.info("链接已复制到剪贴板");
 					},
 				},
 			],

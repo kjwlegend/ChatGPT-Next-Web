@@ -16,6 +16,7 @@ interface CardProps {
 	style?: any;
 	positionMeaning?: string;
 	size?: "small" | "large";
+	index?: number;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -80,11 +81,16 @@ const DeckCard: React.FC<CardProps> = ({
 	onClick,
 	classNameString,
 	style,
+	index,
 }) => {
 	const [flipped, setFlipped] = useState<boolean>(true); // 默认为背面状态
 
 	return (
-		<div className={`${styles["tarot-card"]} ${classNameString}`} style={style}>
+		<div
+			key={index}
+			className={`${styles["tarot-card"]} ${classNameString}`}
+			style={style}
+		>
 			<div
 				className={`${styles["tarot-card-face"]} ${
 					flipped ? "" : styles.flipped

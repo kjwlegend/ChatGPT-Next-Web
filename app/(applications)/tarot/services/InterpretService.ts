@@ -33,7 +33,7 @@ export const interpretTarotCard = async (
 		},
 	];
 
-	const model = "gpt-4-1106-preview";
+	const model = "gpt-3.5-turbo-16k";
 
 	// 调用LLM服务
 	const output = await strictLLMResult(userInput, model);

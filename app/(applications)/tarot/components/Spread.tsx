@@ -10,6 +10,7 @@ import { Collapse, Switch } from "antd";
 import { CollapseProps } from "antd/lib/collapse";
 import { LoadingIcon2 } from "@/app/icons";
 import { useMobileScreen } from "@/app/utils";
+import GetMoreDrawsModal from "./GetDraws";
 
 const Spread: React.FC = () => {
 	const TarotStore = useTarotStore();
@@ -51,6 +52,15 @@ const Spread: React.FC = () => {
 
 	const handleInterpretationSwitch = (checked: boolean) => {
 		setInterpretationType(checked ? "spread" : "single");
+	};
+	const [isGetMoreDrawsVisible, setIsGetMoreDrawsVisible] = useState(false);
+
+	const handleOpenGetMoreDraws = () => {
+		setIsGetMoreDrawsVisible(true);
+	};
+
+	const handleCloseGetMoreDraws = () => {
+		setIsGetMoreDrawsVisible(false);
 	};
 
 	const handleCardClick = async (position: TarotPosition, index: number) => {
@@ -209,10 +219,21 @@ const Spread: React.FC = () => {
 					</div>
 				</div>
 			</div>
-			<div className={styles.spreadFooter}>
+			<div className="flex-container">
 				<button className={styles.tarotButtonPrimary} onClick={resetHandler}>
 					重新开始
 				</button>
+				<button
+					className={`${styles.tarotButtonPrimary} `}
+					onClick={() => handleOpenGetMoreDraws()}
+				>
+					获取占卜次数
+				</button>
+				<GetMoreDrawsModal
+					visible={isGetMoreDrawsVisible}
+					onClose={handleCloseGetMoreDraws}
+					onConfirm={handleCloseGetMoreDraws}
+				/>
 			</div>
 		</>
 	);
