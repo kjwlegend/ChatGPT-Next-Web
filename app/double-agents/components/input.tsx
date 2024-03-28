@@ -140,7 +140,7 @@ export function DoubleAgentInput() {
 	const [totalRounds, setTotalRounds] = useState(
 		conversation?.totalRounds ?? 0,
 	);
-	const { chat_balance } = useUserStore.getState().user;
+	const { chat_balance } = useUserStore.getState().user.user_balance;
 
 	const config = useAppConfig();
 	useEffect(() => {

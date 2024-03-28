@@ -43,7 +43,7 @@ export interface OpenAIListModelResponse {
 }
 
 function CheckUserBalance() {
-	const balance = useUserStore.getState().user.chat_balance;
+	const balance = useUserStore.getState().user.user_balance.chat_balance;
 
 	console.log("balance", balance);
 

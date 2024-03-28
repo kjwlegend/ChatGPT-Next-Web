@@ -55,7 +55,7 @@ export default function UserInfo() {
 		},
 		// 对话次数
 		{
-			label: `对话剩余: ${user?.chat_balance}`,
+			label: `对话剩余: ${user?.user_balance.chat_balance}`,
 			key: "3",
 		},
 		// {

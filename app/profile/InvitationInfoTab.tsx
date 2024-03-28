@@ -14,7 +14,8 @@ const { Paragraph } = Typography;
 
 const InvitePage = () => {
 	const { user } = useUserStore();
-	const { invite_code, invite_count, xgb_balance } = user;
+	const { invite_code, invite_count } = user;
+	const { xgb_balance } = user.user_balance;
 
 	useEffect(() => {
 		// 在这里可以根据需要加载邀请人数和邀请点数的数据

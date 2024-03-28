@@ -319,7 +319,7 @@ export function ChatActions(props: {
 	const chatStore = useChatStore();
 	const session = props.session ? props.session : chatStore.currentSession();
 	const sessionId = session.id;
-	const { chat_balance } = useUserStore().user;
+	const { chat_balance } = useUserStore().user.user_balance;
 
 	const fileInputRef = React.useRef<HTMLInputElement>(null);
 
