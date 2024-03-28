@@ -18,11 +18,13 @@ export interface User {
 	username: string;
 	member_expire_date: string;
 	last_refresh_date: string;
-	chat_balance: number;
-	draw_balance: number;
-	xgb_balance: number;
-	tarot_balance: number;
-	tarot_total: number;
+	user_balance: {
+		chat_balance: number;
+		draw_balance: number;
+		xgb_balance: number;
+		tarot_balance: number;
+		tarot_total: number;
+	};
 }
 
 export interface UserStore {
@@ -53,11 +55,13 @@ export const useUserStore = create<UserStore>()(
 				username: "",
 				member_expire_date: "",
 				last_refresh_date: "",
-				chat_balance: 0,
-				draw_balance: 0,
-				xgb_balance: 0,
-				tarot_balance: 0,
-				tarot_total: 0,
+				user_balance: {
+					chat_balance: 0,
+					draw_balance: 0,
+					xgb_balance: 0,
+					tarot_balance: 0,
+					tarot_total: 0,
+				},
 			},
 
 			updateNickname: (nickname) => {
@@ -105,11 +109,13 @@ export const useUserStore = create<UserStore>()(
 						username: "",
 						member_expire_date: "",
 						last_refresh_date: "",
-						chat_balance: 0,
-						draw_balance: 0,
-						xgb_balance: 0,
-						tarot_balance: 0,
-						tarot_total: 0,
+						user_balance: {
+							chat_balance: 0,
+							draw_balance: 0,
+							xgb_balance: 0,
+							tarot_balance: 0,
+							tarot_total: 0,
+						},
 					},
 				}));
 			},

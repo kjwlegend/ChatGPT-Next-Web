@@ -16,6 +16,7 @@ interface LoginParams {
 }
 import { ChatSession } from "../store/chat";
 import { createEmptyMask } from "../store/mask";
+import { error } from "console";
 
 // function clearAllData() {
 // 	const chatStore = useChatStore();
@@ -107,51 +108,54 @@ export default function useAuth() {
 			throw error;
 		}
 	};
-	const updateUserInfo = async (id: number): Promise<void> => {
+	const updateUserInfo = async (id: number): Promise<void | Error> => {
 		const user = await getUserInfo(id);
 
-		if (user) {
-			// 处理会员类型 , 如果是 normal 则为普通会员, 如果是 monthly 黄金会员, quarterly 为白金会员, yearly 为钻石会员
-
-			// switch 语法
-
-			switch (user.member_type) {
-				case "normal":
-					user.member_type = "普通会员";
-					break;
-				case "monthly":
-					user.member_type = "黄金会员";
-					break;
-				case "quarterly":
-					user.member_type = "白金会员";
-					break;
-				case "halfyearly":
-					user.member_type = "钻石会员";
-					break;
-				default:
-					user.member_type = "普通会员";
-			}
-			// 存在过期时间则处理, 否则显示不过期
-			if (!user.member_expire_date) {
-				user.member_expire_date = "不过期";
-			} else {
-				// 处理 member_expire_date 会员过期时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
-				user.member_expire_date = user.member_expire_date.slice(0, 10);
-			}
-
-			// 处理重置时间, 如果没有重置时间则显示不重置
-			if (!user.last_refresh_date) {
-				user.last_refresh_date = "不重置";
-			} else {
-				// 处理 last_refresh_date 会员重置时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
-				user.last_refresh_date = user.last_refresh_date.slice(0, 10);
-				// 如果有重置时间,则在获取到的时间上+30天
-				const last_refresh_date = new Date(user.last_refresh_date);
-				last_refresh_date.setDate(last_refresh_date.getDate() + 30);
-				user.last_refresh_date = last_refresh_date.toISOString().slice(0, 10);
-			}
+		if (user.code == 401) {
+			logoutHook();
+			return new Error("登录过期，请重新登录");
 		}
 
+		// 处理会员类型 , 如果是 normal 则为普通会员, 如果是 monthly 黄金会员, quarterly 为白金会员, yearly 为钻石会员
+
+		// switch 语法
+
+		switch (user.member_type) {
+			case "normal":
+				user.member_type = "普通会员";
+				break;
+			case "monthly":
+				user.member_type = "黄金会员";
+				break;
+			case "quarterly":
+				user.member_type = "白金会员";
+				break;
+			case "halfyearly":
+				user.member_type = "钻石会员";
+				break;
+			default:
+				user.member_type = "普通会员";
+		}
+		// 存在过期时间则处理, 否则显示不过期
+		if (!user.member_expire_date) {
+			user.member_expire_date = "不过期";
+		} else {
+			// 处理 member_expire_date 会员过期时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
+			user.member_expire_date = user.member_expire_date.slice(0, 10);
+		}
+
+		// 处理重置时间, 如果没有重置时间则显示不重置
+		if (!user.last_refresh_date) {
+			user.last_refresh_date = "不重置";
+		} else {
+			// 处理 last_refresh_date 会员重置时间 . 元数据 2023-01-01 00:00:00 . 只保留日期部分
+			user.last_refresh_date = user.last_refresh_date.slice(0, 10);
+			// 如果有重置时间,则在获取到的时间上+30天
+			const last_refresh_date = new Date(user.last_refresh_date);
+			last_refresh_date.setDate(last_refresh_date.getDate() + 30);
+			user.last_refresh_date = last_refresh_date.toISOString().slice(0, 10);
+		}
+		console.log("user", user);
 		userStore.updateUser(user);
 	};
 

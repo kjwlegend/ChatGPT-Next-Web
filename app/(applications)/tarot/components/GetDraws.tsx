@@ -44,6 +44,36 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 		navigator.clipboard.writeText(inviteLink);
 	};
 
+	const balanceUpdate = async () => {
+		messageApi.loading("领取中");
+		try {
+			const balance = await resetTarotBalance(user.id);
+			if (balance.data) {
+				const tarot_balance = balance.data.balance;
+
+				updateUser({
+					...user,
+					user_balance: {
+						...user.user_balance,
+						tarot_balance,
+					},
+				});
+				messageApi.success({
+					content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
+				});
+			} else {
+				setButtonDisabled(true);
+				setButtonText("已领取");
+				messageApi.info({
+					content: balance.message || balance.msg.detail,
+				});
+			}
+		} catch (error) {
+			//
+			messageApi.info("出错了, 稍后再试吧");
+		}
+	};
+
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const data = [
@@ -56,26 +86,7 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					}`,
 					text: buttonText,
 					onClick: async (index: number) => {
-						messageApi.loading("领取中");
-						try {
-							const balance = await resetTarotBalance(user.id);
-							if (balance.data) {
-								const tarot_balance = balance.data.balance;
-								updateUser({ ...user, tarot_balance });
-								messageApi.success({
-									content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
-								});
-							} else {
-								setButtonDisabled(true);
-								setButtonText("已领取");
-								messageApi.info({
-									content: balance.message,
-								});
-							}
-						} catch (error) {
-							//
-							messageApi.info("出错了, 稍后再试吧");
-						}
+						await balanceUpdate();
 					},
 				},
 			],
@@ -96,26 +107,7 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 					}`,
 					text: buttonText,
 					onClick: async (index: number) => {
-						messageApi.loading("领取中");
-						try {
-							const balance = await resetTarotBalance(user.id);
-							if (balance.data) {
-								const tarot_balance = balance.data.balance;
-								updateUser({ ...user, tarot_balance });
-								messageApi.success({
-									content: `领取成功, 您的占卜次数已经增加'${tarot_balance}次`,
-								});
-							} else {
-								setButtonDisabled(true);
-								setButtonText("已领取");
-								messageApi.info({
-									content: balance.message,
-								});
-							}
-						} catch (error) {
-							//
-							messageApi.info("出错了, 稍后再试吧");
-						}
+						await balanceUpdate();
 					},
 				},
 			],

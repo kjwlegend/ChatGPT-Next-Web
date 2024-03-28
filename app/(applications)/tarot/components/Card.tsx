@@ -25,6 +25,7 @@ const Card: React.FC<CardProps> = ({
 	positionMeaning,
 	classNameString,
 	style,
+	index,
 }) => {
 	const [flipped, setFlipped] = useState<boolean>(false); // 默认为背面状态
 
@@ -72,6 +73,7 @@ const Card: React.FC<CardProps> = ({
 			>
 				{flipped && <div className={styles["tarot-card-info"]}></div>}
 			</Tooltip>
+			<span>{index}</span>
 		</div>
 	);
 };

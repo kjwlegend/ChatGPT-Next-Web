@@ -99,13 +99,13 @@ const MembershipTab = () => {
 
 	const {
 		member_type,
-		xgb_balance,
-		chat_balance,
-		draw_balance,
+		user_balance,
 		member_expire_date,
 		last_refresh_date,
 		id,
 	} = user;
+
+	const { xgb_balance, chat_balance, draw_balance } = user_balance;
 
 	// 定义4种会员的价格
 	const [price, setPrice] = useState({
@@ -259,12 +259,12 @@ const MembershipTab = () => {
 						<p className={styles["service"]}>
 							购买的服务：{selectedMembershipName}
 						</p>
-						<p className={styles["balance"]}>当前余额：{user.xgb_balance}</p>
+						<p className={styles["balance"]}>当前余额：{xgb_balance}</p>
 						<p className={styles["deduction"]}>
 							扣款金额：{getPrice(selectedMembershipType)}
 						</p>
 						<p className={styles["remaining"]}>
-							剩余金额：{user.xgb_balance - getPrice(selectedMembershipType)}
+							剩余金额：{xgb_balance - getPrice(selectedMembershipType)}
 						</p>
 						<Radio.Group
 							onChange={handlePaymentMethodChange}

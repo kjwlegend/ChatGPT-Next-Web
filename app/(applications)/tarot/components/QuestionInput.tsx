@@ -14,6 +14,7 @@ import { useUserStore } from "@/app/store";
 import { Stages } from "../store/tarot";
 import useAuth from "@/app/hooks/useAuth";
 import GetMoreDrawsModal from "./GetDraws";
+import { decreaseTarotBalance } from "@/app/api/backend/user";
 
 const QuestionInputComponent = () => {
 	const TarotStore = useTarotStore();
@@ -22,7 +23,9 @@ const QuestionInputComponent = () => {
 
 	const { updateUserInfo } = userAuth;
 
-	const { tarot_balance, id } = UserStore.user;
+	const { user_balance, id } = UserStore.user;
+
+	const { tarot_balance } = user_balance;
 
 	const nickname = UserStore.user.nickname;
 	const { setStage, questions, setQuestions, stage } = TarotStore;
@@ -83,6 +86,7 @@ const QuestionInputComponent = () => {
 			const user = await updateUserInfo(id);
 		} catch (error) {
 			setErrorText("提交失败，请重试");
+			return;
 		}
 		// if no question, show error text
 		if (tarot_balance === 0) {
@@ -149,6 +153,9 @@ const QuestionInputComponent = () => {
 
 		// update store
 		setQuestions(updateStoreInfo);
+		decreaseTarotBalance(id).then((res) => {
+			console.log("decreaseTarotBalance", res);
+		});
 
 		setStage(Stages.Shuffle);
 	};

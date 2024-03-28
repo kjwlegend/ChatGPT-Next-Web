@@ -65,3 +65,15 @@ export async function resetTarotBalance(userId: number) {
 			return err.message;
 		});
 }
+
+export async function decreaseTarotBalance(userId: number) {
+	return request({
+		url: `/gpt/decrease-tarot/`,
+		method: "post",
+		data: { userid: userId },
+	})
+		.then((res) => res.data)
+		.catch((err) => {
+			return err.message;
+		});
+}
