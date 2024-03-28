@@ -25,7 +25,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 }) => {
 	const [isShuffling, setIsShuffling] = useState(false);
 	const TarotStore = useTarotStore();
-	const [countdown, setCountdown] = useState(1);
+	const [countdown, setCountdown] = useState(25);
 	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
 		TarotStore;
 	const isMobileScreen = useMobileScreen();
