@@ -15,6 +15,7 @@ import useAuth from "../hooks/useAuth";
 import { member_type, upgradeMember } from "../api/backend/user";
 import { type } from "os";
 import Image from "next/image";
+import { epaySigniture } from "../services/ePayService";
 
 const { Paragraph } = Typography;
 
@@ -114,6 +115,8 @@ const MembershipTab = () => {
 		quarterly: 55,
 		halfyearly: 98,
 	});
+
+	console.log("sign", epaySigniture);
 
 	useEffect(() => {
 		// 在这里可以根据需要加载邀请人数和邀请点数的数据

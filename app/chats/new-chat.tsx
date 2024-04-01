@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { Path, SlotID } from "../constant";
 import styles from "./new-chat.module.scss";
@@ -92,23 +93,23 @@ function featureMaskGroup(masks: Mask[]) {
 function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
 	return (
 		<Card
-			style={{ maxWidth: 340 }}
+			style={{ maxWidth: 300 }}
 			title={mask.name}
-			extra={<span className={"label"}>{mask.category}</span>}
+			extra={<span key={mask.id}>角色等级: {mask.version} </span>}
 			hoverable
+			onClick={() => startChat(mask)}
 			actions={[
 				<Button key={mask.id} type="primary" onClick={() => startChat(mask)}>
 					开始聊天
 				</Button>,
-				<span key={mask.id}>角色等级: {mask.version} </span>,
 			]}
 			key={mask.id}
 		>
 			<div className={styles["mask-item"]}>
 				<div className={styles["img-wrapper"]}>
 					<Image
-						width={100}
-						height={200}
+						width={90}
+						height={180}
 						src={mask?.img || ""}
 						alt={mask?.name || ""}
 					/>
@@ -127,12 +128,10 @@ export function NewChat() {
 	const maskStore = useMaskStore();
 	const userStore = useUserStore();
 
-	const masks = maskStore.getAll();
-	const groups = useMaskGroup(masks);
-	const featureGroup = featureMaskGroup(masks);
-
 	const navigate = useNavigate();
 	const config = useAppConfig();
+	const masks = maskStore.getAll();
+	const featureGroup = featureMaskGroup(masks);
 
 	const maskRef = useRef<HTMLDivElement>(null);
 
@@ -155,13 +154,6 @@ export function NewChat() {
 			}
 		},
 	});
-
-	useEffect(() => {
-		if (maskRef.current) {
-			maskRef.current.scrollLeft =
-				(maskRef.current.scrollWidth - maskRef.current.clientWidth) / 2;
-		}
-	}, [groups]);
 
 	return (
 		<div className={styles["new-chat"]}>

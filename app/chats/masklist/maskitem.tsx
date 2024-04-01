@@ -98,67 +98,60 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 					</div>
 				}
 				headStyle={{ padding: 5 }}
-				// extra={}
+				extra={
+					mask.builtin && (
+						<IconButton
+							icon={<EyeIcon />}
+							key="view"
+							text={`${mask.hotness ? mask.hotness : "0"}`}
+							className={styles.hotness}
+							// onClick={() => setEditingMaskId(mask.id)}
+						/>
+					)
+				}
 				hoverable
+				bordered={true}
 				className={`${styles["mask-item"]} ${getCardStyle()}`}
 				bodyStyle={{ padding: 10 }}
 				onClick={() => onChat()}
-				actions={[
-					// <IconButton
-					// 	icon={<AddIcon />}
-					// 	key="chat"
-					// 	text={Locale.Mask.Item.Chat}
-					// 	onClick={() => onChat()}
-					// />,
-					<div className={styles["label"]} key={mask.id}>
-						{mask.category}
-					</div>,
-
-					<>
-						{" "}
-						{mask.builtin ? (
-							<IconButton
-								icon={<EyeIcon />}
-								key="view"
-								text={`热度: ${mask.hotness ? mask.hotness : "0"}`}
-								// onClick={() => setEditingMaskId(mask.id)}
-							/>
-						) : (
-							<IconButton
-								icon={<EditIcon />}
-								key="edit"
-								text={Locale.Mask.Item.Edit}
-								onClick={(event: any) => {
-									event.stopPropagation(); // prevent click event from bubbling up to the card
-									setEditingMaskId(mask.id);
-								}}
-							/>
-						)}
-					</>,
-					<>
-						{" "}
-						{!mask.builtin && (
-							<IconButton
-								icon={<DeleteIcon />}
-								text={Locale.Mask.Item.Delete}
-								key="delete"
-								onClick={async (e) => {
-									e.stopPropagation(); // prevent click event from bubbling up to the card
-									if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
-										onDelete();
-									}
-								}}
-							/>
-						)}
-					</>,
-				]}
 			>
 				<Meta
 					// avatar={<MaskAvatar mask={mask} />}
+
 					description={
 						mask.description ? mask.description : "作者很懒, 还没有上传介绍"
 					}
 				/>
+				<div className={styles.tags}>
+					<span className={styles["label"]} key={mask.id}>
+						{mask.category}
+					</span>
+				</div>
+
+				{!mask.builtin && (
+					<div className={styles.actions}>
+						<IconButton
+							icon={<EditIcon />}
+							key="edit"
+							text={Locale.Mask.Item.Edit}
+							onClick={(event: any) => {
+								event.stopPropagation(); // prevent click event from bubbling up to the card
+								setEditingMaskId(mask.id);
+							}}
+						/>
+						<IconButton
+							icon={<DeleteIcon />}
+							text={Locale.Mask.Item.Delete}
+							key="delete"
+							onClick={async (e) => {
+								e.stopPropagation(); // prevent click event from bubbling up to the card
+								if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
+									onDelete();
+								}
+							}}
+						/>
+					</div>
+				)}
 			</Card>
 		);
 	};

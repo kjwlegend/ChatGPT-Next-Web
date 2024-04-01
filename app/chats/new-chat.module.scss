@@ -100,7 +100,7 @@
 
 		.mask-item {
 			display: flex;
-			align-items: flex-start;
+			align-items: flex-end;
 
 			.img-wrapper {
 				margin-right: 16px;
@@ -115,7 +115,7 @@
 				}
 
 				p {
-					font-size: 15px;
+					font-size: 14px;
 					margin-bottom: 4px;
 					color: rgba(0, 0, 0, 0.6);
 				}

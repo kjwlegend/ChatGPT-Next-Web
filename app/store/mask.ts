@@ -8,15 +8,25 @@ import { createPersistStore } from "../utils/store";
 import { type } from "os";
 import { Plugin } from "./plugin";
 
+interface roleSettingType {
+	// 语气, 年龄, 血型, 星座, 性格,爱好,特征
+	tone?: string;
+	age?: string;
+	bloodType?: string;
+	constellation?: string;
+	personality?: string;
+	hobby?: string;
+	feature?: string;
+}
+
 export type Mask = {
 	id: string;
-	createdAt: number;
+	name: string;
+	category: string;
 	author?: string;
 	type?: string;
 	topic?: string;
 	avatar: string;
-	name: string;
-	category: string;
 	featureMask?: boolean;
 	constellation?: string;
 	img?: string;
@@ -25,13 +35,15 @@ export type Mask = {
 	hideContext?: boolean;
 	version?: string;
 	context: ChatMessage[];
-	syncGlobalConfig?: boolean;
 	modelConfig: ModelConfig;
 	lang: Lang;
 	builtin: boolean;
+	syncGlobalConfig?: boolean;
 	usePlugins?: boolean;
 	plugins?: string[];
 	hotness?: number;
+	createdAt: number;
+	roleSetting?: roleSettingType;
 };
 export const DEFAULT_MASK_STATE = {
 	masks: {} as Record<string, Mask>,
@@ -100,13 +112,14 @@ export const useMaskStore = createPersistStore(
 		get(id?: string) {
 			return get().masks[id ?? 1145141919810];
 		},
-		getAll() {
+		async getAll() {
 			const userMasks = Object.values(get().masks).sort((a, b) => {
 				return b.createdAt - a.createdAt;
 			});
 			const config = useAppConfig.getState();
 			if (config.hideBuiltinMasks) return userMasks;
-			const buildinMasks = BUILTIN_MASKS.map(
+			const buildinMasks = await BUILTIN_MASKS;
+			buildinMasks.map(
 				(m) =>
 					({
 						...m,

@@ -1,32 +1,44 @@
 import { Mask } from "../store/mask";
 import { CN_MASKS } from "./cn";
 import { EN_MASKS } from "./en";
-
 import { type BuiltinMask } from "./typing";
-export { type BuiltinMask } from "./typing";
-import { getPromptHotness, getPromptCategory } from "../api/backend/prompts";
+import {
+	getPromptHotness,
+	getPromptCategory,
+	getPrompt,
+} from "../api/backend/prompts";
+import { MaskCategory } from "../constant";
+import { Console } from "console";
 
 export const BUILTIN_MASK_ID = 100000;
 
-export const BUILTIN_MASK_STORE = {
+const BUILTIN_MASK_STORE = {
 	buildinId: BUILTIN_MASK_ID,
 	masks: {} as Record<string, BuiltinMask>,
 	get(id?: string) {
 		if (!id) return undefined;
-		return this.masks[id] as Mask | undefined;
+		return this.masks[id];
 	},
-	getByname(name: string) {
-		// search by name
+	getByName(name: string) {
 		return Object.values(this.masks).find((m) => m.name === name);
 	},
 	add(m: BuiltinMask) {
-		const mask = { ...m, id: this.buildinId++, builtin: true };
+		const mask = { ...m };
 		this.masks[mask.id] = mask;
 		return mask;
 	},
 };
 
-// 调用接口获取hotness数据
+async function fetchPromptData() {
+	try {
+		const response = await getPrompt({ page: 1, limit: 50 });
+		return response.data;
+	} catch (error) {
+		console.error("Failed to fetch prompts", error);
+		return [];
+	}
+}
+
 async function fetchHotnessData() {
 	try {
 		const response = await getPromptHotness();
@@ -34,22 +46,15 @@ async function fetchHotnessData() {
 
 		hotnessData.forEach((item: any) => {
 			const maskName = item.prompt.toString();
-			const mask = BUILTIN_MASK_STORE.getByname(maskName);
+			const mask = BUILTIN_MASK_STORE.getByName(maskName);
 			if (mask) {
 				mask.hotness = item.hotness;
 			}
 		});
-		// buildBuiltinMasks(); // 在获取hotness数据后构建BUILTIN_MASKS
 	} catch (error) {
 		console.error("Failed to fetch hotness data:", error);
 	}
 }
-
-// use api to get prompt category
-//
-import { MaskCategory, MaskCategoryType, maskCategories } from "../constant";
-
-// export let MaskCategory: MaskCategoryType[] = [];
 
 async function fetchPromptCategory() {
 	try {
@@ -65,30 +70,38 @@ async function fetchPromptCategory() {
 			};
 			const existingCategory = MaskCategory.find((c) => c.key === item.key);
 			if (existingCategory) {
-				if (existingCategory.value !== item.value) {
-					existingCategory.value = item.value;
-				}
+				existingCategory.value = item.value;
 			} else {
 				MaskCategory.push(category);
 			}
 		});
-
-		// 输出添加完成后的MaskCategory枚举
-		console.log(MaskCategory);
 	} catch (error) {
 		console.error("Failed to fetch prompt category:", error);
 	}
 }
 
-// 将接口所获得的分类数据 添加到 export enum MaskCategory
+async function setupBuiltins(): Promise<void> {
+	const serverMasks = await fetchPromptData();
+	console.log("serverMasks", serverMasks);
+	const allMasks: BuiltinMask[] = [...EN_MASKS];
 
-// async function buildBuiltinMasks() {
-//   BUILTIN_MASKS.forEach((m) => BUILTIN_MASK_STORE.add(m));
-// }
+	allMasks.forEach((mask) => {
+		BUILTIN_MASK_STORE.add(mask);
+	});
+}
 
-export const BUILTIN_MASKS: BuiltinMask[] = [...CN_MASKS, ...EN_MASKS].map(
-	(m) => BUILTIN_MASK_STORE.add(m),
-);
+async function initializeMasks(): Promise<void> {
+	await setupBuiltins();
+	// ...其他可能的初始化函数
+	await fetchHotnessData();
+	await fetchPromptCategory();
+}
 
-fetchHotnessData(); // 在最开始调用fetchHotnessData来获取hotness数据
-fetchPromptCategory();
+// 导出一个Promise，它将在所有masks初始化后解决
+const BUILTIN_MASKS: Promise<BuiltinMask[]> = initializeMasks().then(() => {
+	const data = Object.values(BUILTIN_MASK_STORE.masks);
+	// console.log("Built-in masks initialized", data);
+	return data;
+});
+
+export { BuiltinMask, BUILTIN_MASK_STORE, BUILTIN_MASKS };

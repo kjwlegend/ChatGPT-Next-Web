@@ -51,7 +51,6 @@ const ChatList = dynamic(async () => (await import("./chatList")).ChatList, {
 	loading: () => null,
 });
 
-
 function useHotKey() {
 	const chatStore = useChatStore();
 

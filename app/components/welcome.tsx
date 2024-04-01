@@ -6,23 +6,23 @@ import { Button } from "antd";
 import Image from "next/image";
 
 const ModalPopup = () => {
-	const [visible, setVisible] = useState(false);
+	const [visible, setVisible] = useState(true);
 
-	useEffect(() => {
-		const isFirstVisit = localStorage.getItem("isFirstVisit");
-		const lastVisitTime = localStorage.getItem("lastVisitTime");
-		const currentTime = new Date().getTime();
-		const twentyFourHours = 1000 * 60 * 60 * 24 * 2; // 48小时的毫秒数
+	// useEffect(() => {
+	// 	const isFirstVisit = localStorage.getItem("isFirstVisit");
+	// 	const lastVisitTime = localStorage.getItem("lastVisitTime");
+	// 	const currentTime = new Date().getTime();
+	// 	const twentyFourHours = 1000 * 60 * 60 * 24 * 2; // 48小时的毫秒数
 
-		if (
-			!isFirstVisit ||
-			(isFirstVisit && currentTime - Number(lastVisitTime) > twentyFourHours)
-		) {
-			setVisible(true);
-			localStorage.setItem("isFirstVisit", "false");
-			localStorage.setItem("lastVisitTime", String(currentTime));
-		}
-	}, []);
+	// 	if (
+	// 		!isFirstVisit ||
+	// 		(isFirstVisit && currentTime - Number(lastVisitTime) > twentyFourHours)
+	// 	) {
+	// 		setVisible(true);
+	// 		localStorage.setItem("isFirstVisit", "false");
+	// 		localStorage.setItem("lastVisitTime", String(currentTime));
+	// 	}
+	// }, []);
 
 	const handleOk = () => {
 		setVisible(false);
@@ -30,7 +30,6 @@ const ModalPopup = () => {
 
 	const handleCancel = () => {
 		localStorage.setItem("isFirstVisit", "true");
-
 		setVisible(false);
 	};
 
@@ -56,25 +55,25 @@ const ModalPopup = () => {
 
 				<p className={styles.title}> 进群可领取邀请码, 领取1个月免费福利</p>
 				{/* subtitle */}
-				<p className={styles.subtitle}>为什么使用小光AI?</p>
+				<p className={styles.subtitle}>小光核心特色</p>
 				{/* 基于工作 , 生活, 娱乐 3大块, 以flex组件帮我生成带有 小标题, 描述的代码 */}
 				<div className={styles.description}>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>工作</p>
+						<p className={styles["description-title"]}>对话及绘画</p>
 						<p className={styles["description-content"]}>
-							产品文案, 社交媒体协作, 合同起草, 法律文书, 专业术语翻译 ...
+							集成合规大模型,并加入了大量定制化微调. 专业提示词工程师研究.
 						</p>
 					</div>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>生活</p>
+						<p className={styles["description-title"]}>工作流+双AI</p>
 						<p className={styles["description-content"]}>
-							百科学习,旅游指南, 餐厅推荐, 电影推荐, 电视剧推荐, 书籍推荐 ...
+							可支持无限制工作流定制, 集成双AI特色训练.
 						</p>
 					</div>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>娱乐</p>
+						<p className={styles["description-title"]}>命理运势</p>
 						<p className={styles["description-content"]}>
-							角色陪伴, 起名算命, 角色扮演游戏, 文字冒险, 星座占卜 ...
+							由专业塔罗师设计的塔罗牌阵, 结合大模型给出专业解读, 专业解答.
 						</p>
 					</div>
 				</div>
@@ -84,9 +83,7 @@ const ModalPopup = () => {
 					<Button type="primary" href="/auth#tab2">
 						立即注册
 					</Button>
-					<Button type="primary" href="/about">
-						查看介绍
-					</Button>
+
 					<Button type="primary" href="/auth">
 						立即登录
 					</Button>
