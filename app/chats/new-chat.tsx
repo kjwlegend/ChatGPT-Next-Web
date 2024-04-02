@@ -1,13 +1,7 @@
-"use client";
 import { useEffect, useRef, useState } from "react";
 import { Path, SlotID } from "../constant";
 import styles from "./new-chat.module.scss";
 
-import {
-	EditOutlined,
-	EllipsisOutlined,
-	SettingOutlined,
-} from "@ant-design/icons";
 import { Avatar, Card, Skeleton, Switch, Button, Row } from "antd";
 const { Meta } = Card;
 import { IconButton } from "@/app/components/button";
@@ -35,48 +29,6 @@ function MaskItem(props: { mask: Mask; onClick?: () => void }) {
 			<div className={styles["mask-name"] + " one-line"}>{props.mask.name}</div>
 		</div>
 	);
-}
-
-function useMaskGroup(masks: Mask[]) {
-	const [groups, setGroups] = useState<Mask[][]>([]);
-
-	useEffect(() => {
-		const computeGroup = () => {
-			const appBody = document.getElementById(SlotID.AppBody);
-			if (!appBody || masks.length === 0) return;
-
-			const rect = appBody.getBoundingClientRect();
-			const maxWidth = rect.width;
-			const maxHeight = rect.height * 0.6;
-			const maskItemWidth = 120;
-			const maskItemHeight = 50;
-
-			const randomMask = () => masks[Math.floor(Math.random() * masks.length)];
-			let maskIndex = 0;
-			const nextMask = () => masks[maskIndex++ % masks.length];
-
-			const rows = Math.ceil(maxHeight / maskItemHeight);
-			const cols = Math.ceil(maxWidth / maskItemWidth);
-
-			const newGroups = new Array(rows)
-				.fill(0)
-				.map((_, _i) =>
-					new Array(cols)
-						.fill(0)
-						.map((_, j) => (j < 1 || j > cols - 2 ? randomMask() : nextMask())),
-				);
-
-			setGroups(newGroups);
-		};
-
-		// computeGroup();
-
-		// window.addEventListener("resize", computeGroup);
-		// return () => window.removeEventListener("resize", computeGroup);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	return groups;
 }
 
 function featureMaskGroup(masks: Mask[]) {
@@ -130,8 +82,20 @@ export function NewChat() {
 
 	const navigate = useNavigate();
 	const config = useAppConfig();
-	const masks = maskStore.getAll();
-	const featureGroup = featureMaskGroup(masks);
+
+	const [masks, setMasks] = useState<Mask[]>([]);
+	const [featureGroup, setFeatureGroup] = useState<Mask[]>([]);
+
+	useEffect(() => {
+		async function fetchMasks() {
+			const masksData = await maskStore.getAll();
+
+			setMasks(masksData);
+			setFeatureGroup(featureMaskGroup(masksData));
+		}
+
+		fetchMasks();
+	}, [maskStore]);
 
 	const maskRef = useRef<HTMLDivElement>(null);
 
@@ -154,7 +118,10 @@ export function NewChat() {
 			}
 		},
 	});
-
+	// 确保在数据加载时处理加载状态或空状态
+	if (!masks) {
+		return <div>Loading...</div>;
+	}
 	return (
 		<div className={styles["new-chat"]}>
 			<div className={styles["mask-intro"]}>

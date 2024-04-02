@@ -130,7 +130,19 @@ export function MaskPage() {
 		setSelectedTags(selectedTags);
 	};
 
-	const allMasks = maskStore.getAll().filter((m) => {
+	const [allMasks, setallMasks] = useState<Mask[]>([]);
+
+	useEffect(() => {
+		async function fetchMasks() {
+			const masksData = await maskStore.getAll();
+
+			setallMasks(masksData);
+		}
+
+		fetchMasks();
+	}, [maskStore]);
+
+	allMasks.filter((m) => {
 		if (filterLang && m.lang !== filterLang) {
 			return false;
 		}

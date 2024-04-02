@@ -83,7 +83,7 @@ async function fetchPromptCategory() {
 async function setupBuiltins(): Promise<void> {
 	const serverMasks = await fetchPromptData();
 	console.log("serverMasks", serverMasks);
-	const allMasks: BuiltinMask[] = [...EN_MASKS];
+	const allMasks: BuiltinMask[] = [...serverMasks];
 
 	allMasks.forEach((mask) => {
 		BUILTIN_MASK_STORE.add(mask);
@@ -100,7 +100,7 @@ async function initializeMasks(): Promise<void> {
 // 导出一个Promise，它将在所有masks初始化后解决
 const BUILTIN_MASKS: Promise<BuiltinMask[]> = initializeMasks().then(() => {
 	const data = Object.values(BUILTIN_MASK_STORE.masks);
-	// console.log("Built-in masks initialized", data);
+	console.log("Built-in masks initialized", data);
 	return data;
 });
 
