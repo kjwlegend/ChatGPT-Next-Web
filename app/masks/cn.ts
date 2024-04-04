@@ -8,6 +8,7 @@ export const CN_MASKS: BuiltinMask[] = [
 	...RolePlay,
 
 	{
+		
 		avatar: "gpt-bot",
 		category: "职场日常",
 		featureMask: false,

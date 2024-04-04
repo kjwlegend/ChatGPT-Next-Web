@@ -84,6 +84,7 @@ export default function Login() {
 					// router.push("/chats");
 					// push to the previous page
 					router.back();
+					router.refresh();
 				}, 1000);
 			}
 		} catch (error) {
