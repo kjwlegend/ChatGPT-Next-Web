@@ -10,9 +10,9 @@ import React, {
 } from "react";
 
 import { getISOLang, getLang } from "../locales";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,

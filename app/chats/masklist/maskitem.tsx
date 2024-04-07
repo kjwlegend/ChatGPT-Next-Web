@@ -25,9 +25,9 @@ import { Card } from "antd";
 import { IconButton } from "@/app/components/button";
 import { BotAvatar } from "@/app/components/emoji";
 import { Avatar } from "antd";
-import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "@/app/store/mask";
+import { DEFAULT_MASK_AVATAR, useMaskStore } from "@/app/store/mask";
+import { Mask, ChatMessage } from "@/app/types/";
 import {
-	ChatMessage,
 	createMessage,
 	ModelConfig,
 	useAppConfig,
@@ -52,6 +52,7 @@ type MaskComponentProps = {
 	mask: Mask;
 	setEditingMaskId: (id: string) => void;
 	styleName?: string;
+	deleteCallback?: () => void;
 };
 
 const MaskComponent: React.FC<MaskComponentProps> = ({
@@ -76,6 +77,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 		console.log("onDelete");
 		maskStore.delete(mask.id);
 	};
+
 	const getCardStyle = () => {
 		if (styleName === "assistant") {
 			return styles["mask-item-card"];
@@ -99,15 +101,13 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 				}
 				headStyle={{ padding: 5 }}
 				extra={
-					mask.builtin && (
-						<IconButton
-							icon={<EyeIcon />}
-							key="view"
-							text={`${mask.hotness ? mask.hotness : "0"}`}
-							className={styles.hotness}
-							// onClick={() => setEditingMaskId(mask.id)}
-						/>
-					)
+					<IconButton
+						icon={<EyeIcon />}
+						key="view"
+						text={`${mask.hotness ? mask.hotness : "0"}`}
+						className={styles.hotness}
+						// onClick={() => setEditingMaskId(mask.id)}
+					/>
 				}
 				hoverable
 				bordered={true}
@@ -127,31 +127,33 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 						{mask.category}
 					</span>
 				</div>
-
-				{!mask.builtin && (
-					<div className={styles.actions}>
-						<IconButton
-							icon={<EditIcon />}
-							key="edit"
-							text={Locale.Mask.Item.Edit}
-							onClick={(event: any) => {
-								event.stopPropagation(); // prevent click event from bubbling up to the card
-								setEditingMaskId(mask.id);
-							}}
-						/>
-						<IconButton
-							icon={<DeleteIcon />}
-							text={Locale.Mask.Item.Delete}
-							key="delete"
-							onClick={async (e) => {
-								e.stopPropagation(); // prevent click event from bubbling up to the card
-								if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
-									onDelete();
-								}
-							}}
-						/>
-					</div>
-				)}
+				<div className={styles.cardFooter}>
+					<div className={styles.author}>@{mask.author}</div>
+					{!mask.builtin && (
+						<div className={styles.actions}>
+							<IconButton
+								icon={<EditIcon />}
+								key="edit"
+								text={Locale.Mask.Item.Edit}
+								onClick={(event: any) => {
+									event.stopPropagation(); // prevent click event from bubbling up to the card
+									setEditingMaskId(mask.id);
+								}}
+							/>
+							<IconButton
+								icon={<DeleteIcon />}
+								text={Locale.Mask.Item.Delete}
+								key="delete"
+								onClick={async (e) => {
+									e.stopPropagation(); // prevent click event from bubbling up to the card
+									if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
+										onDelete();
+									}
+								}}
+							/>
+						</div>
+					)}
+				</div>
 			</Card>
 		);
 	};

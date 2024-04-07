@@ -1,4 +1,5 @@
-import { BuiltinMask } from "./typing";
+import { BuiltinMask } from "../types/mask";
+
 import { MaskCategory } from "../constant";
 
 export const EN_MASKS: BuiltinMask[] = [

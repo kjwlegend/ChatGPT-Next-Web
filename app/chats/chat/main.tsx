@@ -9,9 +9,9 @@ import React, {
 } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import dynamic from "next/dynamic";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -56,7 +56,7 @@ import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
 import WindowHeaer from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 import Upload from "@/app/chats/knowledge/upload";
-import { ChatSession } from "@/app/store";
+import { useScrollToBottom } from "./chat-controller";
 
 interface ChatContextType {
 	hitBottom: boolean;
@@ -111,11 +111,10 @@ export function _Chat(props: {
 	const [hitBottom, setHitBottom] = useState(true);
 	const [showPromptModal, setShowPromptModal] = useState(false);
 	const [userInput, setUserInput] = useState("");
-	const [autoScroll, setAutoScroll] = useState(true);
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 	const [userImage, setUserImage] = useState<any>();
-
-	const scrollRef = useRef<HTMLDivElement>(null);
+	const { autoScroll, setAutoScroll, scrollDomToBottom, scrollRef } =
+		useScrollToBottom();
 
 	const config = useAppConfig();
 

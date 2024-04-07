@@ -37,8 +37,10 @@ import {
 	HeartTwoTone,
 } from "@ant-design/icons";
 
+import { ChatMessage, ChatSession} from "@/app/types/chat";
+
 import {
-	ChatMessage,
+
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -114,7 +116,7 @@ import {
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
 import { useAllModels } from "@/app/utils/hooks";
-import { ChatSession } from "@/app/store";
+
 
 import {
 	ApiTwoTone,
@@ -639,7 +641,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	} = useContext(ChatContext);
 
 	const { submitKey, shouldSubmit } = useSubmitHandler();
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
+	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
 	const [promptHints, setPromptHints] = useState<RenderPompt[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 

@@ -17,8 +17,9 @@ import useDoubleAgentStore, {
 	DoubleAgentChatSession,
 } from "@/app/store/doubleAgents";
 import styles from "../double-agents.module.scss";
-import { Mask } from "@/app/store/mask";
-import { ChatSession } from "@/app/store/chat";
+
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
+
 import { useChatStore } from "@/app/store/chat";
 import { useUserStore } from "@/app/store/user";
 import { useMaskStore } from "@/app/store/mask";
@@ -215,7 +216,7 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 						? [...aiConfig.plugins, p.toolName ?? p.name]
 						: [p.toolName ?? p.name]
 					: aiConfig.plugins?.filter(
-							(plugin) => plugin !== p.toolName ?? p.name,
+							(plugin: any) => plugin !== p.toolName ?? p.name,
 					  ),
 			},
 		};

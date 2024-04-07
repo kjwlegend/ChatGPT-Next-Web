@@ -28,7 +28,6 @@ import {
 } from "@/app/icons"; // 假设的图标资源
 
 import {
-	ChatMessage,
 	useChatStore,
 	BOT_HELLO,
 	createMessage,
@@ -53,7 +52,8 @@ import {
 import { CreateChatData, createChat } from "@/app/api/backend/chat";
 import { useMobileScreen } from "@/app/utils";
 
-import { ChatSession } from "@/app/store";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
+
 import { message } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
@@ -112,9 +112,8 @@ export function Chatbody(props: {
 		scrollRef,
 		userImage,
 		setUserImage,
+		setAutoScroll,
 	} = useContext(ChatContext);
-
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
 
 	const [messages, setMessages] = useState<RenderMessage[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -275,7 +274,7 @@ export function Chatbody(props: {
 		// // 更新是否触碰到底部的状态
 		// setHitBottom(isHitBottom);
 		// // 更新是否自动滚动到底部的状态
-		// setAutoScroll(isHitBottom);
+		setAutoScroll(isHitBottom);
 	};
 	const checkScrollAndFetchMessages = (e: HTMLElement) => {
 		const bottomHeight = e.scrollTop + e.clientHeight;

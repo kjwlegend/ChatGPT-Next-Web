@@ -14,9 +14,7 @@ interface LoginParams {
 	username: string;
 	password: string;
 }
-import { ChatSession } from "../store/chat";
 import { createEmptyMask } from "../store/mask";
-import { error } from "console";
 
 // function clearAllData() {
 // 	const chatStore = useChatStore();

@@ -1,16 +1,17 @@
-import { Mask } from "../store/mask";
 import { CN_MASKS } from "./cn";
 import { EN_MASKS } from "./en";
-import { type BuiltinMask } from "./typing";
-import {
-	getPromptHotness,
-	getPromptCategory,
-	getPrompt,
-} from "../api/backend/prompts";
+import { getPromptHotness, getPromptCategory, getPrompt } from "./service";
 import { MaskCategory } from "../constant";
 import { Console } from "console";
 
+import { BuiltinMask } from "../types/mask";
+import { featureMask } from "./featureMask_cn";
+
+import fs from "fs/promises";
+import path from "path";
+
 export const BUILTIN_MASK_ID = 100000;
+export const SERVER_MASKS = {} as Record<string, BuiltinMask>;
 
 const BUILTIN_MASK_STORE = {
 	buildinId: BUILTIN_MASK_ID,
@@ -28,33 +29,6 @@ const BUILTIN_MASK_STORE = {
 		return mask;
 	},
 };
-
-async function fetchPromptData() {
-	try {
-		const response = await getPrompt({ page: 1, limit: 50 });
-		return response.data;
-	} catch (error) {
-		console.error("Failed to fetch prompts", error);
-		return [];
-	}
-}
-
-async function fetchHotnessData() {
-	try {
-		const response = await getPromptHotness();
-		const hotnessData = response.data;
-
-		hotnessData.forEach((item: any) => {
-			const maskName = item.prompt.toString();
-			const mask = BUILTIN_MASK_STORE.getByName(maskName);
-			if (mask) {
-				mask.hotness = item.hotness;
-			}
-		});
-	} catch (error) {
-		console.error("Failed to fetch hotness data:", error);
-	}
-}
 
 async function fetchPromptCategory() {
 	try {
@@ -80,28 +54,24 @@ async function fetchPromptCategory() {
 	}
 }
 
-async function setupBuiltins(): Promise<void> {
-	const serverMasks = await fetchPromptData();
-	console.log("serverMasks", serverMasks);
-	const allMasks: BuiltinMask[] = [...serverMasks];
-
+function setupBuiltins() {
+	const allMasks: BuiltinMask[] = [...featureMask, ...CN_MASKS, ...EN_MASKS];
+	// console.log(allMasks);
 	allMasks.forEach((mask) => {
 		BUILTIN_MASK_STORE.add(mask);
+		//  add to servermask
+		// console.log(mask);
 	});
 }
 
 async function initializeMasks(): Promise<void> {
-	await setupBuiltins();
+	setupBuiltins();
 	// ...其他可能的初始化函数
-	await fetchHotnessData();
 	await fetchPromptCategory();
 }
+initializeMasks();
+const allMasks: BuiltinMask[] = [...CN_MASKS, ...EN_MASKS];
 
-// 导出一个Promise，它将在所有masks初始化后解决
-const BUILTIN_MASKS: Promise<BuiltinMask[]> = initializeMasks().then(() => {
-	const data = Object.values(BUILTIN_MASK_STORE.masks);
-	console.log("Built-in masks initialized", data);
-	return data;
-});
+const BUILTIN_MASKS = Object.values(allMasks);
 
-export { BuiltinMask, BUILTIN_MASK_STORE, BUILTIN_MASKS };
+export { BUILTIN_MASK_STORE, BUILTIN_MASKS };

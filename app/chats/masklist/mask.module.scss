@@ -40,6 +40,10 @@
 		.mask-category {
 			margin: 10px;
 			font-size: 14px;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			background: #fff;
 
 			:global .ant-tag {
 				margin: 5px;
@@ -97,6 +101,16 @@
 				"Helvetica", "Arial", sans-serif, "Noto Sans", "SF Pro SC",
 				"SF Pro Text", "SF Pro Icons";
 
+			.cardFooter {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.author {
+				color: #777;
+				font-size: 12px;
+			}
 			.mask-item {
 				padding: 10px;
 				margin: 10px;
@@ -159,7 +173,7 @@
 					}
 				}
 				.tags {
-					margin-top: 10px;
+					margin: 10px 0;
 					display: flex;
 					flex-direction: row;
 				}
@@ -170,7 +184,7 @@
 					font-size: 10px;
 					color: rgb(66, 66, 66);
 					border-radius: 5px;
-				} 
+				}
 				&.develop {
 					background-color: aquamarine;
 				}

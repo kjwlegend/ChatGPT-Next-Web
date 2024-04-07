@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { useWorkflowStore } from "../store/workflow";
-import { ChatSession, useUserStore } from "../store";
+import {  useUserStore } from "../store";
+import { ChatMessage, ChatSession, Mask} from "@/app/types/";
+
 import { message } from "antd";
 
 import {

@@ -12,7 +12,6 @@ import React, {
 import { getISOLang, getLang } from "@/app/locales";
 
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -24,6 +23,7 @@ import {
 	ModelType,
 	useUserStore,
 } from "@/app/store";
+import { ChatMessage } from "@/app/types/chat";
 
 import Locale from "@/app/locales";
 
@@ -96,19 +96,19 @@ export function ClearContextDivider(props: { sessionId?: string }) {
 	);
 }
 
-export function useScrollToBottom(scrollRef: any) {
+export function useScrollToBottom() {
 	// for auto-scroll
-	// const scrollRef = useRef<HTMLDivElement>(null);
+	const scrollRef = useRef<HTMLDivElement>(null);
 	const [autoScroll, setAutoScroll] = useState(true);
 
 	function scrollDomToBottom() {
 		const dom = scrollRef.current;
 		if (dom) {
-			// requestAnimationFrame(() => {
-			//   setAutoScroll(true);
-			//   dom.scrollTo(0, dom.scrollHeight);
-			// });
-			setAutoScroll(true);
+			requestAnimationFrame(() => {
+				setAutoScroll(true);
+				dom.scrollTo(0, dom.scrollHeight);
+			});
+			setAutoScroll(autoScroll);
 			dom.scrollTo(0, dom.scrollHeight);
 		}
 	}

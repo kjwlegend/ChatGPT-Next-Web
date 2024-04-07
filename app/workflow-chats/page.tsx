@@ -8,8 +8,9 @@ import React, {
 	Fragment,
 	use,
 } from "react";
+import { ChatMessage, ChatSession, Mask} from "@/app/types/";
 
-import { useChatStore, useUserStore, ChatSession } from "../store";
+import { useChatStore, useUserStore } from "../store";
 import { ChatControllerPool } from "../client/controller";
 import { Prompt, usePromptStore } from "../store/prompt";
 import { useMaskStore } from "../store/mask";

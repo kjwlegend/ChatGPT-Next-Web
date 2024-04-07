@@ -14,9 +14,9 @@ import EyeIcon from "@/app/icons/eye.svg";
 import CopyIcon from "@/app/icons/copy.svg";
 import DragIcon from "@/app/icons/drag.svg";
 
-import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "@/app/store/mask";
+import { DEFAULT_MASK_AVATAR, useMaskStore } from "@/app/store/mask";
+import { Mask } from "@/app/types/mask";
 import {
-	ChatMessage,
 	createMessage,
 	ModelConfig,
 	useAppConfig,
@@ -39,12 +39,12 @@ import { MaskCategory, maskCategories, MaskCategoryType } from "@/app/constant";
 import { useNavigate } from "react-router-dom";
 
 import chatStyle from "../chat.module.scss";
-import { useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { copyToClipboard, downloadAs, readFromFile } from "@/app/utils";
 import { Updater } from "@/app/typing";
 import { ModelConfigList } from "@/app/components/model-config";
 import { FileName, Path } from "@/app/constant";
-import { BUILTIN_MASK_STORE } from "@/app/masks";
+import { BUILTIN_MASKS, BUILTIN_MASK_STORE } from "@/app/masks";
 import { nanoid } from "nanoid";
 import {
 	DragDropContext,
@@ -59,6 +59,8 @@ import MaskComponent from "./maskitem";
 import { MaskConfig } from "../mask-components";
 
 import MultipleTag from "@/app/components/multipletags";
+import { on } from "events";
+import { filter } from "cheerio/lib/api/traversing";
 
 const { Meta } = Card;
 
@@ -82,18 +84,22 @@ export function MaskPage() {
 	const navigate = useNavigate();
 
 	const maskStore = useMaskStore();
+	const { masks: originalMask, maskslist } = maskStore;
 	const chatStore = useChatStore();
 	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
-	const [isBuiltin, setisBuiltin] = useState(false);
+	const [isBuiltin, setisBuiltin] = useState(true);
 	const [filterLang, setFilterLang] = useState<Lang>();
 	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
-	const [searchMasks, setSearchMasks] = useState<Mask[]>([]);
 	const [searchText, setSearchText] = useState("");
 	const [cardStyle, setCardStyle] = useState<
 		"roleplay" | "assistant" | "workflow"
 	>("assistant");
 
 	const [segmentValue, setsegmentValue] = useState<string | number>("场景助手");
+
+	const [allMasks, setallMasks] = useState<Mask[]>([]);
+	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
+	const [userMasks, setUserMasks] = useState<Mask[]>([]);
 
 	const segmentOptions = [
 		{ label: "场景助手", value: "场景助手", disabled: false },
@@ -126,56 +132,72 @@ export function MaskPage() {
 	};
 
 	const handleTagsChange = (selectedTags: string[]) => {
-		console.log("fu", selectedTags);
+		console.log("tags", selectedTags);
 		setSelectedTags(selectedTags);
 	};
 
-	const [allMasks, setallMasks] = useState<Mask[]>([]);
+	const onFilter = () => {
+		// 创建一个包含所有过滤条件的对象
+		const filterOptions = {} as {
+			lang: string;
+			tags: string[];
+			builtin: boolean;
+			type: string;
+			searchTerm: string;
+		};
+
+		// 如果存在 filterLang，添加到过滤条件中
+		if (filterLang !== undefined) {
+			filterOptions.lang = filterLang;
+		}
+
+		// 如果存在 selectedTags，添加到过滤条件中
+		// 假设 selectedTags 是一个字符串或字符串数组
+		if (selectedTags) {
+			filterOptions.tags = selectedTags;
+		}
+
+		// 如果存在 isBuiltin，添加到过滤条件中
+		if (isBuiltin !== undefined) {
+			filterOptions.builtin = isBuiltin;
+		}
+
+		if (cardStyle !== undefined) {
+			filterOptions.type = cardStyle;
+		}
+
+		if (searchText !== undefined) {
+			filterOptions.searchTerm = searchText;
+		}
+
+		// 调用新的 filter 方法，并传递过滤条件对象
+		const data = maskStore.filter(filterOptions);
+
+		// 更新状态
+		return data;
+	};
 
 	useEffect(() => {
-		async function fetchMasks() {
-			const masksData = await maskStore.getAll();
-
-			setallMasks(masksData);
-		}
-
-		fetchMasks();
+		const masksData = maskStore.getAll();
+		setallMasks(masksData);
 	}, [maskStore]);
 
-	allMasks.filter((m) => {
-		if (filterLang && m.lang !== filterLang) {
-			return false;
-		}
-		if (!selectedTags.includes("全部") && !selectedTags.includes(m.category)) {
-			return false;
-		}
-		if (isBuiltin && !!m.builtin) {
-			return false;
-		}
-		if (cardStyle === "roleplay" && m.type !== "roleplay") {
-			return false;
-		}
-		if (
-			cardStyle === "assistant" &&
-			(m.type === "roleplay" || m.type === "workflow")
-		) {
-			return false;
-		}
-		return true;
-	});
+	// 依赖项数组中包含所有可能影响过滤的变量
+	useEffect(() => {
+		let filteredMasks = onFilter();
+		filteredMasks = maskStore.sort("createdAt", filteredMasks);
 
-	const masks = searchText.length > 0 ? searchMasks : allMasks;
+		setFilterMasks(filteredMasks);
+	}, [filterLang, selectedTags, isBuiltin, cardStyle, searchText, maskStore]);
 
-	// simple search, will refactor later
+	function deleteHandler() {
+		console.log("item delete");
+	}
+
 	const onSearch = (text: string) => {
 		setSearchText(text);
-		if (text.length > 0) {
-			const result = allMasks.filter((m) => m.name.includes(text));
-			setSearchMasks(result);
-		} else {
-			setSearchMasks(allMasks);
-		}
 	};
+	const masks = filterMasks;
 
 	const [editingMaskId, setEditingMaskId] = useState<string | undefined>();
 	const editingMask =
@@ -183,7 +205,7 @@ export function MaskPage() {
 	const closeMaskModal = () => setEditingMaskId(undefined);
 
 	const downloadAll = () => {
-		downloadAs(JSON.stringify(masks.filter((v) => !v.builtin)), FileName.Masks);
+		downloadAs(JSON.stringify(BUILTIN_MASKS), FileName.Masks);
 	};
 
 	const importFromFile = () => {
@@ -220,14 +242,14 @@ export function MaskPage() {
 					</div>
 
 					<div className="window-actions">
-						{/* <div className="window-action-button">
-              <IconButton
-                icon={<DownloadIcon />}
-                bordered
-                onClick={downloadAll}
-                text={Locale.UI.Export}
-              />
-            </div> */}
+						<div className="window-action-button">
+							<IconButton
+								icon={<DownloadIcon />}
+								bordered
+								onClick={downloadAll}
+								text={Locale.UI.Export}
+							/>
+						</div>
 						<div className="window-action-button">
 							<IconButton
 								icon={<UploadIcon />}
@@ -282,7 +304,7 @@ export function MaskPage() {
 							onInput={(e) => onSearch(e.currentTarget.value)}
 						/>
 
-						<Select
+						{/* <Select
 							className={styles["mask-filter-lang"]}
 							value={filterLang ?? Locale.Settings.Lang.All}
 							onChange={(e) => {
@@ -302,30 +324,32 @@ export function MaskPage() {
 									{ALL_LANG_OPTIONS[lang]}
 								</option>
 							))}
-						</Select>
+						</Select> */}
 
 						<IconButton
 							className={styles["mask-create"]}
 							icon={<AddIcon />}
 							text={Locale.Mask.Page.Create}
 							bordered
-							onClick={() => {
-								const createdMask = maskStore.create();
+							onClick={async () => {
+								const createdMask = await maskStore.create();
 								setEditingMaskId(createdMask.id);
 							}}
 						/>
 					</div>
 					{/* ====顶部end==== */}
 
-					<div className={`${styles["mask-list"]} flex-container`}>
-						{masks.map((m) => (
-							<MaskComponent
-								mask={m}
-								key={m.id}
-								styleName={cardStyle}
-								setEditingMaskId={(id) => setEditingMaskId(id)}
-							/>
-						))}
+					<div>
+						<div className={`${styles["mask-list"]} flex-container`}>
+							{masks.map((m) => (
+								<MaskComponent
+									mask={m}
+									key={m.id}
+									styleName={cardStyle}
+									setEditingMaskId={(id) => setEditingMaskId(id)}
+								/>
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -336,6 +360,7 @@ export function MaskPage() {
 						title={Locale.Mask.EditModal.Title(editingMask?.builtin)}
 						onClose={closeMaskModal}
 						actions={[
+							<p>新建角色可以享受 1小光币奖励</p>,
 							<IconButton
 								icon={<DownloadIcon />}
 								text={Locale.Mask.EditModal.Download}
@@ -349,13 +374,13 @@ export function MaskPage() {
 								}
 							/>,
 							<IconButton
-								key="copy"
+								key="save"
 								icon={<CopyIcon />}
 								bordered
-								text={Locale.Mask.EditModal.Clone}
+								text={"保存助手"}
 								onClick={() => {
-									navigate(Path.Masks);
-									maskStore.create(editingMask);
+									// navigate(Path.Masks);
+									maskStore.saveMask(editingMaskId!);
 									setEditingMaskId(undefined);
 								}}
 							/>,

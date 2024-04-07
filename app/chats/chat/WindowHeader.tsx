@@ -12,15 +12,15 @@ import MinIcon from "@/app/icons/min.svg";
 import ConfirmIcon from "@/app/icons/confirm.svg";
 import CancelIcon from "@/app/icons/cancel.svg";
 
+import { ChatMessage, ChatSession } from "@/app/types/chat";
+
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
 	createMessage,
 	useAppConfig,
 	DEFAULT_TOPIC,
-	ChatSession,
 } from "@/app/store";
 
 import { useNavigate } from "react-router-dom";

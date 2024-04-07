@@ -1,4 +1,5 @@
-import { BuiltinMask } from "./typing";
+import { BuiltinMask } from "../types/mask";
+
 import { MaskCategory, maskCategories } from "../constant";
 
 export const RolePlay: BuiltinMask[] = [

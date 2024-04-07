@@ -1,14 +1,14 @@
 import request from "@/app/utils/request";
 import { User } from "../../store/user";
 import { ModelType } from "../../store/config";
-import { ChatMessage, MJMessage, MjConfig } from "../../store/chat";
-import { Mask } from "@/app/store/mask";
+import { ChatMessage, MJMessage, MjConfig, Mask } from "@/app/types/index";
 import { data } from "cheerio/lib/api/attributes";
 
 export interface CreateChatSessionData {
 	user: number;
+	id?: string;
 	topic?: string;
-	prompt_id?: string;
+	prompt_id?: number | string;
 	hide?: boolean;
 }
 

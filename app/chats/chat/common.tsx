@@ -27,7 +27,6 @@ import StopIcon from "@/app/icons/pause.svg";
 import RobotIcon from "@/app/icons/robot.svg";
 
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -86,7 +85,8 @@ import {
 } from "@/app/chats/mask-components";
 
 import { useMaskStore } from "@/app/store/mask";
-import { ChatSession } from "@/app/store";
+import { ChatMessage, ChatSession} from "@/app/types/chat";
+
 import { prop } from "cheerio/lib/api/attributes";
 
 export function SessionConfigModel(props: {

@@ -1,5 +1,7 @@
 import { useChatStore } from "@/app/store";
-import { ChatSession } from "@/app/store";
+
+import { ChatMessage, ChatSession} from "@/app/types/chat";
+
 import { useState, useEffect, HtmlHTMLAttributes } from "react";
 import styles from "./chats.module.scss";
 import { midjourneyOnUserInput } from "@/app/services/midjourneyService";

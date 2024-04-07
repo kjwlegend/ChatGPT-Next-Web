@@ -11,7 +11,8 @@ import LightningIcon from "../icons/lightning.svg";
 import EyeIcon from "../icons/eye.svg";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { Mask, useMaskStore, createEmptyMask } from "../store/mask";
+import { useMaskStore, createEmptyMask } from "../store/mask";
+import { Mask } from "../types/mask";
 import { useUserStore } from "../store";
 import Locale from "../locales";
 import { useAppConfig, useChatStore } from "../store";
@@ -21,6 +22,8 @@ import { showConfirm } from "@/app/components/ui-lib";
 import { BUILTIN_MASK_STORE } from "../masks";
 import Image from "next/image";
 import { type } from "os";
+import { useMasks } from "../masks/useMasks";
+import { useAuthStore } from "../store/auth";
 
 function MaskItem(props: { mask: Mask; onClick?: () => void }) {
 	return (
@@ -79,6 +82,8 @@ export function NewChat() {
 	const chatStore = useChatStore();
 	const maskStore = useMaskStore();
 	const userStore = useUserStore();
+	const { masks: maskfetch, fetchPrompts } = useMasks();
+	const { isAuthenticated } = useAuthStore();
 
 	const navigate = useNavigate();
 	const config = useAppConfig();
@@ -87,15 +92,12 @@ export function NewChat() {
 	const [featureGroup, setFeatureGroup] = useState<Mask[]>([]);
 
 	useEffect(() => {
-		async function fetchMasks() {
-			const masksData = await maskStore.getAll();
+		const masksData = maskfetch;
 
-			setMasks(masksData);
-			setFeatureGroup(featureMaskGroup(masksData));
-		}
-
-		fetchMasks();
-	}, [maskStore]);
+		setMasks(masksData);
+		setFeatureGroup(featureMaskGroup(masksData));
+		console.log("feature", featureGroup);
+	}, [maskfetch]);
 
 	const maskRef = useRef<HTMLDivElement>(null);
 
@@ -128,13 +130,13 @@ export function NewChat() {
 				<div className={styles["title"]}>{Locale.NewChat.Title}</div>
 				<div className={styles["sub-title"]}>{Locale.NewChat.SubTitle}</div>
 				<div className={styles["actions"]}>
-					<IconButton
+					{/* <IconButton
 						key="return"
 						icon={<LeftIcon />}
 						text={Locale.NewChat.Return}
 						onClick={() => navigate(Path.Home)}
 						shadow
-					></IconButton>
+					></IconButton> */}
 					<IconButton
 						key="skip"
 						text={Locale.NewChat.Skip}
@@ -153,7 +155,7 @@ export function NewChat() {
 						shadow
 					/>
 
-					{!state?.fromHome && (
+					{/* {!state?.fromHome && (
 						<IconButton
 							key="not-show"
 							text={Locale.NewChat.NotShow}
@@ -168,7 +170,7 @@ export function NewChat() {
 							icon={<EyeIcon />}
 							shadow
 						></IconButton>
-					)}
+					)} */}
 				</div>
 			</div>
 			<Row
@@ -176,7 +178,11 @@ export function NewChat() {
 				justify="center"
 				className={styles["feature-masks"]}
 			>
-				{featureGroup.map((mask) => FeatureMaskItem(mask, startChat))}
+				{isAuthenticated ? (
+					featureGroup.map((mask) => FeatureMaskItem(mask, startChat))
+				) : (
+					<>请登录后开启该功能</>
+				)}
 			</Row>
 		</div>
 	);

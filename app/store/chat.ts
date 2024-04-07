@@ -3,7 +3,7 @@ import { trimTopic } from "../utils";
 import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "./config";
-import { createEmptyMask, Mask } from "./mask";
+import { createEmptyMask } from "./mask";
 import {
 	DEFAULT_MODELS,
 	KnowledgeCutOffDate,
@@ -30,16 +30,12 @@ import {
 } from "../api/backend/chat";
 import { UserStore, useUserStore } from "./user";
 import { BUILTIN_MASKS } from "../masks";
-import type { BuiltinMask } from "../masks";
+import type { BuiltinMask } from "../types/index";
 import { Plugin, usePluginStore } from "../store/plugin";
 import { sendChatMessage, handleChatCallbacks } from "../services/chatService";
 import { midjourneyOnUserInput } from "../services/midjourneyService";
 // import { DEFAULT_TOPIC, BOT_HELLO } from "./constant";
 
-export interface ChatToolMessage {
-	toolName: string;
-	toolInput?: string;
-}
 import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
@@ -47,26 +43,13 @@ import { summarizeTitle, summarizeSession } from "../chains/summarize";
 import { CreateChatData } from "../api/backend/chat";
 import { is } from "cheerio/lib/api/traversing";
 
-export type ChatMessage = RequestMessage & {
-	date: string;
-	id: string;
-	model?: ModelType;
-	image_url?: string;
-	mjstatus?: MJMessage;
-	toolMessages?: ChatToolMessage[];
-	streaming?: boolean;
-	isError?: boolean;
-	preview?: boolean;
-};
-
-export type MjConfig = {
-	size: string;
-	quality: string;
-	stylize: string;
-	model: string;
-	speed?: string;
-	seed?: string;
-};
+import {
+	ChatMessage,
+	ChatToolMessage,
+	ChatSession,
+	MJMessage,
+} from "../types/index";
+import { Mask } from "../types/index";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	return {
@@ -78,47 +61,6 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 		image_url: "",
 		...override,
 	};
-}
-
-export interface ChatStat {
-	tokenCount: number;
-	wordCount: number;
-	charCount: number;
-}
-
-export interface ChatSession {
-	id: string;
-	topic: string;
-	memoryPrompt: string;
-	messages: ChatMessage[];
-	stat: ChatStat;
-	lastUpdate: number;
-	lastSummarizeIndex: number;
-	clearContextIndex?: number;
-	mask: Mask;
-	responseStatus?: boolean;
-	isworkflow?: boolean;
-	mjConfig: MjConfig;
-	chat_count?: number;
-	isDoubleAgent?: boolean;
-}
-
-export interface MJMessage {
-	action: string;
-	description: string;
-	failReason: string;
-	finishTime: number;
-	id: string;
-	imageUrl: string;
-	progress: string;
-	prompt: string;
-	promptInput?: string;
-	promptEn: string;
-	properties: Record<string, unknown>;
-	startTime: number;
-	state: string;
-	status: string;
-	submitTime: number;
 }
 
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic || "默认话题";
@@ -309,7 +251,7 @@ export const useChatStore = createPersistStore(
 				// 使用类型守卫来检查 'id' 属性是否存在
 				const defaultMaskId = "100000";
 				const selectedMask: any = mask ||
-					BUILTIN_MASKS.find((m) => m.name === "小光(通用)") || {
+					(await BUILTIN_MASKS).find((m: Mask) => m.name === "小光(通用)") || {
 						modelConfig: {},
 					};
 				const isCustomMask =
@@ -332,9 +274,10 @@ export const useChatStore = createPersistStore(
 
 				// 处理 userStore 相关逻辑
 				if (userStore) {
-					const promptId = isCustomMask ? "100000" : session.mask.id;
+					const promptId = isCustomMask ? "100000" : session.mask.prompt_id;
 					const data = {
 						user: userId,
+						id: session.mask.id,
 						prompt_id: promptId,
 						isworkflow: session.isworkflow,
 						mask: session.mask,

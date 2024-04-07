@@ -16,9 +16,9 @@ import DragIcon from "../icons/drag.svg";
 import { Button } from "antd";
 import { genPrompt } from "../chains/promptgen";
 
-import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "../store/mask";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
+import { DEFAULT_MASK_AVATAR,  useMaskStore } from "../store/mask";
 import {
-	ChatMessage,
 	createMessage,
 	ModelConfig,
 	useAppConfig,
@@ -187,7 +187,6 @@ export function MaskConfig(props: {
 							mask.category = e.currentTarget.value;
 						})
 					}
-					disabled
 				>
 					{Object.values(MaskCategory).map((category) => (
 						<option key={category.key} value={category.value}>
@@ -296,14 +295,15 @@ export function MaskConfig(props: {
 				items={[
 					{
 						key: "1",
-						label: "提示词配置",
-						children: PromptsManage,
-					},
-					{
-						key: "2",
 						label: "角色基础",
 						children: RolesManage,
 					},
+					{
+						key: "2",
+						label: "提示词配置",
+						children: PromptsManage,
+					},
+
 					{
 						key: "3",
 						label: "高级设置",

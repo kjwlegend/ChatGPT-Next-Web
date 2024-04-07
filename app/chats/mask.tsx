@@ -12,10 +12,9 @@ import DeleteIcon from "../icons/delete.svg";
 import EyeIcon from "../icons/eye.svg";
 import CopyIcon from "../icons/copy.svg";
 import DragIcon from "../icons/drag.svg";
-
-import { DEFAULT_MASK_AVATAR, Mask, useMaskStore } from "../store/mask";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
+import { DEFAULT_MASK_AVATAR, useMaskStore } from "../store/mask";
 import {
-	ChatMessage,
 	createMessage,
 	ModelConfig,
 	useAppConfig,
@@ -226,8 +225,8 @@ export function MaskPage() {
 							icon={<AddIcon />}
 							text={Locale.Mask.Page.Create}
 							bordered
-							onClick={() => {
-								const createdMask = maskStore.create();
+							onClick={async () => {
+								const createdMask = await maskStore.create();
 								setEditingMaskId(createdMask.id);
 							}}
 						/>

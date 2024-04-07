@@ -16,9 +16,10 @@ import CopyIcon from "../icons/copy.svg";
 import PromptIcon from "../icons/prompt.svg";
 
 import ResetIcon from "../icons/reload.svg";
+import { ChatMessage, ChatSession, Mask} from "@/app/types/";
 
 import {
-	ChatMessage,
+
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -29,7 +30,7 @@ import {
 	DEFAULT_TOPIC,
 	ModelType,
 	useUserStore,
-	ChatSession,
+
 } from "../store";
 
 import { api } from "../client/api";

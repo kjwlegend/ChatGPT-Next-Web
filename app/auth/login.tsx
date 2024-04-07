@@ -10,7 +10,7 @@ import { ChatSessionData, getChatSession } from "@/app/api/backend/chat";
 import { createEmptyMask } from "@/app/store/mask";
 import { useUserStore } from "../store";
 import { useChatStore } from "../store";
-import { ChatSession } from "../store";
+import { ChatSession } from "../types/chat";
 import { UpdateChatSessions } from "../services/chatService";
 import PasswordResetModal from "./PasswordResetModal";
 // 登录页面

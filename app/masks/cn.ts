@@ -1,4 +1,4 @@
-import { BuiltinMask } from "./typing";
+import { BuiltinMask } from "../types/mask";
 import { MaskCategory, maskCategories } from "../constant";
 import { featureMask } from "./featureMask_cn";
 import { RolePlay } from "./roleplay_cn";
@@ -8,7 +8,6 @@ export const CN_MASKS: BuiltinMask[] = [
 	...RolePlay,
 
 	{
-		
 		avatar: "gpt-bot",
 		category: "职场日常",
 		featureMask: false,
@@ -84,7 +83,7 @@ export const CN_MASKS: BuiltinMask[] = [
 	},
 
 	{
-		avatar: "a-xiaohongshu",
+		avatar: " ",
 		name: "小红书写作高手",
 		category: "文章写作",
 		featureMask: false,

@@ -16,7 +16,9 @@ import Locale from "../locales";
 import { Link, useNavigate } from "react-router-dom";
 import { Path } from "../constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
-import { Mask } from "../store/mask";
+
+import { ChatMessage, ChatSession, Mask} from "@/app/types/";
+
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { showConfirm } from "@/app/components/ui-lib";
 import { useUserStore } from "../store";
