@@ -16,19 +16,7 @@ import { createPrompt, deletePrompt, updatePrompt } from "../masks/service";
 export const DEFAULT_MASK_STATE = {
 	masks: {} as Record<string, Mask>,
 	maskslist: [] as Mask[],
-	updateStates: (updatedMasksList: Mask[]) => {
-		// 将数组转换为对象
-		const updatedMasks = updatedMasksList.reduce(
-			(acc, mask) => {
-				acc[mask.id] = mask; // 假设每个 mask 对象都有一个唯一的 id 属性
-				return acc;
-			},
-			{} as Record<string, Mask>,
-		);
-
-		// 同时更新 masks 和 maskslist
-		({ masks: updatedMasks, maskslist: updatedMasksList });
-	},
+	total: 0,
 };
 
 export type MaskState = typeof DEFAULT_MASK_STATE;
@@ -93,6 +81,9 @@ export const useMaskStore = createPersistStore(
 			set(() => ({ masks }));
 			get().markUpdate();
 			return masks[id];
+		},
+		updatestate(any: any) {
+			set((state) => ({ ...state, ...any }));
 		},
 		add(mask: Mask) {
 			const existingMasks = get().masks;
@@ -200,8 +191,8 @@ export const useMaskStore = createPersistStore(
 			if (filterOptions.searchTerm) {
 				filteredMasks = filteredMasks.filter(
 					(mask) =>
-						mask.name.includes(filterOptions.searchTerm) ||
-						mask.description?.includes(filterOptions.searchTerm) ||
+						mask.name.includes(filterOptions.searchTerm!) ||
+						mask.description?.includes(filterOptions.searchTerm!) ||
 						mask.tags?.includes(filterOptions.searchTerm),
 				);
 			}
@@ -209,12 +200,11 @@ export const useMaskStore = createPersistStore(
 			// ...可以添加更多的过滤条件
 
 			// 使用 updateMasks 函数来更新状态
-			console.log("filteredMasks", filteredMasks);
+			console.log("filteredMasks", filteredMasks.length);
 			return filteredMasks;
 		},
 		sort: (sortMethods: string, prevmasks?: Mask[]) => {
 			let masks = prevmasks ?? Object.values(get().masks);
-			console.log("sort masks", prevmasks);
 			masks.sort((a, b) => {
 				switch (sortMethods) {
 					case "hotness":
@@ -228,7 +218,7 @@ export const useMaskStore = createPersistStore(
 						return 0;
 				}
 			});
-			console.log("sorted masks", masks);
+			// console.log("sorted masks", masks);
 			return masks;
 		},
 	}),

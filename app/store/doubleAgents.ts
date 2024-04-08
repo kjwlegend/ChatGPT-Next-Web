@@ -1,16 +1,14 @@
 // src/app/store/doubleAgent.ts
-import { Mask } from "./mask";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand";
 import { DoubleAgentData, createDoubleAgentSession } from "../api/backend/chat";
 import { RequestMessage } from "../client/api";
-import { ChatMessage } from "./chat";
 import { nanoid } from "nanoid";
 import { estimateTokenLength } from "../utils/token";
 import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
-import { ChatToolMessage } from "./chat";
 import { contextSummarize } from "../chains/summarize";
+import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
 
 export type DoubleAgentChatMessage = ChatMessage & {
 	agentNum?: number;

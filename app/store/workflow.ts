@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ChatSession } from "./chat";
+import { ChatSession } from "../types/chat";
 import {
 	createWorkflowSession,
 	deleteWorkflowSession,

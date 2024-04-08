@@ -249,7 +249,7 @@ export const useChatStore = createPersistStore(
 				const globalModelConfig = config.modelConfig;
 
 				// 使用类型守卫来检查 'id' 属性是否存在
-				const defaultMaskId = "100000";
+				const defaultMaskId = "1000";
 				const selectedMask: any = mask ||
 					(await BUILTIN_MASKS).find((m: Mask) => m.name === "小光(通用)") || {
 						modelConfig: {},
@@ -274,7 +274,7 @@ export const useChatStore = createPersistStore(
 
 				// 处理 userStore 相关逻辑
 				if (userStore) {
-					const promptId = isCustomMask ? "100000" : session.mask.prompt_id;
+					const promptId = isCustomMask ? "2000" : session.mask.prompt_id;
 					const data = {
 						user: userId,
 						id: session.mask.id,
@@ -305,6 +305,7 @@ export const useChatStore = createPersistStore(
 
 				set((state) => ({
 					currentSessionIndex: 0,
+					currentSessionId: session.id,
 					sessions: [session].concat(state.sessions),
 				}));
 				return session;

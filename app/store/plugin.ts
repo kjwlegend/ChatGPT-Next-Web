@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { BUILTIN_PLUGIN_STORE, BUILTIN_PLUGINS } from "../plugins";
 import { getLang, Lang } from "../locales";
-import { ChatMessage } from "./chat";
+import { ChatMessage } from "../types/"
 import { ModelConfig, useAppConfig } from "./config";
 import { StoreKey } from "../constant";
 import { nanoid } from "nanoid";

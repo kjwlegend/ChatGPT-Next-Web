@@ -1,4 +1,5 @@
 "use client";
+import { useRef } from "react";
 import { IconButton } from "@/app/components/button";
 import { ErrorBoundary } from "@/app/components/error";
 
@@ -61,6 +62,7 @@ import { MaskConfig } from "../mask-components";
 import MultipleTag from "@/app/components/multipletags";
 import { on } from "events";
 import { filter } from "cheerio/lib/api/traversing";
+import { useMasks } from "@/app/masks/useMasks";
 
 const { Meta } = Card;
 
@@ -84,6 +86,8 @@ export function MaskPage() {
 	const navigate = useNavigate();
 
 	const maskStore = useMaskStore();
+	const { masks: maskfetch, fetchPrompts } = useMasks();
+
 	const { masks: originalMask, maskslist } = maskStore;
 	const chatStore = useChatStore();
 	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
@@ -100,6 +104,50 @@ export function MaskPage() {
 	const [allMasks, setallMasks] = useState<Mask[]>([]);
 	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
 	const [userMasks, setUserMasks] = useState<Mask[]>([]);
+
+	const [totalPrompts, setTotalPrompts] = useState(0);
+	const [isNext, setIsNext] = useState(true);
+	const [page, setPage] = useState(1);
+
+	// create a scroll ref to detect scroll container
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const limit = 25; // 或者其他你需要的限制数
+	const loaderRef = useRef(null);
+
+	const loadMore = useCallback(async () => {
+		console.log(isNext, page, totalPrompts);
+		if (isNext) {
+			const result = await fetchPrompts(page, limit);
+			if (result.is_next !== undefined) {
+				setIsNext(result.is_next);
+			}
+			if (result.total !== undefined) {
+				setTotalPrompts(result.total);
+			}
+			setPage((prevPage) => prevPage + 1);
+		}
+	}, [isNext, page, limit]);
+
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					loadMore();
+				}
+			},
+			{ threshold: 1.0 },
+		);
+
+		if (loaderRef.current) {
+			observer.observe(loaderRef.current);
+		}
+
+		return () => {
+			if (loaderRef.current) {
+				observer.unobserve(loaderRef.current);
+			}
+		};
+	}, [loadMore]);
 
 	const segmentOptions = [
 		{ label: "场景助手", value: "场景助手", disabled: false },
@@ -179,6 +227,8 @@ export function MaskPage() {
 
 	useEffect(() => {
 		const masksData = maskStore.getAll();
+
+		console.log("masksData", masksData.length);
 		setallMasks(masksData);
 	}, [maskStore]);
 
@@ -186,7 +236,6 @@ export function MaskPage() {
 	useEffect(() => {
 		let filteredMasks = onFilter();
 		filteredMasks = maskStore.sort("createdAt", filteredMasks);
-
 		setFilterMasks(filteredMasks);
 	}, [filterLang, selectedTags, isBuiltin, cardStyle, searchText, maskStore]);
 
@@ -237,7 +286,7 @@ export function MaskPage() {
 							{Locale.Mask.Page.Title}
 						</div>
 						<div className="window-header-submai-title">
-							{Locale.Mask.Page.SubTitle(allMasks.length)}
+							{Locale.Mask.Page.SubTitle(maskStore.total)}
 						</div>
 					</div>
 
@@ -340,7 +389,10 @@ export function MaskPage() {
 					{/* ====顶部end==== */}
 
 					<div>
-						<div className={`${styles["mask-list"]} flex-container`}>
+						<div
+							className={`${styles["mask-list"]} flex-container`}
+							ref={scrollRef}
+						>
 							{masks.map((m) => (
 								<MaskComponent
 									mask={m}
@@ -349,6 +401,7 @@ export function MaskPage() {
 									setEditingMaskId={(id) => setEditingMaskId(id)}
 								/>
 							))}
+							<div ref={loaderRef} style={{ height: "1px" }} />
 						</div>
 					</div>
 				</div>

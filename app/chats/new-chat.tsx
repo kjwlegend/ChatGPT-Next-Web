@@ -86,22 +86,24 @@ export function NewChat() {
 	const { isAuthenticated } = useAuthStore();
 
 	const navigate = useNavigate();
-	const config = useAppConfig();
 
 	const [masks, setMasks] = useState<Mask[]>([]);
 	const [featureGroup, setFeatureGroup] = useState<Mask[]>([]);
 
 	useEffect(() => {
-		const masksData = maskfetch;
+		const initialize = async () => {
+			const { data, total, is_next } = await fetchPrompts(1, 100);
+			// set maskStore.total
 
-		setMasks(masksData);
-		setFeatureGroup(featureMaskGroup(masksData));
-		console.log("feature", featureGroup);
-	}, [maskfetch]);
+			const featureMasks = featureMaskGroup(data);
 
-	const maskRef = useRef<HTMLDivElement>(null);
-
-	const { state } = useLocation();
+			setFeatureGroup(featureMasks);
+			setMasks(data);
+			maskStore.updatestate({ total });
+			console.log("load times");
+		};
+		initialize();
+	}, []);
 
 	const startChat = (mask?: Mask) => {
 		setTimeout(() => {
