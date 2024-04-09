@@ -70,7 +70,7 @@ async function initializeMasks(): Promise<void> {
 	await fetchPromptCategory();
 }
 initializeMasks();
-const allMasks: BuiltinMask[] = [...CN_MASKS, ...EN_MASKS];
+const allMasks: BuiltinMask[] = [...CN_MASKS];
 
 const BUILTIN_MASKS = Object.values(allMasks);
 

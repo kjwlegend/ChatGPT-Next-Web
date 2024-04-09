@@ -151,6 +151,7 @@ export const useMaskStore = createPersistStore(
 				tags?: string[];
 				type?: string;
 				searchTerm?: string;
+				author?: string;
 			},
 			prevmasks?: Mask[],
 		) => {
@@ -165,8 +166,8 @@ export const useMaskStore = createPersistStore(
 				);
 			}
 
-			// 根据是否内置过滤
-			if (filterOptions.builtin == false) {
+			// // 根据是否内置过滤
+			if (filterOptions.builtin !== undefined) {
 				filteredMasks = filteredMasks.filter(
 					(mask) => mask.builtin === filterOptions.builtin,
 				);
@@ -194,6 +195,12 @@ export const useMaskStore = createPersistStore(
 						mask.name.includes(filterOptions.searchTerm!) ||
 						mask.description?.includes(filterOptions.searchTerm!) ||
 						mask.tags?.includes(filterOptions.searchTerm),
+				);
+			}
+
+			if (filterOptions.author) {
+				filteredMasks = filteredMasks.filter(
+					(mask) => mask.author === filterOptions.author,
 				);
 			}
 

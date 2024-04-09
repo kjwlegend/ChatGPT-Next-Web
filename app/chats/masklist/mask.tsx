@@ -38,7 +38,6 @@ import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "@/app/locales";
 import { MaskCategory, maskCategories, MaskCategoryType } from "@/app/constant";
 
 import { useNavigate } from "react-router-dom";
-
 import chatStyle from "../chat.module.scss";
 import { use, useCallback, useEffect, useState } from "react";
 import { copyToClipboard, downloadAs, readFromFile } from "@/app/utils";
@@ -54,7 +53,7 @@ import {
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { Card, Button, Switch, Segmented } from "antd";
+import { Card, Button, Switch, Segmented, Checkbox } from "antd";
 import MaskComponent from "./maskitem";
 
 import { MaskConfig } from "../mask-components";
@@ -63,6 +62,7 @@ import MultipleTag from "@/app/components/multipletags";
 import { on } from "events";
 import { filter } from "cheerio/lib/api/traversing";
 import { useMasks } from "@/app/masks/useMasks";
+import { FilterOptions } from "react-markdown/lib/react-markdown";
 
 const { Meta } = Card;
 
@@ -91,8 +91,8 @@ export function MaskPage() {
 	const { masks: originalMask, maskslist } = maskStore;
 	const chatStore = useChatStore();
 	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
-	const [isBuiltin, setisBuiltin] = useState(true);
-	const [filterLang, setFilterLang] = useState<Lang>();
+	const [isBuiltin, setisBuiltin] = useState<boolean | undefined>(true);
+	const [filterLang, setFilterLang] = useState<Lang>("cn");
 	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
 	const [searchText, setSearchText] = useState("");
 	const [cardStyle, setCardStyle] = useState<
@@ -100,10 +100,19 @@ export function MaskPage() {
 	>("assistant");
 
 	const [segmentValue, setsegmentValue] = useState<string | number>("场景助手");
+	const [filterOptions, setFilterOptions] = useState<Object>({
+		lang: "",
+		tags: [],
+		builtin: false,
+		type: "",
+		searchTerm: "",
+		author: "",
+	});
 
 	const [allMasks, setallMasks] = useState<Mask[]>([]);
 	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
 	const [userMasks, setUserMasks] = useState<Mask[]>([]);
+	const [author, setAuthor] = useState<string | undefined>("");
 
 	const [totalPrompts, setTotalPrompts] = useState(0);
 	const [isNext, setIsNext] = useState(true);
@@ -184,42 +193,60 @@ export function MaskPage() {
 		setSelectedTags(selectedTags);
 	};
 
+	const checkOptions = [
+		{ label: "官方", value: "builtin" },
+		{ label: "用户", value: "user" },
+		{ label: "自建", value: "private" },
+	];
+	const defaultValue = ["builtin", "user"];
+	const handleCheckChange = (checkedValues: any[]) => {
+		console.log("option", checkedValues);
+
+		// 定义局部变量来存储新的状态值
+		const isBuiltinChecked = checkedValues.includes("builtin");
+		const isUserChecked = checkedValues.includes("user");
+		const isPrivateChecked = checkedValues.includes("private");
+
+		// // 计算 isBuiltin 的新值
+		// const newIsBuiltin = isBuiltinChecked && !isUserChecked;
+		// 计算 isBuiltin 的新值，如果同时选择了 builtin 和 user，则设置为 undefined
+		const newIsBuiltin = isBuiltinChecked
+			? isUserChecked
+				? undefined
+				: true
+			: false;
+		// 计算 author 的新值
+		const newAuthor = isPrivateChecked ? "kjw1" : undefined;
+
+		console.log("newIsBuiltin", newIsBuiltin, "newAuthor", newAuthor);
+
+		// 更新状态
+		setisBuiltin(newIsBuiltin);
+		setAuthor(newAuthor);
+
+		// 更新 filterOptions 状态
+		setFilterOptions((prevOptions) => ({
+			...prevOptions,
+			builtin: newIsBuiltin,
+			author: newAuthor,
+		}));
+	};
 	const onFilter = () => {
-		// 创建一个包含所有过滤条件的对象
-		const filterOptions = {} as {
-			lang: string;
-			tags: string[];
-			builtin: boolean;
-			type: string;
-			searchTerm: string;
+		// 如果存在 filterLang，添加到过滤条件中
+		// const filterOptions = {
+		// 	lang: filterLang,
+		// };
+		const newFilterOptions = {
+			...filterOptions,
+			...(filterLang !== undefined && { lang: filterLang }),
+			...(selectedTags && { tags: selectedTags }),
+			...(isBuiltin !== undefined && { builtin: isBuiltin }),
+			...(cardStyle !== undefined && { type: cardStyle }),
+			...(searchText !== undefined && { searchTerm: searchText }),
 		};
 
-		// 如果存在 filterLang，添加到过滤条件中
-		if (filterLang !== undefined) {
-			filterOptions.lang = filterLang;
-		}
-
-		// 如果存在 selectedTags，添加到过滤条件中
-		// 假设 selectedTags 是一个字符串或字符串数组
-		if (selectedTags) {
-			filterOptions.tags = selectedTags;
-		}
-
-		// 如果存在 isBuiltin，添加到过滤条件中
-		if (isBuiltin !== undefined) {
-			filterOptions.builtin = isBuiltin;
-		}
-
-		if (cardStyle !== undefined) {
-			filterOptions.type = cardStyle;
-		}
-
-		if (searchText !== undefined) {
-			filterOptions.searchTerm = searchText;
-		}
-
 		// 调用新的 filter 方法，并传递过滤条件对象
-		const data = maskStore.filter(filterOptions);
+		const data = maskStore.filter(newFilterOptions);
 
 		// 更新状态
 		return data;
@@ -237,7 +264,15 @@ export function MaskPage() {
 		let filteredMasks = onFilter();
 		filteredMasks = maskStore.sort("createdAt", filteredMasks);
 		setFilterMasks(filteredMasks);
-	}, [filterLang, selectedTags, isBuiltin, cardStyle, searchText, maskStore]);
+	}, [
+		filterLang,
+		selectedTags,
+		isBuiltin,
+		cardStyle,
+		searchText,
+		author,
+		maskStore,
+	]);
 
 	function deleteHandler() {
 		console.log("item delete");
@@ -330,11 +365,22 @@ export function MaskPage() {
 					</div>
 					<div className={styles["mask-category"]}>
 						<span className={styles["builtin"]}>
+							{/* <Switch
+								defaultChecked={isBuiltin}
+								onChange={handleSwitchChange}
+								unCheckedChildren="只看官方"
+								checkedChildren="查看全部"
+							/>
 							<Switch
 								defaultChecked={isBuiltin}
 								onChange={handleSwitchChange}
-								unCheckedChildren="只看自建"
+								unCheckedChildren="只看自己"
 								checkedChildren="查看全部"
+							/> */}
+							<Checkbox.Group
+								options={checkOptions}
+								defaultValue={defaultValue}
+								onChange={handleCheckChange}
 							/>
 						</span>
 						<MultipleTag
