@@ -2,8 +2,8 @@ import { BuiltinMask } from "../types/mask";
 import { MaskCategory, maskCategories } from "../constant";
 import { featureMask } from "./featureMask_cn";
 import { RolePlay } from "./roleplay_cn";
-
-export const CN_MASKS: BuiltinMask[] = [
+import { LightMask } from "../types/mask";
+export const CN_MASKS: LightMask[] = [
 	...featureMask,
 	...RolePlay,
 

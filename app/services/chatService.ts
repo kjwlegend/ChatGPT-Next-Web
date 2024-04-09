@@ -1,6 +1,6 @@
-import { ChatSession, ChatMessage, DEFAULT_TOPIC } from "../store";
-import { useChatStore } from "../store";
-import { MJMessage } from "../store";
+import { DEFAULT_TOPIC, useChatStore } from "../store";
+
+import { ChatSession, ChatMessage, MJMessage } from "@/app/types/";
 import { useUserStore } from "../store";
 import { RequestMessage, api } from "../client/api";
 import { SUMMARIZE_MODEL } from "../constant";

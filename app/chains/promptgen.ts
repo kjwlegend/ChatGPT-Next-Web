@@ -3,7 +3,6 @@ import { trimTopic } from "../utils";
 import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "@/app/store/config";
-import { createEmptyMask, Mask } from "@/app/store/mask";
 import { KnowledgeCutOffDate, StoreKey, SUMMARIZE_MODEL } from "../constant";
 
 import { api, RequestMessage } from "../client/api";
@@ -14,7 +13,6 @@ import { nanoid } from "nanoid";
 import { createChatSession } from "../api/backend/chat";
 import { UserStore, useUserStore } from "@/app/store/user";
 import { BUILTIN_MASKS } from "../masks";
-import type { BuiltinMask } from "../masks";
 import { Plugin, usePluginStore } from "../store/plugin";
 
 import { strictLLMResult } from "./basic";

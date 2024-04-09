@@ -1,8 +1,8 @@
-import { BuiltinMask } from "../types/mask";
+import { BuiltinMask,LightMask } from "../types/mask";
 
 import { MaskCategory, maskCategories } from "../constant";
 
-export const RolePlay: BuiltinMask[] = [
+export const RolePlay: LightMask[] = [
 	{
 		name: "李白",
 		avatar: "role-bot",

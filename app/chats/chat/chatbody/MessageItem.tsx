@@ -7,12 +7,8 @@ import { Loading3QuartersOutlined } from "@ant-design/icons";
 
 // 全局状态管理和上下文
 import { useAppConfig } from "@/app/store";
-import {
-	ChatMessage,
-	ChatSession,
-	useChatStore,
-	useUserStore,
-} from "@/app/store";
+import { useChatStore, useUserStore } from "@/app/store";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { ChatContext } from "../main";
 import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";

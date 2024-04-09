@@ -26,9 +26,9 @@ import {
 	CheckmarkIcon,
 	PlayIcon,
 } from "@/app/icons"; // 假设的图标资源
+import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import {
-	ChatMessage,
 	useChatStore,
 	BOT_HELLO,
 	createMessage,
@@ -53,7 +53,6 @@ import {
 import { CreateChatData, createChat } from "@/app/api/backend/chat";
 import { useMobileScreen } from "@/app/utils";
 
-import { ChatSession } from "@/app/store";
 import { message, Button } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
@@ -114,7 +113,7 @@ export function DoubleAgentChatbody(props: {
 	} = useContext(ChatContext);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
+	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
 
 	const [messages, setMessages] = useState<RenderMessage[]>([]);
 	const [isLoading, setIsLoading] = useState(false);

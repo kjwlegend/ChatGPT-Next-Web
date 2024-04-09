@@ -1,7 +1,7 @@
-import { BuiltinMask } from "../types/mask";
+import { BuiltinMask,  LightMask} from "../types/mask";
 import { MaskCategory, maskCategories } from "../constant";
 
-export const featureMask: BuiltinMask[] = [
+export const featureMask: LightMask[] = [
 	{
 		avatar: "gpt-bot",
 		category: "通用",

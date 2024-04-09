@@ -1,5 +1,6 @@
 import { ModelType } from "../store";
-import { Mask } from "../store/mask";
+import { Mask } from "@/app/types/";
+
 import BotIcon from "../icons/bot.svg";
 import BlackBotIcon from "../icons/black-bot.svg";
 

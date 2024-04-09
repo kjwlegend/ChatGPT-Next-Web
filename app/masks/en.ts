@@ -1,8 +1,8 @@
 import { BuiltinMask } from "../types/mask";
 
 import { MaskCategory } from "../constant";
-
-export const EN_MASKS: BuiltinMask[] = [
+import { LightMask } from "../types/mask";
+export const EN_MASKS: LightMask[] = [
 	{
 		avatar: "1f3a8",
 		name: "Stable Diffusion",

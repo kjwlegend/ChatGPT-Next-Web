@@ -250,10 +250,7 @@ export const useChatStore = createPersistStore(
 
 				// 使用类型守卫来检查 'id' 属性是否存在
 				const defaultMaskId = "1000";
-				const selectedMask: any = mask ||
-					(await BUILTIN_MASKS).find((m: Mask) => m.name === "小光(通用)") || {
-						modelConfig: {},
-					};
+				const selectedMask: any = mask;
 				const isCustomMask =
 					!("id" in selectedMask) || isNaN(Number(selectedMask.id));
 

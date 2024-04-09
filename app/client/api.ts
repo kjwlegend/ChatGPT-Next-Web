@@ -1,6 +1,8 @@
 import { getClientConfig } from "../config/client";
 import { ACCESS_CODE_PREFIX, Azure, ServiceProvider } from "../constant";
-import { ChatMessage, ModelType, useAccessStore } from "../store";
+import { ModelType, useAccessStore } from "../store";
+import { ChatMessage } from "@/app/types/";
+
 import { ChatGPTApi } from "./platforms/openai";
 import { FileApi } from "./platforms/utils";
 

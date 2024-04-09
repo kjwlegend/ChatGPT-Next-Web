@@ -1,4 +1,10 @@
-import { ChatSession, ChatMessage } from "../store";
+import {
+	ChatSession,
+	ChatMessage,
+	MJMessage,
+	ChatToolMessage,
+	Mask,
+} from "@/app/types/";
 import { useChatStore } from "../store";
 import { useUserStore } from "../store";
 import { RequestMessage, api } from "../client/api";

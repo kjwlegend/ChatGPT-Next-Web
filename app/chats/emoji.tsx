@@ -5,7 +5,7 @@ import EmojiPicker, {
 } from "emoji-picker-react";
 
 import { ModelType } from "../store";
-import { Mask } from "../store/mask";
+import { Mask } from "../types/";
 import BotIcon from "../icons/bot.svg";
 import BlackBotIcon from "../icons/black-bot.svg";
 

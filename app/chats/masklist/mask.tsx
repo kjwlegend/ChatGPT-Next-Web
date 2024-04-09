@@ -459,7 +459,7 @@ export function MaskPage() {
 						title={Locale.Mask.EditModal.Title(editingMask?.builtin)}
 						onClose={closeMaskModal}
 						actions={[
-							<p>新建角色可以享受 1小光币奖励</p>,
+							<p key="description">新建角色可以享受 1小光币奖励</p>,
 							<IconButton
 								icon={<DownloadIcon />}
 								text={Locale.Mask.EditModal.Download}

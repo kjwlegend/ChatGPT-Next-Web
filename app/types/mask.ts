@@ -48,3 +48,8 @@ export type BuiltinMask = Mask & {
 	modelConfig: Partial<ModelConfig>;
 	[key: string]: any;
 };
+
+export type LightMask = Omit<Mask, "context" | "modelConfig" | "lang"> & {
+	modelConfig: Partial<ModelConfig>;
+	[key: string]: any;
+};

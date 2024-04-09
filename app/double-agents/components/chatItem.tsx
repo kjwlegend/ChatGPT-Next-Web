@@ -16,8 +16,10 @@ import Locale from "../../locales";
 import { Link, useNavigate } from "react-router-dom";
 import { Path } from "../../constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
-import { DEFAULT_MASK_AVATAR, Mask, createEmptyMask } from "../../store/mask";
+import { DEFAULT_MASK_AVATAR, createEmptyMask } from "../../store/mask";
 import { useRef, useEffect, useState, useCallback } from "react";
+import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
+
 
 export function ChatItem(props: {
 	onClick?: () => void;

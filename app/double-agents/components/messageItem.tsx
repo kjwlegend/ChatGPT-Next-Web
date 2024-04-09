@@ -8,11 +8,13 @@ import { Loading3QuartersOutlined } from "@ant-design/icons";
 // 全局状态管理和上下文
 import { useAppConfig } from "@/app/store";
 import {
-	ChatMessage,
-	ChatSession,
+
 	useChatStore,
 	useUserStore,
 } from "@/app/store";
+
+import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
+
 import { ChatContext } from "@/app/chats/chat/main";
 import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";

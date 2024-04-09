@@ -1,6 +1,6 @@
 import { createDoubleAgentChatMessage } from "../store/doubleAgents";
 import { getLang } from "../locales";
-import { Mask } from "../store/mask";
+import { Mask } from "../types/mask";
 export function InitialConversationChatTemplate(
 	agent1: Mask,
 	agent2: Mask,

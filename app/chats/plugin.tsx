@@ -14,12 +14,12 @@ import LeftIcon from "../icons/left.svg";
 
 import { Plugin, usePluginStore } from "../store/plugin";
 import {
-	ChatMessage,
 	createMessage,
 	ModelConfig,
 	useAppConfig,
 	useChatStore,
 } from "../store";
+import { ChatMessage } from "../types/";
 import { ROLES } from "../client/api";
 import {
 	Input,

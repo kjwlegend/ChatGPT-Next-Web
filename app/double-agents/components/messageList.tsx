@@ -1,9 +1,10 @@
 // MessageList.tsx
 import React from "react";
-import { ChatMessage, ChatSession, useUserStore } from "@/app/store";
+import { useUserStore } from "@/app/store";
 import { AgentMessageItem } from "./messageItem";
 import { useContext, useRef, useState, useMemo, Fragment } from "react";
 import { useScrollToBottom } from "../../chats/chat/chat-controller";
+import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import { copyToClipboard, useMobileScreen } from "@/app/utils";
 import { message } from "antd";

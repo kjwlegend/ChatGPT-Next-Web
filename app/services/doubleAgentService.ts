@@ -1,11 +1,14 @@
+import { DEFAULT_TOPIC } from "../store";
+
 import {
 	ChatSession,
 	ChatMessage,
-	DEFAULT_TOPIC,
+	MJMessage,
 	ChatToolMessage,
-} from "../store";
+	Mask,
+} from "@/app/types/";
+
 import { useChatStore } from "../store";
-import { MJMessage } from "../store";
 import { useUserStore } from "../store";
 import { RequestMessage, api } from "../client/api";
 import { SUMMARIZE_MODEL } from "../constant";
@@ -42,7 +45,6 @@ import {
 } from "../chains/doubleagents";
 import useAuth from "../hooks/useAuth";
 import { useAuthStore } from "../store/auth";
-import { Mask } from "../store/mask";
 import { first } from "cheerio/lib/api/traversing";
 
 // 假设我们有一个函数来启动对话

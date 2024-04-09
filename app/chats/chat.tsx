@@ -37,9 +37,9 @@ import BottomIcon from "../icons/bottom.svg";
 import StopIcon from "../icons/pause.svg";
 import RobotIcon from "../icons/robot.svg";
 import CheckmarkIcon from "../icons/checkmark.svg";
+import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,

@@ -1,7 +1,7 @@
 import { useUserStore } from "@/app/store/user";
 import { RequestMessage, api } from "../client/api";
 import { SUMMARIZE_MODEL } from "../constant";
-import { ChatMessage } from "../store";
+import { ChatMessage } from "../types/chat";
 import { DoubleAgentChatMessage } from "../store/doubleAgents";
 // 定义一个公共函数，它接受 prompt 作为参数
 export function strictLLMResult(

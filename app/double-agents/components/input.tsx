@@ -38,7 +38,6 @@ import {
 } from "@ant-design/icons";
 
 import {
-	ChatMessage,
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -49,6 +48,8 @@ import {
 	ModelType,
 	useUserStore,
 } from "@/app/store";
+
+import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import { DOUBLE_AGENT_DEFAULT_TOPIC } from "@/app/store/doubleAgents";
 import {

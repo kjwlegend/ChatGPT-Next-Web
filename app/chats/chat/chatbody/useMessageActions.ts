@@ -1,6 +1,7 @@
 // useMessageActions.ts
 import { useCallback } from "react";
-import { ChatMessage, ChatSession } from "@/app/store";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
+
 import { useChatStore } from "@/app/store";
 import {
 	List,

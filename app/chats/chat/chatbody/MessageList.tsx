@@ -1,6 +1,8 @@
 // MessageList.tsx
 import React from "react";
-import { ChatMessage, ChatSession, useUserStore } from "@/app/store";
+import { useUserStore } from "@/app/store";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
+
 import { AgentMessageItem, MessageItem } from "./MessageItem";
 import { MJFloatButton } from "../midjourney";
 import { useContext, useRef, useState, useMemo, Fragment } from "react";
@@ -59,7 +61,7 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 	// const [isLoading, setIsLoading] = useState(false);
 	// const [hasNextPage, setHasNextPage] = useState(true);
 
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom(scrollRef);
+	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
 	const {
 		handleUserStop,
 		handleDelete,

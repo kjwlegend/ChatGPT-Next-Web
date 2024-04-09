@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ChatMessage, useAppConfig, useChatStore } from "../store";
+import {  useAppConfig, useChatStore } from "../store";
+import { ChatMessage } from "../types/";
 import { Updater } from "../typing";
 import { IconButton } from "./button";
 import { BotAvatar as Avatar } from "./emoji";

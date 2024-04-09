@@ -6,7 +6,7 @@ import { Console } from "console";
 
 import { BuiltinMask } from "../types/mask";
 import { featureMask } from "./featureMask_cn";
-
+import { LightMask } from "../types/mask";
 import fs from "fs/promises";
 import path from "path";
 
@@ -55,13 +55,13 @@ async function fetchPromptCategory() {
 }
 
 function setupBuiltins() {
-	const allMasks: BuiltinMask[] = [...featureMask, ...CN_MASKS, ...EN_MASKS];
+	const allMasks: LightMask[] = [...featureMask, ...CN_MASKS, ...EN_MASKS];
 	// console.log(allMasks);
-	allMasks.forEach((mask) => {
-		BUILTIN_MASK_STORE.add(mask);
-		//  add to servermask
-		// console.log(mask);
-	});
+	// allMasks.forEach((mask) => {
+	// 	BUILTIN_MASK_STORE.add(mask);
+	// 	//  add to servermask
+	// 	// console.log(mask);
+	// });
 }
 
 async function initializeMasks(): Promise<void> {
@@ -70,7 +70,7 @@ async function initializeMasks(): Promise<void> {
 	await fetchPromptCategory();
 }
 initializeMasks();
-const allMasks: BuiltinMask[] = [...CN_MASKS];
+const allMasks: LightMask[] = [...CN_MASKS];
 
 const BUILTIN_MASKS = Object.values(allMasks);
 

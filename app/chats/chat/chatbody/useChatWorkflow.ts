@@ -1,6 +1,6 @@
 // useChatWorkflow.ts
 import { useState, useCallback } from "react";
-import { ChatMessage } from "@/app/store";
+import { ChatMessage } from "@/app/types/";
 
 interface IUseChatWorkflow {
 	sendMessage: (content: string) => void;
