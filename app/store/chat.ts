@@ -482,13 +482,13 @@ export const useChatStore = createPersistStore(
 
 				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
 				// if chatResponse code return 4000 or 401 , throw error
+				console.log(chatResponse);
 				if (chatResponse.code === 4000 || chatResponse.code === 401) {
 					const response = {
 						code: chatResponse.code,
 						message: chatResponse.msg,
 					};
-
-					throw response;
+					throw new Error("chatResponse error: " + response.message);
 				}
 				const data = chatResponse.data;
 				const user_chat_id = data.chat_id;

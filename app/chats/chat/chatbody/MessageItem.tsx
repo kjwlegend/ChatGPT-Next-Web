@@ -177,13 +177,17 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 				const msg = error.response?.data?.message ?? error.message;
 				console.log("code:", code);
 
-				if (code == 4000 || code == 401) {
-					messageApi.error(`${msg} 2秒后将跳转到登录页面`);
+				if (msg.includes("令牌无效")) {
+					messageApi.error(`登录过期, 请重新登录. 2秒后将跳转到登录页面`);
 
 					setTimeout(() => {
 						authHook.logoutHook();
 						router.push("/auth/");
 					}, 2000);
+				}
+
+				if (code == 4000 || code == 401) {
+					messageApi.error(`${msg} `);
 				} else {
 					messageApi.error(`${msg}`);
 				}

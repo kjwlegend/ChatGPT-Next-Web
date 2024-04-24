@@ -37,10 +37,9 @@ import {
 	HeartTwoTone,
 } from "@ant-design/icons";
 
-import { ChatMessage, ChatSession} from "@/app/types/chat";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import {
-
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -116,7 +115,6 @@ import {
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
 import { useAllModels } from "@/app/utils/hooks";
-
 
 import {
 	ApiTwoTone,
@@ -709,22 +707,19 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			.catch((error) => {
 				setIsLoading(false);
 				// chatStore.clearAllData();
-				const code = error.response?.status ?? error.code;
-				const msg = error.response?.data?.message ?? error.message;
-				console.log("code:", code);
+				console.log("error:", error);
+				// if msg contains '令牌无效'
 
-				if (code == 4000 || code == 401) {
-					messageApi.error(`${msg} 2秒后将跳转到登录页面`);
+				// if (error.includes("令牌无效")) {
+				// 	messageApi.error(`登录过期, 请重新登录. 2秒后将跳转到登录页面`);
 
-					setTimeout(() => {
-						authHook.logoutHook();
-						router.push("/auth/");
-					}, 2000);
-				} else {
-					messageApi.error(`${msg}`);
-				}
+				// 	setTimeout(() => {
+				// 		authHook.logoutHook();
+				// 		router.push("/auth/");
+				// 	}, 2000);
+				// }
 
-				console.error("chatStore.onUserInput error:", msg);
+				console.error("chatStore.onUserInput error:", error);
 				// wait 1 sec push to login page
 			});
 		localStorage.setItem(LAST_INPUT_KEY, userInput);
