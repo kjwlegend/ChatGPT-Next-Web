@@ -11,11 +11,12 @@ export default function App() {
 	const query = useSearchParams();
 
 	const inviteCode = query.get("i");
-	console.log("inviteCode", inviteCode);
 	const inviteCodeStore = useInviteCodeStore();
 
 	useEffect(() => {
 		// 在这里可以使用inviteCode进行相应的处理
+		console.log("inviteCode", inviteCode);
+
 		inviteCodeStore.setInviteCode(inviteCode);
 	}, [inviteCode]);
 

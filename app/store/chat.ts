@@ -286,16 +286,7 @@ export const useChatStore = createPersistStore(
 
 					// 使用 async/await 优化异步请求处理
 					const res = await createChatSession(data);
-
-					// 如果 res.code 为 4000 或 401，抛出错误
-					if (res.code === 4000 || res.code === 401) {
-						const response = {
-							code: res.code,
-							message: res.msg,
-						};
-
-						throw response;
-					}
+					console.log("createChatSession: ", res);
 
 					session.id = res.data.session_id || nanoid();
 				}
@@ -479,17 +470,10 @@ export const useChatStore = createPersistStore(
 					role: "user",
 					model: session.mask.modelConfig.model,
 				};
-
 				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+
 				// if chatResponse code return 4000 or 401 , throw error
-				console.log(chatResponse);
-				if (chatResponse.code === 4000 || chatResponse.code === 401) {
-					const response = {
-						code: chatResponse.code,
-						message: chatResponse.msg,
-					};
-					throw new Error("chatResponse error: " + response.message);
-				}
+
 				const data = chatResponse.data;
 				const user_chat_id = data.chat_id;
 				const newSessionId = data.chat_session;

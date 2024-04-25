@@ -35,7 +35,7 @@ export interface ChatSessionData {
 
 // 定义响应数据的接口
 interface ResponseData {
-	code?: number | string;
+	status?: number | string;
 	data?: any; // 根据实际情况，你可能需要更具体的类型
 	message?: string;
 	msg?: string; // 有些API可能使用msg而不是message
@@ -48,47 +48,67 @@ interface ErrorResponse {
 	};
 }
 
-function handleResponse(res: ResponseData): any {
-	const { code, data } = res;
-	console.log("res 1st", res);
-	if ((code === 201 || code === 200) && data) {
-		return data; // 正常返回
-	} else if (code === 4000 || code === 401) {
-		const message = data.message || data.msg;
-		console.log(message);
-		if (message.includes("令牌过期")) {
-			throw new Error("登录已过期");
+function handleErrorMessage(message: string): never {
+	const errorMap: { [key: string]: string } = {
+		令牌过期: "登录已过期",
+		身份认证: "请登录后再继续操作",
+		"matching query does not exist": "对话数据错误, 请新建对话",
+		对象不存在: "对话数据错误, 请新建对话",
+	};
+
+	// 查找对应的错误信息并抛出
+	for (const key in errorMap) {
+		if (message.includes(key)) {
+			throw new Error(errorMap[key]);
 		}
-		if (message.includes("身份认证")) {
-			throw new Error("请登录后再继续操作");
-		}
-		if (
-			message.includes("matching query does not exist") ||
-			message.includes("对象不存在")
-		) {
-			throw new Error("对话数据错误, 请新建对话");
-		}
-		throw new Error(message); // 其他4000错误
 	}
-	throw new Error("未知错误"); // 其他情况
+
+	// 如果没有匹配的特定错误信息，抛出原始消息
+	throw new Error(message);
+}
+function handleResponse(res: ResponseData): any {
+	const { status, data } = res;
+	const code = data.code;
+
+	// console.log("res 1st", res, status, data, "code", code);
+
+	// 成功响应
+	if ((status === 201 || status === 200) && data.data !== null) {
+		console.log("success");
+		return data;
+	}
+
+	// 错误处理
+	if ([4000, 401].includes(code)) {
+		const message = data.message || data.msg;
+		console.log("---------------");
+		return handleErrorMessage(message);
+	}
+
+	// 默认未知错误
+	throw new Error("未知错误");
 }
 
-function handleError(err: ErrorResponse): any {
+function handleError(err: ErrorResponse): never {
 	console.log("err", err);
 	// 检查错误是否已经是一个明确的消息
 	if (err instanceof Error) {
-		return { message: err.message };
+		throw new Error(err.message);
 	}
 
 	// 原有的基于响应的错误处理
 	if (err.response && err.response.data) {
-		return err.response.data;
+		// 假设 err.response.data 是一个字符串或者有 message 属性
+		if (typeof err.response.data === "string") {
+			throw new Error(err.response.data);
+		} else if (err.response.data.message) {
+			throw new Error(err.response.data.message);
+		}
 	}
 
 	// 默认错误消息
-	return { message: "网络错误" };
+	throw new Error("网络错误");
 }
-
 export async function createChatSession(data: CreateChatSessionData) {
 	return request({
 		url: `/gpt/chat-sessions/`,
@@ -118,11 +138,8 @@ export async function getSingleChatSession(id: string) {
 		url: `/gpt/chat-sessions/by_session_id/${id}/`,
 		method: "get",
 	})
-		.then((res) => res.data)
-		.catch((err) => {
-			// console.log(err);
-			return err.response.data;
-		});
+		.then(handleResponse)
+		.catch(handleError);
 }
 
 // update chatSession
@@ -145,11 +162,8 @@ export async function updateChatSession(
 		method: "put",
 		data,
 	})
-		.then((res) => res.data)
-		.catch((err) => {
-			// console.log(err);
-			return err.response.data;
-		});
+		.then(handleResponse)
+		.catch(handleError);
 }
 
 export interface ChatData {

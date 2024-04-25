@@ -706,20 +706,16 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			})
 			.catch((error) => {
 				setIsLoading(false);
+				messageApi.error(error.message);
+
 				// chatStore.clearAllData();
-				console.log("error:", error);
-				// if msg contains '令牌无效'
+				if (error.message.includes("登录")) {
+					setTimeout(() => {
+						authHook.logoutHook();
+						router.push("/auth/");
+					}, 2000);
+				}
 
-				// if (error.includes("令牌无效")) {
-				// 	messageApi.error(`登录过期, 请重新登录. 2秒后将跳转到登录页面`);
-
-				// 	setTimeout(() => {
-				// 		authHook.logoutHook();
-				// 		router.push("/auth/");
-				// 	}, 2000);
-				// }
-
-				console.error("chatStore.onUserInput error:", error);
 				// wait 1 sec push to login page
 			});
 		localStorage.setItem(LAST_INPUT_KEY, userInput);

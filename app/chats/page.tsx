@@ -34,6 +34,7 @@ import useAuth from "../hooks/useAuth";
 import { log } from "console";
 import { useAuthStore } from "../store/auth";
 import { message } from "antd";
+// import { NewChat } from "./new-chat";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
