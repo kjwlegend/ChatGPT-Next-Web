@@ -4,25 +4,29 @@ import { Modal } from "antd";
 import styles from "./welcome.module.scss";
 import { Button } from "antd";
 import Image from "next/image";
+import { useAuthStore } from "../store/auth";
 
 const ModalPopup = () => {
 	const [visible, setVisible] = useState(true);
+	const useAuth = useAuthStore();
 
-	// useEffect(() => {
-	// 	const isFirstVisit = localStorage.getItem("isFirstVisit");
-	// 	const lastVisitTime = localStorage.getItem("lastVisitTime");
-	// 	const currentTime = new Date().getTime();
-	// 	const twentyFourHours = 1000 * 60 * 60 * 24 * 2; // 48小时的毫秒数
+	const isLogin = useAuth.isAuthenticated;
 
-	// 	if (
-	// 		!isFirstVisit ||
-	// 		(isFirstVisit && currentTime - Number(lastVisitTime) > twentyFourHours)
-	// 	) {
-	// 		setVisible(true);
-	// 		localStorage.setItem("isFirstVisit", "false");
-	// 		localStorage.setItem("lastVisitTime", String(currentTime));
-	// 	}
-	// }, []);
+	useEffect(() => {
+		const isFirstVisit = localStorage.getItem("isFirstVisit");
+		const lastVisitTime = localStorage.getItem("lastVisitTime");
+		const currentTime = new Date().getTime();
+		const twentyFourHours = 1000 * 60 * 60 * 24 * 2; // 48小时的毫秒数
+
+		if (
+			!isFirstVisit ||
+			(isFirstVisit && currentTime - Number(lastVisitTime) > twentyFourHours)
+		) {
+			setVisible(true);
+			localStorage.setItem("isFirstVisit", "false");
+			localStorage.setItem("lastVisitTime", String(currentTime));
+		}
+	}, []);
 
 	const handleOk = () => {
 		setVisible(false);
@@ -80,13 +84,27 @@ const ModalPopup = () => {
 
 				<p className={styles.button}>
 					{/* 插入四个Button , 立即注册, 查看介绍 立即登录 */}
-					<Button type="primary" href="/auth#tab2">
-						立即注册
-					</Button>
 
-					<Button type="primary" href="/auth">
-						立即登录
-					</Button>
+					{isLogin ? (
+						<>
+							<Button type="primary" onClick={handleOk}>
+								开始对话
+							</Button>
+							<Button type="primary" href="/tarot">
+								塔罗占卜
+							</Button>
+						</>
+					) : (
+						<>
+							<Button type="primary" href="/auth#tab2">
+								立即注册
+							</Button>
+
+							<Button type="primary" href="/auth">
+								立即登录
+							</Button>
+						</>
+					)}
 				</p>
 			</div>
 		</Modal>

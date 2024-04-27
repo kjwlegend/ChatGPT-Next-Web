@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Modal } from "antd";
 import useAuth from "../hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { message } from "antd";
 import { LoginResult } from "../types";
 import { use, useState, useEffect } from "react";
@@ -13,6 +13,7 @@ import { useChatStore } from "../store";
 import { ChatSession } from "../types/chat";
 import { UpdateChatSessions } from "../services/chatService";
 import PasswordResetModal from "./PasswordResetModal";
+import { query } from "express";
 // 登录页面
 
 export default function Login() {
@@ -20,14 +21,22 @@ export default function Login() {
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const router = useRouter();
+	const path = usePathname();
+	const param = useSearchParams();
+
+	const from = param.get("from");
 
 	const userStore = useUserStore();
 	const chatStore = useChatStore();
+
+	console.log("path", from, path, param);
 
 	const [user, setUser] = useState<User | null>(null);
 
 	//  a modal to show password reset box
 	const [showResetPassword, setShowResetPassword] = useState(false);
+
+	const [historyStack, setHistoryStack] = useState([] as string[]);
 
 	const showModal = () => {
 		setShowResetPassword(true);
@@ -81,10 +90,16 @@ export default function Login() {
 				setUser(result.data.user);
 				//
 				setTimeout(() => {
-					// router.push("/chats");
 					// push to the previous page
-					router.back();
-					router.refresh();
+					//  check router path, if it's login, then push to chats
+					//  if it's not login, then push to the previous page
+					//  if it's empty, then push to chats
+
+					if (from && from !== "/auth") {
+						router.push(from);
+					} else {
+						router.push("/chats");
+					}
 				}, 1000);
 			}
 		} catch (error) {

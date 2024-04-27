@@ -17,6 +17,7 @@ import { useAuthStore } from "@/app/store/auth";
 import Login from "@/app/auth/login";
 import { Button } from "antd";
 import DrawerMenu from "@/app/components/drawer-menu";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const Index: React.FC = () => {
 	const TarotStore = useTarotStore();
@@ -54,7 +55,7 @@ const Index: React.FC = () => {
 						<button
 							className={styles["tarotButtonPrimary"]}
 							onClick={() => {
-								window.location.href = "/auth";
+								window.location.href = "/auth?from=/tarot";
 							}}
 						>
 							登录

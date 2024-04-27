@@ -135,7 +135,11 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 			form={form}
 			name="register"
 			onFinish={onFinish}
-			initialValues={{ prefix: "86", invite_code: inviteCodeStore.inviteCode }}
+			initialValues={{
+				prefix: "86",
+				invite_code: inviteCodeStore.inviteCode,
+				gender: "选择",
+			}}
 			style={{ maxWidth: 900, minWidth: 300 }}
 			scrollToFirstError
 			labelAlign="left"
@@ -200,7 +204,6 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 
 			<Form.Item name="gender" label="性别">
 				<Select
-					defaultValue="0"
 					style={{ width: 375 }}
 					onChange={selectChange}
 					options={[
@@ -209,7 +212,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 						{ value: "2", label: "女" },
 					]}
 				/>
-				<p>性别选择会影响小光的回答风格</p>
+				{/* <p>性别选择会影响小光的回答风格</p> */}
 			</Form.Item>
 
 			<Form.Item
@@ -318,7 +321,7 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 				onOk={() => setOpen(false)}
 				onCancel={() => setOpen(false)}
 				width={1000}
-				bodyStyle={{ height: 500, overflow: "scroll" }}
+				styles={{ body: { height: 500, overflow: "scroll" } }}
 			>
 				<p>更新时间：2023-07-15</p>
 				<p>
