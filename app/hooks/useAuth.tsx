@@ -37,8 +37,8 @@ export default function useAuth() {
 			// cookie
 
 			console.log("当前:", expirationDate);
-			expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000); // 当前时间的 24 小时后
-			console.log("24小时后cookie过期:", expirationDate);
+			expirationDate.setTime(expirationDate.getTime() + 48 * 60 * 60 * 1000); // 当前时间的 24 小时后
+			console.log("48小时后cookie过期:", expirationDate);
 			setExpirationDate(expirationDate);
 			document.cookie = `authenticated=true;`;
 			document.cookie = `user_id=${result.data.user.id}`;

@@ -741,6 +741,19 @@ const items = [
 			</>
 		),
 	},
+	{
+		label: "2024-04-28",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.3.1 版本, 小光说:
+				<ul>
+					<li>修复登录循环的bug</li>
+					<li>优化登录弹窗</li>
+				</ul>
+			</>
+		),
+	},
 ];
 
 const Log = () => {
