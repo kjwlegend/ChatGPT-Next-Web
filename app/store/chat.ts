@@ -500,10 +500,6 @@ export const useChatStore = createPersistStore(
 					return;
 				}
 
-				let responseStatus = session.responseStatus;
-
-				console.log("click send: ", session.topic, responseStatus);
-
 				const userContent = fillTemplateWith(content, modelConfig);
 				console.log("[User Input] after template: ", userContent);
 
@@ -534,7 +530,9 @@ export const useChatStore = createPersistStore(
 						savedUserMessage,
 						botMessage,
 					]);
+					session.responseStatus = false;
 				});
+				console.log("click send: ", session.topic, session.responseStatus);
 
 				sendChatMessage(
 					// 调用发送消息函数

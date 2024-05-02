@@ -56,6 +56,7 @@ import { LAST_INPUT_KEY } from "@/app/constant";
 // 样式
 import styles from "../chats.module.scss";
 import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import { useWorkflowStore } from "@/app/store/workflow";
 interface MessageItemProps {
 	message: ChatMessage;
 	session: ChatSession;
@@ -94,6 +95,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	// 你的其他逻辑和方法
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
+	const workflowStore = useWorkflowStore();
 	const config = useAppConfig();
 	const fontSize = config.fontSize;
 	const {
@@ -133,6 +135,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	let responseState = session.responseStatus;
 	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
+		console.log("responseState", sessionId, " ", responseState);
+
 		const lastMessage = session.messages.at(-1)?.content ?? "";
 		if (responseState && enableAutoFlow) {
 			onNextworkflow(lastMessage);
@@ -145,26 +149,37 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
 	const onNextworkflow = (message: string) => {
 		// 点击后将该条 message 传递到下一个 session
-		// 找到当前session 的index
-		const sessions = chatStore.sessions;
-		const index = sessions.findIndex((s) => s.id === sessionId);
-		// 找到下一个 是 workflow 的session 的index
-		const nextSession = sessions.find(
-			(s, i) => i > index && s.isworkflow === true,
+		// 找到当前 session 的 ID
+
+		// 找到当前 session 所在的 workflow group
+		const workflowGroup = Object.values(workflowStore.workflowGroup).find(
+			(group) => group.sessions.includes(sessionId),
 		);
-
-		// console.log(
-		// 	"工作流, 当前session: ",
-		// 	session,
-		// 	"下一个session: ",
-		// 	nextSession,
-		// );
-
-		if (!nextSession) {
+		if (!workflowGroup) {
+			console.error("当前 session 所在的 workflow group 未找到");
 			return;
 		}
 
-		const nextSessionId = nextSession.id;
+		// 在当前 workflow group 中找到当前 session 的索引
+		const currentSessionIndex = workflowGroup.sessions.indexOf(sessionId);
+
+		// 找到下一个 session 的索引
+		const nextSessionIndex = workflowGroup.sessions.findIndex(
+			(s, i) => i > currentSessionIndex,
+		);
+
+		// 如果找到了下一个 session，则进行相应的操作
+		if (nextSessionIndex !== -1) {
+			const nextSessionId = workflowGroup.sessions[nextSessionIndex];
+			// 这里可以添加代码来处理下一个 session
+			console.log("下一个 session 的 ID 是：", nextSessionId);
+		} else {
+			console.log("没有找到下一个 workflow session");
+			return;
+		}
+
+		const nextSessionId = workflowGroup.sessions[nextSessionIndex];
+		const nextSession = chatStore.sessions.find((s) => s.id === nextSessionId);
 
 		chatStore
 			.onUserInput(message, undefined, nextSession)
@@ -172,32 +187,17 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 				updateUserInfo(userStore.user.id);
 			})
 			.catch((error) => {
+				messageApi.error(error.message);
+
 				// chatStore.clearAllData();
-				const code = error.response?.status ?? error.code;
-				const msg = error.response?.data?.message ?? error.message;
-				console.log("code:", code);
-
-				if (msg.includes("令牌无效")) {
-					messageApi.error(`登录过期, 请重新登录. 2秒后将跳转到登录页面`);
-
+				if (error.message.includes("登录")) {
 					setTimeout(() => {
 						authHook.logoutHook();
 						router.push("/auth/");
 					}, 2000);
 				}
-
-				if (code == 4000 || code == 401) {
-					messageApi.error(`${msg} `);
-				} else {
-					messageApi.error(`${msg}`);
-				}
-
-				console.error("chatStore.onUserInput error:", msg);
-				// wait 1 sec push to login page
-			})
-			.catch((error) => {
-				console.error("chatStore.onUserInput error:", error);
 			});
+
 		localStorage.setItem(LAST_INPUT_KEY, userInput);
 	};
 
