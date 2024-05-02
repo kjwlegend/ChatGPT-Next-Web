@@ -1,5 +1,12 @@
 // 第三方库的导入
-import React, { useMemo, Fragment, useContext, useEffect } from "react";
+import React, {
+	useMemo,
+	Fragment,
+	useContext,
+	useEffect,
+	useState,
+	useRef,
+} from "react";
 import { useRouter } from "next/navigation";
 
 import { Avatar as UserAvatar, message as messagepop } from "antd";
@@ -131,21 +138,27 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	const shouldShowClearContextDivider = i === clearContextIndex - 1;
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
+	const [responseState, setResponseState] = useState(session.responseStatus);
+
+	const responseStateRef = useRef(false);
+	responseStateRef.current = session.responseStatus;
+
+
 	// 采用store 的方式来获取 responseState
-	let responseState = session.responseStatus;
 	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
-		console.log("responseState", sessionId, " ", responseState);
+		console.log("responseState", sessionId, " ", responseStateRef.current);
 
 		const lastMessage = session.messages.at(-1)?.content ?? "";
-		if (responseState && enableAutoFlow) {
+		if (responseStateRef.current && enableAutoFlow) {
 			onNextworkflow(lastMessage);
 			// 将session 的 responseState 转为false
 			chatStore.updateSession(sessionId, () => {
 				session.responseStatus = false;
 			});
+			setResponseState(false);
 		}
-	}, [responseState]);
+	}, [responseStateRef.current]);
 
 	const onNextworkflow = (message: string) => {
 		// 点击后将该条 message 传递到下一个 session
