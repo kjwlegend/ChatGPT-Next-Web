@@ -140,17 +140,13 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
 	const [responseState, setResponseState] = useState(session.responseStatus);
 
-	const responseStateRef = useRef(false);
-	responseStateRef.current = session.responseStatus;
-
-
 	// 采用store 的方式来获取 responseState
 	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
-		console.log("responseState", sessionId, " ", responseStateRef.current);
+		console.log("responseState", sessionId, " ", responseState);
 
 		const lastMessage = session.messages.at(-1)?.content ?? "";
-		if (responseStateRef.current && enableAutoFlow) {
+		if (responseState && enableAutoFlow) {
 			onNextworkflow(lastMessage);
 			// 将session 的 responseState 转为false
 			chatStore.updateSession(sessionId, () => {
@@ -158,7 +154,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 			});
 			setResponseState(false);
 		}
-	}, [responseStateRef.current]);
+	}, [responseState]);
 
 	const onNextworkflow = (message: string) => {
 		// 点击后将该条 message 传递到下一个 session

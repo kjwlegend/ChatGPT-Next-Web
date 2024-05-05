@@ -110,11 +110,15 @@ export const useWorkflowStore = create<State>()(
 						...state.workflowGroup,
 						[groupId]: {
 							...state.workflowGroup[groupId],
-							sessions: [...state.workflowGroup[groupId].sessions, session],
+							sessions: [
+								...(state.workflowGroup[groupId].sessions || []),
+								session,
+							],
 						},
 					},
 				}));
 
+				console.log(session, "workflowsession");
 				const newSessions = get().getWorkflowSessionId(groupId);
 				const res = await updateWorkflowSession(groupId, {
 					chat_sessions: newSessions,

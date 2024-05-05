@@ -12,6 +12,8 @@ export type ChatMessage = RequestMessage & {
 	streaming?: boolean;
 	isError?: boolean;
 	preview?: boolean;
+	isFinish?: boolean;
+	[key: string]: any;
 };
 
 export interface ChatToolMessage {
