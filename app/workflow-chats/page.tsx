@@ -8,7 +8,7 @@ import React, {
 	Fragment,
 	use,
 } from "react";
-import { ChatMessage, ChatSession, Mask} from "@/app/types/";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import { useChatStore, useUserStore } from "../store";
 import { ChatControllerPool } from "../client/controller";
@@ -170,14 +170,14 @@ function AgentList() {
 			[]; // 使用类型保护来过滤 undefined 值
 
 		setOrderedSessions(updatedSessions);
-		console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
+		// console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
 	}, [sessionIds, chatstore.sessions]); // 添加 chatstore.sessions 作为依赖项
 
 	const items: MenuProps["items"] = GenerateMenuItems();
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
-		console.log("destination", destination, "source", source);
+		// console.log("destination", destination, "source", source);
 		if (!destination) {
 			return;
 		}
@@ -193,12 +193,12 @@ function AgentList() {
 	};
 
 	const itemClickHandler = (item: any, i: number) => {
-		console.log("item", item);
+		// console.log("item", item);
 		setSelectIndex(i);
 	};
 
 	const itemDeleteHandler = async (item: any) => {
-		console.log("item", item);
+		// console.log("item", item);
 		deleteSessionFromGroup(selectedId, item.id);
 	};
 
@@ -283,7 +283,7 @@ export default function Chat() {
 			[]; // 使用类型保护来过滤 undefined 值
 
 		setOrderedSessions(updatedSessions);
-		console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
+		// console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
 	}, [sessionIds, chatStore.sessions]); // 添加 chatstore.sessions 作为依赖项
 	const isAuth = useAuthStore().isAuthenticated;
 	const userid = useUserStore.getState().user.id;

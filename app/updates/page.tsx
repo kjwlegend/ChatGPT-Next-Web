@@ -754,6 +754,19 @@ const items = [
 			</>
 		),
 	},
+	{
+		label: "2024-05-06",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.3.2 版本, 小光说:
+				<ul>
+					<li>修复工作流功能的bug</li>
+					<li>优化部分页面响应速度</li>
+				</ul>
+			</>
+		),
+	},
 ];
 
 const Log = () => {

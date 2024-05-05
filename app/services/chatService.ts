@@ -89,7 +89,6 @@ export function handleChatCallbacks(
 			});
 		},
 		onFinish: (message: string) => {
-			botMessage.streaming = false;
 			if (message) {
 				botMessage.content = message;
 				// console.log("message111 finish: ", message);
@@ -100,6 +99,8 @@ export function handleChatCallbacks(
 					},
 					false,
 				);
+				botMessage.streaming = false;
+				// console.log("botMessage streaming: ", botMessage.streaming);
 
 				const createChatData: CreateChatData = {
 					user: user.id,
@@ -114,13 +115,16 @@ export function handleChatCallbacks(
 					const data = res.data;
 					if (data) {
 						botMessage.id = data.chat_id.toString();
-						console.log("botMessage id: ", botMessage.id);
+						botMessage.isFinished = true;
+						botMessage.isTransfered = false;
+						// console.log("botMessage id: ", botMessage.id);
 						// 需要替换原本的message id 为新的id
 						chatStoreState.onNewMessage(botMessage);
 					}
 				});
 			}
 			ChatControllerPool.remove(session.id, botMessage.id);
+			// console.log("controller finish botMessage id: ", botMessage.id);
 		},
 		onError: (error: Error) => {
 			const isAborted = error.message.includes("aborted");

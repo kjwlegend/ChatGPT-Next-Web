@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { useWorkflowStore } from "../store/workflow";
-import {  useUserStore } from "../store";
-import { ChatMessage, ChatSession, Mask} from "@/app/types/";
+import { useUserStore } from "../store";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import { message } from "antd";
 
@@ -22,7 +22,7 @@ interface WorkflowContextType {
 	workflowGroup: {
 		[groupId: string]: {
 			id: string;
-			name: string;
+			topic: string;
 			lastUpdateTime: string;
 			sessions: string[];
 		};
@@ -213,10 +213,12 @@ export const WorkflowProvider = ({
 			type: "loading",
 		});
 
-		const { chat_sessions, ...rest } = newGroup;
+		const { chat_sessions, topic, ...rest } = newGroup;
 
 		const workflowGroupData = {
+			user: userid,
 			chat_sessions: chat_sessions,
+			topic: topic,
 			...rest,
 		};
 
@@ -241,7 +243,7 @@ export const WorkflowProvider = ({
 		// 遍历新的数据，更新workflowGroup
 		newData.forEach(async (item: any) => {
 			const groupId = item.id; // 假设item.id是workflowGroup的key
-			const name = item.topic; // 假设item.topic是workflowGroup中group的名字
+			const topic = item.topic; // 假设item.topic是workflowGroup中group的名字
 			const lastUpdateTime = item.last_updated;
 			const sessionIds = item.chat_sessions;
 			let sessions: any = [];
@@ -270,7 +272,7 @@ export const WorkflowProvider = ({
 
 			const newGroup = {
 				id: groupId,
-				name: name,
+				topic: topic,
 				lastUpdateTime: lastUpdateTime,
 				sessions: sessionIds,
 			};

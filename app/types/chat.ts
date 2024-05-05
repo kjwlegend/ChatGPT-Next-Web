@@ -5,6 +5,7 @@ import { Mask } from "./mask";
 export type ChatMessage = RequestMessage & {
 	date: string;
 	id: string;
+	nanoid?: string;
 	model?: ModelType;
 	image_url?: string;
 	mjstatus?: MJMessage;
@@ -12,7 +13,7 @@ export type ChatMessage = RequestMessage & {
 	streaming?: boolean;
 	isError?: boolean;
 	preview?: boolean;
-	isFinish?: boolean;
+	isFinished?: boolean;
 	[key: string]: any;
 };
 

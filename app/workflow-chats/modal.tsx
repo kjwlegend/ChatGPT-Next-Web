@@ -16,10 +16,9 @@ import CopyIcon from "../icons/copy.svg";
 import PromptIcon from "../icons/prompt.svg";
 
 import ResetIcon from "../icons/reload.svg";
-import { ChatMessage, ChatSession, Mask} from "@/app/types/";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import {
-
 	SubmitKey,
 	useChatStore,
 	BOT_HELLO,
@@ -30,7 +29,6 @@ import {
 	DEFAULT_TOPIC,
 	ModelType,
 	useUserStore,
-
 } from "../store";
 
 import { api } from "../client/api";
@@ -73,7 +71,7 @@ export function WorkflowModalConfig(props: {
 	workflow: any;
 }) {
 	const { workflow, onClose } = props;
-	const { name, description } = workflow;
+	const { topic, description } = workflow;
 
 	const {
 		workflowGroup,
@@ -83,7 +81,7 @@ export function WorkflowModalConfig(props: {
 		updateSingleWorkflowGroup,
 	} = useWorkflowContext();
 
-	const [workflowName, setWorkflowName] = useState(name);
+	const [workflowName, setWorkflowName] = useState(topic);
 	const [workflowDescription, setWorkflowDescription] = useState(description);
 
 	const chatStore = useChatStore();
@@ -103,7 +101,7 @@ export function WorkflowModalConfig(props: {
 
 	const handleSave = async () => {
 		await updateSingleWorkflowGroup(workflow.id, {
-			name: workflowName,
+			topic: workflowName,
 			lastUpdateTime: new Date().toISOString(),
 			description: workflowDescription,
 		});

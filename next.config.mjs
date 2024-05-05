@@ -35,6 +35,7 @@ const nextConfig = {
   // trailingSlash: true,
   generateEtags: false,
   poweredByHeader: false,
+  reactStrictMode: false,
   images: {
     unoptimized: mode === "export",
     remotePatterns: [

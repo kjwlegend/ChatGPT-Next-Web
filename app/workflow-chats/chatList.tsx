@@ -41,6 +41,7 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 
 	// 将conversations 排序 并更新到 sortedSessions
 	// 排序 workflowGroup 中的会话
+
 	const sortedWorkflowGroup = Object.values(workflowGroup).sort((a, b) => {
 		const aTime = new Date(a.lastUpdateTime).getTime(); // 假设第一个会话的 lastUpdateTime 代表组的时间
 		const bTime = new Date(b.lastUpdateTime).getTime(); // 同上
@@ -86,7 +87,7 @@ export function WorkflowChatList(props: { narrow?: boolean }) {
 						>
 							{sortedWorkflowGroup.map((item, i) => (
 								<ChatItem
-									title={item.name}
+									title={item.topic}
 									time={new Date(item.lastUpdateTime).toLocaleString()}
 									count={item.sessions?.length ?? 0}
 									key={item.id}

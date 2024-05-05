@@ -11,7 +11,7 @@ import { nanoid } from "nanoid";
 
 export interface workflowGroup {
 	id: string;
-	name: string;
+	topic: string;
 	description: string;
 	lastUpdateTime: string;
 	sessions: string[];
@@ -21,7 +21,7 @@ type State = {
 	workflowGroup: {
 		[groupId: string]: {
 			id: string;
-			name: string;
+			topic: string;
 			description: string;
 			lastUpdateTime: string;
 			sessions: string[];
@@ -61,7 +61,7 @@ export const useWorkflowStore = create<State>()(
 						...state.workflowGroup,
 						[groupId]: {
 							id: groupId,
-							name: groupName,
+							topic: groupName,
 							description: "等待你创作无限的可能",
 							lastUpdateTime: new Date().toISOString(),
 							sessions: [],

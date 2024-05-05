@@ -138,23 +138,24 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	const shouldShowClearContextDivider = i === clearContextIndex - 1;
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
-	const [responseState, setResponseState] = useState(session.responseStatus);
-
-	// 采用store 的方式来获取 responseState
-	// 在responseState 为 true 时 执行 onNextworkflow
 	useEffect(() => {
-		console.log("responseState", sessionId, " ", responseState);
+		const botMessage = message.role === "assistant" ? message.content : null;
 
-		const lastMessage = session.messages.at(-1)?.content ?? "";
-		if (responseState && enableAutoFlow) {
-			onNextworkflow(lastMessage);
+		if (
+			enableAutoFlow &&
+			message.isFinished &&
+			message.isTransfered == false &&
+			!isUser &&
+			botMessage !== ""
+		) {
+			onNextworkflow(message.content);
 			// 将session 的 responseState 转为false
 			chatStore.updateSession(sessionId, () => {
 				session.responseStatus = false;
+				message.isTransfered = true;
 			});
-			setResponseState(false);
 		}
-	}, [responseState]);
+	}, [message.isFinished]);
 
 	const onNextworkflow = (message: string) => {
 		// 点击后将该条 message 传递到下一个 session
@@ -277,7 +278,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 											text={Locale.Chat.Actions.Stop}
 											icon={<StopIcon />}
 											onClick={() =>
-												onUserStop ? onUserStop(message.id ?? i) : null
+												onUserStop
+													? onUserStop(message.nanoid ?? message.id)
+													: null
 											}
 										/>
 									) : (

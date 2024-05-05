@@ -259,12 +259,12 @@ export function Chatbody(props: {
 			}
 			setMsgRenderIndex(prevPageMsgIndex);
 		} else if (isTouchBottomEdge && isHitBottom && hasNextPage) {
-			console.log(
-				"isTouchBottomEdge",
-				isTouchBottomEdge,
-				"hasNextPage",
-				hasNextPage,
-			);
+			// console.log(
+			// 	"isTouchBottomEdge",
+			// 	isTouchBottomEdge,
+			// 	"hasNextPage",
+			// 	hasNextPage,
+			// );
 			// 如果触碰到底部且还有下一页的消息，则加载下一页的消息
 			setCurrentPage(currentPage + 1);
 			// getMessages(sessionId, currentPage);

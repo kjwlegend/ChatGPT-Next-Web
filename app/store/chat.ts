@@ -52,8 +52,10 @@ import {
 import { Mask } from "../types/index";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
+	const randomId = nanoid();
 	return {
-		id: nanoid(),
+		id: randomId,
+		nanoid: randomId,
 		date: new Date().toLocaleString(),
 		toolMessages: new Array<ChatToolMessage>(),
 		role: "user",
@@ -517,6 +519,7 @@ export const useChatStore = createPersistStore(
 					streaming: true,
 					model: modelConfig.model,
 					toolMessages: [],
+					isFinished: false,
 				});
 				// console.log("[botMessage] ", botMessage);
 				const sendMessages = recentMessages.concat(userMessage);
