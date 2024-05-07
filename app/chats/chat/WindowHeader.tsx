@@ -61,14 +61,14 @@ import { ExportMessageModal } from "@/app/chats/exporter";
 import { getClientConfig } from "@/app/config/client";
 
 import useAuth from "@/app/hooks/useAuth";
-import { message } from "antd";
+import { message, Switch } from "antd";
 
 import { SessionConfigModel } from "./common";
 
 import { ChatContext } from "./main";
 import { index, is } from "cheerio/lib/api/traversing";
-import { Switch } from "antd";
 import doubleAgent, { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import { LLMModelSwitch } from "./chatActions";
 
 export function EditMessageModal(props: {
 	onClose: () => void;
@@ -385,7 +385,7 @@ function WindowActions(props: {
 			<div className="window-actions">
 				{!isMobileScreen && props.isworkflow && <AutoFlowSwitchButton />}
 				{!isMobileScreen && !props.isworkflow && <RenameButton />}
-				{!props.isworkflow && <ExportButton />}
+				{/* {!props.isworkflow && <ExportButton />} */}
 				{showMaxIcon && <MaxMinButton />}
 			</div>
 			{showExport && (
@@ -451,6 +451,8 @@ export default function WindowHeader(props: {
 				index={index}
 				isworkflow={props.isworkflow}
 			/>
+
+			<LLMModelSwitch session={session} />
 
 			<WindowActions
 				session={session}

@@ -1,57 +1,60 @@
 .window-header {
-  padding: 10px 20px;
-  border-bottom: rgba(0, 0, 0, 0.1) 1px solid;
-  position: relative;
+	padding: 10px 20px;
+	border-bottom: rgba(0, 0, 0, 0.1) 1px solid;
+	position: relative;
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .window-header-title {
-  max-width: calc(100% - 100px);
-  overflow: hidden;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+	max-width: calc(100% - 100px);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
 
-  .window-header-main-title {
-    font-size: 20px;
-    font-weight: bolder;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-    max-width: 50vw;
-    margin-right: 10px;
-  }
+	.window-header-main-title {
+		font-size: 16px;
+		font-weight: bolder;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: block;
+		max-width: 50vw;
+		margin-right: 10px;
+	}
 
-  .window-header-sub-title {
-    font-size: 14px;
-  }
+	.window-header-sub-title {
+		font-size: 12px;
+		color: rgba(0, 0, 0, 0.5);
+	}
 }
 
 .window-actions {
-  display: inline-flex;
+	display: inline-flex;
+	align-items: center;
 }
 
 .window-action-button:not(:first-child) {
-  margin-left: 10px;
+	margin-left: 10px;
 }
 
 @media screen and (max-width: 768px) {
-  .window-header {
-    padding: 4px 10px;
-  }
+	.window-header {
+		padding: 4px 10px;
+		justify-content: flex-start;
+	}
 
-  .window-header-title {
-    .window-header-main-title {
-      font-size: 16px;
-    }
+	.window-header-title {
+		.window-header-main-title {
+			font-size: 14px;
+		}
 
-    .window-header-sub-title {
-      display: none;
-    }
-  }
-  
+		.window-header-sub-title {
+			display: none;
+		}
+	}
 }

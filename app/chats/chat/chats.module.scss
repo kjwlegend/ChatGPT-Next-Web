@@ -96,6 +96,15 @@
 	}
 }
 
+.chat-model {
+	display: flex;
+	.chat-header-model {
+		font-size: 14px;
+		margin-right: 5px;
+		line-height: 1.5;
+	}
+}
+
 .section-title {
 	font-size: 12px;
 	font-weight: bold;
@@ -310,6 +319,7 @@
 @media only screen and (max-width: 600px) {
 	.chat-body-title {
 		text-align: center;
+		margin-left: 15px;
 	}
 
 	.user,

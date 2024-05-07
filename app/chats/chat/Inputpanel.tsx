@@ -127,6 +127,7 @@ import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
 import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
 import { submitChatMessage } from "@/app/services/chatService";
+import { LLMModelSwitch } from "./chatActions";
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -470,7 +471,6 @@ export function ChatActions(props: {
 						hidetext={props.workflows ? true : false}
 					/>
 				)}
-
 				{/* <ChatAction
 					onClick={nextTheme}
 					text={Locale.Chat.InputActions.Theme[theme]}
@@ -486,20 +486,17 @@ export function ChatActions(props: {
 						</>
 					}
 				/> */}
-
 				{/* <ChatAction
 					onClick={props.showPromptHints}
 					text={Locale.Chat.InputActions.Prompt}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 				/> */}
-
-				<ChatAction
+				{/* <ChatAction
 					onClick={() => setShowModelSelector(true)}
 					text={currentModel}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 					hidetext={props.workflows ? true : false}
-				/>
-
+				/> */}
 				{config.pluginConfig.enable &&
 					/^gpt(?!.*03\d{2}$).*$/.test(currentModel) &&
 					currentModel != "gpt-4-vision-preview" && (
@@ -569,7 +566,6 @@ export function ChatActions(props: {
 						}}
 					/>
 				)}
-
 				{currentModel !== "midjourney" && (
 					<ChatAction
 						text={Locale.Chat.InputActions.Clear}
