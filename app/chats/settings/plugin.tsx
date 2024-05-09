@@ -2,25 +2,25 @@ import { IconButton } from "@/app/components/button";
 
 import styles from "./plugin.module.scss";
 
-import DownloadIcon from "../icons/download.svg";
-import UploadIcon from "../icons/upload.svg";
-import EditIcon from "../icons/edit.svg";
-import AddIcon from "../icons/add.svg";
-import CloseIcon from "../icons/close.svg";
-import DeleteIcon from "../icons/delete.svg";
-import EyeIcon from "../icons/eye.svg";
-import CopyIcon from "../icons/copy.svg";
-import LeftIcon from "../icons/left.svg";
+import DownloadIcon from "@/app/icons/download.svg";
+import UploadIcon from "@/app/icons/upload.svg";
+import EditIcon from "@/app/icons/edit.svg";
+import AddIcon from "@/app/icons/add.svg";
+import CloseIcon from "@/app/icons/close.svg";
+import DeleteIcon from "@/app/icons/delete.svg";
+import EyeIcon from "@/app/icons/eye.svg";
+import CopyIcon from "@/app/icons/copy.svg";
+import LeftIcon from "@/app/icons/left.svg";
 
-import { Plugin, usePluginStore } from "../store/plugin";
+import { Plugin, usePluginStore } from "../../store/plugin";
 import {
 	createMessage,
 	ModelConfig,
 	useAppConfig,
 	useChatStore,
-} from "../store";
-import { ChatMessage } from "../types/";
-import { ROLES } from "../client/api";
+} from "../../store";
+import { ChatMessage } from "@/app/types/";
+import { ROLES } from "../../client/api";
 import {
 	Input,
 	List,
@@ -30,18 +30,18 @@ import {
 	Select,
 	showConfirm,
 } from "@/app/components/ui-lib";
-import { Avatar } from "./emoji";
-import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../locales";
+import { Avatar } from "../emoji";
+import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../../locales";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import chatStyle from "./chat.module.scss";
+import chatStyle from "../chat.module.scss";
 import { useEffect, useState } from "react";
-import { copyToClipboard, downloadAs, readFromFile } from "../utils";
-import { Updater } from "../typing";
-import { FileName, Path } from "../constant";
-import { BUILTIN_PLUGIN_STORE } from "../plugins";
+import { copyToClipboard, downloadAs, readFromFile } from "../../utils";
+import { Updater } from "../../typing";
+import { FileName, Path } from "../../constant";
+import { BUILTIN_PLUGIN_STORE } from "../../plugins";
 import { nanoid } from "nanoid";
-import { getISOLang, getLang } from "../locales";
+import { getISOLang, getLang } from "../../locales";
 
 // export function PluginConfig(props: {
 //   plugin: Plugin;

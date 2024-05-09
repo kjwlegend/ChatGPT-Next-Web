@@ -1,14 +1,14 @@
-@import "../styles/animation.scss";
-.mask-page {
+@import "@/app/styles/animation.scss";
+.plugin-page {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 
-	.mask-page-body {
+	.plugin-page-body {
 		padding: 20px;
 		overflow-y: auto;
 
-		.mask-filter {
+		.plugin-filter {
 			width: 100%;
 			max-width: 100%;
 			margin-bottom: 20px;
@@ -23,12 +23,12 @@
 				min-width: 0;
 			}
 
-			.mask-filter-lang {
+			.plugin-filter-lang {
 				height: 100%;
 				margin-left: 10px;
 			}
 
-			.mask-create {
+			.plugin-create {
 				height: 100%;
 				margin-left: 10px;
 				box-sizing: border-box;
@@ -36,7 +36,7 @@
 			}
 		}
 
-		.mask-item {
+		.plugin-item {
 			display: flex;
 			justify-content: space-between;
 			padding: 20px;
@@ -57,32 +57,34 @@
 				border-bottom-right-radius: 10px;
 			}
 
-			.mask-header {
+			.plugin-header {
 				display: flex;
 				align-items: center;
 
-				.mask-icon {
+				.plugin-icon {
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					margin-right: 10px;
 				}
 
-				.mask-title {
-					.mask-name {
+				.plugin-title {
+					.plugin-name {
 						font-size: 14px;
 						font-weight: bold;
 					}
-					.mask-info {
+					.plugin-info {
 						font-size: 12px;
 					}
 				}
 			}
 
-			.mask-actions {
+			.plugin-actions {
 				display: flex;
 				flex-wrap: nowrap;
 				transition: all ease 0.3s;
+				justify-content: center;
+				align-items: center;
 			}
 
 			@media screen and (max-width: 600px) {
@@ -97,7 +99,7 @@
 					border-bottom: var(--border-in-default);
 				}
 
-				.mask-actions {
+				.plugin-actions {
 					width: 100%;
 					justify-content: space-between;
 					padding-top: 10px;

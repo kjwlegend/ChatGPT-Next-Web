@@ -1,6 +1,6 @@
-import { PluginConfig } from "../store";
+import { PluginConfig } from "../../store";
 
-import Locale from "../locales";
+import Locale from "../../locales";
 import { ListItem } from "@/app/components/ui-lib";
 
 export function PluginConfigList(props: {

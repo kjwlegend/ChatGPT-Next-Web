@@ -27,7 +27,11 @@ import { menuItems } from "./menu-items";
 import DrawerMenu from "./drawer-menu";
 import LoginButton from "./userinfo";
 import UserInfo from "./userinfo";
-
+enum Theme {
+	Auto = "auto",
+	Dark = "dark",
+	Light = "light",
+}
 const items: any = menuItems;
 
 const { Header } = Layout;
@@ -35,6 +39,26 @@ const { Header } = Layout;
 interface Props {
 	displayMobileVersion: boolean;
 }
+
+const ThemeSwitcher = () => {
+	const [theme, setTheme] = useState("light");
+
+	const newTheme = theme === "light" ? "dark" : "light";
+	const config = useAppConfig();
+	const updateConfig = config.update;
+
+	const toggleTheme = () => {
+		setTheme(newTheme);
+		localStorage.setItem("theme", newTheme);
+		document.body.className = newTheme;
+
+		updateConfig((config) => {
+			config.theme = newTheme as Theme;
+		});
+	};
+
+	return <Button onClick={toggleTheme}>切换主题</Button>;
+};
 
 export default function MainNav() {
 	const isMobileScreen = useMobileScreen();
@@ -153,6 +177,7 @@ export default function MainNav() {
 							// overflowedIndicator={<span>...</span>}
 						/>
 					</div>
+					<ThemeSwitcher />
 					<UserInfo />
 				</Header>
 			)}

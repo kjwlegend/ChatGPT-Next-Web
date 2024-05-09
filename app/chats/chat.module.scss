@@ -11,7 +11,7 @@
 		font-size: 12px;
 		background-color: var(--white);
 		color: var(--black);
-		border: var(--border-in-light);
+		border: var(--border-in-default);
 		padding: 4px 10px;
 		animation: slide-in ease 0.3s;
 		box-shadow: var(--card-shadow);
@@ -71,7 +71,7 @@
 		background-color: var(--white);
 		color: var(--black);
 
-		border: var(--border-in-light);
+		border: var(--border-in-default);
 		box-shadow: var(--card-shadow);
 		padding: 10px 20px;
 		border-radius: 100px;
@@ -177,7 +177,7 @@
 	.memory-prompt-content {
 		background-color: var(--white);
 		color: var(--black);
-		border: var(--border-in-light);
+		border: var(--border-in-default);
 		border-radius: 10px;
 		padding: 10px;
 		font-size: 12px;
@@ -189,8 +189,8 @@
 	margin: 20px 0 0 0;
 	padding: 4px 0;
 
-	border-top: var(--border-in-light);
-	border-bottom: var(--border-in-light);
+	border-top: var(--border-in-default);
+	border-bottom: var(--border-in-default);
 	box-shadow: var(--card-shadow) inset;
 
 	display: flex;
@@ -458,7 +458,7 @@
 	padding-top: 10px;
 	box-sizing: border-box;
 	flex-direction: column;
-	border-top: var(--border-in-light);
+	border-top: var(--border-in-default);
 	box-shadow: var(--card-shadow);
 
 	.chat-input-actions {
@@ -483,7 +483,7 @@
 	flex-direction: column-reverse;
 
 	background-color: var(--white);
-	border: var(--border-in-light);
+	border: var(--border-in-default);
 	border-radius: 10px;
 	margin-bottom: 10px;
 	box-shadow: var(--shadow);
@@ -531,7 +531,7 @@
 	height: 100%;
 	width: 100%;
 	border-radius: 10px;
-	border: var(--border-in-light);
+	border: var(--border-in-default);
 	box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
 	background-color: var(--white);
 	color: var(--black);

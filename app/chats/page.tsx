@@ -45,9 +45,12 @@ function Loading(props: { noLogo?: boolean }) {
 	);
 }
 
-const Settings = dynamic(async () => (await import("./settings")).Settings, {
-	loading: () => <Loading noLogo />,
-});
+const Settings = dynamic(
+	async () => (await import("./settings/settings")).Settings,
+	{
+		loading: () => <Loading noLogo />,
+	},
+);
 
 const Chat = dynamic(async () => (await import("./chat/main")).Chat, {
 	loading: () => <Loading noLogo />,
@@ -74,9 +77,12 @@ const Paitings = dynamic(
 	},
 );
 
-const Plugins = dynamic(async () => (await import("./plugin")).PluginPage, {
-	loading: () => <Loading noLogo />,
-});
+const Plugins = dynamic(
+	async () => (await import("./settings/plugin")).PluginPage,
+	{
+		loading: () => <Loading noLogo />,
+	},
+);
 
 function useSwitchTheme() {
 	const config = useAppConfig();
@@ -85,11 +91,11 @@ function useSwitchTheme() {
 		document.body.classList.remove("light");
 		document.body.classList.remove("dark");
 
-		// if (config.theme === "dark") {
-		//   document.body.classList.add("dark");
-		// } else if (config.theme === "light") {
-		//   document.body.classList.add("light");
-		// }
+		if (config.theme === "dark") {
+			document.body.classList.add("dark");
+		} else if (config.theme === "light") {
+			document.body.classList.add("light");
+		}
 
 		const metaDescriptionDark = document.querySelector(
 			'meta[name="theme-color"][media*="dark"]',
@@ -98,14 +104,14 @@ function useSwitchTheme() {
 			'meta[name="theme-color"][media*="light"]',
 		);
 
-		// if (config.theme === "auto") {
-		//   metaDescriptionDark?.setAttribute("content", "#151515");
-		//   metaDescriptionLight?.setAttribute("content", "#fafafa");
-		// } else {
-		//   const themeColor = getCSSVar("--theme-color");
-		//   metaDescriptionDark?.setAttribute("content", themeColor);
-		//   metaDescriptionLight?.setAttribute("content", themeColor);
-		// }
+		if (config.theme === "auto") {
+			metaDescriptionDark?.setAttribute("content", "#151515");
+			metaDescriptionLight?.setAttribute("content", "#fafafa");
+		} else {
+			const themeColor = getCSSVar("--theme-color");
+			metaDescriptionDark?.setAttribute("content", themeColor);
+			metaDescriptionLight?.setAttribute("content", themeColor);
+		}
 	}, [config.theme]);
 }
 

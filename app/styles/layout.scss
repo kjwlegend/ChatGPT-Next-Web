@@ -6,7 +6,6 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	margin: auto;
-	background-color: var(--background-color);
 }
 
 .main {
@@ -17,7 +16,7 @@
 	flex-grow: 1;
 	width: 100%;
 	padding: 20px;
-	background-image: url("/bg.png");
+	// background-image: url("/bg.png");
 	background-repeat: no-repeat;
 	background-position: 100% 0;
 	background-attachment: fixed;

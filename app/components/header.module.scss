@@ -4,17 +4,16 @@
 	align-items: center;
 	height: var(--nav-height);
 	width: 100%;
-	color: rgb(91, 105, 230);
 	font-weight: 600;
 	text-align: center;
 	padding: 0 20px;
 
 	// background-color: #fef2f2;
-	background: linear-gradient(to bottom right, #f2fdfe 0%, #ecfafd 100%);
-	background-image: url("/bg.png");
-	background-repeat: no-repeat;
-	background-position: 100% 0;
-	background-attachment: fixed;
+	background: linear-gradient(to right, var(--color-set1));
+	// background-image: url("/bg.png");
+	// background-repeat: no-repeat;
+	// background-position: 100% 0;
+	// background-attachment: fixed;
 
 	:global .ant-form-inline {
 		align-items: center;
@@ -43,7 +42,7 @@
 	.logo-text {
 		font-size: 1.2rem;
 		font-weight: 600;
-		color: rgb(87 87 87);
+		color: var(--black);
 		text-align: left;
 		margin-left: 35px;
 
@@ -74,20 +73,34 @@
 	}
 	:global .ant-menu-item {
 		height: 50px;
+		color: var(--black);
+		&:hover {
+			color: var(--active) !important;
+			&::after {
+				border-bottom-color: var(--active) !important;
+			}
+		}
+	}
+	:global .ant-menu-item-selected,
+	:global .ant-menu-item-active {
+		color: var(--active) !important;
+		&::after {
+			border-bottom-color: var(--active) !important;
+		}
 	}
 }
 
 .header-button {
 	background-color: transparent;
-	border: 2px solid white;
-	color: white;
+	border: 2px solid var(--white);
+	color: var(--white);
 	padding: 10px 20px;
 	font-size: 1rem;
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
 	&:hover {
-		background-color: white;
-		color: #282c34;
+		background-color: var(--white);
+		color: var(--black);
 	}
 }
 .login-wrapper {

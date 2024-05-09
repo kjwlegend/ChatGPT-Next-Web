@@ -123,16 +123,6 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 };
 
 export const DEFAULT_MODELS = [
-	// {
-	// 	name: "gpt-4",
-	// 	displayName: "小光Pro-(5积分/次)",
-	// 	available: true,
-	// 	provider: {
-	// 		id: "openai",
-	// 		providerName: "OpenAI",
-	// 		providerType: "openai",
-	// 	},
-	// },
 	{
 		name: "gpt-4-1106-preview",
 		available: true,
@@ -184,8 +174,8 @@ import { getServerSideConfig } from "@/app/config/server";
 
 export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 
-export const server_url = "https://admin.xiaoguang.fun";
-// export const server_url = "http://localhost:8000";
+// export const server_url = "https://admin.xiaoguang.fun";
+export const server_url = "http://localhost:8000";
 
 export const version = "2.3.3";
 

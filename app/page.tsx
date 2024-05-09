@@ -4,6 +4,8 @@ import { getServerSideConfig } from "./config/server";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useInviteCodeStore } from "./store/auth";
+import Header from "./components/header";
+import Footer from "./components/footer";
 
 const serverConfig = getServerSideConfig();
 

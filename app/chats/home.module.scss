@@ -1,6 +1,6 @@
 @mixin container {
 	background-color: var(--white);
-	// border: var(--border-in-light);
+	// border: var(--border-in-default);
 	border-radius: 20px;
 	box-shadow: var(--shadow);
 	color: var(--black);
@@ -42,9 +42,7 @@
 	width: var(--sidebar-width);
 	box-sizing: border-box;
 	padding: 20px;
-	// background-color: var(--second);
-	background-color: #fef2f2;
-	background-image: linear-gradient(to bottom, #fefefe 0%, #ddeafe 99%);
+	background-image: linear-gradient(to bottom, var(--color-set1));
 
 	display: flex;
 	flex-direction: column;
@@ -163,6 +161,7 @@
 	font-size: 12px;
 	font-weight: 400;
 	animation: slide-in ease 0.3s;
+	color: inherit;
 }
 
 .sidebar-body {
@@ -204,7 +203,7 @@
 
 .chat-item-selected {
 	// border-color: var(--primary);
-	background: linear-gradient(90deg, #d1cfff 0%, #e2eeff 80%);
+	background: linear-gradient(270deg, var(--color-set1));
 	box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 10%);
 }
 

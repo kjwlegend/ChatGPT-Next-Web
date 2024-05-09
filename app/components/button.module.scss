@@ -46,7 +46,7 @@
 
 	&:hover,
 	&:focus {
-		border-color: var(--primary);
+		border-color: var(--border-color-active);
 	}
 }
 
@@ -55,11 +55,11 @@
 }
 
 .border {
-	border: var(--border-in-light);
+	border: var(--border-in-default);
 }
 
 .logout {
-	border: var(--border-in-light);
+	border: var(--border-in-default);
 	margin: auto;
 	display: block;
 
