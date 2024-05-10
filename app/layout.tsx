@@ -61,7 +61,7 @@ const darkTheme: ThemeConfig = {
 		},
 	},
 };
-
+import Head from "next/head";
 export default function RootLayout({
 	children,
 }: {
@@ -80,14 +80,15 @@ export default function RootLayout({
 				<meta httpEquiv="pragma" content="no-cache" />
 				<meta httpEquiv="cache-control" content="no-cache" />
 				<meta httpEquiv="expires" content="0" />
-				<Helmet>
-					<title>小光AI</title>
+				{/* <Helmet>
+					<title>小光AI | 专业提示词工程师打造</title>
 					<meta
 						name="description"
 						content="小光AI, 由专业提示词工程师打造的AIGC 工具, 专注于文案, 工作流, multi-agents 的人工智能工具, 为您提供最优质的AI服务."
 					/>
 					<meta name="keywords" content="小光AI, chatgpt, AIGC" />
-				</Helmet>
+				</Helmet> */}
+
 				<link rel="manifest" href="/site.webmanifest"></link>
 				{/* <link
 					rel="stylesheet"
