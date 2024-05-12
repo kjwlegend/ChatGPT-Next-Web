@@ -58,10 +58,7 @@ export default function UserInfo() {
 			label: `对话剩余: ${user?.user_balance?.chat_balance}`,
 			key: "3",
 		},
-		// {
-		//   label: `绘画剩余: ${user?.draw_balance} `,
-		//   key: "4",
-		// },
+
 		{
 			label: <Link href="/profile#4">邀请得礼</Link>,
 			key: "5",

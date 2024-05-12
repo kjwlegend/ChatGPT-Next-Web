@@ -35,7 +35,11 @@ enum Theme {
 const items: any = menuItems;
 
 const { Header } = Layout;
-
+import Locale from "@/app/locales";
+import { ChatAction } from "../chats/chat/Inputpanel";
+import LightIcon from "@/app/icons/light.svg";
+import DarkIcon from "@/app/icons/dark.svg";
+import AutoIcon from "@/app/icons/auto.svg";
 interface Props {
 	displayMobileVersion: boolean;
 }
@@ -62,8 +66,32 @@ const ThemeSwitcher = () => {
 			config.theme = newTheme as Theme;
 		});
 	};
+	const iconStyle = {
+		top: "2px",
+		position: "relative",
+	};
 
-	return <Button onClick={toggleTheme}>切换主题</Button>;
+	const ThemeIcon =
+		theme == "dark" ? (
+			<DarkIcon style={iconStyle} />
+		) : (
+			<LightIcon style={iconStyle} />
+		);
+	return (
+		<>
+			<Button onClick={toggleTheme}>
+				<span
+					style={{
+						marginRight: "5px",
+						top: "5px",
+					}}
+				>
+					{ThemeIcon}
+				</span>
+				{Locale.Chat.InputActions.Theme[theme]}
+			</Button>
+		</>
+	);
 };
 
 export default function MainNav() {
@@ -126,11 +154,6 @@ export default function MainNav() {
 				<Header className={styles.header}>
 					<DrawerMenu />
 					<div className={styles.logo}>
-						{/* <img
-							className={styles["logo-image"]}
-							src="/logo-2.png"
-							alt="Logo"
-						/> */}
 						<Link href="/chats">
 							<Image
 								src={"/logo-2.png"}
@@ -152,11 +175,6 @@ export default function MainNav() {
 					style={{ display: !showHeader ? "none" : "" }}
 				>
 					<div className={styles.logo}>
-						{/* <img
-							className={styles["logo-image"]}
-							src="/logo-2.png"
-							alt="Logo"
-						/> */}
 						<Image
 							src={"/logo-2.png"}
 							alt="logo"
@@ -183,8 +201,10 @@ export default function MainNav() {
 							// overflowedIndicator={<span>...</span>}
 						/>
 					</div>
-					<ThemeSwitcher />
-					<UserInfo />
+					<div style={{ display: "flex", alignItems: "center", flexGrow: "1" }}>
+						<UserInfo />
+						<ThemeSwitcher />
+					</div>
 				</Header>
 			)}
 		</>

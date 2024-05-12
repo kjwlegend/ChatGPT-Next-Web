@@ -1,19 +1,13 @@
 .header {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	justify-content: flex-start;
+	// align-items: center;
 	height: var(--nav-height);
 	width: 100%;
 	font-weight: 600;
 	text-align: center;
-	padding: 0 20px;
 
-	// background-color: #fef2f2;
 	background: linear-gradient(to right, var(--color-set1));
-	// background-image: url("/bg.png");
-	// background-repeat: no-repeat;
-	// background-position: 100% 0;
-	// background-attachment: fixed;
 
 	:global .ant-form-inline {
 		align-items: center;
@@ -59,9 +53,8 @@
 	}
 }
 .ant-menu {
-	flex-grow: 1;
-	flex-basis: 100%;
 	font-size: 15px;
+	flex-grow: 2;
 
 	:global .ant-menu-horizontal {
 		border-bottom: none;
@@ -107,13 +100,8 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: flex-end;
-	width: 100%;
 
 	.avatar {
-		// width: 30px;
-		// height: 30px;
-		// display: inline-block;
 		margin: 10px;
 		position: relative;
 		display: inline;

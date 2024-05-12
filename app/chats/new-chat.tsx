@@ -50,7 +50,11 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
 		<Card
 			style={{ maxWidth: 300 }}
 			title={mask.name}
-			extra={<span key={mask.id}>角色等级: {mask.version} </span>}
+			extra={
+				<span key={mask.id} className={styles["card-extra"]}>
+					角色等级: {mask.version}
+				</span>
+			}
 			hoverable
 			onClick={() => startChat(mask)}
 			actions={[
