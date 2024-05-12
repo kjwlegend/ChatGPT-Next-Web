@@ -58,7 +58,8 @@ const DrawerMenu = () => {
 		<>
 			<MenuOutlined
 				onClick={showDrawer}
-				style={{ fontSize: "24px", cursor: "pointer", color: "#444" }}
+				style={{ fontSize: "24px", cursor: "pointer" }}
+				className={styles.icons}
 			/>
 			<Drawer placement="left" onClose={onClose} open={visible}>
 				<div className={styles.logo}>

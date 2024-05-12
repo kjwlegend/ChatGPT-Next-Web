@@ -147,7 +147,6 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 			<Form.Item
 				name="username"
 				label="用户名"
-				tooltip="登录使用"
 				rules={[
 					{ required: true, message: "请输入你的用户名", whitespace: false },
 				]}
@@ -192,30 +191,6 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 				<Input.Password />
 			</Form.Item>
 			<Form.Item
-				name="nickname"
-				label="昵称"
-				tooltip="您希望别人怎么称呼您？"
-				rules={[
-					{ required: false, message: "请输入你的昵称", whitespace: true },
-				]}
-			>
-				<Input placeholder="希望AI 怎么称呼您?" />
-			</Form.Item>
-
-			<Form.Item name="gender" label="性别">
-				<Select
-					style={{ width: 375 }}
-					onChange={selectChange}
-					options={[
-						{ value: "0", label: "选择" },
-						{ value: "1", label: "男" },
-						{ value: "2", label: "女" },
-					]}
-				/>
-				{/* <p>性别选择会影响小光的回答风格</p> */}
-			</Form.Item>
-
-			<Form.Item
 				name="email"
 				label="邮箱"
 				rules={[
@@ -237,6 +212,29 @@ const App = ({ onRegisterSuccess }: { onRegisterSuccess: () => void }) => {
 				rules={[{ required: true, message: "请输入手机号" }]}
 			>
 				<Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+			</Form.Item>
+
+			<Form.Item
+				name="nickname"
+				label="昵称"
+				rules={[
+					{ required: false, message: "请输入你的昵称", whitespace: true },
+				]}
+			>
+				<Input placeholder="希望AI 怎么称呼您?" />
+			</Form.Item>
+
+			<Form.Item name="gender" label="性别">
+				<Select
+					style={{ width: 375 }}
+					onChange={selectChange}
+					options={[
+						{ value: "0", label: "选择" },
+						{ value: "1", label: "男" },
+						{ value: "2", label: "女" },
+					]}
+				/>
+				{/* <p>性别选择会影响小光的回答风格</p> */}
 			</Form.Item>
 
 			<Form.Item

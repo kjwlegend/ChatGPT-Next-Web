@@ -1,6 +1,6 @@
 // pages/index.tsx
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { TarotCardType } from "./types/TarotCard";
 import { Deck } from "./components/Deck";
 import { Spread, TestSpread } from "./components/Spread";
@@ -19,6 +19,7 @@ import { Button } from "antd";
 import DrawerMenu from "@/app/components/drawer-menu";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { useAppConfig } from "@/app/store";
 const Index: React.FC = () => {
 	const TarotStore = useTarotStore();
 	const { game, resetGame, stage, remainingDraws } = TarotStore;
@@ -27,8 +28,6 @@ const Index: React.FC = () => {
 	const authStore = useAuthStore();
 
 	const { isAuthenticated } = authStore;
-
-	// console.log("state", stage, remainingDraws, game);
 
 	const reset = useCallback(() => {
 		resetGame();

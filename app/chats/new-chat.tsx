@@ -100,7 +100,6 @@ export function NewChat() {
 			setFeatureGroup(featureMasks);
 			setMasks(data);
 			maskStore.updatestate({ total });
-			console.log("l奇怪的渲染");
 		};
 		initialize();
 	}, []);

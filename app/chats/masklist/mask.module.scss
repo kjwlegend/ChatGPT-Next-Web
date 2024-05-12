@@ -17,21 +17,21 @@
 				margin: 5px;
 			}
 
-			.ant-segmented-item {
-				&:hover {
-					color: rgba(0, 0, 0, 0.25);
-				}
+			// .ant-segmented-item {
+			// 	&:hover {
+			// 		color: rgba(0, 0, 0, 0.25);
+			// 	}
 
-				&.ant-segmented-item-selected {
-					background: rgb(55, 126, 233);
-					color: white;
-				}
+			// 	&.ant-segmented-item-selected {
+			// 		background: rgb(55, 126, 233);
+			// 		color: white;
+			// 	}
 
-				&.ant-segmented-item-disabled {
-					color: rgba(0, 0, 0, 0.25);
-					cursor: not-allowed;
-				}
-			}
+			// 	&.ant-segmented-item-disabled {
+			// 		color: rgba(0, 0, 0, 0.25);
+			// 		cursor: not-allowed;
+			// 	}
+			// }
 		}
 		.builtin {
 			margin-right: 5px;
@@ -40,23 +40,21 @@
 		.mask-category {
 			margin: 10px;
 			font-size: 14px;
-			position: sticky;
 			top: 0;
 			z-index: 2;
-			background: #fff;
 
 			:global .ant-tag {
 				margin: 5px;
 				font-size: 14px;
 
-				&.ant-tag-checkable {
-					padding: 0 5px;
-					// border-color: #d9d9d9;
-					background-color: rgba(0, 0, 0, 0.03);
-				}
-				&.ant-tag-checkable-checked {
-					background-color: rgb(55 126 233);
-				}
+				// &.ant-tag-checkable {
+				// 	padding: 0 5px;
+				// 	// border-color: #d9d9d9;
+				// 	background-color: rgba(0, 0, 0, 0.03);
+				// }
+				// &.ant-tag-checkable-checked {
+				// 	background-color: rgb(55 126 233);
+				// }
 			}
 		}
 
@@ -244,7 +242,7 @@
 
 				.description {
 					font-size: 14px;
-					color: #666666;
+					color: var(--light-gray);
 					margin-bottom: 20px;
 					text-align: left;
 					text-overflow: ellipsis;
@@ -256,7 +254,7 @@
 				}
 				.author {
 					font-size: 12px;
-					color: #999999;
+					color: var(--light-gray);
 					margin-top: 10px;
 				}
 			}
@@ -265,7 +263,8 @@
 }
 
 .hotness {
-	color: #888;
+	color: var(--light-gray);
+	background-color: unset;
 	.button-icon {
 		width: 12px;
 	}
@@ -273,7 +272,7 @@
 		// margin-right: 5px;
 
 		path {
-			fill: #888;
+			fill: var(--light-gray);
 		}
 	}
 }

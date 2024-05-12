@@ -41,14 +41,20 @@ interface Props {
 }
 
 const ThemeSwitcher = () => {
-	const [theme, setTheme] = useState("light");
-
-	const newTheme = theme === "light" ? "dark" : "light";
 	const config = useAppConfig();
 	const updateConfig = config.update;
+	const currentTheme = config.theme;
+
+	const [theme, setTheme] = useState(currentTheme as Theme);
+	const newTheme = theme === "light" ? "dark" : "light";
+
+	useEffect(() => {
+		// set theme
+		document.body.className = theme;
+	}, [theme]);
 
 	const toggleTheme = () => {
-		setTheme(newTheme);
+		setTheme(newTheme as Theme);
 		localStorage.setItem("theme", newTheme);
 		document.body.className = newTheme;
 

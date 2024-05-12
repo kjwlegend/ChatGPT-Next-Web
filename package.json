@@ -33,7 +33,7 @@
     "@types/react-helmet": "^6.1.11",
     "@vercel/analytics": "^0.1.11",
     "ali-oss": "^6.19.0",
-    "antd": "^5.8.6",
+    "antd": "^5.17.0",
     "axios": "^1.4.0",
     "bufferutil": "^4.0.8",
     "cargo": "^0.8.0",

@@ -58,8 +58,7 @@ const ModalPopup = () => {
 				</div>
 
 				<p className={styles.title}> 进群可领取邀请码, 领取1个月免费福利</p>
-				{/* subtitle */}
-				<p className={styles.subtitle}>小光核心特色</p>
+
 				{/* 基于工作 , 生活, 娱乐 3大块, 以flex组件帮我生成带有 小标题, 描述的代码 */}
 				<div className={styles.description}>
 					<div className={styles["description-item"]}>

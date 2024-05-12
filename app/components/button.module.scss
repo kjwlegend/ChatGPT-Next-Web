@@ -22,10 +22,10 @@
 	&.primary {
 		background-color: var(--primary);
 		background: var(--linear-set1);
-		color: white;
+		color: var(--black);
 
 		path {
-			fill: white !important;
+			fill: var(--black) !important;
 		}
 	}
 

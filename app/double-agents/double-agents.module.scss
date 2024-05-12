@@ -24,12 +24,7 @@
 }
 
 .background {
-	background: linear-gradient(
-		267deg,
-		#ffffff -2.16%,
-		#9586f53b 42%,
-		#edf9ff 100.31%
-	);
+	background-color: var(--white);
 }
 
 .welcome-container {
@@ -44,14 +39,19 @@
 	font:
 		500 24px/29px "Roboto",
 		sans-serif;
-	color: #1e425d;
+	color: var(--black);
+	font-weight: bold;
+	background-image: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 .sub-title {
 	text-align: center;
 	font:
 		400 16px/19px "Roboto",
 		sans-serif;
-	color: #1e425d;
+	color: var(--black);
 }
 .actions {
 	.action-button {

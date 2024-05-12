@@ -45,19 +45,91 @@ const darkTheme: ThemeConfig = {
 		borderRadius: 5,
 		// colorPrimary: "#102c53",
 		colorPrimary: "#cbdfff",
-
+		colorText: "rgba(255, 255, 255, 0.88)",
 		colorTextQuaternary: "#6c6666",
 	},
 
 	components: {
 		Button: {
-			colorPrimary: "#102c53",
+			colorPrimary: "#664eb5",
+			colorPrimaryHover: "#664eaa",
+			colorLink: "#d1c4ff",
+			algorithm: true,
 		},
 		Switch: {
 			handleBg: "#fff",
 			colorTextQuaternary: "rgba(11, 9, 9, 0.25)",
 			colorTextTertiary: "rgba(98, 185, 218, 0.45)",
 			algorithm: true,
+		},
+		Form: {
+			labelColor: "rgba(255, 255, 255, 0.88)",
+			colorText: "rgba(255, 255, 255, 0.88)",
+		},
+
+		Input: {
+			colorIcon: "rgba(247, 247, 247, 0.45)",
+			colorBgContainer: "rgb(37, 34, 76)",
+			algorithm: true,
+			activeBg: "rgba(37, 34, 76, 0.74)",
+			colorIconHover: "rgba(253, 253, 253, 0.88)",
+			colorText: "rgba(255, 255, 255, 0.88)",
+			colorTextDescription: "rgba(255, 255, 255, 0.45)",
+			colorTextPlaceholder: "rgba(255, 255, 255, 0.46)",
+		},
+		Tabs: {
+			inkBarColor: "rgb(114, 46, 209)",
+			itemActiveColor: "rgb(255, 255, 255)",
+			itemColor: "rgb(164 169 175)",
+			itemHoverColor: "rgb(114, 46, 209)",
+			itemSelectedColor: "rgb(255, 255, 255)",
+		},
+		Checkbox: {
+			colorText: "rgba(255, 255, 255, 0.88)",
+			colorTextDescription: "rgba(255, 255, 255, 0.45)",
+			colorTextPlaceholder: "rgba(255, 255, 255, 0.46)",
+			colorIcon: "rgba(247, 247, 247, 0.45)",
+			colorIconHover: "rgba(253, 253, 253, 0.88)",
+			colorBgContainer: "rgb(37, 34, 76)",
+			colorPrimary: "#664eb5",
+			algorithm: true,
+		},
+		Segmented: {
+			itemSelectedBg: "rgb(108, 97, 165)",
+			itemSelectedColor: "rgb(220, 220, 220)",
+			itemHoverBg: "rgba(139, 125, 212, 0.61)",
+			trackBg: "#afacc2",
+		},
+		Tag: {
+			colorPrimary: "rgb(108, 97, 165)",
+			colorText: "rgba(255, 255, 255, 0.45)",
+			colorPrimaryActive: "rgb(108, 97, 165)",
+			colorPrimaryHover: "rgb(108, 97, 195)",
+		},
+		Modal: {
+			contentBg: "rgb(37, 34, 76)",
+		},
+		Select: {
+			colorBgContainer: "rgb(28, 32, 54)",
+			colorText: "rgba(255, 255, 255, 0.88)",
+			colorBgElevated: "rgb(37, 34, 76)",
+			optionSelectedBg: "rgb(108, 97, 165)",
+		},
+		Message: {
+			contentBg: "rgb(37, 34, 76)",
+		},
+		Dropdown: {
+			colorText: "rgba(38, 38, 38, 0.88)",
+		},
+		Drawer: {
+			colorBgElevated: "rgb(37, 34, 76)",
+			colorIcon: "rgba(247, 247, 247, 0.45)",
+			colorText: "rgba(255, 255, 255, 0.88)",
+		},
+		Menu: {
+			colorBgElevated: "rgb(37, 34, 76)",
+			colorText: "rgba(255, 255, 255, 0.88)",
+			itemBg: "rgb(37, 34, 76)",
 		},
 	},
 };
