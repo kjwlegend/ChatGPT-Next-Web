@@ -174,8 +174,8 @@ import { getServerSideConfig } from "@/app/config/server";
 
 export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 
-export const server_url = "https://admin.xiaoguang.fun";
-// export const server_url = "http://localhost:8000";
+// export const server_url = "https://admin.xiaoguang.fun";
+export const server_url = "http://localhost:8000";
 
 export const version = "2.4.1";
 
