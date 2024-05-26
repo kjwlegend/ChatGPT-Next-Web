@@ -9,7 +9,7 @@ import React, {
 	Fragment,
 } from "react";
 
-import { getISOLang, getLang } from "../locales";
+import { getISOLang, getLang } from "../../locales";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import {
@@ -23,11 +23,11 @@ import {
 	DEFAULT_TOPIC,
 	ModelType,
 	useUserStore,
-} from "../store";
+} from "../../store";
 
-import Locale from "../locales";
+import Locale from "../../locales";
 
-import { IconButton } from "../components/button";
+import { IconButton } from "../../components/button";
 import styles from "@/app/workflow-chats/workflow-chats.module.scss";
 
 export function useSubmitHandler() {

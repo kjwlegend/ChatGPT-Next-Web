@@ -10,21 +10,21 @@ import {
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { useChatStore } from "../../store";
+import { useChatStore } from "@/app/store";
 
-import Locale from "../../locales";
+import Locale from "@/app/locales";
 import { Link, useNavigate } from "react-router-dom";
-import { Path } from "../../constant";
+import { Path } from "@/app/constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { showConfirm } from "@/app/components/ui-lib";
-import { useUserStore } from "../../store";
-import { useWorkflowStore } from "../../store/workflow";
-import { useMobileScreen } from "../../utils";
-import { ChatData, getChat } from "../../api/backend/chat";
-import { UpdateChatMessages } from "../../services/chatService";
+import { useUserStore } from "@/app/store";
+import { useWorkflowStore } from "@/app/store/workflow";
+import { useMobileScreen } from "@/app/utils";
+import { ChatData, getChat } from "@/app/api/backend/chat";
+import { UpdateChatMessages } from "@/app/services/chatService";
 import { ChatItem } from "./chatItem";
 
 import usedoubleAgent, {

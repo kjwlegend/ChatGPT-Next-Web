@@ -25,7 +25,7 @@ import {
 } from "react-router-dom";
 import { SideBar } from "./sidebar/sidebar";
 import { useAppConfig } from "../store/config";
-import AuthPage from "../auth/page";
+import AuthPage from "../(pages)/auth/page";
 import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
@@ -34,6 +34,7 @@ import useAuth from "../hooks/useAuth";
 import { log } from "console";
 import { useAuthStore } from "../store/auth";
 import { message } from "antd";
+import { SEOHeader } from "../components/seo-header";
 // import { NewChat } from "./new-chat";
 
 function Loading(props: { noLogo?: boolean }) {
@@ -264,6 +265,7 @@ export default function Home() {
 
 	return (
 		<Router>
+			<SEOHeader />
 			<Screen />
 		</Router>
 	);

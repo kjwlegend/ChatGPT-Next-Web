@@ -16,6 +16,8 @@ import type { CollapseProps } from "antd";
 import { useEffect, useRef } from "react";
 import styles from "./updates.module.scss";
 import { Helmet } from "react-helmet";
+import { SEOHeader } from "@/app/components/seo-header";
+import { children } from "cheerio/lib/api/traversing";
 const { Content } = Layout;
 
 const items = [
@@ -780,6 +782,7 @@ const items = [
 			</>
 		),
 	},
+
 	{
 		label: "2024-05-13",
 		color: "red",
@@ -792,6 +795,22 @@ const items = [
 						但黑暗中的光似乎更被人需要. 经过5天的UI和色彩搭配设计,
 						终于完成了深色模式第一版本.
 					</li>
+					<li>优化代码结构</li>
+				</ul>
+			</>
+		),
+	},
+	{
+		label: "2024-05-27",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.4.1 版本, 小光说:
+				<ul>
+					<li>修复一些深色模式bug</li>
+					<li>优化页面 SEO 标题</li>
+					<li>移除 顶部导航的福利</li>
+					<li>更新页面结构</li>
 				</ul>
 			</>
 		),
@@ -825,22 +844,6 @@ const Log = () => {
 
 	return (
 		<>
-			{/* <Helmet>
-				<title>小光AI -更新日志 | 专业提示词工程师打造</title>
-				<meta
-					name="description"
-					content="小光AI, 由专业提示词工程师打造的AIGC 工具, 专注于文案, 工作流, multi-agents 的人工智能工具, 为您提供最优质的AI服务."
-				/>
-				<meta name="keywords" content="小光AI, chatgpt, AIGC" />
-			</Helmet> */}
-
-			<title>小光AI - 更新日志 | 专业提示词工程师打造</title>
-			<meta
-				name="description"
-				content="小光AI, 由专业提示词工程师打造的AIGC 工具, 专注于文案, 工作流, multi-agents 的人工智能工具, 为您提供最优质的AI服务."
-			/>
-			<meta name="keywords" content="小光AI, chatgpt, AIGC" />
-
 			<div className={styles["home-page"]}>
 				<Timeline mode="left" items={items} pending="On my road.." />
 			</div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, Button, message, Steps } from "antd";
 
-import { resetPasswordAPI, changePasswordAPI } from "../api/auth";
+import { resetPasswordAPI, changePasswordAPI } from "@/app/api/auth";
 
 import styles from "./auth.module.scss";
 

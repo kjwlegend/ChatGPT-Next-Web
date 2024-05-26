@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { useWorkflowStore } from "../store/workflow";
-import { useUserStore } from "../store";
+import { useWorkflowStore } from "../../store/workflow";
+import { useUserStore } from "../../store";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import { message } from "antd";
@@ -11,9 +11,9 @@ import {
 	getSingleChatSession,
 	getWorkflowSession,
 	updateWorkflowSession,
-} from "../api/backend/chat";
+} from "../../api/backend/chat";
 import { group } from "console";
-import { UpdateChatSessions } from "../services/chatService";
+import { UpdateChatSessions } from "../../services/chatService";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 

@@ -3,10 +3,10 @@ import React from "react";
 
 import styles from "@/app/chats/home.module.scss";
 
-import { IconButton } from "../components/button";
+import { IconButton } from "../../components/button";
 
-import MainNav from "../components/header";
-import Locale from "../locales";
+import MainNav from "../../components/header";
+import Locale from "../../locales";
 
 import {
 	SettingsIcon,
@@ -20,7 +20,7 @@ import {
 	DragIcon,
 } from "@/app/icons";
 import Image from "next/image";
-import { useAppConfig, useChatStore } from "../store";
+import { useAppConfig, useChatStore } from "../../store";
 
 import {
 	DEFAULT_SIDEBAR_WIDTH,
@@ -29,24 +29,24 @@ import {
 	NARROW_SIDEBAR_WIDTH,
 	Path,
 	REPO_URL,
-} from "../constant";
+} from "../../constant";
 
 import { Link, useNavigate } from "react-router-dom";
-import { isIOS, useMobileScreen } from "../utils";
+import { isIOS, useMobileScreen } from "../../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "../components/ui-lib";
-import { useAuthStore } from "../store/auth";
+import { showConfirm, showToast } from "../../components/ui-lib";
+import { useAuthStore } from "../../store/auth";
 
 import AuthPage from "../auth/page";
-import DrawerMenu from "../components/drawer-menu";
+import DrawerMenu from "../../components/drawer-menu";
 
-import { getChatSession } from "../api/backend/chat";
-import { ChatSessionData } from "../api/backend/chat";
-import { UpdateChatSessions } from "../services/chatService";
-import { useUserStore } from "../store/user";
+import { getChatSession } from "../../api/backend/chat";
+import { ChatSessionData } from "../../api/backend/chat";
+import { UpdateChatSessions } from "../../services/chatService";
+import { useUserStore } from "../../store/user";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 
-import { useWorkflowStore } from "../store/workflow";
+import { useWorkflowStore } from "../../store/workflow";
 
 import { message } from "antd";
 

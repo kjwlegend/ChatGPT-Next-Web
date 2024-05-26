@@ -1,17 +1,17 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Modal } from "antd";
-import useAuth from "../hooks/useAuth";
+import useAuth from "@/app/hooks/useAuth";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { message } from "antd";
-import { LoginResult } from "../types";
+import { LoginResult } from "@/app/types";
 import { use, useState, useEffect } from "react";
-import { User } from "../store";
+import { User } from "@/app/store";
 import { ChatSessionData, getChatSession } from "@/app/api/backend/chat";
 import { createEmptyMask } from "@/app/store/mask";
-import { useUserStore } from "../store";
-import { useChatStore } from "../store";
-import { ChatSession } from "../types/chat";
-import { UpdateChatSessions } from "../services/chatService";
+import { useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store";
+import { ChatSession } from "@/app/types/chat";
+import { UpdateChatSessions } from "@/app/services/chatService";
 import PasswordResetModal from "./PasswordResetModal";
 import { query } from "express";
 // 登录页面

@@ -1,6 +1,6 @@
 "use client";
 import styles from "./auth.module.scss";
-import Locale from "../locales";
+import Locale from "@/app/locales";
 
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
@@ -10,11 +10,12 @@ import Register from "./register";
 import Login from "./login";
 
 import React, { useState, createContext, useEffect } from "react";
-import { useAuthStore } from "../store/auth";
+import { useAuthStore } from "@/app/store/auth";
 import { useSearchParams } from "next/navigation";
-import { useInviteCodeStore } from "../store/auth";
-import LogoutButton from "../components/logout";
-import LoadingIcon from "../icons/three-dots.svg";
+import { useInviteCodeStore } from "@/app/store/auth";
+import LogoutButton from "@/app/components/logout";
+import LoadingIcon from "@/app//icons/three-dots.svg";
+import { SEOHeader } from "@/app/components/seo-header";
 
 export default function AuthPage() {
 	const { isAuthenticated } = useAuthStore();
@@ -83,22 +84,24 @@ export default function AuthPage() {
 	];
 
 	return (
-		<div className={styles["auth-page"] + " main"}>
-			<div className={styles["welcome-header"]}>
-				<div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
-				<div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
+		<>
+			<div className={styles["auth-page"] + " main"}>
+				<div className={styles["welcome-header"]}>
+					<div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
+					<div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>
+				</div>
+				<div className="form-container">
+					<Tabs
+						activeKey={activeTab}
+						items={items}
+						onChange={onChange}
+						size="large"
+						tabBarGutter={50}
+						centered={true}
+					/>
+				</div>
+				{isAuthenticated && isClient && <LogoutButton />}
 			</div>
-			<div className="form-container">
-				<Tabs
-					activeKey={activeTab}
-					items={items}
-					onChange={onChange}
-					size="large"
-					tabBarGutter={50}
-					centered={true}
-				/>
-			</div>
-			{isAuthenticated && isClient && <LogoutButton />}
-		</div>
+		</>
 	);
 }

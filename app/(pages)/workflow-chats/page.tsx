@@ -10,11 +10,11 @@ import React, {
 } from "react";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
-import { useChatStore, useUserStore } from "../store";
-import { ChatControllerPool } from "../client/controller";
-import { Prompt, usePromptStore } from "../store/prompt";
-import { useMaskStore } from "../store/mask";
-import Locale from "../locales";
+import { useChatStore, useUserStore } from "../../store";
+import { ChatControllerPool } from "../../client/controller";
+import { Prompt, usePromptStore } from "../../store/prompt";
+import { useMaskStore } from "../../store/mask";
+import Locale from "../../locales";
 
 import {
 	SettingsIcon,
@@ -28,8 +28,8 @@ import {
 	DragIcon,
 } from "@/app/icons";
 
-import BrainIcon from "../icons/brain.svg";
-import LoadingIcon from "../icons/three-dots.svg";
+import BrainIcon from "@/app/icons/brain.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import {
 	WorkflowContext,
@@ -37,9 +37,9 @@ import {
 	useWorkflowContext,
 } from "./workflowContext";
 
-import { createWorkflowSession } from "../api/backend/chat";
+import { createWorkflowSession } from "../../api/backend/chat";
 
-import styles from "@/app/workflow-chats/workflow-chats.module.scss";
+import styles from "./workflow-chats.module.scss";
 import styles2 from "@/app/chats/home.module.scss";
 import {
 	Avatar as UserAvatar,
@@ -52,9 +52,9 @@ import {
 } from "antd";
 
 import type { MenuProps } from "antd";
-import { ChatItemShort } from "../chats/sidebar/chatItem";
+import { ChatItemShort } from "../../chats/sidebar/chatItem";
 
-import { _Chat } from "../chats/chat/main";
+import { _Chat } from "../../chats/chat/main";
 import {
 	DragDropContext,
 	Droppable,
@@ -62,13 +62,14 @@ import {
 	OnDragEndResponder,
 	OnDragUpdateResponder,
 } from "@hello-pangea/dnd";
-import { useWorkflowStore } from "../store/workflow";
-import { useAuthStore } from "../store/auth";
+import { useWorkflowStore } from "../../store/workflow";
+import { useAuthStore } from "../../store/auth";
 import { WorkflowSidebar } from "./sidebar";
 import { message } from "antd";
 import Image from "next/image";
-import { IconButton } from "../components/button";
+import { IconButton } from "../../components/button";
 import { WORKFLOW_DEFAULT_TITLE } from "./workflowContext";
+import { SEOHeader } from "@/app/components/seo-header";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;

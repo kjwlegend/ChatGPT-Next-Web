@@ -3,10 +3,10 @@ import React from "react";
 
 import styles from "@/app/chats/home.module.scss";
 
-import { IconButton } from "../../components/button";
+import { IconButton } from "@/app/components/button";
 
-import MainNav from "../../components/header";
-import Locale from "../../locales";
+import MainNav from "@/app/components/header";
+import Locale from "@/app/locales";
 
 import {
 	SettingsIcon,
@@ -20,7 +20,7 @@ import {
 	DragIcon,
 } from "@/app/icons";
 import Image from "next/image";
-import { useAppConfig, useChatStore } from "../../store";
+import { useAppConfig, useChatStore } from "@/app/store";
 
 import {
 	DEFAULT_SIDEBAR_WIDTH,
@@ -29,21 +29,21 @@ import {
 	NARROW_SIDEBAR_WIDTH,
 	Path,
 	REPO_URL,
-} from "../../constant";
+} from "@/app/constant";
 
 import { Link, useNavigate } from "react-router-dom";
-import { isIOS, useMobileScreen } from "../../utils";
+import { isIOS, useMobileScreen } from "@/app/utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "../../components/ui-lib";
-import { useAuthStore } from "../../store/auth";
+import { showConfirm, showToast } from "@/app/components/ui-lib";
+import { useAuthStore } from "@/app/store/auth";
 
-import AuthPage from "../../auth/page";
-import DrawerMenu from "../../components/drawer-menu";
+import AuthPage from "@/app/(pages)/auth/page";
+import DrawerMenu from "@/app/components/drawer-menu";
 
-import { getChatSession } from "../../api/backend/chat";
-import { ChatSessionData } from "../../api/backend/chat";
-import { UpdateChatSessions } from "../../services/chatService";
-import { useUserStore } from "../../store/user";
+import { getChatSession } from "@/app/api/backend/chat";
+import { ChatSessionData } from "@/app/api/backend/chat";
+import { UpdateChatSessions } from "@/app/services/chatService";
+import { useUserStore } from "@/app/store/user";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 
 import { message } from "antd";

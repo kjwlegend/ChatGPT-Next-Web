@@ -13,8 +13,7 @@ import { Button, ConfigProvider, ThemeConfig, theme } from "antd";
 import Script from "next/script";
 
 import { useAppConfig } from "./store";
-
-import { Helmet } from "react-helmet";
+import { SEOHeader } from "./components/seo-header";
 
 import { type Metadata, type Viewport } from "next";
 
@@ -58,8 +57,9 @@ const darkTheme: ThemeConfig = {
 		},
 		Switch: {
 			handleBg: "#fff",
-			colorTextQuaternary: "rgba(11, 9, 9, 0.25)",
-			colorTextTertiary: "rgba(98, 185, 218, 0.45)",
+			// colorTextQuaternary: "rgba(11, 9, 9, 0.25)",
+			// colorTextTertiary: "rgba(98, 185, 218, 0.45)",
+			colorPrimary: "#664eb5",
 			algorithm: true,
 		},
 		Form: {
@@ -79,10 +79,11 @@ const darkTheme: ThemeConfig = {
 		},
 		Tabs: {
 			inkBarColor: "rgb(114, 46, 209)",
-			itemActiveColor: "rgb(255, 255, 255)",
+			itemActiveColor: "#414c6f",
 			itemColor: "rgb(164 169 175)",
 			itemHoverColor: "rgb(114, 46, 209)",
-			itemSelectedColor: "rgb(255, 255, 255)",
+			itemSelectedColor: "#414c6f",
+			cardBg: "rgb(37, 34, 76)",
 		},
 		Checkbox: {
 			colorText: "rgba(255, 255, 255, 0.88)",
@@ -148,24 +149,13 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<head>
+				<SEOHeader />
+
 				<meta name="config" content={JSON.stringify(getClientConfig())} />
 				<meta httpEquiv="pragma" content="no-cache" />
 				<meta httpEquiv="cache-control" content="no-cache" />
 				<meta httpEquiv="expires" content="0" />
-				{/* <Helmet>
-					<title>小光AI | 专业提示词工程师打造</title>
-					<meta
-						name="description"
-						content="小光AI, 由专业提示词工程师打造的AIGC 工具, 专注于文案, 工作流, multi-agents 的人工智能工具, 为您提供最优质的AI服务."
-					/>
-					<meta name="keywords" content="小光AI, chatgpt, AIGC" />
-				</Helmet> */}
-
 				<link rel="manifest" href="/site.webmanifest"></link>
-				{/* <link
-					rel="stylesheet"
-					href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-				/> */}
 
 				<script src={"/serviceWorkerRegister.js?v=" + version} defer></script>
 				<script

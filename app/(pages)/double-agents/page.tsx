@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Button, Layout, message } from "antd";
 // import Sidebar from "./components/Sidebar";
 import ChatArea from "./chatarea/ChatArea";
-import { Path, SlotID } from "../constant";
+import { Path, SlotID } from "@/app/constant";
 import styles from "./double-agents.module.scss";
 import styles2 from "@/app/chats/home.module.scss";
 import {
@@ -23,7 +23,7 @@ import {
 
 import usedoubleAgentStore from "@/app/store/doubleAgents";
 import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
-import { useUserStore } from "../store";
+import { useUserStore } from "@/app/store";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
@@ -31,7 +31,7 @@ import {
 	PlusCircleOutlined,
 	RightSquareOutlined,
 } from "@ant-design/icons";
-import { useAuthStore } from "../store/auth";
+import { useAuthStore } from "@/app/store/auth";
 const DoubleAgentSideBar = dynamic(
 	async () => (await import("./components/sidebar")).DoubleAgentSideBar,
 	{

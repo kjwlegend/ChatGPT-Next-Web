@@ -63,6 +63,21 @@ export default function UserInfo() {
 			label: <Link href="/profile#4">邀请得礼</Link>,
 			key: "5",
 		},
+		{
+			key: "7",
+			label: (
+				<Button onClick={handleButtonClick}>
+					<LightningIcon
+						style={{
+							marginRight: "4px",
+							position: "relative",
+							top: "5px",
+						}}
+					/>{" "}
+					领福利
+				</Button>
+			),
+		},
 
 		{
 			type: "divider",
@@ -98,17 +113,6 @@ export default function UserInfo() {
 							</Space>
 						</a>
 					</Dropdown>
-
-					<Button onClick={handleButtonClick}>
-						<LightningIcon
-							style={{
-								marginRight: "4px",
-								position: "relative",
-								top: "5px",
-							}}
-						/>{" "}
-						领福利
-					</Button>
 				</>
 			) : (
 				<>

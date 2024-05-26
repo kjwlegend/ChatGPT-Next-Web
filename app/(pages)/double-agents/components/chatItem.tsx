@@ -10,16 +10,15 @@ import {
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { useChatStore } from "../../store";
+import { useChatStore } from "@/app/store";
 
-import Locale from "../../locales";
+import Locale from "@/app/locales";
 import { Link, useNavigate } from "react-router-dom";
-import { Path } from "../../constant";
+import { Path } from "@/app/constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
-import { DEFAULT_MASK_AVATAR, createEmptyMask } from "../../store/mask";
+import { DEFAULT_MASK_AVATAR, createEmptyMask } from "@/app/store/mask";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
-
 
 export function ChatItem(props: {
 	onClick?: () => void;

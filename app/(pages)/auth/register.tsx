@@ -13,13 +13,13 @@ import {
 } from "antd";
 import Image from "next/image";
 import React, { useState, useContext } from "react";
-import { register, RegisterParams, RegisterResult } from "../api/auth";
+import { register, RegisterParams, RegisterResult } from "@/app/api/auth";
 import request from "@/app/utils/request";
 import axios from "axios";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
-import { useInviteCodeStore } from "../store/auth";
-import style from "../components/welcome.module.scss";
+import { useInviteCodeStore } from "@/app/store/auth";
+import style from "@/app/components/welcome.module.scss";
 
 const { Option } = Select;
 

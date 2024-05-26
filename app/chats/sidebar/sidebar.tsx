@@ -37,7 +37,7 @@ import dynamic from "next/dynamic";
 import { showConfirm, showToast } from "../../components/ui-lib";
 import { useAuthStore } from "../../store/auth";
 
-import AuthPage from "../../auth/page";
+import AuthPage from "../../(pages)/auth/page";
 import DrawerMenu from "../../components/drawer-menu";
 import UserInfo from "../../components/userinfo";
 import { Divider } from "antd";

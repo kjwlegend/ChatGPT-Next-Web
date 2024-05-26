@@ -1,4 +1,4 @@
-import BotIcon from "../icons/bot.png";
+import BotIcon from "@/app/icons/bot.png";
 
 import { DeleteIcon } from "@/app/icons";
 
@@ -10,28 +10,28 @@ import {
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
 
-import { useChatStore } from "../store";
+import { useChatStore } from "../../store";
 
-import Locale from "../locales";
+import Locale from "../../locales";
 import { Link, useNavigate } from "react-router-dom";
-import { Path } from "../constant";
+import { Path } from "../../constant";
 import { MaskAvatar } from "@/app/chats/masklist/mask";
 
-import { ChatMessage, ChatSession, Mask} from "@/app/types/";
+import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { showConfirm } from "@/app/components/ui-lib";
-import { useUserStore } from "../store";
-import { useWorkflowStore } from "../store/workflow";
-import { useMobileScreen } from "../utils";
-import { ChatData, getChat } from "../api/backend/chat";
-import { UpdateChatMessages } from "../services/chatService";
+import { useUserStore } from "../../store";
+import { useWorkflowStore } from "../../store/workflow";
+import { useMobileScreen } from "../../utils";
+import { ChatData, getChat } from "../../api/backend/chat";
+import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem } from "../double-agents/components/chatItem";
 import { Modal } from "@/app/components/ui-lib";
 import usedoubleAgent, {
 	DoubleAgentChatSession,
 } from "@/app/store/doubleAgents";
-import { workflowGroup } from "../store/workflow";
+import { workflowGroup } from "../../store/workflow";
 import { useWorkflowContext } from "./workflowContext";
 import { WorkflowModalConfig } from "./modal";
 

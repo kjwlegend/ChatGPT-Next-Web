@@ -6,11 +6,11 @@ import React, {
 	use,
 	useEffect,
 } from "react";
-import { DoubleAgentChatSession } from "../store/doubleAgents";
-import doubleAgentStore from "../store/doubleAgents";
-// ... 其他必要的 imports
-import { useUserStore } from "../store";
-import { DOUBLE_AGENT_DEFAULT_TOPIC } from "../store/doubleAgents";
+import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import doubleAgentStore from "@/app/store/doubleAgents";
+// @/app. 其他必要的 imports
+import { useUserStore } from "@/app/store";
+import { DOUBLE_AGENT_DEFAULT_TOPIC } from "@/app/store/doubleAgents";
 import { message } from "antd";
 
 // 扩展ChatContext接口以包含startNewConversation方法

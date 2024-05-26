@@ -3,7 +3,7 @@ import React from "react";
 import { useUserStore } from "@/app/store";
 import { AgentMessageItem } from "./messageItem";
 import { useContext, useRef, useState, useMemo, Fragment } from "react";
-import { useScrollToBottom } from "../../chats/chat/chat-controller";
+import { useScrollToBottom } from "@/app/chats/chat/chat-controller";
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import { copyToClipboard, useMobileScreen } from "@/app/utils";
@@ -15,9 +15,9 @@ import { useAccessStore } from "@/app/store";
 import { BOT_HELLO } from "@/app/store";
 import Locale from "@/app/locales";
 import styles from "../chats.module.scss";
-import { ChatContext } from "../../chats/chat/main";
-import { useMessageActions } from "../../chats/chat/chatbody/useMessageActions";
-import { useChatPagination } from "../../chats/chat/chatbody/useChatPagination";
+import { ChatContext } from "@/app/chats/chat/main";
+import { useMessageActions } from "@/app/chats/chat/chatbody/useMessageActions";
+import { useChatPagination } from "@/app/chats/chat/chatbody/useChatPagination";
 import {
 	DoubleAgentChatMessage,
 	DoubleAgentChatSession,

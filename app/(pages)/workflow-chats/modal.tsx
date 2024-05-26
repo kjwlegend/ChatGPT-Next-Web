@@ -8,14 +8,14 @@ import React, {
 	Fragment,
 } from "react";
 
-import { getISOLang, getLang } from "../locales";
+import { getISOLang, getLang } from "../../locales";
 
-import SendWhiteIcon from "../icons/send-white.svg";
+import SendWhiteIcon from "@/app/icons/send-white.svg";
 
-import CopyIcon from "../icons/copy.svg";
-import PromptIcon from "../icons/prompt.svg";
+import CopyIcon from "@/app/icons/copy.svg";
+import PromptIcon from "@/app/icons/prompt.svg";
 
-import ResetIcon from "../icons/reload.svg";
+import ResetIcon from "@/app/icons/reload.svg";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import {
@@ -29,17 +29,17 @@ import {
 	DEFAULT_TOPIC,
 	ModelType,
 	useUserStore,
-} from "../store";
+} from "../../store";
 
-import { api } from "../client/api";
+import { api } from "../../client/api";
 
 import dynamic from "next/dynamic";
 
-import { ChatControllerPool } from "../client/controller";
-import { Prompt, usePromptStore } from "../store/prompt";
-import Locale from "../locales";
+import { ChatControllerPool } from "../../client/controller";
+import { Prompt, usePromptStore } from "../../store/prompt";
+import Locale from "../../locales";
 
-import { IconButton } from "../components/button";
+import { IconButton } from "../../components/button";
 import styles from "./workflow-chats.module.scss";
 
 import {
@@ -48,20 +48,20 @@ import {
 	showConfirm,
 	showPrompt,
 	showToast,
-} from "../components/ui-lib";
+} from "../../components/ui-lib";
 import {
 	CHAT_PAGE_SIZE,
 	LAST_INPUT_KEY,
 	MAX_RENDER_MSG_COUNT,
 	Path,
 	REQUEST_TIMEOUT_MS,
-} from "../constant";
+} from "../../constant";
 
-import { useMaskStore } from "../store/mask";
+import { useMaskStore } from "../../store/mask";
 import { useWorkflowContext } from "./workflowContext";
 
 import { List, Input, Form, Row, Col } from "antd";
-import { Avatar } from "../chats/emoji";
+import { Avatar } from "../../chats/emoji";
 import { CopyOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;

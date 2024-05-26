@@ -41,14 +41,14 @@ import {
 
 import dynamic from "next/dynamic";
 
-import { ChatContext } from "../../chats/chat/main";
+import { ChatContext } from "@/app/chats/chat/main";
 
-import { ChatActions, ChatAction } from "../../chats/chat/Inputpanel";
+import { ChatActions, ChatAction } from "@/app/chats/chat/Inputpanel";
 import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
-} from "../../chats/chat/chat-controller";
+} from "@/app/chats/chat/chat-controller";
 
 import { CreateChatData, createChat } from "@/app/api/backend/chat";
 import { useMobileScreen } from "@/app/utils";
@@ -61,7 +61,7 @@ import { UpdateChatMessages } from "@/app/services/chatService";
 import { useRouter } from "next/navigation";
 import { FloatButton } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";
-import { MJFloatButton } from "../../chats/chat/midjourney";
+import { MJFloatButton } from "@/app/chats/chat/midjourney";
 
 import { DoubleAgentMessageList } from "./messageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";

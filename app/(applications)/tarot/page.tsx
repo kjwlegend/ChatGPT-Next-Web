@@ -14,12 +14,13 @@ import { Stages } from "./store/tarot";
 import styles from "./styles/layout.module.scss";
 import { useUserStore } from "@/app/store";
 import { useAuthStore } from "@/app/store/auth";
-import Login from "@/app/auth/login";
+import Login from "@/app/(pages)/auth/login";
 import { Button } from "antd";
 import DrawerMenu from "@/app/components/drawer-menu";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { useAppConfig } from "@/app/store";
+import { SEOHeader } from "@/app/components/seo-header";
 const Index: React.FC = () => {
 	const TarotStore = useTarotStore();
 	const { game, resetGame, stage, remainingDraws } = TarotStore;
@@ -39,40 +40,39 @@ const Index: React.FC = () => {
 	}, []);
 
 	return (
-		<div
-			style={{
-				overflow: "hidden",
-			}}
-		>
-			<div className={styles.stars}></div>
-			<div className={styles.stars2}></div>
-			<div className={styles.stars3}></div>
-			<div className={`${styles.tarotcontainer}`}>
-				{!isAuthenticated ? (
-					<div className={styles["login"]}>
-						<div>离开启塔罗世界还剩下一步</div>
-						<button
-							className={styles["tarotButtonPrimary"]}
-							onClick={() => {
-								window.location.href = "/auth?from=/tarot";
-							}}
-						>
-							登录
-						</button>
-					</div>
-				) : (
-					<>
-						<QuestionInputComponent />
-						<Deck />
-						{stage == Stages.Interpretation && <Spread />}
-					</>
-				)}
-
-				{/* {TAROT_SPREADS.map((spread: TarotSpread, index: number) => (
-					<TestSpread spread={spread} key={index} />
-				))} */}
+		<>
+			{/* <SEOHeader /> */}
+			<div
+				style={{
+					overflow: "hidden",
+				}}
+			>
+				<div className={styles.stars}></div>
+				<div className={styles.stars2}></div>
+				<div className={styles.stars3}></div>
+				<div className={`${styles.tarotcontainer}`}>
+					{!isAuthenticated ? (
+						<div className={styles["login"]}>
+							<div>离开启塔罗世界还剩下一步</div>
+							<button
+								className={styles["tarotButtonPrimary"]}
+								onClick={() => {
+									window.location.href = "/auth?from=/tarot";
+								}}
+							>
+								登录
+							</button>
+						</div>
+					) : (
+						<>
+							<QuestionInputComponent />
+							<Deck />
+							{stage == Stages.Interpretation && <Spread />}
+						</>
+					)}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
