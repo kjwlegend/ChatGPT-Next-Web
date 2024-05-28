@@ -815,6 +815,18 @@ const items = [
 			</>
 		),
 	},
+	{
+		label: "2024-05-28",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.4.2 版本, 小光说:
+				<ul>
+					<li>更新界面图标 , UI优化</li>
+				</ul>
+			</>
+		),
+	},
 ];
 
 const Log = () => {
