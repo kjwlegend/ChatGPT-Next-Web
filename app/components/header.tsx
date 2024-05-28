@@ -22,7 +22,7 @@ import {
 } from "antd";
 
 import LoadingIcon from "../icons/three-dots.svg";
-import { menuItems } from "./menu-items";
+import { TopMenuItems } from "./menu-items";
 
 import DrawerMenu from "./drawer-menu";
 import LoginButton from "./userinfo";
@@ -32,7 +32,7 @@ enum Theme {
 	Dark = "dark",
 	Light = "light",
 }
-const items: any = menuItems;
+const items: any = TopMenuItems;
 
 const { Header } = Layout;
 import Locale from "@/app/locales";
@@ -80,15 +80,14 @@ const ThemeSwitcher = () => {
 	return (
 		<>
 			<Button onClick={toggleTheme}>
+				{/* {Locale.Chat.InputActions.Theme[theme]} */}
 				<span
 					style={{
-						marginRight: "5px",
 						top: "5px",
 					}}
 				>
 					{ThemeIcon}
 				</span>
-				{Locale.Chat.InputActions.Theme[theme]}
 			</Button>
 		</>
 	);

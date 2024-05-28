@@ -156,6 +156,7 @@ export default function RootLayout({
 				<meta httpEquiv="cache-control" content="no-cache" />
 				<meta httpEquiv="expires" content="0" />
 				<link rel="manifest" href="/site.webmanifest"></link>
+				{/* import css */}
 
 				<script src={"/serviceWorkerRegister.js?v=" + version} defer></script>
 				<script
@@ -170,6 +171,7 @@ export default function RootLayout({
 					async
 					src="https://www.googletagmanager.com/gtag/js?id=G-2RS8HX8937"
 				></script>
+
 				<Script id="google-analytics" strategy="afterInteractive">
 					{`
 						window.dataLayer = window.dataLayer || [];
@@ -194,10 +196,6 @@ export default function RootLayout({
 				async
 				src="https://www.googletagmanager.com/gtag/js?id=G-2RS8HX8937"
 			></script>
-			{/* <script
-				async
-				src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
-			></script> */}
 		</html>
 	);
 }

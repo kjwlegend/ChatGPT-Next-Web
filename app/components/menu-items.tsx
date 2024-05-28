@@ -7,6 +7,11 @@ import {
 } from "@ant-design/icons";
 import { ReactNode } from "react";
 
+import { createFromIconfontCN } from "@ant-design/icons";
+export const IconFont = createFromIconfontCN({
+	scriptUrl: "//at.alicdn.com/t/c/font_4149808_kgqvqajkwql.js",
+});
+
 export interface MenuItem {
 	label: string;
 	title?: string;
@@ -17,38 +22,38 @@ export interface MenuItem {
 	disabled?: boolean;
 }
 
-export const menuItems: MenuItem[] = [
+export const TopMenuItems: MenuItem[] = [
 	{
 		label: "首页",
 		key: "home",
-		icon: <ContainerOutlined />,
+		icon: <IconFont type="iconfont-home" />,
 		url: "/about",
 	},
 	{
 		label: "对话",
 		title: "对话",
 		key: "chat",
-		icon: <AliwangwangOutlined />,
+		icon: <IconFont type="iconfont-chat" />,
 		url: "/chats/",
 	},
 	{
 		label: "塔罗",
 		title: "塔罗",
 		key: "tarot",
-		icon: <BookOutlined />,
+		icon: <IconFont type="iconfont-033-tarot" />,
 		url: "/tarot/",
 	},
 	{
 		label: "ai实验室",
 		key: "double-agents",
-		icon: <UsergroupAddOutlined />,
+		icon: <IconFont type="iconfont-bx-cool" />,
 		disabled: false,
 		url: "/double-agents",
 	},
 	{
 		label: "超级工作流",
 		key: "workflow-chats",
-		icon: <UsergroupAddOutlined />,
+		icon: <IconFont type="iconfont-workflow" />,
 		disabled: false,
 		url: "/workflow-chats",
 	},
@@ -56,13 +61,13 @@ export const menuItems: MenuItem[] = [
 	{
 		label: "版本日志",
 		key: "updates",
-		icon: <ContainerOutlined />,
+		icon: <IconFont type="iconfont-Timeline" />,
 		url: "/updates",
 	},
 	{
 		label: "社区(开发中)",
 		key: "draw",
-		icon: <HighlightOutlined />,
+		icon: <IconFont type="iconfont-group" />,
 		disabled: true,
 		url: "/draw",
 	},

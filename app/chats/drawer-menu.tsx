@@ -3,12 +3,12 @@ import { useState } from "react";
 import { Drawer, Menu } from "antd";
 import { HomeOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "@/app/components/header.module.scss";
-import { menuItems } from "@/app/components/menu-items";
+import { TopMenuItems } from "@/app/components/menu-items";
 import type { MenuProps } from "antd";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 
-const items = menuItems;
+const items = TopMenuItems;
 
 const DrawerMenu = () => {
 	const [visible, setVisible] = useState(false);
