@@ -23,6 +23,7 @@ import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "../types/";
 import { sendChatMessage } from "../services/chatService";
 import { useChatStore, createMessage, DEFAULT_TOPIC } from "../store";
 import { DoubleAgentChatMessage } from "../store/doubleAgents";
+import { strictLLMResult } from "./basic";
 
 function countMessages(msgs: ChatMessage[]) {
 	return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
@@ -159,8 +160,6 @@ export async function summarizeSession(_session?: ChatSession) {
 		});
 	}
 }
-
-import { strictLLMResult } from "./basic";
 
 export async function contextSummarize(
 	message: ChatMessage[] | DoubleAgentChatMessage[],

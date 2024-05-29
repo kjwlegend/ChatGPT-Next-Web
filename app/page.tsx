@@ -7,6 +7,7 @@ import { useInviteCodeStore } from "./store/auth";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import Head from "next/head";
+import Home from "./chats/page";
 const serverConfig = getServerSideConfig();
 
 export default function App() {
@@ -24,7 +25,8 @@ export default function App() {
 
 	return (
 		<>
-			<About />
+			{/* <About /> */}
+			<Home />
 		</>
 	);
 }

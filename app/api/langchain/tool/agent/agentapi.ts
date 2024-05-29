@@ -394,6 +394,7 @@ export class AgentApi {
 			const modelWithTools = llm.bind({
 				tools: tools.map(convertToOpenAITool),
 			});
+			console.log("[tools]", tools);
 			const runnableAgent = RunnableSequence.from([
 				{
 					input: (i: { input: string; steps: ToolsAgentStep[] }) => i.input,

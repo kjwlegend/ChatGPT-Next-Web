@@ -176,10 +176,10 @@ export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 
 // const env = getServerSideConfig().server_url;
 // console.log("env", env);
-
 // export const server_url = env;
-export const server_url = "https://admin.xiaoguang.fun";
-// export const server_url = "http://localhost:8000";
+// export const server_url = "https://admin.xiaoguang.fun";
+
+export const server_url = "http://localhost:8000";
 
 export const version = "2.4.2";
 

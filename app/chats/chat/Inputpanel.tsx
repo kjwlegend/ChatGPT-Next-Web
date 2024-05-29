@@ -93,7 +93,7 @@ import {
 	MaskConfig,
 } from "@/app/chats/mask-components";
 
-import { Radio } from "antd";
+import { Radio, Switch } from "antd";
 import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
 import Image from "next/image";
@@ -128,6 +128,11 @@ import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
 import { submitChatMessage } from "@/app/services/chatService";
 import { LLMModelSwitch } from "./chatActions";
+
+import { createFromIconfontCN } from "@ant-design/icons";
+export const IconFont = createFromIconfontCN({
+	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
+});
 
 export function PromptHints(props: {
 	prompts: RenderPompt[];
@@ -444,6 +449,32 @@ export function ChatActions(props: {
 
 	const [showModelSelector, setShowModelSelector] = useState(false);
 
+	const chatInjection = session.mask.modelConfig;
+	const [enableUserInfo, setEnableUserInfo] = useState(
+		chatInjection.enableUserInfos,
+	);
+	const [enableRelatedQuestions, setEnableRelatedQuestions] = useState(
+		chatInjection.enableRelatedQuestions,
+	);
+
+	const handleInjectUserInfo = () => {
+		chatStore.updateSession(sessionId, () => {
+			session.mask.modelConfig.enableUserInfos =
+				!session.mask.modelConfig.enableUserInfos;
+			setEnableUserInfo(session.mask.modelConfig.enableUserInfos);
+		});
+	};
+
+	const handleInjectRelatedQuestions = () => {
+		chatStore.updateSession(sessionId, () => {
+			session.mask.modelConfig.enableRelatedQuestions =
+				!session.mask.modelConfig.enableRelatedQuestions;
+			setEnableRelatedQuestions(
+				session.mask.modelConfig.enableRelatedQuestions,
+			);
+		});
+	};
+
 	return (
 		<div className={styles["chat-input-actions"]}>
 			<div>
@@ -544,6 +575,36 @@ export function ChatActions(props: {
 						hidetext={props.workflows ? true : false}
 					/>
 				)}
+				<ChatAction
+					icon={
+						enableRelatedQuestions ? (
+							<IconFont type="iconfont-Thinking" style={{ fontSize: "15px" }} />
+						) : (
+							<IconFont
+								type="iconfont-think-fill"
+								style={{ fontSize: "15px" }}
+							/>
+						)
+					}
+					onClick={handleInjectRelatedQuestions}
+					text={enableRelatedQuestions ? "关闭联想" : "开启联想"}
+				/>
+
+				<ChatAction
+					icon={
+						enableUserInfo ? (
+							<IconFont
+								type="iconfont-user-active"
+								style={{ fontSize: "15px" }}
+							/>
+						) : (
+							<IconFont type="iconfont-user" style={{ fontSize: "15px" }} />
+						)
+					}
+					onClick={handleInjectUserInfo}
+					text={enableUserInfo ? "个性化" : "通用"}
+				/>
+
 				{showModelSelector && (
 					<Selector
 						defaultSelectedValue={currentModel}

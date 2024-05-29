@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 
 import { createFromIconfontCN } from "@ant-design/icons";
 export const IconFont = createFromIconfontCN({
-	scriptUrl: "//at.alicdn.com/t/c/font_4149808_kgqvqajkwql.js",
+	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
 
 export interface MenuItem {
@@ -66,10 +66,10 @@ export const TopMenuItems: MenuItem[] = [
 	},
 	{
 		label: "社区(开发中)",
-		key: "draw",
-		icon: <IconFont type="iconfont-group" />,
+		key: "test",
+		icon: <IconFont type="iconfont-lightfill" />,
 		disabled: true,
-		url: "/draw",
+		url: "/updates",
 	},
 	// {
 	//   label: "商城(开发中)",

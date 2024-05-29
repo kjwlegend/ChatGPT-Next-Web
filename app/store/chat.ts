@@ -51,6 +51,8 @@ import {
 } from "../types/index";
 import { Mask } from "../types/index";
 
+import { fillTemplateWith } from "@/app/chains/base";
+
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
 	return {
@@ -130,33 +132,6 @@ interface ChatStore {
 
 function countMessages(msgs: ChatMessage[]) {
 	return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
-}
-
-function fillTemplateWith(input: string, modelConfig: ModelConfig) {
-	let cutoff =
-		KnowledgeCutOffDate[modelConfig.model] ?? KnowledgeCutOffDate.default;
-
-	const vars = {
-		cutoff,
-		model: modelConfig.model,
-		time: new Date().toLocaleString(),
-		lang: getLang(),
-		input: input,
-	};
-
-	let output = modelConfig.template ?? DEFAULT_INPUT_TEMPLATE;
-
-	// must contains {{input}}
-	const inputVar = "{{input}}";
-	if (!output.includes(inputVar)) {
-		output += "\n" + inputVar;
-	}
-
-	Object.entries(vars).forEach(([name, value]) => {
-		output = output.replaceAll(`{{${name}}}`, value);
-	});
-
-	return output;
 }
 
 const DEFAULT_CHAT_STATE = {
@@ -502,7 +477,7 @@ export const useChatStore = createPersistStore(
 					return;
 				}
 
-				const userContent = fillTemplateWith(content, modelConfig);
+				const userContent = content;
 				console.log("[User Input] after template: ", userContent);
 
 				const userMessage: ChatMessage = createMessage({
@@ -608,14 +583,15 @@ export const useChatStore = createPersistStore(
 
 				// system prompts, to get close to OpenAI Web ChatGPT
 				const shouldInjectSystemPrompts = modelConfig.enableInjectSystemPrompts;
+				const injectSetting = {
+					injectUserInfo: modelConfig.enableUserInfos,
+					injectRelatedQuestions: modelConfig.enableRelatedQuestions,
+				};
 				const systemPrompts = shouldInjectSystemPrompts
 					? [
 							createMessage({
 								role: "system",
-								content: fillTemplateWith("", {
-									...modelConfig,
-									template: getDefaultSystemTemplate(),
-								}),
+								content: fillTemplateWith("", injectSetting),
 							}),
 					  ]
 					: [];
@@ -766,7 +742,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.3,
+		version: 3.4,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(
@@ -825,6 +801,12 @@ export const useChatStore = createPersistStore(
 						speed: "",
 						seed: "",
 					};
+				});
+			}
+			if (version < 3.4) {
+				newState.sessions.forEach((s) => {
+					s.mask.modelConfig.enableRelatedQuestions = false;
+					s.mask.modelConfig.enableUserInfos = true;
 				});
 			}
 
