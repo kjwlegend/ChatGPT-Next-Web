@@ -8,6 +8,7 @@ import React, {
 	Fragment,
 	useContext,
 	use,
+	useCallback,
 } from "react";
 import { getISOLang, getLang } from "@/app/locales";
 import { useRouter } from "next/navigation";
@@ -27,8 +28,15 @@ import RobotIcon from "@/app/icons/robot.svg";
 import Record from "@/app/icons/record.svg";
 import UploadIcon from "@/app/icons/upload.svg";
 import CloseIcon from "@/app/icons/close.svg";
+import DeleteIcon from "@/app/icons/clear.svg";
+
+import LoadingIcon from "@/app/icons/three-dots.svg";
+import LoadingButtonIcon from "@/app/icons/loading.svg";
+import ImageIcon from "@/app/icons/image.svg";
+
 import { oss } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
+import { FileInfo } from "@/app/client/platforms/utils";
 
 import {
 	PauseOutlined,
@@ -57,6 +65,11 @@ import {
 	selectOrCopy,
 	autoGrowTextArea,
 	useMobileScreen,
+	getMessageTextContent,
+	getMessageImages,
+	isVisionModel,
+	isFirefox,
+	isSupportRAGModel,
 } from "@/app/utils";
 
 import { api } from "@/app/client/api";
@@ -128,6 +141,9 @@ import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
 import { submitChatMessage } from "@/app/services/chatService";
 import { LLMModelSwitch } from "./chatActions";
+
+import { compressImage } from "@/app/utils/chat";
+import { ClientApi } from "@/app/client/api";
 
 import { createFromIconfontCN } from "@ant-design/icons";
 export const IconFont = createFromIconfontCN({
@@ -208,6 +224,7 @@ export function PromptHints(props: {
 export function ChatAction(props: {
 	text: string;
 	icon: JSX.Element;
+	loding?: boolean;
 	innerNode?: JSX.Element;
 	onClick: () => void;
 	type?: "default" | "dropdown";
@@ -312,11 +329,17 @@ export function ChatAction(props: {
 }
 
 export function ChatActions(props: {
+	uploadImage: () => void;
+	setAttachImages: (images: string[]) => void;
+	uploadFile: () => void;
+	setAttachFiles: (files: FileInfo[]) => void;
+	setUploading: (uploading: boolean) => void;
 	showPromptModal: () => void;
 	scrollToBottom: () => void;
 	showPromptHints: () => void;
 	imageSelected: (img: any) => void;
 	hitBottom: boolean;
+	uploading: boolean;
 	session?: ChatSession;
 	index?: number;
 	workflows?: boolean;
@@ -327,9 +350,20 @@ export function ChatActions(props: {
 	const sessionId = session.id;
 	const { chat_balance } = useUserStore().user.user_balance;
 
+	const accessStore = useAccessStore();
+	const isEnableRAG = useMemo(
+		() => accessStore.enableRAG(),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[],
+	);
+
 	const fileInputRef = React.useRef<HTMLInputElement>(null);
 
 	const usePlugins = session.mask.usePlugins;
+
+	const [showModelSelector, setShowModelSelector] = useState(false);
+	const [showUploadImage, setShowUploadImage] = useState(false);
+	const [showUploadFile, setShowUploadFile] = useState(false);
 
 	// use useeffect to check mask.plugins.length , if zero then set usePlugins to false
 
@@ -447,7 +481,15 @@ export function ChatActions(props: {
 			value: m.name,
 		}));
 
-	const [showModelSelector, setShowModelSelector] = useState(false);
+	useEffect(() => {
+		const show = isVisionModel(currentModel);
+		setShowUploadImage(show);
+		setShowUploadFile(isEnableRAG && isSupportRAGModel(currentModel));
+		if (!show) {
+			props.setAttachImages([]);
+			props.setUploading(false);
+		}
+	}, [chatStore, currentModel, models]);
 
 	const chatInjection = session.mask.modelConfig;
 	const [enableUserInfo, setEnableUserInfo] = useState(
@@ -528,36 +570,51 @@ export function ChatActions(props: {
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 					hidetext={props.workflows ? true : false}
 				/> */}
-				{config.pluginConfig.enable &&
-					/^gpt(?!.*03\d{2}$).*$/.test(currentModel) &&
-					currentModel != "gpt-4-vision-preview" && (
-						<ChatAction
-							onClick={switchUsePlugins}
-							text={
-								session.mask.plugins.length > 0
-									? Locale.Chat.InputActions.DisablePlugins
-									: Locale.Chat.InputActions.EnablePlugins
-							}
-							icon={
-								session.mask.plugins.length > 0 ? (
-									<ThunderboltTwoTone
-										style={{
-											fontSize: "15px",
-										}}
-									/>
-								) : (
-									<ApiTwoTone
-										twoToneColor="#52c41a"
-										style={{ fontSize: "15px" }}
-									/>
-								)
-							}
-							type="dropdown"
-							dropdownItems={{ items }}
-							hidetext={props.workflows ? true : false}
-						/>
-					)}
-				{currentModel == "gpt-4-vision-preview" && (
+
+				{showUploadImage && (
+					<ChatAction
+						onClick={props.uploadImage}
+						text={Locale.Chat.InputActions.UploadImage}
+						icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
+					/>
+				)}
+
+				{showUploadFile && (
+					<ChatAction
+						onClick={props.uploadFile}
+						text={Locale.Chat.InputActions.UploadFle}
+						icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
+					/>
+				)}
+
+				{config.pluginConfig.enable && (
+					<ChatAction
+						onClick={switchUsePlugins}
+						text={
+							session.mask.plugins.length > 0
+								? Locale.Chat.InputActions.DisablePlugins
+								: Locale.Chat.InputActions.EnablePlugins
+						}
+						icon={
+							session.mask.plugins.length > 0 ? (
+								<ThunderboltTwoTone
+									style={{
+										fontSize: "15px",
+									}}
+								/>
+							) : (
+								<ApiTwoTone
+									twoToneColor="#52c41a"
+									style={{ fontSize: "15px" }}
+								/>
+							)
+						}
+						type="dropdown"
+						dropdownItems={{ items }}
+						hidetext={props.workflows ? true : false}
+					/>
+				)}
+				{/* {currentModel == "gpt-4-vision-preview" && (
 					<ChatAction
 						onClick={selectImage}
 						text="选择图片"
@@ -574,7 +631,7 @@ export function ChatActions(props: {
 						}
 						hidetext={props.workflows ? true : false}
 					/>
-				)}
+				)} */}
 				<ChatAction
 					icon={
 						enableRelatedQuestions ? (
@@ -664,6 +721,23 @@ export function ChatActions(props: {
 		</div>
 	);
 }
+
+export function DeleteImageButton(props: { deleteImage: () => void }) {
+	return (
+		<div className={styles["delete-image"]} onClick={props.deleteImage}>
+			<DeleteIcon />
+		</div>
+	);
+}
+
+export function DeleteFileButton(props: { deleteFile: () => void }) {
+	return (
+		<div className={styles["delete-file"]} onClick={props.deleteFile}>
+			<DeleteIcon />
+		</div>
+	);
+}
+
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 let voicetext: string[] = [];
 
@@ -699,6 +773,10 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
 	const [promptHints, setPromptHints] = useState<RenderPompt[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
+
+	const [attachImages, setAttachImages] = useState<string[]>([]);
+	const [uploading, setUploading] = useState(false);
+	const [attachFiles, setAttachFiles] = useState<FileInfo[]>([]);
 
 	const textareaMinHeight = userImage ? 121 : 68;
 
@@ -740,7 +818,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const doSubmit = (userInput: string, userImage?: any) => {
+	const doSubmit = (userInput: string) => {
 		if (userInput.trim() === "") return;
 
 		const matchCommand = chatCommands.match(userInput);
@@ -756,7 +834,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		const recentMessages = chatStore.getMessagesWithMemory();
 
 		chatStore
-			.onUserInput(userInput, userImage?.fileUrl, session)
+			.onUserInput(userInput, attachImages, attachFiles, session)
 			.then((res) => {
 				setIsLoading(false);
 				updateUserInfo(userStore.user.id);
@@ -779,7 +857,9 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		setUserInput("");
 		voicetext = [];
 		setPromptHints([]);
-		setUserImage(null);
+		setAttachImages([]);
+		setAttachFiles([]);
+
 		if (!isMobileScreen) inputRef.current?.focus();
 		setAutoScroll(false);
 	};
@@ -857,7 +937,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			return;
 		}
 		if (shouldSubmit(e) && promptHints.length === 0) {
-			doSubmit(userInput, userImage);
+			doSubmit(userInput);
 			e.preventDefault();
 		}
 	};
@@ -916,6 +996,143 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handlePaste = useCallback(
+		async (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+			const currentModel = chatStore.currentSession().mask.modelConfig.model;
+			if (!isVisionModel(currentModel)) {
+				return;
+			}
+			const items = (event.clipboardData || (window as any).clipboardData)
+				.items;
+			for (const item of items) {
+				if (item.kind === "file" && item.type.startsWith("image/")) {
+					event.preventDefault();
+					const file = item.getAsFile();
+					if (file) {
+						const images: string[] = [];
+						images.push(...attachImages);
+						images.push(
+							...(await new Promise<string[]>((res, rej) => {
+								setUploading(true);
+								const imagesData: string[] = [];
+								compressImage(file, 256 * 1024)
+									.then((dataUrl) => {
+										imagesData.push(dataUrl);
+										setUploading(false);
+										res(imagesData);
+									})
+									.catch((e) => {
+										setUploading(false);
+										rej(e);
+									});
+							})),
+						);
+						const imagesLength = images.length;
+
+						if (imagesLength > 3) {
+							images.splice(3, imagesLength - 3);
+						}
+						setAttachImages(images);
+					}
+				}
+			}
+		},
+		[attachImages, chatStore],
+	);
+
+	async function uploadImage() {
+		const images: string[] = [];
+		images.push(...attachImages);
+
+		images.push(
+			...(await new Promise<string[]>((res, rej) => {
+				const fileInput = document.createElement("input");
+				fileInput.type = "file";
+				fileInput.accept =
+					"image/png, image/jpeg, image/webp, image/heic, image/heif";
+				fileInput.multiple = true;
+				fileInput.onchange = (event: any) => {
+					setUploading(true);
+					const files = event.target.files;
+					const imagesData: string[] = [];
+					for (let i = 0; i < files.length; i++) {
+						const file = event.target.files[i];
+						compressImage(file, 256 * 1024)
+							.then((dataUrl) => {
+								imagesData.push(dataUrl);
+								if (
+									imagesData.length === 3 ||
+									imagesData.length === files.length
+								) {
+									setUploading(false);
+									res(imagesData);
+								}
+							})
+							.catch((e) => {
+								setUploading(false);
+								rej(e);
+							});
+					}
+				};
+				fileInput.click();
+			})),
+		);
+
+		const imagesLength = images.length;
+		if (imagesLength > 3) {
+			images.splice(3, imagesLength - 3);
+		}
+		console.log(images);
+		setAttachImages(images);
+	}
+
+	async function uploadFile() {
+		const uploadFiles: FileInfo[] = [];
+		uploadFiles.push(...attachFiles);
+
+		uploadFiles.push(
+			...(await new Promise<FileInfo[]>((res, rej) => {
+				const fileInput = document.createElement("input");
+				fileInput.type = "file";
+				fileInput.accept = ".pdf,.txt,.md,.json,.csv,.docx,.srt,.mp3";
+				fileInput.multiple = true;
+				fileInput.onchange = (event: any) => {
+					setUploading(true);
+					const files = event.target.files;
+					const api = new ClientApi();
+					const fileDatas: FileInfo[] = [];
+					for (let i = 0; i < files.length; i++) {
+						const file = event.target.files[i];
+						api.file
+							.upload(file)
+							.then((fileInfo) => {
+								console.log(fileInfo);
+								fileDatas.push(fileInfo);
+								if (
+									fileDatas.length === 3 ||
+									fileDatas.length === files.length
+								) {
+									setUploading(false);
+									res(fileDatas);
+								}
+							})
+							.catch((e) => {
+								setUploading(false);
+								rej(e);
+							});
+					}
+				};
+				fileInput.click();
+			})),
+		);
+
+		const filesLength = uploadFiles.length;
+		if (filesLength > 5) {
+			uploadFiles.splice(5, filesLength - 5);
+		}
+		setAttachFiles(uploadFiles);
+	}
+
 	const autoFocus = !isMobileScreen;
 
 	const handleSpeechRecognition = async (): Promise<void> => {
@@ -935,9 +1152,15 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			<PromptHints prompts={promptHints} onPromptSelect={onPromptSelect} />
 
 			<ChatActions
+				uploadImage={uploadImage}
+				setAttachImages={setAttachImages}
+				uploadFile={uploadFile}
+				setAttachFiles={setAttachFiles}
+				setUploading={setUploading}
 				showPromptModal={() => setShowPromptModal(true)}
 				scrollToBottom={scrollToBottom}
 				hitBottom={hitBottom}
+				uploading={uploading}
 				showPromptHints={() => {
 					if (promptHints.length > 0) {
 						setPromptHints([]);
@@ -955,7 +1178,14 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 				index={props.index}
 				workflows={props.session?.isworkflow}
 			/>
-			<div className={styles["chat-input-panel-inner"]}>
+			<label
+				className={`${styles["chat-input-panel-inner"]} ${
+					attachImages.length != 0 || attachFiles.length != 0
+						? styles["chat-input-panel-inner-attach"]
+						: ""
+				}`}
+				htmlFor="chat-input"
+			>
 				<textarea
 					ref={inputRef}
 					className={styles["chat-input"]}
@@ -965,6 +1195,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 					onKeyDown={onInputKeyDown}
 					onFocus={scrollToBottom}
 					onClick={scrollToBottom}
+					onPaste={handlePaste}
 					rows={inputRows}
 					autoFocus={autoFocus}
 					style={{
@@ -972,29 +1203,53 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 						minHeight: textareaMinHeight,
 					}}
 				/>
-				{userImage && (
-					<div className={styles["chat-input-image"]}>
-						<div
-							style={{ position: "relative", width: "48px", height: "48px" }}
-						>
-							<Image
-								loader={() => userImage.fileUrl}
-								src={userImage.fileUrl}
-								alt={userImage.filename}
-								title={userImage.filename}
-								layout="fill"
-								objectFit="cover"
-								objectPosition="center"
-							/>
-						</div>
-						<button
-							className={styles["chat-input-image-close"]}
-							onClick={() => {
-								setUserImage(null);
-							}}
-						>
-							<CloseIcon />
-						</button>
+				{attachImages.length != 0 && (
+					<div className={styles["attach-images"]}>
+						{attachImages.map((image, index) => {
+							return (
+								<div
+									key={index}
+									className={styles["attach-image"]}
+									style={{ backgroundImage: `url("${image}")` }}
+								>
+									<div className={styles["attach-image-mask"]}>
+										<DeleteImageButton
+											deleteImage={() => {
+												setAttachImages(
+													attachImages.filter((_, i) => i !== index),
+												);
+											}}
+										/>
+									</div>
+								</div>
+							);
+						})}
+					</div>
+				)}
+				{attachFiles.length != 0 && (
+					<div className={styles["attach-files"]}>
+						{attachFiles.map((file, index) => {
+							return (
+								<div
+									key={index}
+									className={styles["attach-file"]}
+									title={file.originalFilename}
+								>
+									<div className={styles["attach-file-info"]}>
+										{file.originalFilename}
+									</div>
+									<div className={styles["attach-file-mask"]}>
+										<DeleteFileButton
+											deleteFile={() => {
+												setAttachFiles(
+													attachFiles.filter((_, i) => i !== index),
+												);
+											}}
+										/>
+									</div>
+								</div>
+							);
+						})}
 					</div>
 				)}
 				<IconButton
@@ -1002,7 +1257,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 					text=""
 					className={styles["chat-input-send"]}
 					type="primary"
-					onClick={() => doSubmit(userInput, userImage)}
+					onClick={() => doSubmit(userInput)}
 				/>
 				<IconButton
 					icon={<Record />}
@@ -1011,7 +1266,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 					type="primary"
 					onClick={() => handleSpeechRecognition()}
 				/>
-			</div>
+			</label>
 		</div>
 	);
 }

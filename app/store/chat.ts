@@ -43,6 +43,8 @@ import { summarizeTitle, summarizeSession } from "../chains/summarize";
 import { CreateChatData } from "../api/backend/chat";
 import { is } from "cheerio/lib/api/traversing";
 
+import { getMessageTextContent, getMessageImages } from "../utils";
+
 import {
 	ChatMessage,
 	ChatToolMessage,
@@ -51,7 +53,9 @@ import {
 } from "../types/index";
 import { Mask } from "../types/index";
 
+import { FileInfo } from "../client/platforms/utils";
 import { fillTemplateWith } from "@/app/chains/base";
+import { MultimodalContent } from "../client/api";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
@@ -131,7 +135,10 @@ interface ChatStore {
 }
 
 function countMessages(msgs: ChatMessage[]) {
-	return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
+	return msgs.reduce(
+		(pre, cur) => pre + estimateTokenLength(getMessageTextContent(cur)),
+		0,
+	);
 }
 
 const DEFAULT_CHAT_STATE = {
@@ -423,7 +430,8 @@ export const useChatStore = createPersistStore(
 
 			async onUserInput(
 				content: string,
-				image_url?: string,
+				attachImages?: string[],
+				attachFiles?: FileInfo[],
 				_session?: ChatSession,
 			) {
 				// if sessionID is not provided, use current session, else use the session with the provided ID
@@ -466,7 +474,7 @@ export const useChatStore = createPersistStore(
 				if (sessionModel === "midjourney") {
 					const mjparams = {
 						content: content,
-						image_url: image_url,
+						image_url: "",
 						_session: session,
 						action: undefined,
 						taskId: undefined,
@@ -480,11 +488,32 @@ export const useChatStore = createPersistStore(
 				const userContent = content;
 				console.log("[User Input] after template: ", userContent);
 
+				let mContent: string | MultimodalContent[] = userContent;
+
+				if (attachImages && attachImages.length > 0) {
+					mContent = [
+						{
+							type: "text",
+							text: userContent,
+						},
+					];
+					mContent = mContent.concat(
+						attachImages.map((url) => {
+							return {
+								type: "image_url",
+								image_url: {
+									url: url,
+								},
+							};
+						}),
+					);
+				}
+
 				const userMessage: ChatMessage = createMessage({
 					id: user_chat_id,
 					role: "user",
-					content: userContent,
-					image_url: image_url,
+					content: mContent,
+					fileInfos: attachFiles,
 				});
 
 				console.log("[userMessage] ", userMessage);
@@ -502,7 +531,7 @@ export const useChatStore = createPersistStore(
 				get().updateSession(sessionId, (session: ChatSession) => {
 					const savedUserMessage = {
 						...userMessage,
-						content,
+						content: mContent,
 					};
 					session.messages = session.messages.concat([
 						savedUserMessage,
@@ -642,7 +671,7 @@ export const useChatStore = createPersistStore(
 				) {
 					const msg = messages[i];
 					if (!msg || msg.isError) continue;
-					tokenCount += estimateTokenLength(msg.content);
+					tokenCount += estimateTokenLength(getMessageTextContent(msg));
 					reversedRecentMessages.push(msg);
 				}
 

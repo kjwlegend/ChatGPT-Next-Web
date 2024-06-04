@@ -8,11 +8,14 @@ import { getHeaders } from "../client/api";
 import { getClientConfig } from "../config/client";
 import { createPersistStore } from "../utils/store";
 import { ensure } from "../utils/clone";
+import { DEFAULT_CONFIG } from "./config";
 
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 
 const DEFAULT_OPENAI_URL =
-	getClientConfig()?.buildMode === "export" ? DEFAULT_API_HOST : ApiPath.OpenAI;
+	getClientConfig()?.buildMode === "export"
+		? DEFAULT_API_HOST + "/api/proxy/openai"
+		: ApiPath.OpenAI;
 
 const DEFAULT_ACCESS_STATE = {
 	accessCode: "",
@@ -27,12 +30,17 @@ const DEFAULT_ACCESS_STATE = {
 	// azure
 	azureUrl: "",
 	azureApiKey: "",
-	azureApiVersion: "2023-08-01-preview",
+	azureApiVersion: "2024-02-15-preview",
 
 	// google ai studio
-	googleBaseUrl: "",
+	googleUrl: "",
 	googleApiKey: "",
 	googleApiVersion: "v1",
+
+	// anthropic
+	anthropicApiKey: "",
+	anthropicApiVersion: "2023-06-01",
+	anthropicUrl: "",
 
 	// server config
 	needCode: true,
@@ -41,6 +49,11 @@ const DEFAULT_ACCESS_STATE = {
 	disableGPT4: false,
 	disableFastLink: false,
 	customModels: "",
+	isEnableRAG: false,
+	defaultModel: "",
+
+	// tts config
+	edgeTTSVoiceName: "zh-CN-YunxiNeural",
 };
 
 export const useAccessStore = createPersistStore(
@@ -51,6 +64,18 @@ export const useAccessStore = createPersistStore(
 			this.fetch();
 
 			return get().needCode;
+		},
+
+		edgeVoiceName() {
+			this.fetch();
+
+			return get().edgeTTSVoiceName;
+		},
+
+		enableRAG() {
+			this.fetch();
+
+			return get().isEnableRAG;
 		},
 
 		isValidOpenAI() {
@@ -65,6 +90,10 @@ export const useAccessStore = createPersistStore(
 			return ensure(get(), ["googleApiKey"]);
 		},
 
+		isValidAnthropic() {
+			return ensure(get(), ["anthropicApiKey"]);
+		},
+
 		isAuthorized() {
 			this.fetch();
 
@@ -73,6 +102,7 @@ export const useAccessStore = createPersistStore(
 				this.isValidOpenAI() ||
 				this.isValidAzure() ||
 				this.isValidGoogle() ||
+				this.isValidAnthropic() ||
 				!this.enabledAccessControl() ||
 				(this.enabledAccessControl() && ensure(get(), ["accessCode"]))
 			);
@@ -88,6 +118,13 @@ export const useAccessStore = createPersistStore(
 				},
 			})
 				.then((res) => res.json())
+				.then((res) => {
+					// Set default model from env request
+					let defaultModel = res.defaultModel ?? "";
+					DEFAULT_CONFIG.modelConfig.model =
+						defaultModel !== "" ? defaultModel : "gpt-3.5-turbo";
+					return res;
+				})
 				.then((res: DangerConfig) => {
 					console.log("[Config] got config from server", res);
 					set(() => ({ ...res }));
@@ -112,7 +149,7 @@ export const useAccessStore = createPersistStore(
 					googleApiKey: string;
 				};
 				state.openaiApiKey = state.token;
-				state.azureApiVersion = "2023-08-01-preview";
+				state.azureApiVersion = "2024-02-15-preview";
 				state.googleApiKey = state.token;
 			}
 

@@ -8,13 +8,12 @@ export const FETCH_COMMIT_URL = `https://api.github.com/repos/${OWNER}/${REPO}/c
 export const FETCH_TAG_URL = `https://api.github.com/repos/${OWNER}/${REPO}/tags?per_page=1`;
 export const RUNTIME_CONFIG_DOM = "danger-runtime-config";
 
-export const DEFAULT_CORS_HOST = "https://ab.nextweb.fun";
-export const DEFAULT_API_HOST = `${DEFAULT_CORS_HOST}/api/proxy`;
+export const DEFAULT_CORS_HOST = "https://ab.nextweb.dev";
+
+export const DEFAULT_API_HOST = "https://api.nextchat.dev";
 export const OPENAI_BASE_URL = "https://api.openai.com";
-
-export const GOOGLE_BASE_URL = "https://generativelanguage.googleapis.com";
-
 export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/";
+export const ANTHROPIC_BASE_URL = "https://api.anthropic.com";
 
 export const LAST_INPUT_IMAGE_KEY = "last-input-image";
 
@@ -36,6 +35,7 @@ export enum ApiPath {
 	Cors = "/api/cors",
 	OpenAI = "/api/openai",
 	GoogleAI = "/api/google",
+	Anthropic = "/api/anthropic",
 }
 
 export enum SlotID {
@@ -89,18 +89,28 @@ export enum ServiceProvider {
 	OpenAI = "OpenAI",
 	Azure = "Azure",
 	Google = "Google",
+	Anthropic = "Anthropic",
 }
-
 export enum ModelProvider {
 	GPT = "GPT",
 	GeminiPro = "GeminiPro",
+	Claude = "Claude",
 }
 
 export const OpenaiPath = {
 	ChatPath: "v1/chat/completions",
+	SpeechPath: "v1/audio/speech",
+	TranscriptionPath: "v1/audio/transcriptions",
 	UsagePath: "dashboard/billing/usage",
 	SubsPath: "dashboard/billing/subscription",
 	ListModelPath: "v1/models",
+};
+
+export const Anthropic = {
+	ChatPath: "v1/messages",
+	ChatPath1: "v1/complete",
+	ExampleEndpoint: "https://api.anthropic.com",
+	Vision: "2023-06-01",
 };
 
 export const Azure = {
@@ -124,7 +134,7 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 
 export const DEFAULT_MODELS = [
 	{
-		name: "gpt-4-1106-preview",
+		name: "gpt-4o",
 		available: true,
 		displayName: "小光Pro-(5积分/次)",
 		provider: {
@@ -167,6 +177,21 @@ export const DEFAULT_MODELS = [
 		name: "midjourney",
 		available: true,
 		displayName: "Midjourney(2积分/次)",
+		provider: {
+			id: "midjourney",
+			providerName: "midjourney",
+			providerType: "midjourney",
+		},
+	},
+	{
+		name: "deepseek-chat",
+		available: true,
+		displayName: "deepseek(2积分/次)",
+		provider: {
+			id: "deepseek",
+			providerName: "deepseek",
+			providerType: "deepseek",
+		},
 	},
 ] as const;
 
@@ -177,15 +202,11 @@ export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 // const env = getServerSideConfig().server_url;
 // console.log("env", env);
 // export const server_url = env;
-export const server_url = "https://admin.xiaoguang.fun";
+// export const server_url = "https://admin.xiaoguang.fun";
 
-// export const server_url = "http://localhost:8000";
+export const server_url = "http://localhost:8000";
 
 export const version = "2.4.3";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
-
-// console.log("server_url", server_url);
-
-// console.

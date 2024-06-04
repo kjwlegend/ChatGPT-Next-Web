@@ -44,20 +44,29 @@ export const TopMenuItems: MenuItem[] = [
 		url: "/tarot/",
 	},
 	{
-		label: "ai实验室",
+		label: "双AI对话",
 		key: "double-agents",
 		icon: <IconFont type="iconfont-bx-cool" />,
 		disabled: false,
 		url: "/double-agents",
 	},
 	{
-		label: "超级工作流",
+		label: "工作流",
 		key: "workflow-chats",
 		icon: <IconFont type="iconfont-workflow" />,
 		disabled: false,
 		url: "/workflow-chats",
 	},
 
+	// {
+	//   label: "商城(开发中)",
+	//   key: "mall",
+	//   disabled: true,
+	//   url: "/mall",
+	// },
+];
+
+export const BottomMenuItems = [
 	{
 		label: "版本日志",
 		key: "updates",
@@ -71,10 +80,4 @@ export const TopMenuItems: MenuItem[] = [
 		disabled: true,
 		url: "/updates",
 	},
-	// {
-	//   label: "商城(开发中)",
-	//   key: "mall",
-	//   disabled: true,
-	//   url: "/mall",
-	// },
 ];

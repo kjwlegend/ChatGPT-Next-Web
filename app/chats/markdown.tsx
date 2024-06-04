@@ -12,7 +12,7 @@ import mermaid from "mermaid";
 import LoadingIcon from "../icons/three-dots.svg";
 import React from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { showImageModal } from "@/app/components/ui-lib";
+import { showImageModal } from "../components/ui-lib";
 
 export function Mermaid(props: { code: string }) {
 	const ref = useRef<HTMLDivElement>(null);
@@ -116,52 +116,55 @@ function escapeDollarNumber(text: string) {
 	return escapedText;
 }
 
-function _MarkDownContent(props: { content: string; imageBase64?: string }) {
-	const escapedContent = useMemo(
-		() => escapeDollarNumber(props.content),
-		[props.content],
+function escapeBrackets(text: string) {
+	const pattern =
+		/(```[\s\S]*?```|`.*?`)|\\\[([\s\S]*?[^\\])\\\]|\\\((.*?)\\\)/g;
+	return text.replace(
+		pattern,
+		(match, codeBlock, squareBracket, roundBracket) => {
+			if (codeBlock) {
+				return codeBlock;
+			} else if (squareBracket) {
+				return `$$${squareBracket}$$`;
+			} else if (roundBracket) {
+				return `$${roundBracket}$`;
+			}
+			return match;
+		},
 	);
+}
+
+function _MarkDownContent(props: { content: string }) {
+	const escapedContent = useMemo(() => {
+		return escapeBrackets(escapeDollarNumber(props.content));
+	}, [props.content]);
 
 	return (
-		<div style={{ fontSize: "inherit" }}>
-			{/* {props.imageBase64 && <img src={props.imageBase64} alt="" />} */}
-			<ReactMarkdown
-				remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
-				rehypePlugins={[
-					RehypeKatex,
-					[
-						RehypeHighlight,
-						{
-							detect: false,
-							ignoreMissing: true,
-						},
-					],
-				]}
-				components={{
-					pre: PreCode,
-					p: (pProps) => <p {...pProps} dir="auto" />,
-					a: (aProps) => {
-						const href = aProps.href || "";
-						const isInternal = /^\/#/i.test(href);
-						const target = isInternal ? "_self" : aProps.target ?? "_blank";
-						return <a {...aProps} target={target} />;
+		<ReactMarkdown
+			remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+			rehypePlugins={[
+				RehypeKatex,
+				[
+					RehypeHighlight,
+					{
+						detect: false,
+						ignoreMissing: true,
 					},
-
-					// img: (imgProps) => {
-					// 	const src = imgProps.src || "";
-					// 	const isInternal = /^\/#/i.test(src);
-					// 	const target = isInternal ? "_self" : "_blank";
-					// 	return (
-					// 		<a target={target}>
-					// 			<img {...imgProps} />
-					// 		</a>
-					// 	);
-					// },
-				}}
-			>
-				{escapedContent}
-			</ReactMarkdown>
-		</div>
+				],
+			]}
+			components={{
+				pre: PreCode,
+				p: (pProps) => <p {...pProps} dir="auto" />,
+				a: (aProps) => {
+					const href = aProps.href || "";
+					const isInternal = /^\/#/i.test(href);
+					const target = isInternal ? "_self" : aProps.target ?? "_blank";
+					return <a {...aProps} target={target} />;
+				},
+			}}
+		>
+			{escapedContent}
+		</ReactMarkdown>
 	);
 }
 
@@ -174,10 +177,10 @@ export function Markdown(
 		fontSize?: number;
 		parentRef?: RefObject<HTMLDivElement>;
 		defaultShow?: boolean;
-		imageBase64?: string;
 	} & React.DOMAttributes<HTMLDivElement>,
 ) {
 	const mdRef = useRef<HTMLDivElement>(null);
+
 	return (
 		<div
 			className="markdown-body"
@@ -192,10 +195,7 @@ export function Markdown(
 			{props.loading ? (
 				<LoadingIcon />
 			) : (
-				<MarkdownContent
-					content={props.content}
-					imageBase64={props.imageBase64}
-				/>
+				<MarkdownContent content={props.content} />
 			)}
 		</div>
 	);

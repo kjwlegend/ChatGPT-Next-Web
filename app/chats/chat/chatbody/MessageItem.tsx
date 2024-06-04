@@ -78,6 +78,8 @@ interface MessageItemProps {
 	onPlayAudio?: (message: ChatMessage) => void;
 }
 
+import { getMessageImages, getMessageTextContent } from "@/app/utils";
+
 const Markdown = dynamic(
 	async () => (await import("../../markdown")).Markdown,
 	{
@@ -126,20 +128,22 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	const { updateUserInfo } = authHook;
 	const router = useRouter();
 
+	const messageText = getMessageTextContent(message);
+
 	const isUser = message.role === "user";
 	const mjstatus = message.mjstatus;
 	const actions = mjstatus?.action;
 
 	const isContext = i < context.length;
 	const showActions =
-		i > 0 && !(message.preview || message.content.length === 0) && !isContext;
+		i > 0 && !(message.preview || messageText.length === 0) && !isContext;
 	const showTyping = message.preview || message.streaming;
 
 	const shouldShowClearContextDivider = i === clearContextIndex - 1;
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
 	useEffect(() => {
-		const botMessage = message.role === "assistant" ? message.content : null;
+		const botMessage = message.role === "assistant" ? messageText : null;
 
 		if (
 			enableAutoFlow &&
@@ -148,7 +152,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 			!isUser &&
 			botMessage !== ""
 		) {
-			onNextworkflow(message.content);
+			onNextworkflow(messageText);
 			// 将session 的 responseState 转为false
 			chatStore.updateSession(sessionId, () => {
 				session.responseStatus = false;
@@ -192,7 +196,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 		const nextSession = chatStore.sessions.find((s) => s.id === nextSessionId);
 
 		chatStore
-			.onUserInput(message, undefined, nextSession)
+			.onUserInput(message, undefined, undefined, nextSession)
 			.then(() => {
 				updateUserInfo(userStore.user.id);
 			})
@@ -212,9 +216,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	};
 
 	const onRightClick = (e: any, message: ChatMessage) => {
-		if (selectOrCopy(e.currentTarget, message.content)) {
+		if (selectOrCopy(e.currentTarget, messageText)) {
 			if (userInput.length === 0) {
-				setUserInput(message.content);
+				setUserInput(messageText);
 			}
 
 			e.preventDefault();
@@ -253,7 +257,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 									onClick={async () => {
 										const newMessage = await showPrompt(
 											Locale.Chat.Actions.Edit,
-											message.content,
+											messageText,
 											10,
 										);
 										chatStore.updateSession(sessionId, () => {
@@ -307,14 +311,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 											<ChatAction
 												text={Locale.Chat.Actions.Copy}
 												icon={<CopyIcon />}
-												onClick={() => copyToClipboard(message.content)}
+												onClick={() => copyToClipboard(messageText)}
 											/>
 											{/* next icon */}
 											{isworkflow && (
 												<ChatAction
 													text={Locale.Chat.Actions.Next}
 													icon={<NextIcon />}
-													onClick={() => onNextworkflow(message.content)}
+													onClick={() => onNextworkflow(messageText)}
 												/>
 											)}
 										</>
@@ -361,23 +365,73 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 						)}
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
 						<Markdown
-							imageBase64={message.image_url}
-							content={message.content}
+							content={messageText}
 							loading={
 								(message.preview || message.streaming) &&
-								message.content.length === 0 &&
+								messageText.length === 0 &&
 								!isUser
 							}
 							onContextMenu={(e) => onRightClick(e, message)}
 							onDoubleClickCapture={() => {
 								if (!isMobileScreen) return;
-								setUserInput(message.content);
+								setUserInput(messageText);
 							}}
 							fontSize={fontSize}
 							parentRef={scrollRef}
 							defaultShow={i >= messages.length - 6}
 						/>
-						{/* 显示4个按钮, 分别是放大: 左上,右上,左下,右下 */}
+						{message.fileInfos && message.fileInfos.length > 0 && (
+							<nav
+								className={styles["chat-message-item-files"]}
+								style={
+									{
+										"--file-count": message.fileInfos.length,
+									} as React.CSSProperties
+								}
+							>
+								{message.fileInfos.map((fileInfo, index) => {
+									return (
+										<a
+											key={index}
+											href={fileInfo.filePath}
+											className={styles["chat-message-item-file"]}
+											target="_blank"
+										>
+											{fileInfo.originalFilename}
+										</a>
+									);
+								})}
+							</nav>
+						)}
+						{getMessageImages(message).length == 1 && (
+							<img
+								className={styles["chat-message-item-image"]}
+								src={getMessageImages(message)[0]}
+								alt=""
+							/>
+						)}
+						{getMessageImages(message).length > 1 && (
+							<div
+								className={styles["chat-message-item-images"]}
+								style={
+									{
+										"--image-count": getMessageImages(message).length,
+									} as React.CSSProperties
+								}
+							>
+								{getMessageImages(message).map((image, index) => {
+									return (
+										<img
+											className={styles["chat-message-item-image-multi"]}
+											key={index}
+											src={image}
+											alt=""
+										/>
+									);
+								})}
+							</div>
+						)}
+						{/* 针对 Midjourney显示4个按钮, 分别是放大: 左上,右上,左下,右下 */}
 						{!isUser &&
 							mjstatus &&
 							actions &&
@@ -431,15 +485,16 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 	const authHook = useAuth();
 	const { updateUserInfo } = authHook;
 
+	const messageText = getMessageTextContent(message);
 	const isUser = message.role === "user";
 	const showTyping = message.preview || message.streaming;
 
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
 	const onRightClick = (e: any, message: ChatMessage) => {
-		if (selectOrCopy(e.currentTarget, message.content)) {
+		if (selectOrCopy(e.currentTarget, messageText)) {
 			if (userInput.length === 0) {
-				setUserInput(message.content);
+				setUserInput(messageText);
 			}
 
 			e.preventDefault();
@@ -496,22 +551,72 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 					<div className={styles["chat-message-item"]}>
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
 						<Markdown
-							imageBase64={message.image_url}
-							content={message.content}
+							content={messageText}
 							loading={
 								(message.preview || message.streaming) &&
-								message.content.length === 0 &&
+								messageText.length === 0 &&
 								!isUser
 							}
 							onContextMenu={(e) => onRightClick(e, message)}
 							onDoubleClickCapture={() => {
 								if (!isMobileScreen) return;
-								setUserInput(message.content);
+								setUserInput(messageText);
 							}}
 							fontSize={fontSize}
 							parentRef={scrollRef}
 							defaultShow={true}
 						/>
+						{message.fileInfos && message.fileInfos.length > 0 && (
+							<nav
+								className={styles["chat-message-item-files"]}
+								style={
+									{
+										"--file-count": message.fileInfos.length,
+									} as React.CSSProperties
+								}
+							>
+								{message.fileInfos.map((fileInfo, index) => {
+									return (
+										<a
+											key={index}
+											href={fileInfo.filePath}
+											className={styles["chat-message-item-file"]}
+											target="_blank"
+										>
+											{fileInfo.originalFilename}
+										</a>
+									);
+								})}
+							</nav>
+						)}
+						{getMessageImages(message).length == 1 && (
+							<img
+								className={styles["chat-message-item-image"]}
+								src={getMessageImages(message)[0]}
+								alt=""
+							/>
+						)}
+						{getMessageImages(message).length > 1 && (
+							<div
+								className={styles["chat-message-item-images"]}
+								style={
+									{
+										"--image-count": getMessageImages(message).length,
+									} as React.CSSProperties
+								}
+							>
+								{getMessageImages(message).map((image, index) => {
+									return (
+										<img
+											className={styles["chat-message-item-image-multi"]}
+											key={index}
+											src={image}
+											alt=""
+										/>
+									);
+								})}
+							</div>
+						)}
 					</div>
 
 					<div className={styles["chat-message-action-date"]}>
