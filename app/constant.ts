@@ -143,9 +143,10 @@ export const DEFAULT_MODELS = [
 			providerType: "openai",
 		},
 	},
+
 	{
-		name: "gpt-3.5-turbo-1106",
-		displayName: "3.5-插件型(1积分/次)",
+		name: "gpt-3.5-turbo",
+		displayName: "小光基础(1积分/次)",
 		available: true,
 		provider: {
 			id: "openai",
@@ -154,23 +155,23 @@ export const DEFAULT_MODELS = [
 		},
 	},
 	{
-		name: "gpt-3.5-turbo-16k",
-		displayName: "3.5-长文本(1积分/次)",
+		name: "deepseek-chat",
 		available: true,
+		displayName: "Deepseek模型(1积分/次)",
 		provider: {
-			id: "openai",
-			providerName: "OpenAI",
-			providerType: "openai",
+			id: "deepseek",
+			providerName: "deepseek",
+			providerType: "deepseek",
 		},
 	},
 	{
-		name: "gpt-4-vision-preview",
+		name: "deepseek-code",
 		available: true,
-		displayName: "(测试功能-暂不可用)",
+		displayName: "Deepseek编程(1积分/次)",
 		provider: {
-			id: "openai",
-			providerName: "OpenAI",
-			providerType: "openai",
+			id: "deepseek",
+			providerName: "deepseek",
+			providerType: "deepseek",
 		},
 	},
 	{
@@ -181,16 +182,6 @@ export const DEFAULT_MODELS = [
 			id: "midjourney",
 			providerName: "midjourney",
 			providerType: "midjourney",
-		},
-	},
-	{
-		name: "deepseek-chat",
-		available: true,
-		displayName: "deepseek(2积分/次)",
-		provider: {
-			id: "deepseek",
-			providerName: "deepseek",
-			providerType: "deepseek",
 		},
 	},
 ] as const;
@@ -206,7 +197,7 @@ export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 
 export const server_url = "http://localhost:8000";
 
-export const version = "2.4.3";
+export const version = "2.5.0";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

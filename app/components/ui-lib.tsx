@@ -17,7 +17,6 @@ import { createRoot } from "react-dom/client";
 import React, { HTMLProps, useEffect, useState } from "react";
 import { IconButton } from "./button";
 
-
 export function Popover(props: {
 	children: JSX.Element;
 	content: JSX.Element;
@@ -99,8 +98,9 @@ export function Loading() {
 interface ModalProps {
 	title: string;
 	children?: any;
-	actions?: JSX.Element[];
+	actions?: React.ReactNode[];
 	defaultMax?: boolean;
+	footer?: React.ReactNode;
 	onClose?: () => void;
 }
 export function Modal(props: ModalProps) {
@@ -149,6 +149,7 @@ export function Modal(props: ModalProps) {
 			<div className={styles["modal-content"]}>{props.children}</div>
 
 			<div className={styles["modal-footer"]}>
+				{props.footer}
 				<div className={styles["modal-actions"]}>
 					{props.actions?.map((action, i) => (
 						<div key={i} className={styles["modal-action"]}>

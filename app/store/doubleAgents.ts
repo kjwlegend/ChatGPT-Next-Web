@@ -9,6 +9,7 @@ import { estimateTokenLength } from "../utils/token";
 import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
 import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
+import { getMessageTextContent } from "../utils";
 
 export type DoubleAgentChatMessage = ChatMessage & {
 	agentNum?: number;
@@ -345,7 +346,9 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		let historyMessages = [];
 		for (let i = maxMessageCount - 1; i >= 0; i--) {
 			const message = messages[i];
-			const messageTokenCount = estimateTokenLength(message.content); // 估算消息的token数量
+			const messageTokenCount = estimateTokenLength(
+				getMessageTextContent(message),
+			); // 估算消息的token数量
 
 			if (tokenCount + messageTokenCount > MAX_TOKEN_COUNT) {
 				break; // 如果超过最大token数量，则停止添加消息

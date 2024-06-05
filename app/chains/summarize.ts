@@ -24,9 +24,13 @@ import { sendChatMessage } from "../services/chatService";
 import { useChatStore, createMessage, DEFAULT_TOPIC } from "../store";
 import { DoubleAgentChatMessage } from "../store/doubleAgents";
 import { strictLLMResult } from "./basic";
+import { getMessageTextContent } from "../utils";
 
 function countMessages(msgs: ChatMessage[]) {
-	return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
+	return msgs.reduce(
+		(pre, cur) => pre + estimateTokenLength(getMessageTextContent(cur)),
+		0,
+	);
 }
 
 export async function summarizeTitle(

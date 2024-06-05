@@ -7,11 +7,7 @@ import { Loading3QuartersOutlined } from "@ant-design/icons";
 
 // 全局状态管理和上下文
 import { useAppConfig } from "@/app/store";
-import {
-
-	useChatStore,
-	useUserStore,
-} from "@/app/store";
+import { useChatStore, useUserStore } from "@/app/store";
 
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
@@ -46,7 +42,12 @@ import {
 // 自定义组件和工具函数
 
 import { RenderMessage } from "./messageList";
-import { copyToClipboard, selectOrCopy, useMobileScreen } from "@/app/utils";
+import {
+	copyToClipboard,
+	getMessageTextContent,
+	selectOrCopy,
+	useMobileScreen,
+} from "@/app/utils";
 import {
 	ContextPrompts,
 	MaskAvatar,
@@ -124,10 +125,13 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
+	const messageText = getMessageTextContent(message);
+
 	const onRightClick = (e: any, message: ChatMessage) => {
-		if (selectOrCopy(e.currentTarget, message.content)) {
+		const messageText = getMessageTextContent(message);
+		if (selectOrCopy(e.currentTarget, messageText)) {
 			if (userInput.length === 0) {
-				setUserInput(message.content);
+				setUserInput(messageText);
 			}
 
 			e.preventDefault();
@@ -177,17 +181,16 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 					<div className={styles["chat-message-item"]}>
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
 						<Markdown
-							imageBase64={message.image_url}
-							content={message.content}
+							content={messageText}
 							loading={
 								(message.preview || message.streaming) &&
-								message.content.length === 0 &&
+								messageText.length === 0 &&
 								!isUser
 							}
 							onContextMenu={(e) => onRightClick(e, message)}
 							onDoubleClickCapture={() => {
 								if (!isMobileScreen) return;
-								setUserInput(message.content);
+								setUserInput(messageText);
 							}}
 							fontSize={fontSize}
 							parentRef={scrollRef}

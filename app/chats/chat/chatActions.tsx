@@ -28,6 +28,7 @@ import { message, Switch, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 
 import styles from "./chats.module.scss";
+import { isProModel } from "@/app/utils";
 
 // an antd switch component that can be used to toggle to switch chat LLM model
 
@@ -56,8 +57,9 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 
 	const handleModelChange = (model: any) => {
 		// 设置模型类型和成本
-		const modelType = model.includes("4") ? "高级" : "基础";
-		const cost = model.includes("4") ? 5 : 1;
+		const isPro = isProModel(model);
+		const modelType = isPro ? "高级" : "基础";
+		const cost = isPro ? 5 : 1;
 
 		// 更新会话模型配置
 		chatStore.updateSession(sessionId, (session) => {
@@ -73,29 +75,31 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 		);
 	};
 
+	const handleSwitch = async (checked: boolean) => {
+		setChecked(checked);
+		setCost(checked ? 5 : 1);
+
+		// 更新模型
+		const newModel = checked ? "gpt-4o" : "gpt-3.5-turbo";
+		await handleModelChange(newModel);
+	};
+
 	useEffect(() => {
 		// 根据模型类型显示或隐藏切换按钮
 		setShowSwitch(model !== "midjourney");
 
+		const isPro = isProModel(model);
+
 		// 根据模型类型设置选中状态、模型类型和成本
-		const modelType = model.includes("4") ? "高级" : "基础";
-		const cost = model.includes("4") ? 5 : 1;
-		setChecked(model.includes("4"));
+		const modelType = isPro ? "高级" : "基础";
+		const cost = isPro ? 5 : 1;
+		setChecked(isPro);
 		setModelType(modelType);
 		setCost(cost);
 
 		// 打印当前模型类型、选中状态和成本
 		console.log("modelType", modelType, checked, cost);
 	}, [model]);
-
-	const handleSwitch = async (checked: boolean) => {
-		setChecked(checked);
-		setCost(checked ? 5 : 1);
-
-		// 更新模型
-		const newModel = checked ? "gpt-4-1106-preview" : "gpt-3.5-turbo-1106";
-		await handleModelChange(newModel);
-	};
 
 	return (
 		<div className={styles["chat-model"]}>

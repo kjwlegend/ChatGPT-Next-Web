@@ -325,24 +325,22 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 					<p>{aiConfig.description}</p>
 					<Tag>模型: {aiConfig.modelConfig.model}</Tag>
 
-					{aiConfig.modelConfig.model != "gpt-4-vision-preview" && (
-						<Dropdown menu={{ items: plugins }}>
-							<Button
-								icon={
-									aiConfig.plugins.length > 0 ? (
-										<ThunderboltTwoTone />
-									) : (
-										<ApiTwoTone />
-									)
-								}
-								onClick={(e) => e.preventDefault()}
-							>
-								{aiConfig.plugins.length > 0
-									? Locale.Chat.InputActions.DisablePlugins
-									: Locale.Chat.InputActions.EnablePlugins}
-							</Button>
-						</Dropdown>
-					)}
+					<Dropdown menu={{ items: plugins }}>
+						<Button
+							icon={
+								aiConfig.plugins.length > 0 ? (
+									<ThunderboltTwoTone />
+								) : (
+									<ApiTwoTone />
+								)
+							}
+							onClick={(e) => e.preventDefault()}
+						>
+							{aiConfig.plugins.length > 0
+								? Locale.Chat.InputActions.DisablePlugins
+								: Locale.Chat.InputActions.EnablePlugins}
+						</Button>
+					</Dropdown>
 
 					{renderSlider(
 						"多样性（Temperature）",

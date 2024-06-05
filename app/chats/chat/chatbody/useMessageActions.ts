@@ -18,6 +18,7 @@ import { ChatControllerPool } from "@/app/client/controller";
 import { message } from "antd";
 import { convertTextToSpeech } from "@/app/utils/voicetotext";
 import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
+import { getMessageImages, getMessageTextContent } from "@/app/utils";
 
 interface UseMessageActions {
 	handleUserStop: (messageId: string) => void;
@@ -87,7 +88,12 @@ export const useMessageActions = (
 		if (botMessage) handleDelete(botMessage.id);
 
 		// setIsLoading(true);
-		chatStore.onUserInput(userMessage.content, userMessage.image_url, session);
+		chatStore.onUserInput(
+			getMessageTextContent(userMessage),
+			getMessageImages(userMessage),
+			undefined,
+			session,
+		);
 		// .then(() => setIsLoading(false));
 		// inputRef.current?.focus();
 	}, []);
@@ -121,9 +127,10 @@ export const useMessageActions = (
 	);
 
 	const handlePlayAudio = useCallback(async (message: ChatMessage) => {
+		const messageContent = getMessageTextContent(message);
 		// 播放音频消息逻辑
 		const regex = /[*_~`]/g;
-		const newContent = message.content.replace(regex, "");
+		const newContent = messageContent.replace(regex, "");
 		const newSynthesizer = await convertTextToSpeech(newContent);
 	}, []);
 

@@ -2,7 +2,6 @@
 "use client";
 import React, { useEffect } from "react";
 import { Card, Input, Button } from "antd";
-import { Chat } from "@/app/chats/chat";
 import dynamic from "next/dynamic";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 import { useChatStore, useUserStore } from "@/app/store";

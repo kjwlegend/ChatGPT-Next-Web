@@ -37,6 +37,7 @@ export function collectModels(
 			name: m,
 			available: modelTable[m],
 			displayName: model?.displayName,
+			provider: model?.provider,
 		};
 	});
 	// console.log("all available models", allModels);

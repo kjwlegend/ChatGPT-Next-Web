@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { useAppConfig, useChatStore } from "../store";
+import { ModelType, useAppConfig, useChatStore } from "../store";
 import { ChatMessage } from "../types/chat";
+
 import Locale from "../locales";
 import styles from "./exporter.module.scss";
 import {
@@ -13,7 +14,13 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 import { IconButton } from "@/app/components/button";
-import { copyToClipboard, downloadAs, useMobileScreen } from "../utils";
+
+import {
+	copyToClipboard,
+	downloadAs,
+	getMessageImages,
+	useMobileScreen,
+} from "../utils";
 
 import CopyIcon from "../icons/copy.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -26,17 +33,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
 	MessageSelector,
 	useMessageSelector,
-} from "@/app/components/message-selector";
+} from "../components/message-selector";
 import { Avatar } from "./emoji";
 import dynamic from "next/dynamic";
 import NextImage from "next/image";
 
-import { toBlob, toJpeg, toPng } from "html-to-image";
+import { toBlob, toPng } from "html-to-image";
 import { DEFAULT_MASK_AVATAR } from "../store/mask";
-import { api } from "../client/api";
+
 import { prettyObject } from "../utils/format";
-import { EXPORT_MESSAGE_CLASS_NAME } from "../constant";
+import { EXPORT_MESSAGE_CLASS_NAME, ModelProvider } from "../constant";
 import { getClientConfig } from "../config/client";
+import { ClientApi } from "../client/api";
+import { getMessageTextContent } from "../utils";
+import { identifyDefaultClaudeModel } from "@/app/utils/checkers";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
 	loading: () => <LoadingIcon />,
@@ -45,7 +55,22 @@ const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
 export function ExportMessageModal(props: { onClose: () => void }) {
 	return (
 		<div className="modal-mask">
-			<Modal title={Locale.Export.Title} onClose={props.onClose}>
+			<Modal
+				title={Locale.Export.Title}
+				onClose={props.onClose}
+				footer={
+					<div
+						style={{
+							width: "100%",
+							textAlign: "center",
+							fontSize: 14,
+							opacity: 0.5,
+						}}
+					>
+						{Locale.Exporter.Description.Title}
+					</div>
+				}
+			>
 				<div style={{ minHeight: "40vh" }}>
 					<MessageExporter />
 				</div>
@@ -153,7 +178,7 @@ export function MessageExporter() {
 		if (exportConfig.includeContext) {
 			ret.push(...session.mask.context);
 		}
-		ret.push(...session.messages.filter((m, i) => selection.has(m.id)));
+		ret.push(...session.messages.filter((m) => selection.has(m.id)));
 		return ret;
 	}, [
 		exportConfig.includeContext,
@@ -264,7 +289,8 @@ export function RenderExport(props: {
 		});
 
 		props.onRender(renderMsgs);
-	});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<div ref={domRef}>
@@ -274,7 +300,7 @@ export function RenderExport(props: {
 					id={`${m.role}:${i}`}
 					className={EXPORT_MESSAGE_CLASS_NAME}
 				>
-					<Markdown content={m.content} defaultShow />
+					<Markdown content={getMessageTextContent(m)} defaultShow />
 				</div>
 			))}
 		</div>
@@ -289,9 +315,18 @@ export function PreviewActions(props: {
 }) {
 	const [loading, setLoading] = useState(false);
 	const [shouldExport, setShouldExport] = useState(false);
-
+	const config = useAppConfig();
 	const onRenderMsgs = (msgs: ChatMessage[]) => {
 		setShouldExport(false);
+
+		var api: ClientApi;
+		if (config.modelConfig.model.startsWith("gemini")) {
+			api = new ClientApi(ModelProvider.GeminiPro);
+		} else if (identifyDefaultClaudeModel(config.modelConfig.model)) {
+			api = new ClientApi(ModelProvider.Claude);
+		} else {
+			api = new ClientApi(ModelProvider.GPT);
+		}
 
 		api
 			.share(msgs)
@@ -445,7 +480,9 @@ export function ImagePreviewer(props: {
 		const isApp = getClientConfig()?.isApp;
 
 		try {
-			const blob = await toPng(dom);
+			const blob = await toPng(dom, {
+				includeQueryParams: true,
+			});
 			if (!blob) return;
 
 			if (isMobile || (isApp && window.__TAURI__)) {
@@ -495,6 +532,18 @@ export function ImagePreviewer(props: {
 		}
 	};
 
+	const markdownImageUrlCorsProcess = (markdownContent: string) => {
+		const updatedContent = markdownContent.replace(
+			/!\[.*?\]\((.*?)\)/g,
+			(match, url) => {
+				if (!url.startsWith("http")) return `![image](${url})`;
+				const updatedURL = `/api/cors?url=${encodeURIComponent(url)}`;
+				return `![image](${updatedURL})`;
+			},
+		);
+		return updatedContent;
+	};
+
 	return (
 		<div className={styles["image-previewer"]}>
 			<PreviewActions
@@ -519,7 +568,7 @@ export function ImagePreviewer(props: {
 
 					<div>
 						<div className={styles["main-title"]}>小光AI</div>
-						<div className={styles["sub-title"]}>xiaoguang.fun</div>
+						<div className={styles["sub-title"]}>专业提示词工程师</div>
 						<div className={styles["icons"]}>
 							<ExportAvatar avatar={config.avatar} />
 							<span className={styles["icon-space"]}>&</span>
@@ -558,11 +607,37 @@ export function ImagePreviewer(props: {
 
 							<div className={styles["body"]}>
 								<Markdown
-									content={m.content}
-									imageBase64={m.image_url}
+									content={getMessageTextContent(m)}
 									fontSize={config.fontSize}
 									defaultShow
 								/>
+								{getMessageImages(m).length == 1 && (
+									<img
+										key={i}
+										src={getMessageImages(m)[0]}
+										alt="message"
+										className={styles["message-image"]}
+									/>
+								)}
+								{getMessageImages(m).length > 1 && (
+									<div
+										className={styles["message-images"]}
+										style={
+											{
+												"--image-count": getMessageImages(m).length,
+											} as React.CSSProperties
+										}
+									>
+										{getMessageImages(m).map((src, i) => (
+											<img
+												key={i}
+												src={src}
+												alt="message"
+												className={styles["message-image-multi"]}
+											/>
+										))}
+									</div>
+								)}
 							</div>
 						</div>
 					);
@@ -581,8 +656,10 @@ export function MarkdownPreviewer(props: {
 		props.messages
 			.map((m) => {
 				return m.role === "user"
-					? `## ${Locale.Export.MessageFromYou}:\n${m.content}`
-					: `## ${Locale.Export.MessageFromChatGPT}:\n${m.content.trim()}`;
+					? `## ${Locale.Export.MessageFromYou}:\n${getMessageTextContent(m)}`
+					: `## ${Locale.Export.MessageFromChatGPT}:\n${getMessageTextContent(
+							m,
+					  ).trim()}`;
 			})
 			.join("\n\n");
 
@@ -606,8 +683,6 @@ export function MarkdownPreviewer(props: {
 		</>
 	);
 }
-
-// modified by BackTrackZ now it's looks better
 
 export function JsonPreviewer(props: {
 	messages: ChatMessage[];

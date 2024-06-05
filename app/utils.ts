@@ -254,6 +254,12 @@ export function getMessageImages(message: RequestMessage): string[] {
 	return urls;
 }
 
+/**
+ *
+ * @param model
+ * @returns  Whether the model is a vision model
+ */
+
 export function isVisionModel(model: string) {
 	// Note: This is a better way using the TypeScript feature instead of `&&` or `||` (ts v5.5.0-dev.20240314 I've been using)
 
@@ -284,4 +290,16 @@ export function isSupportRAGModel(modelName: string) {
 	return DEFAULT_MODELS.filter((model) => model.provider.id === "openai").some(
 		(model) => model.name === modelName,
 	);
+}
+
+/**
+ * Checks if the given model is a Pro model.
+ *
+ * @param model - The model name as a string.
+ * @returns A boolean indicating whether the model is a Pro model.
+ * Pro models are identified by the presence of "pro" or "midjourney" in their names.
+ */
+export function isProModel(model: string) {
+	const proKeywords = ["pro", "gpt-4", "claude-3"];
+	return proKeywords.some((keyword) => model.includes(keyword));
 }

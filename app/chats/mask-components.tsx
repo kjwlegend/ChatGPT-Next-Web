@@ -17,7 +17,7 @@ import { Button } from "antd";
 import { genPrompt } from "../chains/promptgen";
 
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
-import { DEFAULT_MASK_AVATAR,  useMaskStore } from "../store/mask";
+import { DEFAULT_MASK_AVATAR, useMaskStore } from "../store/mask";
 import {
 	createMessage,
 	ModelConfig,
@@ -42,7 +42,12 @@ import { Row, Col } from "antd";
 
 import chatStyle from "./chat.module.scss";
 import { useEffect, useState } from "react";
-import { copyToClipboard, downloadAs, readFromFile } from "../utils";
+import {
+	copyToClipboard,
+	downloadAs,
+	getMessageTextContent,
+	readFromFile,
+} from "../utils";
 import { Updater } from "../typing";
 import { ModelConfigList } from "../components/model-config";
 import { FileName, Path } from "../constant";
@@ -325,6 +330,8 @@ function ContextPromptItem(props: {
 	const [loadings, setLoadings] = useState<boolean[]>([]);
 	const [value, setValue] = useState<string>(props.prompt.role);
 
+	const currentPrompt = getMessageTextContent(props.prompt);
+
 	const onChange = (e: RadioChangeEvent) => {
 		// update role
 		props.update({
@@ -348,15 +355,14 @@ function ContextPromptItem(props: {
 	// 重命名函数以避免冲突，并处理异步逻辑
 	const handleGenPrompt = async () => {
 		// 获取当前textArea的值
-		const currentContent = props.prompt.content;
+		const contentText = getMessageTextContent(props.prompt);
 
 		setLoadings((prevLoadings) => {
 			const newLoadings = [...prevLoadings];
 			newLoadings[0] = true;
 			return newLoadings;
 		});
-
-		genPrompt(currentContent).then((newPrompt) => {
+		genPrompt(contentText).then((newPrompt) => {
 			props.update({
 				...props.prompt,
 				content: newPrompt as string,
@@ -413,7 +419,7 @@ function ContextPromptItem(props: {
 				{" "}
 				<Col span={24}>
 					<TextArea
-						value={props.prompt.content}
+						value={currentPrompt}
 						className={chatStyle["context-content"]}
 						placeholder="请添加提示词, 如不会撰写, 也输入大致需求和主题后, 再点击生成提示词"
 						showCount
