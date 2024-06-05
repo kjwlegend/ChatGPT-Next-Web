@@ -45,12 +45,17 @@ import {
 import { KnowledgeSearch } from "@/app/api/langchain-tools/doc_search";
 import { User, useUserStore } from "@/app/store";
 
+import { MultimodalContent } from "@/app/client/api";
+import { GoogleCustomSearch } from "@/app/api/langchain-tools/langchian-tool-index";
+import { getMessageTextContent } from "@/app/utils";
+
 export interface RequestMessage {
 	role: string;
-	content: string;
+	content: string | MultimodalContent[];
 }
 
 export interface RequestBody {
+	chatSessionId: string;
 	messages: RequestMessage[];
 	isAzure: boolean;
 	azureApiVersion?: string;
@@ -65,7 +70,6 @@ export interface RequestBody {
 	maxIterations: number;
 	returnIntermediateSteps: boolean;
 	useTools: (undefined | string)[];
-	user?: User;
 }
 
 export class ResponseBody {
@@ -118,7 +122,6 @@ export class AgentApi {
 					await writer.close();
 					return;
 				}
-
 				console.log("[handleChainError]", err, "writer error");
 				var response = new ResponseBody();
 				response.isSuccess = false;
@@ -130,12 +133,11 @@ export class AgentApi {
 				await writer.close();
 			},
 			async handleChainEnd(outputs, runId, parentRunId, tags) {
-				// console.log("[handleChainEnd]", { outputs, runId, parentRunId, tags });
+				// console.log("[handleChainEnd]");
 				// await writer.ready;
 				// await writer.close();
 			},
 			async handleLLMEnd() {
-				console.log("[handleLLMEnd]");
 				// await writer.ready;
 				// await writer.close();
 			},
@@ -145,7 +147,6 @@ export class AgentApi {
 					await writer.close();
 					return;
 				}
-
 				console.log("[handleLLMError]", e, "writer error");
 				var response = new ResponseBody();
 				response.isSuccess = false;
@@ -157,17 +158,14 @@ export class AgentApi {
 				await writer.close();
 			},
 			async handleLLMStart(llm, _prompts: string[]) {
-				// console.log("handleLLMStart: I'm the second handler!!", {
-				// 	llm,
-				// 	_prompts,
-				// });
+				// console.log("handleLLMStart: I'm the second handler!!", { llm });
 			},
 			async handleChainStart(chain) {
 				// console.log("handleChainStart: I'm the second handler!!", { chain });
 			},
 			async handleAgentAction(action) {
 				try {
-					// console.log("[handleAgentAction tool]", action.tool);
+					// console.log("[handleAgentAction]", { action });
 					if (!reqBody.returnIntermediateSteps) return;
 					var response = new ResponseBody();
 					response.isToolMessage = true;
@@ -178,7 +176,7 @@ export class AgentApi {
 						encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
 					);
 				} catch (ex) {
-					// console.error("[handleAgentAction error]", ex);
+					console.error("[handleAgentAction]", ex);
 					var response = new ResponseBody();
 					response.isSuccess = false;
 					response.message = (ex as Error).message;
@@ -190,7 +188,7 @@ export class AgentApi {
 				}
 			},
 			async handleToolStart(tool, input) {
-				console.log("[handleToolStart]", { tool, input });
+				// console.log("[handleToolStart]", { tool, input });
 			},
 			async handleToolEnd(output, runId, parentRunId, tags) {
 				// console.log("[handleToolEnd]", { output, runId, parentRunId, tags });
@@ -199,7 +197,7 @@ export class AgentApi {
 				if (controller.signal.aborted) {
 					return;
 				}
-				// console.log("[handleAgentEnd]", { action, runId, parentRunId, tags });
+				console.log("[handleAgentEnd]");
 				await writer.ready;
 				await writer.close();
 			},
@@ -239,16 +237,14 @@ export class AgentApi {
 			const serverConfig = getServerSideConfig();
 
 			// const reqBody: RequestBody = await req.json();
-			const isAzure = reqBody.isAzure || serverConfig.isAzure;
+			// ui set azure model provider
+			const isAzure = reqBody.isAzure;
 			const authHeaderName = isAzure ? "api-key" : "Authorization";
 			const authToken = req.headers.get(authHeaderName) ?? "";
 			const token = authToken.trim().replaceAll("Bearer ", "").trim();
-			const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
-			const username = reqBody.user?.username ?? "";
 
 			let apiKey = await this.getOpenAIApiKey(token);
 			if (isAzure) apiKey = token;
-
 			let baseUrl = "https://api.openai.com/v1";
 			if (serverConfig.baseUrl) baseUrl = serverConfig.baseUrl;
 			if (
@@ -301,8 +297,11 @@ export class AgentApi {
 					func: async (input: string) => serpAPITool.call(input),
 				});
 			}
-			if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_API_KEY) {
-				let googleCustomSearchTool = new langchainTools["GoogleCustomSearch"]();
+			if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_SEARCH_API_KEY) {
+				let googleCustomSearchTool = new GoogleCustomSearch({
+					apiKey: process.env.GOOGLE_SEARCH_API_KEY,
+					googleCSEId: process.env.GOOGLE_CSE_ID,
+				});
 				searchTool = new DynamicTool({
 					name: "google_custom_search",
 					description: googleCustomSearchTool.description,
@@ -312,13 +311,11 @@ export class AgentApi {
 
 			const tools = [];
 
+			// configure the right tool for web searching
 			if (useTools.includes("web-search")) tools.push(searchTool);
 			// console.log(customTools);
-			const knowledgeSearchTool = new KnowledgeSearch(username);
-			if (useTools.includes(knowledgeSearchTool.name)) {
-				tools.push(knowledgeSearchTool);
-			}
 
+			// include tools included in this project
 			customTools.forEach((customTool) => {
 				if (customTool) {
 					if (useTools.includes(customTool.name)) {
@@ -327,6 +324,7 @@ export class AgentApi {
 				}
 			});
 
+			// include tools from Langchain community
 			useTools.forEach((toolName) => {
 				if (toolName) {
 					var tool = langchainTools[
@@ -343,11 +341,18 @@ export class AgentApi {
 			reqBody.messages
 				.slice(0, reqBody.messages.length - 1)
 				.forEach((message) => {
-					if (message.role === "system")
+					if (message.role === "system" && typeof message.content === "string")
 						pastMessages.push(new SystemMessage(message.content));
 					if (message.role === "user")
-						pastMessages.push(new HumanMessage(message.content));
-					if (message.role === "assistant")
+						typeof message.content === "string"
+							? pastMessages.push(new HumanMessage(message.content))
+							: pastMessages.push(
+									new HumanMessage({ content: message.content }),
+							  );
+					if (
+						message.role === "assistant" &&
+						typeof message.content === "string"
+					)
 						pastMessages.push(new AIMessage(message.content));
 				});
 
@@ -386,21 +391,22 @@ export class AgentApi {
 				returnMessages: true,
 				chatHistory: new ChatMessageHistory(pastMessages),
 			});
+			const MEMORY_KEY = "chat_history";
 			const prompt = ChatPromptTemplate.fromMessages([
-				new MessagesPlaceholder("chat_history"),
-				["human", "{input}"],
+				new MessagesPlaceholder(MEMORY_KEY),
+				new MessagesPlaceholder("input"),
 				new MessagesPlaceholder("agent_scratchpad"),
 			]);
 			const modelWithTools = llm.bind({
 				tools: tools.map(convertToOpenAITool),
 			});
-			console.log("[tools]", tools);
 			const runnableAgent = RunnableSequence.from([
 				{
-					input: (i: { input: string; steps: ToolsAgentStep[] }) => i.input,
-					agent_scratchpad: (i: { input: string; steps: ToolsAgentStep[] }) =>
-						formatToOpenAIToolMessages(i.steps),
-					chat_history: async (_: {
+					input: (i) => i.input,
+					agent_scratchpad: (i: { input: string; steps: ToolsAgentStep[] }) => {
+						return formatToOpenAIToolMessages(i.steps);
+					},
+					chat_history: async (i: {
 						input: string;
 						steps: ToolsAgentStep[];
 					}) => {
@@ -416,16 +422,21 @@ export class AgentApi {
 			const executor = AgentExecutor.fromAgentAndTools({
 				agent: runnableAgent,
 				tools,
-				// verbose: true,
 			});
-
+			const lastMessageContent = reqBody.messages.slice(-1)[0].content;
+			const lastHumanMessage =
+				typeof lastMessageContent === "string"
+					? new HumanMessage(lastMessageContent)
+					: new HumanMessage({ content: lastMessageContent });
 			executor
-				.call(
+				.invoke(
 					{
-						input: reqBody.messages.slice(-1)[0].content,
+						input: [lastHumanMessage],
 						signal: this.controller.signal,
 					},
-					[handler],
+					{
+						callbacks: [handler],
+					},
 				)
 				.catch((error) => {
 					if (this.controller.signal.aborted) {

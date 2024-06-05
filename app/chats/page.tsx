@@ -192,7 +192,7 @@ function Screen() {
 			message.error("登录已过期，请重新登录");
 			logoutHook()
 				.then(() => {
-					// window.location.reload();
+					window.location.reload();
 				})
 				.catch((e) => {
 					console.log("logout error", e);

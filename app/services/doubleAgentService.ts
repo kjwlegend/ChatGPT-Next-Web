@@ -46,6 +46,7 @@ import {
 import useAuth from "../hooks/useAuth";
 import { useAuthStore } from "../store/auth";
 import { first } from "cheerio/lib/api/traversing";
+import { getMessageTextContent } from "../utils";
 
 // 假设我们有一个函数来启动对话
 
@@ -255,7 +256,7 @@ export function continueConversation(conversationId: string, round: number) {
 	const lastMessage = messages[messages.length - 1];
 	const lastAgentNum = lastMessage.agentNum;
 
-	const messageContent = lastMessage.content;
+	const messageContent = getMessageTextContent(lastMessage);
 	// 如果是第一个AI的回复，则将回复传递给下一个AI
 
 	// 使用 switch 语句根据代理编号发送消息
@@ -333,7 +334,7 @@ export function handleChatCallbacks(
 				doubleAgentStore.updateSingleMessage(
 					conversationId,
 					messageIndex,
-					messageTemplate.content,
+					getMessageTextContent(messageTemplate),
 					toolsMessage,
 				);
 			}

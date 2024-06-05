@@ -21,6 +21,7 @@ declare global {
 			ENABLE_BALANCE_QUERY?: string; // allow user to query balance or not
 			DISABLE_FAST_LINK?: string; // disallow parse settings from url or not
 			CUSTOM_MODELS?: string; // to control custom models
+			DEFAULT_MODEL?: string; // to cnntrol default model in every new chat window
 
 			// azure only
 			AZURE_URL?: string; // https://{azure-url}/openai/deployments
@@ -29,7 +30,10 @@ declare global {
 
 			// google only
 			GOOGLE_API_KEY?: string;
-			GOOGLE_BASE_URL?: string;
+			GOOGLE_URL?: string;
+
+			// google tag manager
+			GTM_ID?: string;
 
 			// OSS
 			ALIYUN_BUCKET?: string;
@@ -50,6 +54,22 @@ const ACCESS_CODES = (function getAccessCodes(): Set<string> {
 	}
 })();
 
+function getApiKey(keys?: string) {
+	const apiKeyEnvVar = keys ?? "";
+	const apiKeys = apiKeyEnvVar.split(",").map((v) => v.trim());
+	const randomIndex = Math.floor(Math.random() * apiKeys.length);
+	const apiKey = apiKeys[randomIndex];
+	if (apiKey) {
+		console.log(
+			`[Server Config] using ${randomIndex + 1} of ${
+				apiKeys.length
+			} api key - ${apiKey}`,
+		);
+	}
+
+	return apiKey;
+}
+
 export const getServerSideConfig = () => {
 	if (typeof process === "undefined") {
 		throw Error(
@@ -59,45 +79,52 @@ export const getServerSideConfig = () => {
 
 	const disableGPT4 = !!process.env.DISABLE_GPT4;
 	let customModels = process.env.CUSTOM_MODELS ?? "";
+	let defaultModel = process.env.DEFAULT_MODEL ?? "";
 
 	if (disableGPT4) {
 		if (customModels) customModels += ",";
 		customModels += DEFAULT_MODELS.filter((m) => m.name.startsWith("gpt-4"))
 			.map((m) => "-" + m.name)
 			.join(",");
+		if (defaultModel.startsWith("gpt-4")) defaultModel = "";
 	}
 
 	const isAzure = !!process.env.AZURE_URL;
 	const isGoogle = !!process.env.GOOGLE_API_KEY;
+	const isAnthropic = !!process.env.ANTHROPIC_API_KEY;
 
-	const env = process.env.ENVIRONMENT;
-	let server_url = "";
+	// const apiKeyEnvVar = process.env.OPENAI_API_KEY ?? "";
+	// const apiKeys = apiKeyEnvVar.split(",").map((v) => v.trim());
+	// const randomIndex = Math.floor(Math.random() * apiKeys.length);
+	// const apiKey = apiKeys[randomIndex];
+	// console.log(
+	//   `[Server Config] using ${randomIndex + 1} of ${apiKeys.length} api key`,
+	// );
 
-	if (env == "PROD") {
-		console.log("PROD");
-		server_url = "https://admin.xiaoguang.fun";
-	}
-
-	if (env == "DEV") {
-		console.log("DEV");
-		server_url = "http://localhost:8000";
-	}
+	const allowedWebDevEndpoints = (
+		process.env.WHITE_WEBDEV_ENDPOINTS ?? ""
+	).split(",");
 
 	return {
 		baseUrl: process.env.BASE_URL,
-		apiKey: process.env.OPENAI_API_KEY,
+		apiKey: getApiKey(process.env.OPENAI_API_KEY),
 		openaiOrgId: process.env.OPENAI_ORG_ID,
-		server_url,
 
-		environment: process.env.NODE_ENV,
 		isAzure,
 		azureUrl: process.env.AZURE_URL,
-		azureApiKey: process.env.AZURE_API_KEY,
+		azureApiKey: getApiKey(process.env.AZURE_API_KEY),
 		azureApiVersion: process.env.AZURE_API_VERSION,
 
 		isGoogle,
-		googleApiKey: process.env.GOOGLE_API_KEY,
-		googleBaseUrl: process.env.GOOGLE_BASE_URL,
+		googleApiKey: getApiKey(process.env.GOOGLE_API_KEY),
+		googleUrl: process.env.GOOGLE_URL,
+
+		isAnthropic,
+		anthropicApiKey: getApiKey(process.env.ANTHROPIC_API_KEY),
+		anthropicApiVersion: process.env.ANTHROPIC_API_VERSION,
+		anthropicUrl: process.env.ANTHROPIC_URL,
+
+		gtmId: process.env.GTM_ID,
 
 		needCode: ACCESS_CODES.size > 0,
 		code: process.env.CODE,
@@ -111,6 +138,21 @@ export const getServerSideConfig = () => {
 		hideBalanceQuery: !process.env.ENABLE_BALANCE_QUERY,
 		disableFastLink: !!process.env.DISABLE_FAST_LINK,
 		customModels,
+		defaultModel,
+		isStoreFileToLocal:
+			!!process.env.NEXT_PUBLIC_ENABLE_NODEJS_PLUGIN &&
+			!process.env.R2_ACCOUNT_ID &&
+			!process.env.S3_ENDPOINT,
+
+		isEnableRAG: !!process.env.ENABLE_RAG,
+		ragEmbeddingModel:
+			process.env.RAG_EMBEDDING_MODEL ?? "text-embedding-3-large",
+		ragChunkSize: process.env.RAG_CHUNK_SIZE ?? "2000",
+		ragChunkOverlap: process.env.RAG_CHUNK_OVERLAP ?? "200",
+		ragReturnCount: process.env.RAG_RETURN_COUNT ?? "4",
+		allowedWebDevEndpoints,
+
+		edgeTTSVoiceName: process.env.EDGE_TTS_VOICE_NAME ?? "zh-CN-YunxiNeural",
 
 		oss: process.env.ALIYUN_BUCKET,
 	};

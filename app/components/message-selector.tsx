@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {  useAppConfig, useChatStore } from "../store";
+import { useAppConfig, useChatStore } from "../store";
 import { ChatMessage } from "../types/";
 import { Updater } from "../typing";
 import { IconButton } from "./button";
@@ -8,6 +8,7 @@ import { MaskAvatar } from "../chats/mask-components";
 import Locale from "../locales";
 
 import styles from "./message-selector.module.scss";
+import { getMessageTextContent } from "../utils";
 
 function useShiftRange() {
 	const [startIndex, setStartIndex] = useState<number>();
@@ -92,7 +93,9 @@ export function MessageSelector(props: {
 		const searchResults = new Set<string>();
 		if (text.length > 0) {
 			messages.forEach((m) =>
-				m.content.includes(text) ? searchResults.add(m.id!) : null,
+				getMessageTextContent(m).includes(text)
+					? searchResults.add(m.id!)
+					: null,
 			);
 		}
 		setSearchIds(searchResults);
@@ -177,6 +180,7 @@ export function MessageSelector(props: {
 			<div className={styles["messages"]}>
 				{messages.map((m, i) => {
 					if (!isInSearchResult(m.id!)) return null;
+					const messageText = getMessageTextContent(m);
 
 					return (
 						<div
@@ -204,7 +208,7 @@ export function MessageSelector(props: {
 									{new Date(m.date).toLocaleString()}
 								</div>
 								<div className={`${styles["content"]} one-line`}>
-									{m.content}
+									{messageText}
 								</div>
 							</div>
 						</div>

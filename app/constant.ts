@@ -118,17 +118,15 @@ export const Azure = {
 };
 
 export const Google = {
-	ExampleEndpoint: "https://generativelanguage.googleapis.com",
-	ChatPath: "v1/models/gemini-pro:generateContent",
-
-	// /api/openai/v1/chat/completions
+	ExampleEndpoint: "https://generativelanguage.googleapis.com/",
+	ChatPath: (modelName: string) => `v1beta/models/${modelName}:generateContent`,
 };
 
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo-16k";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
 	default: "2021-09",
-	"gpt-4-1106-preview": "2023-04",
+	"gpt-4o": "2023-04",
 	"gpt-4-vision-preview": "2023-04",
 };
 

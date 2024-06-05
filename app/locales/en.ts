@@ -68,6 +68,8 @@ const en: LocaleType = {
 			Settings: "Settings",
 			EnablePlugins: "Enable Plugins",
 			DisablePlugins: "Disable Plugins",
+			UploadImage: "Upload Images",
+			UploadFle: "Upload Files",
 		},
 		Rename: "Rename Chat",
 		Typing: "Typing…",
@@ -486,6 +488,9 @@ const en: LocaleType = {
 		Config: "Config",
 	},
 	Exporter: {
+		Description: {
+			Title: "Only messages after clearing the context will be displayed",
+		},
 		Model: "Model",
 		Messages: "Messages",
 		Topic: "Topic",

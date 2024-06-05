@@ -70,6 +70,7 @@ import Image from "next/image";
 import { IconButton } from "../../components/button";
 import { WORKFLOW_DEFAULT_TITLE } from "./workflowContext";
 import { SEOHeader } from "@/app/components/seo-header";
+import Router, { useRouter } from "next/navigation";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -270,6 +271,8 @@ export default function Chat() {
 
 	const [messageApi, contextHolder] = message.useMessage();
 
+	const router = useRouter();
+
 	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
 	// checkout workflowGoup is not an empty object
 
@@ -353,7 +356,7 @@ export default function Chat() {
 										className={styles["action-button"]}
 										icon={<PlusCircleOutlined />}
 										onClick={() => {
-											window.location.href = "/auth/";
+											router.push("/auth/");
 										}}
 									>
 										登录

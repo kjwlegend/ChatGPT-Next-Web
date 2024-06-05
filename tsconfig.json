@@ -35,8 +35,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/calcTextareaHeight.ts",
-    "build/types/**/*.ts",
-    "dist/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

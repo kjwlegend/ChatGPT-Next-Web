@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentApi, RequestBody, ResponseBody } from "../agentapi";
 import { auth } from "@/app/api/auth";
-import { EdgeTool } from "@/app/api/langchain-tools/edge_tools";
+import { EdgeTool } from "../../../../langchain-tools/edge_tools";
+import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 
 async function handle(req: NextRequest) {
 	if (req.method === "OPTIONS") {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
+
 	try {
-		const authResult = await auth(req);
+		const authResult = auth(req, ModelProvider.GPT);
 		if (authResult.error) {
 			return NextResponse.json(authResult, {
 				status: 401,
@@ -43,6 +45,7 @@ async function handle(req: NextRequest) {
 			},
 			{ basePath: baseUrl },
 		);
+
 		var dalleCallback = async (data: string) => {
 			var response = new ResponseBody();
 			response.message = data;
