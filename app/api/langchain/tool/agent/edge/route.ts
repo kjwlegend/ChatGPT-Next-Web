@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentApi, RequestBody, ResponseBody } from "../agentapi";
 import { auth } from "@/app/api/auth";
-import { EdgeTool } from "../../../../langchain-tools/edge_tools";
+import { EdgeTool } from "@/app/api/langchain-tools/edge_tools";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 
@@ -67,7 +67,12 @@ async function handle(req: NextRequest) {
 		);
 		var edgeTools = await edgeTool.getCustomTools();
 		var tools = [...edgeTools];
-		return await agentApi.getApiHandler(req, reqBody, tools);
+
+		// return a demo scuess
+		return new Response(JSON.stringify({ message: "success" }), {
+			status: 200,
+			headers: { "Content-Type": "application/json" },
+		});
 	} catch (e) {
 		return new Response(JSON.stringify({ error: (e as any).message }), {
 			status: 500,

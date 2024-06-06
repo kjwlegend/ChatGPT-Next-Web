@@ -6,12 +6,9 @@ console.log("[Next] build mode", mode)
 const disableChunk = !!process.env.DISABLE_CHUNK || mode === "export"
 console.log("[Next] build with chunk: ", !disableChunk)
 
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
-  webpack: (config, { isServer }) => {
-
+  webpack (config) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
@@ -25,43 +22,19 @@ const nextConfig = {
 
     config.resolve.fallback = {
       child_process: false,
-
     }
 
     return config
   },
-  // distDir: "dist",
   output: mode,
-  // trailingSlash: true,
-  generateEtags: false,
-  poweredByHeader: false,
-  reactStrictMode: false,
   images: {
     unoptimized: mode === "export",
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port: '8000',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '8000',
-      },
-    ],
   },
-  // server: {
-  //   host: '0.0.0.0', // 允许外部访问
-  // },
+  reactStrictMode: false,
   experimental: {
     forceSwcTransforms: true,
   },
-
-
-
 }
-
 
 const CorsHeaders = [
   { key: "Access-Control-Allow-Credentials", value: "true" },
@@ -87,41 +60,27 @@ if (mode !== "export") {
         source: "/api/:path*",
         headers: CorsHeaders,
       },
-      {
-        source: '/chats',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache',
-          }
-        ],
-      },
-      {
-        source: '/workflow-chats',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache',
-          }
-        ],
-      },
-      {
-        source: '/',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache',
-          }
-        ],
-      },
     ]
   }
 
   nextConfig.rewrites = async () => {
     const ret = [
+      // adjust for previous version directly using "/api/proxy/" as proxy base route
       {
-        source: "/api/proxy/:path*",
+        source: "/api/proxy/v1/:path*",
+        destination: "https://api.openai.com/v1/:path*",
+      },
+      {
+        source: "/api/proxy/google/:path*",
+        destination: "https://generativelanguage.googleapis.com/:path*",
+      },
+      {
+        source: "/api/proxy/openai/:path*",
         destination: "https://api.openai.com/:path*",
+      },
+      {
+        source: "/api/proxy/anthropic/:path*",
+        destination: "https://api.anthropic.com/:path*",
       },
       {
         source: "/google-fonts/:path*",
