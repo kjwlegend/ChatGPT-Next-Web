@@ -3,7 +3,6 @@ import React, { use } from "react";
 import { useState, useEffect } from "react";
 import { useUserStore } from "../../store/user";
 import styles from "./profile.module.scss";
-import CountUp from "react-countup";
 
 import { Col, Divider, Row, Statistic, message } from "antd";
 import { Modal, Button, Radio } from "antd"; // 引入 Modal 和 Button 组件

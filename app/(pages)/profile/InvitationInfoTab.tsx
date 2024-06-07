@@ -3,7 +3,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useUserStore } from "../../store/user";
 import styles from "./profile.module.scss";
-import CountUp from "react-countup";
 
 import { Col, Divider, Row, Statistic } from "antd";
 import { Typography } from "antd";
