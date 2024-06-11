@@ -16,19 +16,6 @@ import { Prompt, usePromptStore } from "../../store/prompt";
 import { useMaskStore } from "../../store/mask";
 import Locale from "../../locales";
 
-import {
-	SettingsIcon,
-	GithubIcon,
-	ChatGptIcon,
-	AddIcon,
-	CloseIcon,
-	DeleteIcon,
-	MaskIcon,
-	PluginIcon,
-	DragIcon,
-} from "@/app/icons";
-
-import BrainIcon from "@/app/icons/brain.svg";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import {
@@ -263,18 +250,26 @@ function AgentList() {
 
 export default function Chat() {
 	const chatStore = useChatStore();
+	const isAuthenticated = useAuthStore().isAuthenticated;
 
 	const { selectedId, workflowGroup, addWorkflowGroup } = useWorkflowStore();
 	const sessionIds = workflowGroup[selectedId]?.sessions;
 
 	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
-
 	const [messageApi, contextHolder] = message.useMessage();
+
+	console.log("orderedSessions", orderedSessions);
+
+	const [isAuth, setIsAuth] = useState(false);
 
 	const router = useRouter();
 
 	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
 	// checkout workflowGoup is not an empty object
+
+	useEffect(() => {
+		setIsAuth(isAuthenticated);
+	}, []);
 
 	useEffect(() => {
 		// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
@@ -287,9 +282,9 @@ export default function Chat() {
 			[]; // 使用类型保护来过滤 undefined 值
 
 		setOrderedSessions(updatedSessions);
+
 		// console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
 	}, [sessionIds, chatStore.sessions]); // 添加 chatstore.sessions 作为依赖项
-	const isAuth = useAuthStore().isAuthenticated;
 	const userid = useUserStore.getState().user.id;
 
 	const items: MenuProps["items"] = GenerateMenuItems();
@@ -326,10 +321,111 @@ export default function Chat() {
 		);
 	}
 
-	// 检查window是否存在
-	if (typeof window === undefined) {
-		// 在服务器端渲染或者使用静态生成时，window对象可能不存在
-		return null; // 或者返回一个加载指示器或者一个空的div
+	// use a better clear structure to render content
+
+	function renderContent() {
+		if (!isAuth) {
+			return (
+				<div className={styles["welcome-container"]}>
+					<div className={styles["logo"]}>
+						<Image
+							className={styles["logo-image"]}
+							src="/logo-2.png"
+							alt="Logo"
+							width={200}
+							height={253}
+						/>
+					</div>
+					<div className={styles["title"]}>您还未登录, 请登录后开启该功能</div>
+
+					<div className={styles["actions"]}>
+						<Button
+							type="default"
+							className={styles["action-button"]}
+							icon={<PlusCircleOutlined />}
+							onClick={() => {
+								router.push("/auth/");
+							}}
+						>
+							登录
+						</Button>
+					</div>
+				</div>
+			);
+		}
+
+		if (orderedSessions.length !== 0) {
+			return orderedSessions.map((session, index) => (
+				<_Chat key={index} _session={session} index={index} isworkflow={true} />
+			));
+		}
+
+		if (Object.keys(workflowGroup).length != 0 && orderedSessions.length == 0) {
+			return (
+				<div className={styles["welcome-container"]}>
+					<div className={styles["logo"]}>
+						<Image
+							className={styles["logo-image"]}
+							src="/logo-2.png"
+							alt="Logo"
+							width={200}
+							height={253}
+						/>
+					</div>
+					<div className={styles["title"]}>
+						点击
+						<Dropdown
+							menu={{ items }}
+							autoAdjustOverflow={true}
+							autoFocus={true}
+						>
+							<a onClick={(e) => e.preventDefault()}>
+								<Button
+									type="dashed"
+									className={styles["plus"]}
+									icon={<PlusCircleOutlined />}
+								>
+									新增助手
+								</Button>
+							</a>
+						</Dropdown>{" "}
+						来开启工作流
+					</div>
+					<div className={styles["sub-title"]}>
+						在本页删除助手, 不会影响正常页的会话. 超级对话功能只在电脑端生效,
+						手机端无法使用.
+						<p>该功能属于会员功能, 目前限时开放.</p>
+					</div>
+					<div className={styles["actions"]}></div>
+				</div>
+			);
+		}
+		//  default case
+		return (
+			<div className={styles["welcome-container"]}>
+				<div className={styles["logo"]}>
+					<Image
+						className={styles["logo-image"]}
+						src="/logo-2.png"
+						alt="Logo"
+						width={200}
+						height={253}
+					/>
+				</div>
+				<div className={styles["title"]}>
+					您还没有建立对话, 点击{" "}
+					<Button
+						type="dashed"
+						className={styles["plus"]}
+						icon={<PlusCircleOutlined />}
+						onClick={() => addWorkflowGroupHandler()}
+					>
+						新建对话
+					</Button>
+					按钮开始
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -340,110 +436,7 @@ export default function Chat() {
 					className={`${styles2["window-content"]} ${styles["background"]}`}
 				>
 					{selectedId != "" && <AgentList />}
-					<div className={styles["chats-container"]}>
-						{!isAuth ? (
-							<div className={styles["welcome-container"]}>
-								<div className={styles["logo"]}>
-									<Image
-										className={styles["logo-image"]}
-										src="/logo-2.png"
-										alt="Logo"
-										width={200}
-										height={253}
-									/>
-								</div>
-								<div className={styles["title"]}>
-									您还未登录, 请登录后开启该功能
-								</div>
-
-								<div className={styles["actions"]}>
-									<Button
-										type="default"
-										className={styles["action-button"]}
-										icon={<PlusCircleOutlined />}
-										onClick={() => {
-											router.push("/auth/");
-										}}
-									>
-										登录
-									</Button>
-								</div>
-							</div>
-						) : orderedSessions.length !== 0 ? (
-							orderedSessions.map((session, index) => (
-								<_Chat
-									key={index}
-									_session={session}
-									index={index}
-									isworkflow={true}
-								/>
-							))
-						) : Object.keys(workflowGroup).length != 0 &&
-						  orderedSessions.length == 0 ? (
-							<div className={styles["welcome-container"]}>
-								<div className={styles["logo"]}>
-									<Image
-										className={styles["logo-image"]}
-										src="/logo-2.png"
-										alt="Logo"
-										width={200}
-										height={253}
-									/>
-								</div>
-								<div className={styles["title"]}>
-									点击
-									<Dropdown
-										menu={{ items }}
-										autoAdjustOverflow={true}
-										autoFocus={true}
-									>
-										<a onClick={(e) => e.preventDefault()}>
-											<Button
-												type="dashed"
-												className={styles["plus"]}
-												icon={<PlusCircleOutlined />}
-											>
-												新增助手
-											</Button>
-										</a>
-									</Dropdown>{" "}
-									来开启工作流
-								</div>
-								<div className={styles["sub-title"]}>
-									在本页删除助手, 不会影响正常页的会话.
-									超级对话功能只在电脑端生效, 手机端无法使用.
-									<p>该功能属于会员功能, 目前限时开放.</p>
-								</div>
-								<div className={styles["actions"]}></div>
-							</div>
-						) : (
-							//  点击新增对话
-
-							<div className={styles["welcome-container"]}>
-								<div className={styles["logo"]}>
-									<Image
-										className={styles["logo-image"]}
-										src="/logo-2.png"
-										alt="Logo"
-										width={200}
-										height={253}
-									/>
-								</div>
-								<div className={styles["title"]}>
-									您还没有建立对话, 点击{" "}
-									<Button
-										type="dashed"
-										className={styles["plus"]}
-										icon={<PlusCircleOutlined />}
-										onClick={() => addWorkflowGroupHandler()}
-									>
-										新建对话
-									</Button>
-									按钮开始
-								</div>
-							</div>
-						)}
-					</div>
+					<div className={styles["chats-container"]}>{renderContent()}</div>
 				</Layout>
 			</Layout>
 		</WorkflowProvider>

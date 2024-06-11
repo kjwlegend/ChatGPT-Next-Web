@@ -1,4 +1,3 @@
-"use client";
 import { useDebouncedCallback } from "use-debounce";
 import React, {
 	useState,
@@ -36,7 +35,6 @@ export function useSubmitHandler() {
 	const isComposing = useRef(false);
 
 	useEffect(() => {
-		if (typeof window === undefined) return;
 		const onCompositionStart = () => {
 			isComposing.current = true;
 		};

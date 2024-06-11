@@ -489,8 +489,6 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 	const isUser = message.role === "user";
 	const showTyping = message.preview || message.streaming;
 
-	const [messageApi, contextHolder] = messagepop.useMessage();
-
 	const onRightClick = (e: any, message: ChatMessage) => {
 		if (selectOrCopy(e.currentTarget, messageText)) {
 			if (userInput.length === 0) {

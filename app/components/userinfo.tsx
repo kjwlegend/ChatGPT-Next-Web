@@ -71,7 +71,6 @@ export default function UserInfo() {
 						style={{
 							marginRight: "4px",
 							position: "relative",
-							top: "5px",
 						}}
 					/>{" "}
 					领福利
@@ -105,7 +104,6 @@ export default function UserInfo() {
 										style={{
 											marginRight: "4px",
 											position: "relative",
-											top: "5px",
 										}}
 									/>{" "}
 									{user.nickname ? user.nickname : "神秘人"}{" "}

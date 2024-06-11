@@ -1,5 +1,3 @@
-"use client";
-
 import BotIcon from "@/app/icons/bot.png";
 
 import { DeleteIcon } from "@/app/icons";

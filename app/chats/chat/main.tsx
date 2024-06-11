@@ -58,6 +58,18 @@ import { Chatbody } from "./Chatbody";
 import Upload from "@/app/chats/knowledge/upload";
 import { useScrollToBottom } from "./chat-controller";
 
+const ChatbodyDynamic = dynamic(
+	async () => (await import("./Chatbody")).Chatbody,
+	{
+		ssr: false,
+	},
+);
+const InputpanelDynamic = dynamic(
+	async () => (await import("./Inputpanel")).Inputpanel,
+	{
+		ssr: false,
+	},
+);
 interface ChatContextType {
 	hitBottom: boolean;
 	setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
@@ -150,8 +162,6 @@ export function _Chat(props: {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const clientConfig = useMemo(() => getClientConfig(), []);
-
 	return (
 		<div
 			className={`${styles.chat} ${
@@ -181,12 +191,12 @@ export function _Chat(props: {
 					index={index}
 					isworkflow={props.isworkflow}
 				/>
-				<Chatbody
-					_session={_session}
+				<ChatbodyDynamic
+					_session={session}
 					index={index}
 					isworkflow={props.isworkflow}
 				/>
-				<Inputpanel session={_session} index={index} />
+				<InputpanelDynamic session={_session} index={index} />
 			</ChatContext.Provider>
 		</div>
 	);

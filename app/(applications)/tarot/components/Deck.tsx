@@ -29,13 +29,48 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 	const { game, dealCards, currentSpread, remainingCards, setStage, stage } =
 		TarotStore;
 	const isMobileScreen = useMobileScreen();
+
+	// 生成随机Y轴数组
+	function generateRandomYArray(i: number) {
+		// 创建一个长度为29的新数组
+
+		return Array.from({ length: 18 }, (_, index) => {
+			if (index === 0 || index === 17) {
+				// 确保第一个和最后一个元素为0
+				return 0;
+			}
+
+			// 使用 i 和 index 生成伪随机数，确保每个 i 的随机序列是相同的
+			const seed = (i + 1) * (index + 1);
+			const random = Math.sin(seed) * 10000;
+			//  Y坐标范围是 -30 到 30
+			const randomY = (random - Math.floor(random)) * 60 - 30;
+			return randomY;
+		});
+	}
+
+	// 生成随机旋转数组
+
+	function generateRotateArray(i: number) {
+		// 创建一个长度为29的新数组，并填充随机旋转值
+		return Array.from({ length: 14 }, (_, index) => {
+			if (index === 0 || index === 13) {
+				// 确保第一个和最后一个元素为0
+				return 0;
+			}
+
+			// 使用 i 和 index 生成伪随机数，确保每个 i 的随机序列是相同的
+			const seed = (i + 1) * (index + 1);
+			const random = Math.sin(seed) * 10000;
+			const randomRotate = (random - Math.floor(random)) * 360;
+			return randomRotate;
+		});
+	}
 	const shuffleVariants: Variants = {
 		start: (i: number) => ({
 			x: [0, 60, 140, -80, -60, 55, -55, 44, -10, 0],
-			y: [0, 15, -15, 25, -15, 5, 0],
-			rotate: [
-				0, 50, 60, 180, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360,
-			],
+			y: generateRandomYArray(i),
+			rotate: generateRotateArray(i),
 			// zIndex: i % 2 == 1 ? i : i - 1,
 			transition: {
 				duration: 3.5,

@@ -3,7 +3,9 @@ import { BuildConfig, getBuildConfig } from "./build";
 export function getClientConfig() {
 	if (typeof document !== "undefined") {
 		// client side
-		return JSON.parse(queryMeta("config")) as BuildConfig;
+		const clientConfig = queryMeta("config");
+		// console.log("clientConfig", clientConfig);
+		return JSON.parse(clientConfig) as BuildConfig;
 	}
 
 	if (typeof process !== "undefined") {

@@ -365,16 +365,6 @@ export function ChatActions(props: {
 	const [showUploadImage, setShowUploadImage] = useState(false);
 	const [showUploadFile, setShowUploadFile] = useState(false);
 
-	// use useeffect to check mask.plugins.length , if zero then set usePlugins to false
-
-	function selectImage() {
-		if (fileInputRef?.current) {
-			console.log("upload click1");
-
-			fileInputRef.current.click();
-		}
-	}
-
 	const onImageSelected = async (e: any) => {
 		const file = e.target.files[0];
 		const fileName = await api.file.upload(file, "upload");
@@ -483,13 +473,26 @@ export function ChatActions(props: {
 
 	useEffect(() => {
 		const show = isVisionModel(currentModel);
-		setShowUploadImage(show);
-		setShowUploadFile(isEnableRAG && isSupportRAGModel(currentModel));
-		if (!show) {
-			props.setAttachImages([]);
-			props.setUploading(false);
+
+		if (show !== showUploadImage) {
+			setShowUploadImage(show);
 		}
-	}, [chatStore, currentModel, models]);
+
+		const showFile = isEnableRAG && isSupportRAGModel(currentModel);
+		if (showFile !== showUploadFile) {
+			setShowUploadFile(showFile);
+		}
+
+		// 只有在 currentModel 发生变化且 show 为 false 时才更新父组件状态
+		if (!show) {
+			// 使用 setTimeout 来避免在当前渲染周期中更新父组件状态
+			setTimeout(() => {
+				props.setAttachImages([]);
+				props.setUploading(false);
+			}, 0);
+		}
+		// 这里确保 useEffect 仅在 currentModel 发生变化时触发
+	}, [currentModel]);
 
 	const chatInjection = session.mask.modelConfig;
 	const [enableUserInfo, setEnableUserInfo] = useState(
@@ -750,6 +753,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 	const promptStore = usePromptStore();
 	const isMobileScreen = useMobileScreen();
 	const router = useRouter();
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const { updateUserInfo } = authHook;
 
@@ -815,8 +819,6 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 			inputRef.current?.focus();
 		}, 30);
 	};
-
-	const [messageApi, contextHolder] = message.useMessage();
 
 	const doSubmit = (userInput: string) => {
 		if (userInput.trim() === "") return;
@@ -1148,7 +1150,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 
 	return (
 		<div className={styles["chat-input-panel"]}>
-			{contextHolder}
+			{/* {contextHolder} */}
 			<PromptHints prompts={promptHints} onPromptSelect={onPromptSelect} />
 
 			<ChatActions

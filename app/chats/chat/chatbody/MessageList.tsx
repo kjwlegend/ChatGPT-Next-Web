@@ -4,6 +4,7 @@ import { useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import { AgentMessageItem, MessageItem } from "./MessageItem";
+
 import { MJFloatButton } from "../midjourney";
 import { useContext, useRef, useState, useMemo, Fragment } from "react";
 import { useScrollToBottom } from "../chat-controller";
@@ -57,7 +58,6 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const isMobileScreen = useMobileScreen();
 
-	const [messageApi, contextHolder] = message.useMessage();
 	// const [isLoading, setIsLoading] = useState(false);
 	// const [hasNextPage, setHasNextPage] = useState(true);
 
@@ -84,7 +84,6 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 
 	return (
 		<>
-			{contextHolder}
 			{session.mask.modelConfig.model == "midjourney" && <MJFloatButton />}
 			{messages.map((message, i) => {
 				const isUser = message.role === "user";

@@ -281,7 +281,7 @@ export class ChatGPTApi implements LLMApi {
 					}
 
 					if (remainText.length > 0) {
-						const fetchCount = Math.max(1, Math.round(remainText.length / 60));
+						const fetchCount = Math.max(1, Math.round(remainText.length / 20));
 						const fetchText = remainText.slice(0, fetchCount);
 						responseText += fetchText;
 						remainText = remainText.slice(fetchCount);
