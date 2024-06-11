@@ -326,6 +326,12 @@ export default function Chat() {
 		);
 	}
 
+	// 检查window是否存在
+	if (typeof window === undefined) {
+		// 在服务器端渲染或者使用静态生成时，window对象可能不存在
+		return null; // 或者返回一个加载指示器或者一个空的div
+	}
+
 	return (
 		<WorkflowProvider>
 			<Layout style={{ flexDirection: "row" }}>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import React from "react";
 
@@ -61,6 +63,8 @@ function useHotKey() {
 	const chatStore = useChatStore();
 
 	useEffect(() => {
+		if (typeof window === undefined) return;
+
 		const onKeyDown = (e: KeyboardEvent) => {
 			if (e.altKey || e.ctrlKey) {
 				if (e.key === "ArrowUp") {
@@ -100,6 +104,7 @@ function useDragSideBar() {
 		startDragWidth.current = config.sidebarWidth;
 		const dragStartTime = Date.now();
 
+		if (typeof window === undefined) return;
 		const handleDragMove = (e: MouseEvent) => {
 			if (Date.now() < lastUpdateTime.current + 20) {
 				return;
@@ -216,8 +221,12 @@ export function WorkflowSidebar(props: { className?: string }) {
 			if (listElement && listElement.removeEventListener) {
 				listElement.removeEventListener("scroll", handleScroll);
 			}
-		};
+		};      
 	}, [page]); // 移除了 hasMore，因为它的值在组件挂载后不会改变
+
+	if (typeof window === undefined) {
+		console.log("window is undefined");
+	}
 
 	if (isMobileScreen && !authStore.isAuthenticated) {
 		return (

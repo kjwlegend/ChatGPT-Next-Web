@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentApi, RequestBody, ResponseBody } from "../agentapi";
 import { auth } from "@/app/api/auth";
-import { EdgeTool } from "@/app/api/langchain-tools/edge_tools";
+import { EdgeTool } from "../../../../langchain-tools/edge_tools";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 
@@ -9,7 +9,6 @@ async function handle(req: NextRequest) {
 	if (req.method === "OPTIONS") {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
-
 	try {
 		const authResult = auth(req, ModelProvider.GPT);
 		if (authResult.error) {
@@ -67,12 +66,7 @@ async function handle(req: NextRequest) {
 		);
 		var edgeTools = await edgeTool.getCustomTools();
 		var tools = [...edgeTools];
-
-		// return a demo scuess
-		return new Response(JSON.stringify({ message: "success" }), {
-			status: 200,
-			headers: { "Content-Type": "application/json" },
-		});
+		return await agentApi.getApiHandler(req, reqBody, tools);
 	} catch (e) {
 		return new Response(JSON.stringify({ error: (e as any).message }), {
 			status: 500,
