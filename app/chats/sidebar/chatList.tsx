@@ -44,7 +44,6 @@ export function ChatList(props: { narrow?: boolean }) {
 		state.sortSession,
 	]);
 
-	
 	useEffect(() => {
 		sortSession();
 	}, [sessions]);
@@ -107,7 +106,17 @@ export function ChatList(props: { narrow?: boolean }) {
 							{filteredSessions.map((item, i) => (
 								<ChatItem
 									title={item.topic}
-									time={new Date(item.lastUpdate).toLocaleString()}
+									time={
+										new Date(item.lastUpdate).toLocaleDateString(undefined, {
+											month: "2-digit",
+											day: "2-digit",
+										}) +
+										" " +
+										new Date(item.lastUpdate).toLocaleTimeString(undefined, {
+											hour: "2-digit",
+											minute: "2-digit",
+										})
+									}
 									count={item.chat_count ?? item.messages.length}
 									key={item.id}
 									id={item.id}
