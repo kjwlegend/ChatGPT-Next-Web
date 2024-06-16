@@ -135,6 +135,10 @@
 			align-items: center;
 			opacity: 0.5;
 			transition: all ease 0.3s;
+
+			svg {
+				fill: red;
+			}
 		}
 
 		.context-role {
