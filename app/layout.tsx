@@ -124,6 +124,8 @@ const darkTheme: ThemeConfig = {
 		},
 		Dropdown: {
 			colorText: "rgba(38, 38, 38, 0.88)",
+			colorBgElevated: "rgb(37, 34, 76)",
+			colorPrimary: "#664eb5",
 		},
 		Drawer: {
 			colorBgElevated: "rgb(37, 34, 76)",

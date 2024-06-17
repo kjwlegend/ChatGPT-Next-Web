@@ -44,8 +44,27 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 			const seed = (i + 1) * (index + 1);
 			const random = Math.sin(seed) * 10000;
 			//  Y坐标范围是 -30 到 30
-			const randomY = (random - Math.floor(random)) * 60 - 30;
+			const randomY = (random - Math.floor(random)) * 60 - 100;
 			return randomY;
+		});
+	}
+
+	// 生成随机X数组
+
+	function generateRandomXArray(i: number) {
+		// 创建一个长度为29的新数组
+		return Array.from({ length: 18 }, (_, index) => {
+			if (index === 0 || index === 17) {
+				// 确保第一个和最后一个元素为0
+				return 0;
+			}
+
+			// 使用 i 和 index 生成伪随机数，确保每个 i 的随机序列是相同的
+			const seed = (i + 1) * (index + 1);
+			const random = Math.sin(seed) * 10000;
+			//  X坐标范围是 -150 到 150
+			const randomX = (random - Math.floor(random)) * 300 - 150;
+			return randomX;
 		});
 	}
 
@@ -66,11 +85,15 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 			return randomRotate;
 		});
 	}
+	function generateRandomInt(min: number, max: number) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 	const shuffleVariants: Variants = {
 		start: (i: number) => ({
-			x: [0, 60, 140, -80, -60, 55, -55, 44, -10, 0],
+			x: generateRandomXArray(i),
 			y: generateRandomYArray(i),
 			rotate: generateRotateArray(i),
+			zIndex: generateRandomInt(0, i),
 			// zIndex: i % 2 == 1 ? i : i - 1,
 			transition: {
 				duration: 3.5,
@@ -80,16 +103,16 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 				delay: i * 0.1, // Stagger the animation of each card
 			},
 		}),
-		stop: {
+		stop: (i: number) => ({
 			x: 0,
 			y: 0,
-			zIndex: 0,
+			zIndex: i,
 			rotate: 0,
 			transition: {
 				duration: 2,
 				ease: "easeOut",
 			},
-		},
+		}),
 	};
 
 	const fadeInVariants: Variants = {
