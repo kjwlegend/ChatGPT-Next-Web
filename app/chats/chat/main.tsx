@@ -117,7 +117,6 @@ export function _Chat(props: {
 	// if props._session is not provided, use current session
 
 	const session = chatStore.getSession(_session);
-	if (!session) return null;
 
 	const sessionId = session.id;
 
@@ -162,6 +161,7 @@ export function _Chat(props: {
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	if (!session) return null;
 
 	return (
 		<div
