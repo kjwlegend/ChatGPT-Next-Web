@@ -135,6 +135,8 @@ export const DEFAULT_MODELS = [
 		name: "gpt-4o",
 		available: true,
 		displayName: "小光Pro-(5积分/次)",
+		proModel: true,
+		supportFunctionCall: true,
 		provider: {
 			id: "openai",
 			providerName: "OpenAI",
@@ -146,6 +148,9 @@ export const DEFAULT_MODELS = [
 		name: "gpt-3.5-turbo",
 		displayName: "小光基础(1积分/次)",
 		available: true,
+		proModel: false,
+		supportFunctionCall: true,
+
 		provider: {
 			id: "openai",
 			providerName: "OpenAI",
@@ -156,6 +161,8 @@ export const DEFAULT_MODELS = [
 		name: "deepseek-chat",
 		available: true,
 		displayName: "Deepseek模型(1积分/次)",
+		proModel: true,
+		supportFunctionCall: true,
 		provider: {
 			id: "deepseek",
 			providerName: "deepseek",
@@ -166,6 +173,8 @@ export const DEFAULT_MODELS = [
 		name: "deepseek-code",
 		available: true,
 		displayName: "Deepseek编程(1积分/次)",
+		proModel: false,
+		supportFunctionCall: false,
 		provider: {
 			id: "deepseek",
 			providerName: "deepseek",
@@ -176,6 +185,8 @@ export const DEFAULT_MODELS = [
 		name: "midjourney",
 		available: true,
 		displayName: "Midjourney(2积分/次)",
+		proModel: false,
+		supportFunctionCall: false,
 		provider: {
 			id: "midjourney",
 			providerName: "midjourney",
@@ -195,7 +206,7 @@ export const server_url = "https://admin.xiaoguang.fun";
 
 // export const server_url = "http://localhost:8000";
 
-export const version = "2.5.0";
+export const version = "2.5.1";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

@@ -44,7 +44,6 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 	const sessionId = session.id;
 
 	const model = session.mask.modelConfig.model;
-	console.log("modelswitch", model);
 
 	const unCheckedChildrenText = "基础模型";
 	const checkedChildrenText = "高级模型";

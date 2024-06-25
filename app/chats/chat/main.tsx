@@ -53,7 +53,7 @@ import styles from "./chats.module.scss";
 
 import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
 
-import WindowHeaer from "./WindowHeader";
+import { WindowHeader } from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 import Upload from "@/app/chats/knowledge/upload";
 import { useScrollToBottom } from "./chat-controller";
@@ -117,6 +117,7 @@ export function _Chat(props: {
 	// if props._session is not provided, use current session
 
 	const session = chatStore.getSession(_session);
+	if (!session) return null;
 
 	const sessionId = session.id;
 
@@ -186,7 +187,7 @@ export function _Chat(props: {
 					setUserImage,
 				}}
 			>
-				<WindowHeaer
+				<WindowHeader
 					session={_session}
 					index={index}
 					isworkflow={props.isworkflow}
@@ -217,5 +218,6 @@ export function useLoadData() {
 export function Chat() {
 	const chatStore = useChatStore();
 	const sessionIndex = chatStore.currentSessionIndex;
+	// if (!sessionIndex) return null;
 	return <_Chat key={sessionIndex} isworkflow={false}></_Chat>;
 }

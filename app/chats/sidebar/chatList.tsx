@@ -29,25 +29,27 @@ import { ChatItem, ChatItemShort } from "./chatItem";
 
 export function ChatList(props: { narrow?: boolean }) {
 	const [
-		sessions,
 		currentSessionId,
 		selectSession,
 		selectSessionsById,
 		moveSession,
 		sortSession,
 	] = useChatStore((state) => [
-		state.sessions,
 		state.currentSessionId,
 		state.selectSession,
 		state.selectSessionById,
 		state.moveSession,
 		state.sortSession,
 	]);
+	const chatStore = useChatStore();
+	const { sessions } = chatStore;
 
-	
+	const [chatlist, setChatlist] = useState(sessions);
+
 	useEffect(() => {
 		sortSession();
-	}, [sessions]);
+		// setChatlist(sessions);
+	}, [sessions, sortSession]);
 
 	const filteredSessions = useMemo(() => {
 		//  exlude workflow chat
@@ -56,8 +58,8 @@ export function ChatList(props: { narrow?: boolean }) {
 		);
 		return newSessions;
 	}, [sessions]);
+
 	// console.log("filteredSessions", filteredSessions);
-	const chatStore = useChatStore();
 	const workflowStore = useWorkflowStore();
 	const navigate = useNavigate();
 	const userStore = useUserStore();
@@ -107,7 +109,17 @@ export function ChatList(props: { narrow?: boolean }) {
 							{filteredSessions.map((item, i) => (
 								<ChatItem
 									title={item.topic}
-									time={new Date(item.lastUpdate).toLocaleString()}
+									time={
+										new Date(item.lastUpdate).toLocaleDateString(undefined, {
+											month: "2-digit",
+											day: "2-digit",
+										}) +
+										" " +
+										new Date(item.lastUpdate).toLocaleTimeString(undefined, {
+											hour: "2-digit",
+											minute: "2-digit",
+										})
+									}
 									count={item.chat_count ?? item.messages.length}
 									key={item.id}
 									id={item.id}

@@ -44,6 +44,8 @@ const darkTheme: ThemeConfig = {
 		borderRadius: 5,
 		// colorPrimary: "#102c53",
 		colorPrimary: "#cbdfff",
+		// colorPrimary: "#664eb5",
+
 		colorText: "rgba(255, 255, 255, 0.88)",
 		colorTextQuaternary: "#6c6666",
 	},
@@ -79,10 +81,10 @@ const darkTheme: ThemeConfig = {
 		},
 		Tabs: {
 			inkBarColor: "rgb(114, 46, 209)",
-			itemActiveColor: "#414c6f",
+			itemActiveColor: "#9bb3ff",
 			itemColor: "rgb(164 169 175)",
 			itemHoverColor: "rgb(114, 46, 209)",
-			itemSelectedColor: "#414c6f",
+			itemSelectedColor: "#9bb3ff",
 			cardBg: "rgb(37, 34, 76)",
 		},
 		Checkbox: {
@@ -102,6 +104,7 @@ const darkTheme: ThemeConfig = {
 			trackBg: "#afacc2",
 		},
 		Tag: {
+			defaultBg: "rgb(37, 34, 76)",
 			colorPrimary: "rgb(108, 97, 165)",
 			colorText: "rgba(255, 255, 255, 0.45)",
 			colorPrimaryActive: "rgb(108, 97, 165)",
@@ -121,6 +124,8 @@ const darkTheme: ThemeConfig = {
 		},
 		Dropdown: {
 			colorText: "rgba(38, 38, 38, 0.88)",
+			colorBgElevated: "rgb(37, 34, 76)",
+			colorPrimary: "#664eb5",
 		},
 		Drawer: {
 			colorBgElevated: "rgb(37, 34, 76)",
@@ -131,6 +136,19 @@ const darkTheme: ThemeConfig = {
 			colorBgElevated: "rgb(37, 34, 76)",
 			colorText: "rgba(255, 255, 255, 0.88)",
 			itemBg: "rgb(37, 34, 76)",
+		},
+		Radio: {
+			buttonBg: "rgb(37, 34, 76)",
+			buttonCheckedBg: "rgb(108, 97, 165)",
+		},
+		Table: {
+			colorBgContainer: "#1c2036",
+			colorText: "rgba(255, 255, 255, 0.88)",
+			headerBg: "rgb(37, 34, 76)",
+		},
+		Popover: {
+			colorBgElevated: "rgb(37, 34, 76)",
+			colorText: "rgba(255, 255, 255, 0.88)",
 		},
 	},
 };

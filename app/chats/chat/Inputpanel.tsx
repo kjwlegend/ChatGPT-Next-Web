@@ -120,7 +120,6 @@ import {
 	useScrollToBottom,
 	ClearContextDivider,
 } from "./chat-controller";
-import WindowHeaer from "./WindowHeader";
 import { ChatContext } from "./main";
 // import { ChatContext } from "@/app/workflow-chats/context";
 import {
@@ -140,7 +139,6 @@ import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
 import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
 import { submitChatMessage } from "@/app/services/chatService";
-import { LLMModelSwitch } from "./chatActions";
 
 import { compressImage } from "@/app/utils/chat";
 import { ClientApi } from "@/app/client/api";
@@ -285,10 +283,10 @@ export function ChatAction(props: {
 							? ({
 									"--icon-width": `${width.icon}px`,
 									"--full-width": `${width.full}px`,
-							  } as React.CSSProperties)
+								} as React.CSSProperties)
 							: ({
 									width: "auto",
-							  } as React.CSSProperties)
+								} as React.CSSProperties)
 					}
 				>
 					{actionContent}
@@ -316,10 +314,10 @@ export function ChatAction(props: {
 						? ({
 								"--icon-width": `${width.icon}px`,
 								"--full-width": `${width.full}px`,
-						  } as React.CSSProperties)
+							} as React.CSSProperties)
 						: ({
 								width: "auto",
-						  } as React.CSSProperties)
+							} as React.CSSProperties)
 				}
 			>
 				{actionContent}
@@ -886,7 +884,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								}),
 								preview: true,
 							},
-					  ]
+						]
 					: [],
 			)
 			.concat(
@@ -900,7 +898,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								}),
 								preview: true,
 							},
-					  ]
+						]
 					: [],
 			);
 	}, [

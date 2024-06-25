@@ -370,6 +370,10 @@ export const useChatStore = createPersistStore(
 				let index = get().currentSessionIndex;
 				const sessions = get().sessions;
 
+				if (index === undefined || index === null) {
+					throw new Error("Index is not defined");
+				}
+
 				if (index < 0 || index >= sessions.length) {
 					index = Math.min(sessions.length - 1, Math.max(0, index));
 					set(() => ({ currentSessionIndex: index }));
@@ -406,16 +410,28 @@ export const useChatStore = createPersistStore(
 							? {
 									...session,
 									messages: [...session.messages, newMessage],
-							  }
+								}
 							: session,
 					),
 				}));
 			},
 			sortSession() {
-				// sort sessions by lastUpdate
-				set((state) => ({
-					sessions: state.sessions.sort((a, b) => b.lastUpdate - a.lastUpdate),
-				}));
+				set((state) => {
+					// Create a new sorted array instead of modifying the existing state directly
+					const sortedSessions = [...state.sessions].sort(
+						(a, b) => b.lastUpdate - a.lastUpdate,
+					);
+
+					// Check if the sorted array is different from the current state to avoid unnecessary updates
+					if (
+						JSON.stringify(state.sessions) !== JSON.stringify(sortedSessions)
+					) {
+						return { sessions: sortedSessions };
+					}
+
+					// If the sorted array is the same as the current state, do not update the state
+					return state;
+				});
 				// console.log("sortSession", get().sessions);
 			},
 
@@ -538,6 +554,8 @@ export const useChatStore = createPersistStore(
 						botMessage,
 					]);
 					session.responseStatus = false;
+					session.lastUpdate = Date.now();
+					set((state) => ({ currentSessionIndex: 0 }));
 				});
 				console.log("click send: ", session.topic, session.responseStatus);
 
@@ -622,7 +640,7 @@ export const useChatStore = createPersistStore(
 								role: "system",
 								content: fillTemplateWith("", injectSetting),
 							}),
-					  ]
+						]
 					: [];
 				if (shouldInjectSystemPrompts) {
 					// console.log(

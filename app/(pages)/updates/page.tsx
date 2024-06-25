@@ -852,6 +852,22 @@ const items = [
 			</>
 		),
 	},
+	{
+		label: "2024-06-26",
+		color: "blue",
+		children: (
+			<>
+				发布 V2.5.1 版本, 小光说:
+				<ul>
+					<li>优化了深色模式</li>
+					<li>修复chat页循环跳转的bug</li>
+					<li>优化了对话列表的排序</li>
+					<li>优化了对话框的底色</li>
+					<li>更新站点菜单</li>
+				</ul>
+			</>
+		),
+	},
 ];
 
 const Log = () => {

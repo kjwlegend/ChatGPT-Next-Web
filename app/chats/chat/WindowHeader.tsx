@@ -404,73 +404,75 @@ function WindowActions(props: {
 	);
 }
 
-export default function WindowHeader(props: {
-	session?: ChatSession;
-	index?: number;
-	isworkflow: boolean;
-	doubleAgent?: boolean;
-}) {
-	const chatStore = useChatStore();
-	let session: ChatSession;
-	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
-	const sessionId = session.id;
-	const index = props.index ?? 0;
+export const WindowHeader = React.memo(
+	(props: {
+		session?: ChatSession;
+		index?: number;
+		isworkflow: boolean;
+		doubleAgent?: boolean;
+	}) => {
+		const chatStore = useChatStore();
+		let session: ChatSession;
+		// isworkflow = true then, session use props.session. else use currentSession
+		if (props.isworkflow && props.session) {
+			session = props.session;
+		} else {
+			session = chatStore.currentSession();
+		}
+		const sessionId = session.id;
+		const index = props.index ?? 0;
 
-	const config = useAppConfig();
-	const [showExport, setShowExport] = useState(false);
+		const config = useAppConfig();
+		const [showExport, setShowExport] = useState(false);
 
-	const {
-		hitBottom,
-		setHitBottom,
+		const {
+			hitBottom,
+			setHitBottom,
 
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-	} = useContext(ChatContext);
+			showPromptModal,
+			setShowPromptModal,
+			userInput,
+			setUserInput,
+			enableAutoFlow,
+			setEnableAutoFlow,
+		} = useContext(ChatContext);
 
-	const isMobileScreen = useMobileScreen();
-	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+		const isMobileScreen = useMobileScreen();
+		const clientConfig = useMemo(() => getClientConfig(), []);
+		const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
 
-	const [isEditingMessage, setIsEditingMessage] = useState(false);
+		const [isEditingMessage, setIsEditingMessage] = useState(false);
 
-	return (
-		<div className="window-header" data-tauri-drag-region>
-			{isMobileScreen && !props.isworkflow && <ReturnButton />}
+		return (
+			<div className="window-header" data-tauri-drag-region>
+				{isMobileScreen && !props.isworkflow && <ReturnButton />}
 
-			<WindowHeaderTitle
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
+				<WindowHeaderTitle
+					session={session}
+					index={index}
+					isworkflow={props.isworkflow}
+				/>
 
-			<LLMModelSwitch session={session} />
+				<LLMModelSwitch session={session} />
 
-			<WindowActions
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
+				<WindowActions
+					session={session}
+					index={index}
+					isworkflow={props.isworkflow}
+				/>
 
-			<PromptToast
-				showToast={!hitBottom}
-				showModal={showPromptModal}
-				setShowModal={setShowPromptModal}
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
-		</div>
-	);
-}
+				<PromptToast
+					showToast={!hitBottom}
+					showModal={showPromptModal}
+					setShowModal={setShowPromptModal}
+					session={session}
+					index={index}
+					isworkflow={props.isworkflow}
+				/>
+			</div>
+		);
+	},
+);
 
 function DoulbeAgentWindowHeaderTitle({
 	session,

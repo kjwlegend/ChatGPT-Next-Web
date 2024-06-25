@@ -46,6 +46,8 @@ import { getChatSession } from "../../api/backend/chat";
 import { ChatSessionData } from "../../api/backend/chat";
 import { UpdateChatSessions } from "../../services/chatService";
 import { useUserStore } from "../../store/user";
+import { useDebounce } from "use-debounce";
+import { debounce } from "@/app/utils/debounce";
 
 const ChatList = dynamic(async () => (await import("./chatList")).ChatList, {
 	loading: () => null,
@@ -163,7 +165,7 @@ export function SideBar(props: { className?: string }) {
 
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-	const listRef = useRef<HTMLDivElement | null>(null);
+	const loadRef = useRef<HTMLDivElement | null>(null);
 
 	// 加载更多会话
 	const loadMoreSessions = async () => {
@@ -184,22 +186,37 @@ export function SideBar(props: { className?: string }) {
 			}
 		}
 	};
+
 	useEffect(() => {
-		const handleScroll = (event: Event) => {
-			const target = event.target as HTMLDivElement;
-			const { scrollTop, clientHeight, scrollHeight } = target;
-			if (scrollTop + clientHeight >= scrollHeight - 100) {
-				loadMoreSessions();
-			}
-		};
-		const listElement = listRef.current; // 通过ref获取DOM元素
+		const listElement = loadRef.current; // 通过ref获取DOM元素
+		let observer: IntersectionObserver;
+
 		if (listElement) {
-			listElement.addEventListener("scroll", handleScroll);
+			const options = {
+				root: null,
+				rootMargin: "0px",
+				threshold: 1.0,
+			};
+
+			const debouncedLoadMoreSessions = debounce(
+				() => loadMoreSessions(),
+				1000,
+			);
+
+			observer = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						debouncedLoadMoreSessions();
+					}
+				});
+			}, options);
+
+			observer.observe(listElement);
 		}
 
 		return () => {
-			if (listElement) {
-				listElement.removeEventListener("scroll", handleScroll);
+			if (observer) {
+				observer.disconnect();
 			}
 		};
 	}, [hasMore, page]); // 依赖项数组
@@ -274,9 +291,9 @@ export function SideBar(props: { className?: string }) {
 						navigate(Path.Home);
 					}
 				}}
-				ref={listRef}
 			>
 				<ChatList narrow={shouldNarrow} />
+				<div ref={loadRef}> ...</div>
 			</div>
 
 			<div className={styles["sidebar-tail"]}>
