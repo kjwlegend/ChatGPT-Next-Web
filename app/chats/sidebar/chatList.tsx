@@ -29,24 +29,27 @@ import { ChatItem, ChatItemShort } from "./chatItem";
 
 export function ChatList(props: { narrow?: boolean }) {
 	const [
-		sessions,
 		currentSessionId,
 		selectSession,
 		selectSessionsById,
 		moveSession,
 		sortSession,
 	] = useChatStore((state) => [
-		state.sessions,
 		state.currentSessionId,
 		state.selectSession,
 		state.selectSessionById,
 		state.moveSession,
 		state.sortSession,
 	]);
+	const chatStore = useChatStore();
+	const { sessions } = chatStore;
+
+	const [chatlist, setChatlist] = useState(sessions);
 
 	useEffect(() => {
 		sortSession();
-	}, [sessions]);
+		// setChatlist(sessions);
+	}, [sessions, sortSession]);
 
 	const filteredSessions = useMemo(() => {
 		//  exlude workflow chat
@@ -55,8 +58,8 @@ export function ChatList(props: { narrow?: boolean }) {
 		);
 		return newSessions;
 	}, [sessions]);
+
 	// console.log("filteredSessions", filteredSessions);
-	const chatStore = useChatStore();
 	const workflowStore = useWorkflowStore();
 	const navigate = useNavigate();
 	const userStore = useUserStore();

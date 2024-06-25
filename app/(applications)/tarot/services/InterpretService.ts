@@ -29,7 +29,7 @@ export const interpretTarotCard = async (
 			role: "user",
 			content: `Please interpret the card "${card.name} ${
 				card.isReversed ? "Reversed" : "Upright"
-			}" in the "${positionMeaning}" position of a "${spreadName}" spread for the user question: "${userQuestion}".  You must connect the user question to card interpretation someway. Please provide the interpretation in ${language}.`,
+			}" in the "${positionMeaning}" position of a "${spreadName}" spread for the user question: "${userQuestion}". You must connect the user question to card interpretation in a clear and specific manner, providing actionable advice based on the card's meaning and the user's situation. Please provide the interpretation in ${language}.`,
 		},
 	];
 
@@ -68,22 +68,20 @@ export const interpretTarotSpread = async (
 			}" tarot spread for the question: "${userQuestion}". ${tarotSpread.positions
 				.map(
 					(position, index) =>
-						`Position ${index + 1}: "${position.meaning}", Card: "${position
-							.card?.name} - ${
-							position.card?.isReversed ? "Reversed" : "Upright"
-						} - ${
+						`Position ${index + 1}: "${position.meaning}", Card: "${
+							position.card?.name
+						} - ${position.card?.isReversed ? "Reversed" : "Upright"} - ${
 							position.card?.isReversed
 								? position.card?.meaningReversed
 								: position.card?.meaningPositive
 						}"`,
 				)
 				.join(" ")}.
-Please provide the interpretation in ${language}.
-                `,
+		You must connect each position and card interpretation to the user's question in a clear and specific manner, providing actionable advice based on each card's meaning and the user's situation. Please provide the interpretation in ${language}.`,
 		},
 	];
 
-	const model = "gpt-4-0125-preview";
+	const model = "gpt-4o";
 
 	// 调用LLM服务
 	const output = await strictLLMResult(userInput, model);

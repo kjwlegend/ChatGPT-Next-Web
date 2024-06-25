@@ -78,7 +78,7 @@ export function Chatbody(props: {
 }) {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
-	
+
 	const authHook = useAuth();
 	const { isAuthenticated } = useAuthStore();
 	const router = useRouter();
@@ -203,7 +203,7 @@ export function Chatbody(props: {
 								}),
 								preview: true,
 							},
-					  ]
+						]
 					: [],
 			)
 			.concat(
@@ -217,7 +217,7 @@ export function Chatbody(props: {
 								}),
 								preview: true,
 							},
-					  ]
+						]
 					: [],
 			);
 	}, [

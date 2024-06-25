@@ -23,6 +23,7 @@ import {
 	useLocation,
 	NavigationType,
 } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { SideBar } from "./sidebar/sidebar";
 import { useAppConfig } from "../store/config";
 import AuthPage from "../(pages)/auth/page";
@@ -161,7 +162,7 @@ function Screen() {
 	const { logoutHook } = useAuth();
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
-	console.log("ishome", isHome);
+	const router = useRouter();
 
 	getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
 
@@ -170,38 +171,58 @@ function Screen() {
 	}, []);
 
 	// 检查当前的 cookie 中的 expires=xxx 是否已经过期
-	// 如果过期了，就清除掉当前的 cookie 并执行logouthook
 	useEffect(() => {
+		let timeoutId: number | NodeJS.Timeout | undefined; // 定义 timeoutId 的类型
+
 		if (!isAuthenticated) {
 			return;
 		}
+
 		const cookie = document.cookie;
-		console.log("cookie", cookie);
+		// console.log("cookie", cookie);
 		const cookieArr = cookie.split(";");
 		const cookieObj: any = {};
 		cookieArr.forEach((item) => {
 			const itemArr = item.split("=");
 			cookieObj[itemArr[0].trim()] = itemArr[1];
 		});
+
 		const expires = cookieObj.expires;
 		const expiresTimeStamp = Date.parse(expires);
 		const currentTimeStamp = Date.now();
-		console.log("expiresTimeStamp", expiresTimeStamp);
+
+		const currentDateTime = new Date(currentTimeStamp).toLocaleString();
+		const expiresDateTime = new Date(expiresTimeStamp).toLocaleString();
+
+		console.log(
+			"当前过期",
+			currentDateTime,
+			"expiresTimeStamp",
+			expiresDateTime,
+		);
+
 		if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
 			console.log("cookie已过期");
 			message.error("登录已过期，请重新登录");
+
 			logoutHook()
 				.then(() => {
-					window.location.reload();
+					timeoutId = setTimeout(() => {
+						router.push("/auth");
+					}, 1500);
 				})
 				.catch((e) => {
 					console.log("logout error", e);
 				});
-
-			// window.location.reload();
 		}
-	});
 
+		// 清理函数，组件卸载时取消定时器
+		return () => {
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
+		};
+	}, [isAuthenticated, logoutHook]);
 	return (
 		<div
 			className={

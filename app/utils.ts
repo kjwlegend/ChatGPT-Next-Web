@@ -301,5 +301,10 @@ export function isSupportRAGModel(modelName: string) {
  */
 export function isProModel(model: string) {
 	const proKeywords = ["pro", "gpt-4", "claude-3"];
+	//
 	return proKeywords.some((keyword) => model.includes(keyword));
 }
+
+/**
+ * check
+ */

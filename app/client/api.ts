@@ -5,7 +5,12 @@ import {
 	ModelProvider,
 	ServiceProvider,
 } from "../constant";
-import { ModelType, useAccessStore, useChatStore } from "../store";
+import {
+	DEFAULT_CONFIG,
+	ModelType,
+	useAccessStore,
+	useChatStore,
+} from "../store";
 import { ChatMessage } from "@/app/types/";
 
 import { ChatGPTApi } from "./platforms/openai";
@@ -245,7 +250,9 @@ export function getAuthHeaders() {
 export function getHeaders(ignoreHeaders?: boolean) {
 	const accessStore = useAccessStore.getState();
 	let headers: Record<string, string> = {};
-	const modelConfig = useChatStore.getState().currentSession().mask.modelConfig;
+	const modelConfig =
+		useChatStore.getState().currentSession()?.mask.modelConfig ||
+		DEFAULT_CONFIG.modelConfig;
 	const isGoogle = modelConfig.model.startsWith("gemini");
 	if (!ignoreHeaders && !isGoogle) {
 		headers = {
@@ -259,8 +266,8 @@ export function getHeaders(ignoreHeaders?: boolean) {
 	const apiKey = isGoogle
 		? accessStore.googleApiKey
 		: isAzure
-		? accessStore.azureApiKey
-		: accessStore.openaiApiKey;
+			? accessStore.azureApiKey
+			: accessStore.openaiApiKey;
 
 	const makeBearer = (s: string) =>
 		`${isGoogle || isAzure ? "" : "Bearer "}${s.trim()}`;

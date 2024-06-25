@@ -158,7 +158,7 @@ export default function useAuth() {
 	};
 
 	const logoutHook = async () => {
-		await logoutAPI();
+		// await logoutAPI();
 		//clear cookie
 
 		setTimeout(() => {
