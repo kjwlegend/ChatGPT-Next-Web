@@ -1,5 +1,3 @@
-import axios from "axios";
-import request from "./api";
 import { AppMapping, api } from "./api";
 
 // 定义接口
