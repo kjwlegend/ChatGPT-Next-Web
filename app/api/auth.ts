@@ -68,8 +68,8 @@ export function auth(req: NextRequest, modelProvider?: ModelProvider) {
 			modelProvider === ModelProvider.GeminiPro
 				? serverConfig.googleApiKey
 				: serverConfig.isAzure
-				? serverConfig.azureApiKey
-				: serverConfig.apiKey;
+					? serverConfig.azureApiKey
+					: serverConfig.apiKey;
 
 		if (serverApiKey) {
 			console.log("[Auth] use system api key");
@@ -185,9 +185,9 @@ export async function logoutAPI() {
 			document.cookie =
 				"user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			document.cookie =
-				"member_type=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+				"membership_level=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			document.cookie =
-				"member_expire_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+				"membership_expiry_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
 			return res.data;
 		})

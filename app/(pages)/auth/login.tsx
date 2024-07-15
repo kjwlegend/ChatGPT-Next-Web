@@ -19,11 +19,9 @@ import { query } from "express";
 export default function Login() {
 	const { loginHook } = useAuth(); // 获取登录方法
 	const [messageApi, contextHolder] = message.useMessage();
-
 	const router = useRouter();
 	const path = usePathname();
 	const param = useSearchParams();
-
 	const from = param.get("from");
 
 	const userStore = useUserStore();
@@ -33,7 +31,7 @@ export default function Login() {
 
 	const [user, setUser] = useState<User | null>(null);
 
-	//  a modal to show password reset box
+	// a modal to show password reset box
 	const [showResetPassword, setShowResetPassword] = useState(false);
 
 	const [historyStack, setHistoryStack] = useState([] as string[]);
@@ -54,7 +52,6 @@ export default function Login() {
 			};
 			try {
 				const chatSessionList = await getChatSession(param);
-				// console.log("chatSessionList", chatSessionList.data);
 				// 直接使用 chatStore 的方法更新 sessions
 				UpdateChatSessions(chatSessionList.data);
 			} catch (error) {
@@ -67,7 +64,6 @@ export default function Login() {
 	const onFinish = async (values: any) => {
 		try {
 			// 调用登录接口
-
 			messageApi.open({
 				type: "loading",
 				content: "登录初始化中..",
@@ -75,40 +71,35 @@ export default function Login() {
 				key: "loading",
 			});
 
-			const result: any = await loginHook(values);
-			// console.log("Received values of form: ", values);
-			// console.log("Received values of result: ", result);
+			await loginHook(values); // 不再需要返回特定结果
+
 			messageApi.destroy("loading");
 
-			if (result) {
-				// 登录成功后跳转
-				messageApi.open({
-					type: "success",
-					content: "登录成功, 正在跳转..",
-				});
+			// 登录成功后跳转
+			messageApi.open({
+				type: "success",
+				content: "登录成功, 正在跳转..",
+			});
 
-				setUser(result.data.user);
-				//
-				setTimeout(() => {
-					// push to the previous page
-					//  check router path, if it's login, then push to chats
-					//  if it's not login, then push to the previous page
-					//  if it's empty, then push to chats
+			setTimeout(() => {
+				// push to the previous page
+				// check router path, if it's login, then push to chats
+				// if it's not login, then push to the previous page
+				// if it's empty, then push to chats
 
-					if (from && from !== "/auth") {
-						router.push(from);
-					} else {
-						router.push("/chats");
-					}
-				}, 1000);
-			}
-		} catch (error) {
+				if (from && from !== "/auth") {
+					router.push(from);
+				} else {
+					router.push("/chats");
+				}
+			}, 1000);
+		} catch (error: any) {
 			// 失败提示
 			console.log("Received values of error: ", error);
 			messageApi.destroy("loading");
 			messageApi.open({
 				type: "error",
-				content: `登录失败: ${error}`,
+				content: `登录失败: ${error.message || error}`,
 			});
 		}
 	};

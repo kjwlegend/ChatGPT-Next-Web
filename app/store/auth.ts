@@ -1,16 +1,26 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useRouter } from "next/navigation";
-import { logoutAPI } from "../api/auth";
+import { login, logout } from "../services/auth";
+import { getUserInfo } from "../api/backend/user";
+
+import { User } from "./user";
+
+interface LoginParams {
+	username: string;
+	password: string;
+}
 
 export interface AuthState {
 	isAuthenticated: boolean;
 	accessToken: string | null;
 	refreshToken: string | null;
-	login: (accessToken: string | null, refreshToken: string | null) => void;
-	logout: () => void;
+	user: User | null;
+	login: (params: LoginParams) => Promise<void>;
+	logout: () => Promise<void>;
 	getAccessToken: () => string | null;
 	getRefreshToken: () => string | null;
+	updateUserInfo: (id: number) => Promise<void | Error>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -19,24 +29,63 @@ export const useAuthStore = create<AuthState>()(
 			isAuthenticated: false,
 			accessToken: null,
 			refreshToken: null,
-			login: (accessToken, refreshToken) => {
-				set({
-					isAuthenticated: true,
-					accessToken,
-					refreshToken,
-				});
+			user: null,
+			login: async (params: LoginParams) => {
+				try {
+					const result = await login(params);
+
+					const newExpirationDate = new Date();
+					newExpirationDate.setTime(
+						newExpirationDate.getTime() + 48 * 60 * 60 * 1000,
+					); // 当前时间的 48 小时后
+
+					document.cookie = `authenticated=true; expires=${newExpirationDate.toUTCString()}; path=/`;
+					document.cookie = `user_id=${result.user.username}; expires=${newExpirationDate.toUTCString()}; path=/`;
+
+					set({
+						isAuthenticated: true,
+						accessToken: result.access,
+						refreshToken: result.refresh,
+						user: result.user,
+					});
+				} catch (error) {
+					console.error("登录失败:", error);
+					throw new Error("用户名或密码错误");
+				}
 			},
 			logout: async () => {
-				await logoutAPI();
-				set({ isAuthenticated: false, accessToken: null, refreshToken: null });
-				document.cookie = `authenticated=;`;
-				document.cookie = `expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+				await logout();
+				set({
+					isAuthenticated: false,
+					accessToken: null,
+					refreshToken: null,
+					user: null,
+				});
+				document.cookie =
+					"authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+				document.cookie =
+					"user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			},
 			getAccessToken: () => {
 				return get().accessToken;
 			},
 			getRefreshToken: () => {
 				return get().refreshToken;
+			},
+			updateUserInfo: async (id: number) => {
+				try {
+					const user = await getUserInfo(id);
+
+					if (user.code === 401) {
+						await get().logout();
+						return new Error("登录过期，请重新登录");
+					}
+					set({ user });
+					return user;
+				} catch (error) {
+					console.error("更新用户信息失败:", error);
+					throw error;
+				}
 			},
 		}),
 		{
@@ -45,7 +94,6 @@ export const useAuthStore = create<AuthState>()(
 		},
 	),
 );
-
 type InviteCodeStore = {
 	inviteCode: string | null;
 	setInviteCode: (code: string | null) => void;

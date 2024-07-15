@@ -15,10 +15,10 @@ export function ModelConfigList(props: {
 
 	const user = useUserStore();
 	// 根据不同的用户会员等级设置不同的 maxtoken limit
-	const member_type = user.user?.member_type;
+	const membership_level = user.user?.membership_level;
 	// 设置一个maxtoken的limit变量
 	let maxtoken_limit = 1000;
-	switch (member_type) {
+	switch (membership_level) {
 		case "普通会员":
 			maxtoken_limit = 4000;
 			break;

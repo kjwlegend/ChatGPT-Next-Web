@@ -11,7 +11,7 @@ import { SmileTwoTone } from "@ant-design/icons";
 import { QRCode } from "antd";
 import { useRouter } from "next/router";
 import useAuth from "../../hooks/useAuth";
-import { member_type, upgradeMember } from "../../api/backend/user";
+import { membership_level, upgradeMember } from "../../api/backend/user";
 import { type } from "os";
 import Image from "next/image";
 import { epaySigniture } from "../../services/ePayService";
@@ -71,7 +71,7 @@ const MembershipTab = () => {
 	// 添加状态变量
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [selectedMembershipType, setSelectedMembershipType] = useState(
-		"normal" as member_type,
+		"normal" as membership_level,
 	);
 	const [paymentMethod, setPaymentMethod] = useState("1"); // 默认选择小光币
 
@@ -98,9 +98,9 @@ const MembershipTab = () => {
 	}, [selectedMembershipType]);
 
 	const {
-		member_type,
+		membership_level,
 		user_balance,
-		member_expire_date,
+		membership_expiry_date,
 		last_refresh_date,
 		id,
 	} = user;
@@ -123,9 +123,9 @@ const MembershipTab = () => {
 	}, [id]);
 
 	const currentPackage = (packageType: string) => {
-		return member_type === packageType;
+		return membership_level === packageType;
 	};
-	const handleUpgrade = (memberType: member_type) => {
+	const handleUpgrade = (memberType: membership_level) => {
 		// 更新状态变量
 		setIsModalVisible(true);
 		setSelectedMembershipType(memberType);
@@ -159,7 +159,7 @@ const MembershipTab = () => {
 			// Call the backend API to upgrade the member
 			const response = await upgradeMember({
 				user_id: user.id,
-				member_type: selectedMembershipType,
+				membership_level: selectedMembershipType,
 				order_amount: getPrice(selectedMembershipType),
 				payment_type: paymentMethod,
 			});
@@ -207,7 +207,7 @@ const MembershipTab = () => {
 	};
 
 	// Function to get the price based on the selected membership type
-	const getPrice = (membershipType: member_type) => {
+	const getPrice = (membershipType: membership_level) => {
 		// Implement logic to get the price based on the membership type
 		// You can use the 'price' state to get the prices for different membership types
 		// Replace this with your actual logic to get the price
@@ -287,10 +287,10 @@ const MembershipTab = () => {
 
 			<Row justify="center" gutter={16} style={{ textAlign: "center" }}>
 				<Col xs={12} sm={4}>
-					<Statistic title="会员类型" value={member_type} />
+					<Statistic title="会员类型" value={membership_level} />
 				</Col>
 				<Col xs={12} sm={4}>
-					<Statistic title="会员到期时间" value={member_expire_date} />
+					<Statistic title="会员到期时间" value={membership_expiry_date} />
 				</Col>
 				{/* xgb */}
 				<Col xs={12} sm={4}>

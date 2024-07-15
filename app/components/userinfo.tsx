@@ -44,13 +44,13 @@ export default function UserInfo() {
 		},
 		{
 			// 展示会员类型, 不可点击
-			label: <Link href="/profile#2">会员类型: {user?.member_type}</Link>,
+			label: <Link href="/profile#2">会员类型: {user?.membership_level}</Link>,
 			key: "1",
 		},
 
 		// 展示到期时间
 		{
-			label: `到期时间: ${user?.member_expire_date} `,
+			label: `到期时间: ${user?.membership_expiry_date} `,
 			key: "2",
 		},
 		// 对话次数

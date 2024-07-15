@@ -13,10 +13,10 @@ export interface User {
 	inviter: string | null;
 	invite_code: string | null;
 	invite_count: number;
-	member_type: string;
+	membership_level: string;
 	phone_number: string | null;
 	username: string;
-	member_expire_date: string;
+	membership_expiry_date: string;
 	last_refresh_date: string;
 	user_balance: {
 		chat_balance: number;
@@ -50,10 +50,10 @@ export const useUserStore = create<UserStore>()(
 				inviter: null,
 				invite_code: null,
 				invite_count: 0,
-				member_type: "",
+				membership_level: "",
 				phone_number: null,
 				username: "",
-				member_expire_date: "",
+				membership_expiry_date: "",
 				last_refresh_date: "",
 				user_balance: {
 					chat_balance: 0,
@@ -104,10 +104,10 @@ export const useUserStore = create<UserStore>()(
 						inviter: null,
 						invite_code: null,
 						invite_count: 0,
-						member_type: "",
+						membership_level: "",
 						phone_number: null,
 						username: "",
-						member_expire_date: "",
+						membership_expiry_date: "",
 						last_refresh_date: "",
 						user_balance: {
 							chat_balance: 0,
