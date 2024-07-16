@@ -880,7 +880,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								...createMessage({
 									role: "assistant",
 									content: "……",
-									image_url: "",
+									image_url: [""],
 								}),
 								preview: true,
 							},
@@ -894,7 +894,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								...createMessage({
 									role: "user",
 									content: userInput,
-									image_url: "",
+									image_url: [""],
 								}),
 								preview: true,
 							},

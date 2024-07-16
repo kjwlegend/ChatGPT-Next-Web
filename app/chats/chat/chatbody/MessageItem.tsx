@@ -129,6 +129,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	const router = useRouter();
 
 	const messageText = getMessageTextContent(message);
+	const messageImages = getMessageImages(message);
 
 	const isUser = message.role === "user";
 	const mjstatus = message.mjstatus;
@@ -442,7 +443,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 					</div>
 
 					<div className={styles["chat-message-action-date"]}>
-						{isContext ? Locale.Chat.IsContext : message.date.toLocaleString()}
+						{isContext ? Locale.Chat.IsContext : message.date}
 					</div>
 				</div>
 			</div>

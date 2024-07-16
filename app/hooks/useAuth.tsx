@@ -1,16 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { loginAPI } from "../services/auth";
 import { useAuthStore } from "../store/auth";
 import { useUserStore, User } from "../store/user";
-import { logoutAPI } from "../api/auth";
-import { Result } from "antd";
-import { getUserInfo } from "../api/backend/user";
-import { ChatSessionData, getChatSession } from "../api/backend/chat";
-import { UpdateChatSessions } from "../services/chatService";
-import { useChatStore } from "../store/chat";
-
-import { createEmptyMask } from "../store/mask";
 
 interface LoginParams {
 	username: string;
@@ -52,11 +43,18 @@ export default function useAuth() {
 
 			const user = authStore.user;
 			if (user) {
-				user.membership_level = handleMembershipLevel(user.membership_level);
-				user.membership_expiry_date = handleMembershipExpiryDate(
-					user.membership_expiry_date,
-				);
-				userStore.setUser(user);
+				const updatedUser = {
+					...user,
+					membership_level: handleMembershipLevel(user.membership_level),
+					membership_expiry_date: handleMembershipExpiryDate(
+						user.membership_expiry_date,
+					),
+					user_balance: {
+						...user.user_balance,
+						chat_balance: 1000, // 应该从其他地方获取这个值
+					},
+				};
+				userStore.setUser(updatedUser);
 			}
 		} catch (error) {
 			console.error("登录失败:", error);

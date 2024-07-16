@@ -26,7 +26,7 @@ import { useMobileScreen } from "../../utils";
 import { ChatData, getChat } from "../../api/backend/chat";
 import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem, ChatItemShort } from "./chatItem";
-
+import { PaginationData, getChatSessionChats } from "@/app/services/chats";
 export function ChatList(props: { narrow?: boolean }) {
 	const [
 		currentSessionId,
@@ -43,6 +43,7 @@ export function ChatList(props: { narrow?: boolean }) {
 	]);
 	const chatStore = useChatStore();
 	const { sessions } = chatStore;
+	console.log(sessions);
 
 	const [chatlist, setChatlist] = useState(sessions);
 
@@ -54,8 +55,9 @@ export function ChatList(props: { narrow?: boolean }) {
 	const filteredSessions = useMemo(() => {
 		//  exlude workflow chat
 		const newSessions = sessions.filter(
-			(session) => session.isworkflow == false,
+			(session) => session.isworkflow !== true,
 		);
+		console.log("newSessions", newSessions);
 		return newSessions;
 	}, [sessions]);
 
@@ -66,16 +68,16 @@ export function ChatList(props: { narrow?: boolean }) {
 	const isMobileScreen = useMobileScreen();
 
 	const getMessages = async (sessionid: string) => {
-		const param: ChatData = {
-			chat_session: sessionid,
-			user: userStore.user.id,
+		const param: PaginationData = {
 			limit: 60,
 		};
 		try {
-			const chatSessionList = await getChat(param);
-			// console.log("chatSessionList", chatSessionList.data);
+			const chatSessionList = await getChatSessionChats(param, sessionid);
 			// 直接使用 chatStore 的方法更新 sessions
-			UpdateChatMessages(param.chat_session, chatSessionList.data);
+			const chats = chatSessionList.results;
+			console.log("chatSessionList", chats);
+
+			UpdateChatMessages(sessionid, chats);
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}

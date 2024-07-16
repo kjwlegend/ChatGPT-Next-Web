@@ -201,27 +201,27 @@ function Screen() {
 			expiresDateTime,
 		);
 
-		if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
-			console.log("cookie已过期");
-			message.error("登录已过期，请重新登录");
+		// if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
+		// 	console.log("cookie已过期");
+		// 	message.error("登录已过期，请重新登录");
 
-			logoutHook()
-				.then(() => {
-					timeoutId = setTimeout(() => {
-						router.push("/auth");
-					}, 1500);
-				})
-				.catch((e) => {
-					console.log("logout error", e);
-				});
-		}
+		// 	logoutHook()
+		// 		.then(() => {
+		// 			timeoutId = setTimeout(() => {
+		// 				router.push("/auth");
+		// 			}, 1500);
+		// 		})
+		// 		.catch((e) => {
+		// 			console.log("logout error", e);
+		// 		});
+		// }
 
-		// 清理函数，组件卸载时取消定时器
-		return () => {
-			if (timeoutId) {
-				clearTimeout(timeoutId);
-			}
-		};
+		// // 清理函数，组件卸载时取消定时器
+		// return () => {
+		// 	if (timeoutId) {
+		// 		clearTimeout(timeoutId);
+		// 	}
+		// };
 	}, [isAuthenticated, logoutHook]);
 	return (
 		<div

@@ -33,6 +33,6 @@ const appnamespace = AppMapping.user;
 
 export const register = api(appnamespace, "/register/");
 export const login = api(appnamespace, "/login/");
-export const resetPasswordAPI = api(appnamespace, "/reset-password/");
-export const changePasswordAPI = api(appnamespace, "/reset-password-confirm/");
+export const resetPasswordapi = api(appnamespace, "/reset-password/");
+export const changePasswordapi = api(appnamespace, "/reset-password-confirm/");
 export const logout = api(appnamespace, "/logout/");

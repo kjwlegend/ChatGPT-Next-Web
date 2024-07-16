@@ -42,9 +42,9 @@ import DrawerMenu from "../../components/drawer-menu";
 import UserInfo from "../../components/userinfo";
 import { Divider } from "antd";
 import Upload from "@/app/chats/knowledge/upload";
-import { getChatSession } from "../../api/backend/chat";
-import { ChatSessionData } from "../../api/backend/chat";
-import { UpdateChatSessions } from "../../services/chatService";
+import { getChatSession } from "@/app/services/chats";
+import { PaginationData } from "@/app/services/chats";
+import { updateChatSessions } from "../../services/chatService";
 import { useUserStore } from "../../store/user";
 import { useDebounce } from "use-debounce";
 import { debounce } from "@/app/utils/debounce";
@@ -170,15 +170,14 @@ export function SideBar(props: { className?: string }) {
 	// 加载更多会话
 	const loadMoreSessions = async () => {
 		if (hasMore) {
-			const param: ChatSessionData = {
-				user: userStore.user.id,
+			const param: PaginationData = {
 				limit: 20,
 				page: page, // 使用当前页码
 			};
 			try {
 				const chatSessionList = await getChatSession(param);
 				console.log("chatSessionList", chatSessionList.data);
-				UpdateChatSessions(chatSessionList.data);
+				updateChatSessions(chatSessionList.data);
 				setPage((prevPage) => prevPage + 1);
 				setHasMore(chatSessionList.is_next); // 根据返回的is_next更新是否还有更多数据
 			} catch (error) {

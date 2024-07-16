@@ -81,13 +81,12 @@ export const BOT_HELLO: ChatMessage = createMessage({
 function createEmptySession(): ChatSession {
 	return {
 		id: nanoid(),
+		session_id: "",
 		topic: DEFAULT_TOPIC,
 		memoryPrompt: "",
 		messages: [],
 		stat: {
 			tokenCount: 0,
-			wordCount: 0,
-			charCount: 0,
 		},
 		lastUpdate: Date.now(),
 		lastSummarizeIndex: 0,
@@ -399,20 +398,17 @@ export const useChatStore = createPersistStore(
 					session.messages = session.messages.concat();
 					session.lastUpdate = Date.now();
 				});
-				get().updateStat(message);
 				summarizeSession();
 			},
 
-			addMessageToSession(sessionId: string, newMessage: ChatMessage) {
+			addMessageToSession: (sessionId: string, newMessage: ChatMessage) => {
 				set((state) => ({
-					sessions: state.sessions.map((session) =>
-						session.id === sessionId
-							? {
-									...session,
-									messages: [...session.messages, newMessage],
-								}
-							: session,
-					),
+					sessions: state.sessions.map((session) => {
+						if (session.session_id === sessionId) {
+							session.messages = [...session.messages, newMessage];
+						}
+						return session;
+					}),
 				}));
 			},
 			sortSession() {
@@ -570,7 +566,7 @@ export const useChatStore = createPersistStore(
 				session: ChatSession,
 				botMessageId: string,
 				content: string,
-				imageUrl = "",
+				imageUrl = [],
 				mjresult?: MJMessage,
 			) {
 				const chatStoreState = useChatStore.getState();
@@ -723,13 +719,6 @@ export const useChatStore = createPersistStore(
 				});
 			},
 
-			updateStat(message: ChatMessage) {
-				get().updateCurrentSession((session) => {
-					session.stat.charCount += message.content.length;
-					// TODO: should update chat count and word count
-				});
-			},
-
 			updateCurrentSession(updater: (session: ChatSession) => void) {
 				const sessions = get().sessions;
 				const index = get().currentSessionIndex;
@@ -746,7 +735,8 @@ export const useChatStore = createPersistStore(
 					set((state) => ({
 						sessions: state.sessions.map((session) => {
 							if (session.id === sessionId) {
-								updater(session);
+								const updatedFields = updater(session);
+								Object.assign(session, updatedFields);
 								if (sync) {
 									updateChatSession(sessionId, session);
 								}
