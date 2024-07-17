@@ -23,7 +23,6 @@ import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import {
-	createChat,
 	createChatSession,
 	getChat,
 	updateChatSession,
@@ -40,7 +39,7 @@ import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
 
-import { CreateChatData } from "../api/backend/chat";
+import { CreateChatData, createChat } from "@/app/services/chats";
 import { is } from "cheerio/lib/api/traversing";
 
 import { getMessageTextContent, getMessageImages } from "../utils";
@@ -66,7 +65,7 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 		toolMessages: new Array<ChatToolMessage>(),
 		role: "user",
 		content: "",
-		image_url: "",
+		image_url: [],
 		...override,
 	};
 }
@@ -458,44 +457,26 @@ export const useChatStore = createPersistStore(
 				const messageIndex = get().currentSession().messages.length + 1;
 
 				const userStore = useUserStore.getState();
-
+				const total_token_count =
+					estimateTokenLength(recentMessages.join("\n")) +
+					estimateTokenLength(content);
+				const content_type = "chatsession";
 				const createChatData: CreateChatData = {
-					user: userStore.user.id, // 替换为实际的用户 ID
-					chat_session: sessionId, // 替换为实际的聊天会话 ID
-					message: content, // 使用用户输入作为 message 参数
+					user: userStore.user.id,
+					object_id: sessionId, // 替换为实际的聊天会话 ID
+					content: content, // 使用用户输入作为 message 参数
 					memory: recentMessages,
-					role: "user",
-					model: session.mask.modelConfig.model,
+					chat_role: "user",
+					chat_model: session.mask.modelConfig.model,
+					content_type: content_type,
+					sender_name: userStore.user.nickname,
+					token_counts_total: total_token_count,
 				};
 				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
 
 				// if chatResponse code return 4000 or 401 , throw error
 
-				const data = chatResponse.data;
-				const user_chat_id = data.chat_id;
-				const newSessionId = data.chat_session;
-				// console.log("user_chat_id: ", user_chat_id);
-				// console.log("newSessionId: ", newSessionId);
-
-				if (sessionId !== newSessionId) {
-					get().updateSession(sessionId, (session: ChatSession) => {
-						session.id = newSessionId;
-					});
-				}
-
-				if (sessionModel === "midjourney") {
-					const mjparams = {
-						content: content,
-						image_url: "",
-						_session: session,
-						action: undefined,
-						taskId: undefined,
-						index: undefined,
-						chat_id: user_chat_id,
-					};
-					await midjourneyOnUserInput(mjparams);
-					return;
-				}
+				const chat_id = chatResponse.chat_id;
 
 				const userContent = content;
 				console.log("[User Input] after template: ", userContent);
@@ -522,7 +503,7 @@ export const useChatStore = createPersistStore(
 				}
 
 				const userMessage: ChatMessage = createMessage({
-					id: user_chat_id,
+					id: chat_id,
 					role: "user",
 					content: mContent,
 					fileInfos: attachFiles,
@@ -696,6 +677,7 @@ export const useChatStore = createPersistStore(
 					...contextPrompts,
 					...reversedRecentMessages.reverse(),
 				];
+				//  update session tokenCount
 
 				return recentMessages;
 			},
@@ -779,7 +761,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.4,
+		version: 3.5,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(
@@ -845,6 +827,9 @@ export const useChatStore = createPersistStore(
 					s.mask.modelConfig.enableRelatedQuestions = false;
 					s.mask.modelConfig.enableUserInfos = true;
 				});
+			}
+			if (version < 3.5) {
+				//准备更新内容
 			}
 
 			return newState as any;

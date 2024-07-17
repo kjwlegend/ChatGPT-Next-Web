@@ -43,7 +43,6 @@ export function ChatList(props: { narrow?: boolean }) {
 	]);
 	const chatStore = useChatStore();
 	const { sessions } = chatStore;
-	console.log(sessions);
 
 	const [chatlist, setChatlist] = useState(sessions);
 
@@ -57,7 +56,6 @@ export function ChatList(props: { narrow?: boolean }) {
 		const newSessions = sessions.filter(
 			(session) => session.isworkflow !== true,
 		);
-		console.log("newSessions", newSessions);
 		return newSessions;
 	}, [sessions]);
 
@@ -75,7 +73,6 @@ export function ChatList(props: { narrow?: boolean }) {
 			const chatSessionList = await getChatSessionChats(param, sessionid);
 			// 直接使用 chatStore 的方法更新 sessions
 			const chats = chatSessionList.results;
-			console.log("chatSessionList", chats);
 
 			UpdateChatMessages(sessionid, chats);
 		} catch (error) {

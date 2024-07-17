@@ -13,7 +13,7 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 
 import { ModelConfig } from "../store";
-import { CreateChatData, createChat } from "../api/backend/chat";
+import { CreateChatData, createChat } from "./chats";
 import useAuth from "../hooks/useAuth";
 
 import { Store } from "antd/es/form/interface";
@@ -100,15 +100,20 @@ export function handleChatCallbacks(
 					false,
 				);
 				botMessage.streaming = false;
+				const tokenCount = estimateTokenLength(message);
 				// console.log("botMessage streaming: ", botMessage.streaming);
-
+				const content_type = "chatsession";
 				const createChatData: CreateChatData = {
 					user: user.id,
-					chat_session: session.id,
-					message: message,
-					role: "assistant",
-					model: session.mask.modelConfig.model,
+					content: message,
+					chat_role: "assistant",
+					chat_model: session.mask.modelConfig.model,
+					content_type: content_type,
+					object_id: session.id,
+					sender_name: session.mask.name,
+					token_counts_total: tokenCount,
 				};
+
 				const botResponse = createChat(createChatData); // 替换为实际的API调用
 				//  botResponse 为 Promise 对象 , 获取其中的 chat_id 作为 botMessage 的 id
 				botResponse.then((res) => {
@@ -205,6 +210,7 @@ export function sendChatMessage(
 }
 
 import { createEmptyMask } from "../store/mask";
+import { estimateTokenLength } from "../utils/token";
 
 export function updateChatSessions(newSessionsData: any[]) {
 	const chatStore = useChatStore.getState();
@@ -259,8 +265,11 @@ export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 
 	messagesData.forEach((messageData) => {
 		// 检查是否已经存在该消息
-		const exists = session?.messages.some((m) => m.id === messageData.id);
-		if (exists) return;
+		const exists = session?.messages.some((m) => m.id == messageData.id);
+		if (exists) {
+			console.log("message already exists: ", messageData.id);
+			return;
+		}
 
 		const newMessage: ChatMessage = {
 			id: messageData.id.toString(),

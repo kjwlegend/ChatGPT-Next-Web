@@ -11,17 +11,15 @@ export interface CreateChatSessionData {
 }
 
 export interface CreateChatData {
-	user: number;
-	chat_session: string;
-	role: "user" | "assistant";
-	message: string | ChatMessage[];
-	mjstatus?: MJMessage;
-	memory?: ChatMessage[];
-	token_count?: number;
-	model?: string;
-	round?: number;
-	agent_num?: number;
-	is_double_agent?: boolean;
+	user: string | number;
+	object_id: string; // session_id
+	chat_role: "user" | "assistant";
+	content: string | ChatMessage[];
+	token_counts_total?: number;
+	chat_model?: string;
+	chat_images?: string[];
+	function_calls?: string[];
+	sender_name?: string;
 	[property: string]: any;
 }
 
@@ -37,8 +35,9 @@ export const getChatSessionChats = apiGet(
 	"/chatsessions/{:id}/chats",
 );
 export const updateChatSession = api(appnamespace, "/chatsessions/:id/");
-export const getChat = apiGet(appnamespace, "/chats/");
-export const createChat = api(appnamespace, "/chats/");
+
+export const getChat = apiGet(appnamespace, "/user/chats/");
+export const createChat = api(appnamespace, "/user/chats/");
 
 export const createMultipleAgentSession = api(
 	appnamespace,
