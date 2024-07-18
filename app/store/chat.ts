@@ -22,13 +22,9 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
-import {
-	createChatSession,
-	getChat,
-	updateChatSession,
-} from "../api/backend/chat";
+
 import { UserStore, useUserStore } from "./user";
-import { BUILTIN_MASKS } from "../masks";
+import { BUILTIN_MASKS, DEFAULT_MASK } from "../masks";
 import type { BuiltinMask } from "../types/index";
 import { Plugin, usePluginStore } from "../store/plugin";
 import { sendChatMessage, handleChatCallbacks } from "../services/chatService";
@@ -38,8 +34,13 @@ import { midjourneyOnUserInput } from "../services/midjourneyService";
 import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
-
-import { CreateChatData, createChat } from "@/app/services/chats";
+import { getChat, updateChatSession } from "../api/backend/chat";
+import {
+	CreateChatData,
+	CreateChatSessionData,
+	createChat,
+	createChatSession,
+} from "@/app/services/chats";
 import { is } from "cheerio/lib/api/traversing";
 
 import { getMessageTextContent, getMessageImages } from "../utils";
@@ -170,14 +171,24 @@ export const useChatStore = createPersistStore(
 				});
 			},
 			selectSessionById(id: string) {
-				const index = get().sessions.findIndex((s) => s.id === id);
+				console.log("selectSessionById called with id:", id);
+
+				const index = get().sessions.findIndex((session) => session.id === id);
+				console.log("Index found:", index);
+
 				if (index !== -1) {
+					console.log(
+						"Valid index found, calling selectSession with index:",
+						index,
+					);
 					get().selectSession(index);
+				} else {
+					console.log("No session found with the given id:", id);
 				}
 
 				set(() => ({ currentSessionId: id }));
+				console.log("currentSessionId set to:", id);
 			},
-
 			moveSession(from: number, to: number, _sessions?: any) {
 				set((state) => {
 					const { sessions, currentSessionIndex: oldIndex } = state;
@@ -225,6 +236,7 @@ export const useChatStore = createPersistStore(
 				userStore?: UserStore,
 				isworkflow?: boolean,
 			) {
+				console.log("newsession");
 				const config = useAppConfig.getState();
 				const session = createEmptySession();
 				const userId = useUserStore.getState().user.id;
@@ -232,14 +244,12 @@ export const useChatStore = createPersistStore(
 
 				// 使用类型守卫来检查 'id' 属性是否存在
 				const defaultMaskId = "1000";
-				const selectedMask: any = mask;
-				const isCustomMask =
-					!("id" in selectedMask) || isNaN(Number(selectedMask.id));
+				const selectedMask: any = mask ?? DEFAULT_MASK;
 
 				// 如果 selectedMask 没有 'id' 属性，我们提供一个默认值
 				session.mask = {
 					...selectedMask,
-					id: isCustomMask ? defaultMaskId : selectedMask.id,
+					id: defaultMaskId ?? selectedMask.id,
 					modelConfig: {
 						...globalModelConfig,
 						...selectedMask.modelConfig,
@@ -252,25 +262,21 @@ export const useChatStore = createPersistStore(
 				}
 
 				// 处理 userStore 相关逻辑
-				if (userStore) {
-					const promptId = isCustomMask ? "2000" : session.mask.prompt_id;
-					const data = {
-						user: userId,
-						id: session.mask.id,
-						prompt_id: promptId,
-						isworkflow: session.isworkflow,
-						mask: session.mask,
-						mjConfig: session.mjConfig,
-						topic: session.mask.topic ?? session.mask.name,
-						model: session.mask.modelConfig.model,
-						hide: false,
-					};
+				const promptId = session.mask.id;
+				const data: CreateChatSessionData = {
+					user: userId,
+					active: true,
+					agent: 1,
+					session_topic: session.topic,
+					session_summary: session.memoryPrompt,
+					session_description: "",
+					custom_agent_data: session.mask,
+				};
 
-					// 使用 async/await 优化异步请求处理
-					const res = await createChatSession(data);
-					console.log("createChatSession: ", res);
-
-					session.id = res.data.session_id || nanoid();
+				// 使用 async/await 优化异步请求处理
+				const res = await createChatSession(data);
+				if (res.id) {
+					session.id = res.id ?? nanoid();
 				}
 
 				set((state) => ({
@@ -308,37 +314,37 @@ export const useChatStore = createPersistStore(
 					sessions.length - 1,
 				);
 
-				if (deletingLastSession) {
-					nextIndex = 0;
-					sessions.push(createEmptySession());
+				// if (deletingLastSession) {
+				// 	nextIndex = 0;
+				// 	sessions.push(createEmptySession());
 
-					// session id  设置为空
-					if (userStore) {
-						const user = userStore.user; // 从 userStore 中获取 user 对象
-						const userId = user.id; // 从 user 对象中获取 id 字段
-						const session = sessions.at(0);
-						if (!session) return;
+				// 	// session id  设置为空
+				// 	if (userStore) {
+				// 		const user = userStore.user; // 从 userStore 中获取 user 对象
+				// 		const userId = user.id; // 从 user 对象中获取 id 字段
+				// 		const session = sessions.at(0);
+				// 		if (!session) return;
 
-						const data = {
-							user: userId,
-							topic: session.mask.topic ?? session.mask.name,
-							isworkflow: session.isworkflow,
-							mask: session.mask,
-							mjConfig: session.mjConfig,
-							model: session.mask.modelConfig.model,
-							prompt_id: "100000",
-							hide: false,
-						};
-						createChatSession(data)
-							.then((res) => {
-								console.log(res);
-								session.id = res.data.session_id || nanoid();
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					}
-				}
+				// 		const data = {
+				// 			user: userId,
+				// 			topic: session.mask.topic ?? session.mask.name,
+				// 			isworkflow: session.isworkflow,
+				// 			mask: session.mask,
+				// 			mjConfig: session.mjConfig,
+				// 			model: session.mask.modelConfig.model,
+				// 			prompt_id: "100000",
+				// 			hide: false,
+				// 		};
+				// 		createChatSession(data)
+				// 			.then((res) => {
+				// 				console.log(res);
+				// 				session.id = res.data.session_id || nanoid();
+				// 			})
+				// 			.catch((err) => {
+				// 				console.log(err);
+				// 			});
+				// 	}
+				// }
 
 				// for undo delete action
 				const restoreState = {
@@ -367,6 +373,9 @@ export const useChatStore = createPersistStore(
 			currentSession() {
 				let index = get().currentSessionIndex;
 				const sessions = get().sessions;
+				// console.log(
+				// 	`store debug - currentSessionIndex: ${index}, sessions length: ${sessions.length}`,
+				// );
 
 				if (index === undefined || index === null) {
 					throw new Error("Index is not defined");

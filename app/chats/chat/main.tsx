@@ -57,6 +57,7 @@ import { WindowHeader } from "./WindowHeader";
 import { Chatbody } from "./Chatbody";
 import Upload from "@/app/chats/knowledge/upload";
 import { useScrollToBottom } from "./chat-controller";
+import { useNavigate } from "react-router-dom";
 
 const ChatbodyDynamic = dynamic(
 	async () => (await import("./Chatbody")).Chatbody,
@@ -117,6 +118,7 @@ export function _Chat(props: {
 	// if props._session is not provided, use current session
 
 	const session = chatStore.getSession(_session);
+	console.log("debug: session main", session);
 
 	const sessionId = session.id;
 
@@ -128,39 +130,35 @@ export function _Chat(props: {
 	const { autoScroll, setAutoScroll, scrollDomToBottom, scrollRef } =
 		useScrollToBottom();
 
-	const config = useAppConfig();
+	// const config = useAppConfig();
 
-	const inputRef = useRef<HTMLTextAreaElement>(null);
+	// useEffect(() => {
+	// 	chatStore.updateSession(sessionId, (session) => {
+	// 		const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
+	// 		session.messages.forEach((m) => {
+	// 			// check if should stop all stale messages
+	// 			if (m.isError || new Date(m.date).getTime() < stopTiming) {
+	// 				if (m.streaming) {
+	// 					m.streaming = false;
+	// 				}
 
-	const isMobileScreen = useMobileScreen();
-
-	useEffect(() => {
-		chatStore.updateSession(sessionId, (session) => {
-			const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
-			session.messages.forEach((m) => {
-				// check if should stop all stale messages
-				if (m.isError || new Date(m.date).getTime() < stopTiming) {
-					if (m.streaming) {
-						m.streaming = false;
-					}
-
-					if (m.content.length === 0) {
-						m.isError = true;
-						m.content = prettyObject({
-							error: true,
-							message: "empty response",
-						});
-					}
-				}
-			});
-			// auto sync mask config from global config
-			if (session.mask.syncGlobalConfig) {
-				console.log("[Mask] syncing from global, name = ", session.mask.name);
-				session.mask.modelConfig = { ...config.modelConfig };
-			}
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// 				if (m.content.length === 0) {
+	// 					m.isError = true;
+	// 					m.content = prettyObject({
+	// 						error: true,
+	// 						message: "empty response",
+	// 					});
+	// 				}
+	// 			}
+	// 		});
+	// 		// auto sync mask config from global config
+	// 		if (session.mask.syncGlobalConfig) {
+	// 			console.log("[Mask] syncing from global, name = ", session.mask.name);
+	// 			session.mask.modelConfig = { ...config.modelConfig };
+	// 		}
+	// 	});
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
 	if (!session) return null;
 
 	return (
@@ -218,6 +216,16 @@ export function useLoadData() {
 export function Chat() {
 	const chatStore = useChatStore();
 	const sessionIndex = chatStore.currentSessionIndex;
+	const sessions = chatStore.sessions;
+	const navigate = useNavigate();
+	console.log("sessions", sessions, "index", sessionIndex);
+
+	if (sessions.length === 0) {
+		navigate(Path.NewChat);
+		return null;
+	}
 	// if (!sessionIndex) return null;
-	return <_Chat key={sessionIndex} isworkflow={false}></_Chat>;
+	return (
+		<_Chat key={sessionIndex} index={sessionIndex} isworkflow={false}></_Chat>
+	);
 }

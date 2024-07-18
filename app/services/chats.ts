@@ -1,13 +1,30 @@
-import { api, apiGet } from "./api";
+import { api, apiGet, apiPut } from "./api";
 
 import { ChatMessage, MJMessage, MjConfig, Mask } from "@/app/types/index";
 import { AppMapping } from "./api";
+
+/**
+ * Request
+ *
+ * ChatSession
+ */
 export interface CreateChatSessionData {
 	user: number;
-	id?: string;
-	topic?: string;
-	prompt_id?: number | string;
-	hide?: boolean;
+	agent: number | string;
+	session_topic: string;
+
+	//以下为可选属性
+	id?: number;
+	active?: boolean;
+	created_at?: Date;
+	custom_agent_data?: { [key: string]: any } | null;
+	relative_docs?: { [key: string]: any } | null;
+	session_description?: null | string;
+	session_id?: string;
+	session_summary?: null | string;
+	token_counts_total?: number;
+	updated_at?: Date;
+	[property: string]: any;
 }
 
 export interface CreateChatData {
@@ -34,7 +51,7 @@ export const getChatSessionChats = apiGet(
 	appnamespace,
 	"/chatsessions/{:id}/chats",
 );
-export const updateChatSession = api(appnamespace, "/chatsessions/:id/");
+export const updateChatSession = apiPut(appnamespace, "/chatsessions/:id/");
 
 export const getChat = apiGet(appnamespace, "/user/chats/");
 export const createChat = api(appnamespace, "/user/chats/");
@@ -43,7 +60,7 @@ export const createMultipleAgentSession = api(
 	appnamespace,
 	"/multiagentchatsessions/",
 );
-export const updateMultiAgentSession = api(
+export const updateMultiAgentSession = apiPut(
 	appnamespace,
 	"/multiagentchatsessions/:id/",
 );
@@ -58,7 +75,7 @@ export const getMultiAgentSessionChats = apiGet(
 
 export const getWorkflowSession = apiGet(appnamespace, "/workflowsessions/");
 export const createWorkflowSession = api(appnamespace, "/workflowsessions/");
-export const updateWorkflowSession = api(appnamespace, "/workflowsessions/");
+export const updateWorkflowSession = apiPut(appnamespace, "/workflowsessions/");
 export const deleteWorkflowSession = api(appnamespace, "/workflowsessions/");
 export const getWorkflowSessionChatGroups = apiGet(
 	appnamespace,
