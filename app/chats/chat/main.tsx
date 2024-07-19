@@ -118,7 +118,6 @@ export function _Chat(props: {
 	// if props._session is not provided, use current session
 
 	const session = chatStore.getSession(_session);
-	console.log("debug: session main", session);
 
 	const sessionId = session.id;
 
@@ -218,7 +217,6 @@ export function Chat() {
 	const sessionIndex = chatStore.currentSessionIndex;
 	const sessions = chatStore.sessions;
 	const navigate = useNavigate();
-	console.log("sessions", sessions, "index", sessionIndex);
 
 	if (sessions.length === 0) {
 		navigate(Path.NewChat);

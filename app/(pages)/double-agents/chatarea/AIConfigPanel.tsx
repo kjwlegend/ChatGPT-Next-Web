@@ -26,7 +26,7 @@ import { useMaskStore } from "@/app/store/mask";
 import { MenuProps } from "antd/lib/menu";
 import { use, useEffect, useState } from "react";
 import { Modal } from "@/app/components/ui-lib";
-import { MaskConfig } from "@/app/chats/mask-components";
+import { MaskConfig } from "@/app/chats/components/mask-modal";
 import { useMobileScreen } from "@/app/utils";
 import {
 	PlusCircleFilled,
@@ -217,7 +217,7 @@ const AIConfigPanel: React.FC<AIConfigPanelProps> = ({ side }) => {
 						: [p.toolName ?? p.name]
 					: aiConfig.plugins?.filter(
 							(plugin: any) => plugin !== p.toolName ?? p.name,
-					  ),
+						),
 			},
 		};
 

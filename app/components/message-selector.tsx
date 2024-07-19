@@ -4,7 +4,7 @@ import { ChatMessage } from "../types/";
 import { Updater } from "../typing";
 import { IconButton } from "./button";
 import { BotAvatar as Avatar } from "./emoji";
-import { MaskAvatar } from "../chats/mask-components";
+import { MaskAvatar } from "../chats/components/mask-modal";
 import Locale from "../locales";
 
 import styles from "./message-selector.module.scss";

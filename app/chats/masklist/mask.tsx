@@ -42,7 +42,6 @@ import chatStyle from "../chat.module.scss";
 import { use, useCallback, useEffect, useState } from "react";
 import { copyToClipboard, downloadAs, readFromFile } from "@/app/utils";
 import { Updater } from "@/app/typing";
-import { ModelConfigList } from "@/app/components/model-config";
 import { FileName, Path } from "@/app/constant";
 import { BUILTIN_MASKS, BUILTIN_MASK_STORE } from "@/app/masks";
 import { nanoid } from "nanoid";
@@ -56,7 +55,7 @@ import {
 import { Card, Button, Switch, Segmented, Checkbox } from "antd";
 import MaskComponent from "./maskitem";
 
-import { MaskConfig } from "../mask-components";
+import { MaskConfig } from "../components/mask-modal";
 
 import MultipleTag from "@/app/components/multipletags";
 import { on } from "events";

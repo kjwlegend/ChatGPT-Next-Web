@@ -100,11 +100,7 @@ import {
 	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
+
 
 import { Radio, Switch } from "antd";
 import { useMaskStore } from "@/app/store/mask";

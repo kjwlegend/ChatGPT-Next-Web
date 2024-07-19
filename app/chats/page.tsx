@@ -5,8 +5,8 @@ require("../polyfill");
 import { useState, useEffect } from "react";
 import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 import styles from "./home.module.scss";
-import LoadingIcon from "../icons/three-dots.svg";
-import BotIcon from "../icons/bot.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
+import BotIcon from "@/app/icons/bot.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 

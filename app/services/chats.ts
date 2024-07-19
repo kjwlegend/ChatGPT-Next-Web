@@ -10,20 +10,20 @@ import { AppMapping } from "./api";
  */
 export interface CreateChatSessionData {
 	user: number;
-	agent: number | string;
-	session_topic: string;
+	agent?: number | string;
+	session_topic?: string;
 
 	//以下为可选属性
-	id?: number;
+	id?: number | string;
 	active?: boolean;
-	created_at?: Date;
 	custom_agent_data?: { [key: string]: any } | null;
 	relative_docs?: { [key: string]: any } | null;
 	session_description?: null | string;
 	session_id?: string;
 	session_summary?: null | string;
 	token_counts_total?: number;
-	updated_at?: Date;
+	created_at?: Date | string | undefined;
+	updated_at?: Date | string | undefined;
 	[property: string]: any;
 }
 
@@ -45,13 +45,16 @@ export interface PaginationData {
 	limit?: number;
 }
 const appnamespace = AppMapping.llm;
-export const createChatSession = api(appnamespace, "/chatsessions/");
-export const getChatSession = apiGet(appnamespace, "/chatsessions/");
+export const createChatSession = api(appnamespace, "/user/chatsessions/");
+export const getChatSession = apiGet(appnamespace, "/user/chatsessions/");
 export const getChatSessionChats = apiGet(
 	appnamespace,
-	"/chatsessions/{:id}/chats",
+	"/user/chatsessions/{:id}/chats",
 );
-export const updateChatSession = apiPut(appnamespace, "/chatsessions/:id/");
+export const updateChatSession = apiPut(
+	appnamespace,
+	"/user/chatsessions/:id/",
+);
 
 export const getChat = apiGet(appnamespace, "/user/chats/");
 export const createChat = api(appnamespace, "/user/chats/");

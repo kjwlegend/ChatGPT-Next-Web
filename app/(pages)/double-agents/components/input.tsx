@@ -59,37 +59,11 @@ import {
 	useMobileScreen,
 } from "@/app/utils";
 
-import { api } from "@/app/client/api";
-
-import { ChatControllerPool } from "@/app/client/controller";
-import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
 import styles from "@/app/chats/chat/chats.module.scss";
 
-import {
-	CHAT_PAGE_SIZE,
-	LAST_INPUT_KEY,
-	MAX_RENDER_MSG_COUNT,
-	Path,
-	REQUEST_TIMEOUT_MS,
-	UNFINISHED_INPUT,
-	LAST_INPUT_IMAGE_KEY,
-} from "@/app/constant";
-
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
-
-import { Radio } from "antd";
-import { useMaskStore } from "@/app/store/mask";
-import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
-import Image from "next/image";
-
-import { createChat, CreateChatData } from "@/app/api/backend/chat";
 import useAuth from "@/app/hooks/useAuth";
 import { message } from "antd";
 
@@ -98,18 +72,6 @@ import {
 	useScrollToBottom,
 	ClearContextDivider,
 } from "@/app/chats/chat/chat-controller";
-
-import {
-	ApiTwoTone,
-	ThunderboltTwoTone,
-	SettingTwoTone,
-	MessageTwoTone,
-} from "@ant-design/icons";
-
-import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
-import { type } from "os";
-import { usePluginStore } from "@/app/store/plugin";
-import { submitChatMessage } from "@/app/services/chatService";
 
 import useDoubleAgentStore, {
 	DoubleAgentChatSession,

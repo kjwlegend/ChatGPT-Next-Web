@@ -1,8 +1,8 @@
 import { ModelType } from "../store";
 import { Mask } from "@/app/types/";
 
-import BotIcon from "../icons/bot.svg";
-import BlackBotIcon from "../icons/black-bot.svg";
+import BotIcon from "@/app/icons/bot.svg";
+import BlackBotIcon from "@/app/icons/black-bot.svg";
 
 import { Avatar as CustomAvatar } from "antd";
 

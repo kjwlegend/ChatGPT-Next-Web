@@ -22,7 +22,7 @@ import AddIcon from "./add.svg";
 import CloseIcon from "./close.svg";
 import MaskIcon from "./mask.svg";
 import PluginIcon from "./plugin.svg";
-import DragIcon from "../icons/drag.svg";
+import DragIcon from "@/app/icons/drag.svg";
 import LoadingIcon2 from "./loading.svg";
 
 export {

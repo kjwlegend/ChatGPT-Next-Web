@@ -30,7 +30,7 @@ import {
 	showConfirm,
 	showToast,
 } from "@/app/components/ui-lib";
-import { ModelConfigList } from "@/app/components/model-config";
+import { ModelConfigList } from "@/app/chats/components/model-config";
 
 import { IconButton } from "@/app/components/button";
 import {
@@ -499,7 +499,7 @@ function SyncItems() {
 						syncStore.lastProvider
 							? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
 									syncStore.lastProvider
-							  }]`
+								}]`
 							: Locale.Settings.Sync.NotSyncYet
 					}
 				>
@@ -971,7 +971,7 @@ export function Settings() {
           </ListItem>
         </List> */}
 
-				<List>
+				{/* <List>
 					<ModelConfigList
 						modelConfig={config.modelConfig}
 						updateConfig={(updater) => {
@@ -980,7 +980,7 @@ export function Settings() {
 							config.update((config) => (config.modelConfig = modelConfig));
 						}}
 					/>
-				</List>
+				</List> */}
 
 				{shouldShowPromptModal && (
 					<UserPromptModal onClose={() => setShowPromptModal(false)} />

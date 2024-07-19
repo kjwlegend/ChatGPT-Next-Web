@@ -21,7 +21,7 @@ import {
 	Dropdown,
 } from "antd";
 
-import LoadingIcon from "../icons/three-dots.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
 import { TopMenuItems } from "./menu-items";
 
 import DrawerMenu from "./drawer-menu";
@@ -133,8 +133,8 @@ export default function MainNav() {
 		if (item) {
 			router.push(item.url);
 		} else {
-			const subItem = items.find(
-				(item: any) => item.children?.some((child: any) => child.key === e.key),
+			const subItem = items.find((item: any) =>
+				item.children?.some((child: any) => child.key === e.key),
 			);
 			if (subItem) {
 				const subItemChild = subItem.children?.find(

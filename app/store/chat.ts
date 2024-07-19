@@ -34,12 +34,13 @@ import { midjourneyOnUserInput } from "../services/midjourneyService";
 import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
-import { getChat, updateChatSession } from "../api/backend/chat";
+import { getChat } from "../api/backend/chat";
 import {
 	CreateChatData,
 	CreateChatSessionData,
 	createChat,
 	createChatSession,
+	updateChatSession,
 } from "@/app/services/chats";
 import { is } from "cheerio/lib/api/traversing";
 
@@ -243,7 +244,7 @@ export const useChatStore = createPersistStore(
 				const globalModelConfig = config.modelConfig;
 
 				// 使用类型守卫来检查 'id' 属性是否存在
-				const defaultMaskId = "1000";
+				const defaultMaskId = "2";
 				const selectedMask: any = mask ?? DEFAULT_MASK;
 
 				// 如果 selectedMask 没有 'id' 属性，我们提供一个默认值
@@ -303,7 +304,7 @@ export const useChatStore = createPersistStore(
 				const sessionid = deletedSession.id;
 
 				// update session
-				updateChatSession(sessionid, { hide: true });
+				updateChatSession({ active: false }, sessionid);
 
 				const sessions = get().sessions.slice();
 				sessions.splice(index, 1);
@@ -363,7 +364,7 @@ export const useChatStore = createPersistStore(
 						text: Locale.Home.Revert,
 						onClick() {
 							set(() => restoreState);
-							updateChatSession(sessionid, { hide: false });
+							updateChatSession({ hide: false }, sessionid);
 						},
 					},
 					5000,
@@ -722,14 +723,20 @@ export const useChatStore = createPersistStore(
 				// add another parameter to control whether to sync with backend, default is true
 				sync = true,
 			) {
+				const userId = useUserStore.getState().user.id;
 				if (sessionId) {
 					set((state) => ({
 						sessions: state.sessions.map((session) => {
 							if (session.id === sessionId) {
-								const updatedFields = updater(session);
-								Object.assign(session, updatedFields);
+								// 直接应用 updater 回调函数
+								updater(session);
 								if (sync) {
-									updateChatSession(sessionId, session);
+									const data: CreateChatSessionData = {
+										...session,
+										session_topic: session.topic,
+										user: userId,
+									};
+									updateChatSession(data, sessionId);
 								}
 							}
 							return session;
@@ -739,7 +746,6 @@ export const useChatStore = createPersistStore(
 					this.updateCurrentSession(updater);
 				}
 			},
-
 			setworkflow(_session: ChatSession, isworkflow: boolean) {
 				const sessionId = _session.id;
 				set((state) => ({
@@ -749,7 +755,7 @@ export const useChatStore = createPersistStore(
 							const data = {
 								isworkflow: isworkflow,
 							};
-							updateChatSession(sessionId, session);
+							updateChatSession(session, sessionId);
 						}
 						return session;
 					}),

@@ -51,10 +51,8 @@ import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy, useMobileScreen } from "@/app/utils";
 import { ChatAction } from "../Inputpanel";
 import {
-	ContextPrompts,
 	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
+} from "@/app/chats/components/mask-modal";
 
 // 常量
 import Locale from "@/app/locales";
@@ -81,7 +79,7 @@ interface MessageItemProps {
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
 
 const Markdown = dynamic(
-	async () => (await import("../../markdown")).Markdown,
+	async () => (await import("../../components/markdown")).Markdown,
 	{
 		loading: () => <LoadingIcon />,
 	},

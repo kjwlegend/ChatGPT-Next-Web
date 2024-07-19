@@ -1,11 +1,11 @@
 "use client";
-import { ModalConfigValidator, ModelConfig, useAppConfig } from "../store";
+import { ModalConfigValidator, ModelConfig, useAppConfig } from "../../store";
 
-import Locale from "../locales";
-import { InputRange } from "./input-range";
-import { ListItem, Select } from "./ui-lib";
-import { useAllModels } from "../utils/hooks";
-import { useUserStore } from "../store";
+import Locale from "../../locales";
+import { InputRange } from "../../components/input-range";
+import { ListItem, Select } from "../../components/ui-lib";
+import { useAllModels } from "../../utils/hooks";
+import { useUserStore } from "../../store";
 
 export function ModelConfigList(props: {
 	modelConfig: ModelConfig;
