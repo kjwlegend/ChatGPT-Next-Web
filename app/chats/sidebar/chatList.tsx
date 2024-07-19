@@ -1,4 +1,4 @@
-import BotIcon from "../icons/bot.png";
+import BotIcon from "@/app/icons/bot.png";
 import { useMemo } from "react";
 
 import { DeleteIcon } from "@/app/icons";
@@ -26,12 +26,12 @@ import { useMobileScreen } from "../../utils";
 import { ChatData, getChat } from "../../api/backend/chat";
 import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem, ChatItemShort } from "./chatItem";
-
+import { PaginationData, getChatSessionChats } from "@/app/services/chats";
 export function ChatList(props: { narrow?: boolean }) {
 	const [
 		currentSessionId,
 		selectSession,
-		selectSessionsById,
+		selectSessionById,
 		moveSession,
 		sortSession,
 	] = useChatStore((state) => [
@@ -54,7 +54,7 @@ export function ChatList(props: { narrow?: boolean }) {
 	const filteredSessions = useMemo(() => {
 		//  exlude workflow chat
 		const newSessions = sessions.filter(
-			(session) => session.isworkflow == false,
+			(session) => session.isworkflow !== true,
 		);
 		return newSessions;
 	}, [sessions]);
@@ -66,16 +66,15 @@ export function ChatList(props: { narrow?: boolean }) {
 	const isMobileScreen = useMobileScreen();
 
 	const getMessages = async (sessionid: string) => {
-		const param: ChatData = {
-			chat_session: sessionid,
-			user: userStore.user.id,
+		const param: PaginationData = {
 			limit: 60,
 		};
 		try {
-			const chatSessionList = await getChat(param);
-			// console.log("chatSessionList", chatSessionList.data);
+			const chatSessionList = await getChatSessionChats(param, sessionid);
 			// 直接使用 chatStore 的方法更新 sessions
-			UpdateChatMessages(param.chat_session, chatSessionList.data);
+			const chats = chatSessionList.results;
+
+			UpdateChatMessages(sessionid, chats);
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}
@@ -106,43 +105,51 @@ export function ChatList(props: { narrow?: boolean }) {
 							ref={provided.innerRef}
 							{...provided.droppableProps}
 						>
-							{filteredSessions.map((item, i) => (
-								<ChatItem
-									title={item.topic}
-									time={
-										new Date(item.lastUpdate).toLocaleDateString(undefined, {
-											month: "2-digit",
-											day: "2-digit",
-										}) +
-										" " +
-										new Date(item.lastUpdate).toLocaleTimeString(undefined, {
-											hour: "2-digit",
-											minute: "2-digit",
-										})
-									}
-									count={item.chat_count ?? item.messages.length}
-									key={item.id}
-									id={item.id}
-									index={i}
-									selected={item.id === currentSessionId}
-									onClick={() => {
-										navigate(Path.Chat);
-										selectSessionsById(item.id);
-										console.log(i);
-										getMessages(item.id);
-									}}
-									onDelete={async () => {
-										if (
-											(!props.narrow && !isMobileScreen) ||
-											(await showConfirm(Locale.Home.DeleteChat))
-										) {
-											chatStore.deleteSession(i, userStore);
+							{filteredSessions.length === 0 ? (
+								<div className={styles["no-conversations"]}>暂无对话</div>
+							) : (
+								filteredSessions.map((item, i) => (
+									<ChatItem
+										title={item.topic}
+										time={
+											new Date(item.lastUpdate).toLocaleDateString(undefined, {
+												month: "2-digit",
+												day: "2-digit",
+											}) +
+											" " +
+											new Date(item.lastUpdate).toLocaleTimeString(undefined, {
+												hour: "2-digit",
+												minute: "2-digit",
+											})
 										}
-									}}
-									narrow={props.narrow}
-									mask={item.mask}
-								/>
-							))}
+										count={item.chat_count ?? item.messages.length}
+										key={item.id}
+										id={item.id}
+										index={i}
+										selected={item.id === currentSessionId}
+										onClick={() => {
+											console.log(
+												`debug item.id: ${item.id}, currentSessionId: ${currentSessionId}`,
+											);
+
+											selectSessionById(item.id);
+											navigate(Path.Chat);
+
+											getMessages(item.id);
+										}}
+										onDelete={async () => {
+											if (
+												(!props.narrow && !isMobileScreen) ||
+												(await showConfirm(Locale.Home.DeleteChat))
+											) {
+												chatStore.deleteSession(i, userStore);
+											}
+										}}
+										narrow={props.narrow}
+										mask={item.mask}
+									/>
+								))
+							)}
 							{provided.placeholder}
 						</div>
 					);

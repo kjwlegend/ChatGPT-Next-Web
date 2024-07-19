@@ -9,7 +9,7 @@ import { useRef, useState, RefObject, useEffect, useMemo } from "react";
 import { copyToClipboard } from "../utils";
 import mermaid from "mermaid";
 
-import LoadingIcon from "../icons/three-dots.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
 import React from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { showImageModal } from "./ui-lib";
@@ -146,7 +146,6 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 						const target = isInternal ? "_self" : aProps.target ?? "_blank";
 						return <a {...aProps} target={target} />;
 					},
-
 				}}
 			>
 				{escapedContent}

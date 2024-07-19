@@ -51,10 +51,8 @@ import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy, useMobileScreen } from "@/app/utils";
 import { ChatAction } from "../Inputpanel";
 import {
-	ContextPrompts,
 	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
+} from "@/app/chats/components/mask-modal";
 
 // 常量
 import Locale from "@/app/locales";
@@ -81,7 +79,7 @@ interface MessageItemProps {
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
 
 const Markdown = dynamic(
-	async () => (await import("../../markdown")).Markdown,
+	async () => (await import("../../components/markdown")).Markdown,
 	{
 		loading: () => <LoadingIcon />,
 	},
@@ -129,6 +127,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	const router = useRouter();
 
 	const messageText = getMessageTextContent(message);
+	const messageImages = getMessageImages(message);
 
 	const isUser = message.role === "user";
 	const mjstatus = message.mjstatus;
@@ -442,7 +441,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 					</div>
 
 					<div className={styles["chat-message-action-date"]}>
-						{isContext ? Locale.Chat.IsContext : message.date.toLocaleString()}
+						{isContext ? Locale.Chat.IsContext : message.date}
 					</div>
 				</div>
 			</div>

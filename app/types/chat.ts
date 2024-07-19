@@ -5,9 +5,10 @@ import { Mask } from "./mask";
 export type ChatMessage = RequestMessage & {
 	date: string;
 	id: string;
+	chat_id?: string;
 	nanoid?: string;
 	model?: ModelType;
-	image_url?: string;
+	image_url?: string[];
 	mjstatus?: MJMessage;
 	toolMessages?: ChatToolMessage[];
 	streaming?: boolean;
@@ -33,17 +34,16 @@ export type MjConfig = {
 
 export interface ChatStat {
 	tokenCount: number;
-	wordCount: number;
-	charCount: number;
 }
 
 export interface ChatSession {
 	id: string;
+	session_id: string;
 	topic: string;
 	memoryPrompt: string;
 	messages: ChatMessage[];
 	stat: ChatStat;
-	lastUpdate: number;
+	lastUpdate: any;
 	lastSummarizeIndex: number;
 	clearContextIndex?: number;
 	mask: Mask;
@@ -52,6 +52,8 @@ export interface ChatSession {
 	mjConfig: MjConfig;
 	chat_count?: number;
 	isDoubleAgent?: boolean;
+	created_at?: string;
+	updated_at?: string;
 }
 
 export interface MJMessage {

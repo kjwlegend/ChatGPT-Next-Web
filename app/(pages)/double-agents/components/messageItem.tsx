@@ -52,7 +52,7 @@ import {
 	ContextPrompts,
 	MaskAvatar,
 	MaskConfig,
-} from "@/app/chats/mask-components";
+} from "@/app/chats/components/mask-modal";
 
 import { Avatar } from "antd";
 
@@ -80,7 +80,7 @@ interface MessageItemProps {
 }
 
 const Markdown = dynamic(
-	async () => (await import("@/app/chats/markdown")).Markdown,
+	async () => (await import("@/app/chats/components/markdown")).Markdown,
 	{
 		loading: () => <LoadingIcon />,
 	},

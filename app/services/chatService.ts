@@ -13,7 +13,7 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 
 import { ModelConfig } from "../store";
-import { CreateChatData, createChat } from "../api/backend/chat";
+import { CreateChatData, createChat } from "./chats";
 import useAuth from "../hooks/useAuth";
 
 import { Store } from "antd/es/form/interface";
@@ -100,15 +100,20 @@ export function handleChatCallbacks(
 					false,
 				);
 				botMessage.streaming = false;
+				const tokenCount = estimateTokenLength(message);
 				// console.log("botMessage streaming: ", botMessage.streaming);
-
+				const content_type = "chatsession";
 				const createChatData: CreateChatData = {
 					user: user.id,
-					chat_session: session.id,
-					message: message,
-					role: "assistant",
-					model: session.mask.modelConfig.model,
+					content: message,
+					chat_role: "assistant",
+					chat_model: session.mask.modelConfig.model,
+					content_type: content_type,
+					object_id: session.id,
+					sender_name: session.mask.name,
+					token_counts_total: tokenCount,
 				};
+
 				const botResponse = createChat(createChatData); // 替换为实际的API调用
 				//  botResponse 为 Promise 对象 , 获取其中的 chat_id 作为 botMessage 的 id
 				botResponse.then((res) => {
@@ -205,71 +210,84 @@ export function sendChatMessage(
 }
 
 import { createEmptyMask } from "../store/mask";
+import { estimateTokenLength } from "../utils/token";
 
-// 获取服务器对话列表
-export function UpdateChatSessions(newSessionsData: any[]) {
+export function updateChatSessions(newSessionsData: any[]) {
 	const chatStore = useChatStore.getState();
-	console.log("newSessionsData: ", newSessionsData);
-	// 遍历接口返回的会话数据
 
 	newSessionsData.forEach((sessionData) => {
-		// 检查chatstore.sessions中是否已经存在该会话
-
-		const exists = chatStore.sessions.some(
-			(s) => s.id === sessionData.session_id,
+		const existingSessionIndex = chatStore.sessions.findIndex(
+			(s) => s.id === sessionData.id,
 		);
-		console.log("exists: ", exists, "sessionData: ", sessionData);
+		const exists = existingSessionIndex !== -1;
 
-		// 如果不存在，则创建一个新的ChatSession对象并添加到chatstore.sessions中
+		const newSession: ChatSession = {
+			id: sessionData.id,
+			session_id: sessionData.session_id,
+			topic: sessionData.session_topic ?? DEFAULT_TOPIC,
+			memoryPrompt: sessionData.session_summary,
+			messages: [],
+			stat: {
+				tokenCount: sessionData.token_counts_total,
+			},
+			lastSummarizeIndex: 0,
+			clearContextIndex: undefined,
+			mask: sessionData.mask ?? createEmptyMask(),
+			responseStatus: undefined,
+			isworkflow: false,
+			mjConfig: sessionData.mjConfig,
+			chat_count: 0,
+			updated_at: sessionData.updated_at,
+			created_at: sessionData.created_at,
+			lastUpdate: Date.parse(sessionData.updated_at),
+		};
+
 		if (!exists) {
-			const newSession: ChatSession = {
-				id: sessionData.session_id,
-				topic: sessionData.topic ?? DEFAULT_TOPIC, // 如果session_topic为null，则使用空字符串
-				memoryPrompt: sessionData.session_summary, // 根据实际情况填充
-				messages: [], // 根据实际情况填充
-				stat: {
-					tokenCount: 0,
-					wordCount: 0,
-					charCount: 0,
-				}, // 根据实际情况填充
-				lastUpdate: Date.parse(sessionData.last_updated),
-				lastSummarizeIndex: sessionData.lastSummarizeIndex, // 根据实际情况填充
-				clearContextIndex: undefined, // 根据实际情况填充
-				mask: sessionData.mask ?? createEmptyMask(), // 根据实际情况填充
-				responseStatus: undefined, // 根据实际情况填充
-				isworkflow: sessionData.isworkflow, // 根据实际情况填充
-				mjConfig: sessionData.mjConfig,
-				chat_count: sessionData.chat_count,
-			};
 			chatStore.addSession(newSession);
-			// console.log("newSession", newSession);
+			console.log("add new session: ", newSession.id);
+		} else {
+			const existingSession = chatStore.sessions[existingSessionIndex];
+
+			if (newSession.lastUpdate! > existingSession.lastUpdate) {
+				chatStore.updateSession(newSession.id!, () => newSession);
+				console.log("update session: ", newSession.id);
+			}
 		}
 	});
 }
 
 // 获取服务器消息列表
-export function UpdateChatMessages(sessionId: string, messagesData: any[]) {
+export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 	const chatStore = useChatStore.getState();
-	const session = chatStore.sessions.find((s) => s.id === sessionId);
+	const session = chatStore.sessions.find((s) => s.id === id);
+	if (!session) return;
+	const session_id = session?.session_id;
 
-	messagesData.forEach((messageData, index) => {
+	messagesData.forEach((messageData) => {
 		// 检查是否已经存在该消息
-
-		const exists = session?.messages.some((m) => m.id === messageData.chat_id);
-		// console.log(exists, index);
-		if (exists) return;
+		const exists = session?.messages.some((m) => m.id == messageData.id);
+		if (exists) {
+			console.log("message already exists: ", messageData.id);
+			return;
+		}
 
 		const newMessage: ChatMessage = {
-			date: messageData.create_date,
-			id: messageData.chat_id.toString(),
-			role: messageData.role, // 确保这里的转换是安全的
-			content: messageData.message,
-			mjstatus: messageData.mjstatus,
+			id: messageData.id.toString(),
+			chat_id: messageData.chat_id.toString(),
+			role: messageData.chat_role, // 确保这里的转换是安全的
+			image_url: messageData.chat_images,
+			date: messageData.created_at,
+			content: messageData.content,
+			function_calls: messageData.function_calls,
+			token_counts_total: messageData.token_counts_total,
+			sender_name: messageData.sender_name,
+			chat_model: messageData.chat_model,
 
-			// 根据需要添加其他属性
+			// 下面属性可能被移除
+			mjstatus: messageData.mjstatus,
 		};
 
 		// 使用 chatStore 的方法来添加新消息
-		chatStore.addMessageToSession(sessionId, newMessage);
+		chatStore.addMessageToSession(session_id, newMessage);
 	});
 }

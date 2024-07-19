@@ -16,8 +16,8 @@ import {
 import type { MenuProps } from "antd";
 import styles from "./header.module.scss";
 import { IconButton } from "./button";
-import LightningIcon from "../icons/lightning.svg";
-import EditIcon from "../icons/menu.svg";
+import LightningIcon from "@/app/icons/lightning.svg";
+import EditIcon from "@/app/icons/menu.svg";
 import { Modal } from "antd";
 import style from "./welcome.module.scss";
 import Image from "next/image";

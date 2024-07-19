@@ -22,14 +22,9 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
-import {
-	createChat,
-	createChatSession,
-	getChat,
-	updateChatSession,
-} from "../api/backend/chat";
+
 import { UserStore, useUserStore } from "./user";
-import { BUILTIN_MASKS } from "../masks";
+import { BUILTIN_MASKS, DEFAULT_MASK } from "../masks";
 import type { BuiltinMask } from "../types/index";
 import { Plugin, usePluginStore } from "../store/plugin";
 import { sendChatMessage, handleChatCallbacks } from "../services/chatService";
@@ -39,8 +34,14 @@ import { midjourneyOnUserInput } from "../services/midjourneyService";
 import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
-
-import { CreateChatData } from "../api/backend/chat";
+import { getChat } from "../api/backend/chat";
+import {
+	CreateChatData,
+	CreateChatSessionData,
+	createChat,
+	createChatSession,
+	updateChatSession,
+} from "@/app/services/chats";
 import { is } from "cheerio/lib/api/traversing";
 
 import { getMessageTextContent, getMessageImages } from "../utils";
@@ -66,7 +67,7 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 		toolMessages: new Array<ChatToolMessage>(),
 		role: "user",
 		content: "",
-		image_url: "",
+		image_url: [],
 		...override,
 	};
 }
@@ -81,13 +82,12 @@ export const BOT_HELLO: ChatMessage = createMessage({
 function createEmptySession(): ChatSession {
 	return {
 		id: nanoid(),
+		session_id: "",
 		topic: DEFAULT_TOPIC,
 		memoryPrompt: "",
 		messages: [],
 		stat: {
 			tokenCount: 0,
-			wordCount: 0,
-			charCount: 0,
 		},
 		lastUpdate: Date.now(),
 		lastSummarizeIndex: 0,
@@ -172,14 +172,24 @@ export const useChatStore = createPersistStore(
 				});
 			},
 			selectSessionById(id: string) {
-				const index = get().sessions.findIndex((s) => s.id === id);
+				console.log("selectSessionById called with id:", id);
+
+				const index = get().sessions.findIndex((session) => session.id === id);
+				console.log("Index found:", index);
+
 				if (index !== -1) {
+					console.log(
+						"Valid index found, calling selectSession with index:",
+						index,
+					);
 					get().selectSession(index);
+				} else {
+					console.log("No session found with the given id:", id);
 				}
 
 				set(() => ({ currentSessionId: id }));
+				console.log("currentSessionId set to:", id);
 			},
-
 			moveSession(from: number, to: number, _sessions?: any) {
 				set((state) => {
 					const { sessions, currentSessionIndex: oldIndex } = state;
@@ -227,21 +237,20 @@ export const useChatStore = createPersistStore(
 				userStore?: UserStore,
 				isworkflow?: boolean,
 			) {
+				console.log("newsession");
 				const config = useAppConfig.getState();
 				const session = createEmptySession();
 				const userId = useUserStore.getState().user.id;
 				const globalModelConfig = config.modelConfig;
 
 				// 使用类型守卫来检查 'id' 属性是否存在
-				const defaultMaskId = "1000";
-				const selectedMask: any = mask;
-				const isCustomMask =
-					!("id" in selectedMask) || isNaN(Number(selectedMask.id));
+				const defaultMaskId = "2";
+				const selectedMask: any = mask ?? DEFAULT_MASK;
 
 				// 如果 selectedMask 没有 'id' 属性，我们提供一个默认值
 				session.mask = {
 					...selectedMask,
-					id: isCustomMask ? defaultMaskId : selectedMask.id,
+					id: defaultMaskId ?? selectedMask.id,
 					modelConfig: {
 						...globalModelConfig,
 						...selectedMask.modelConfig,
@@ -254,25 +263,21 @@ export const useChatStore = createPersistStore(
 				}
 
 				// 处理 userStore 相关逻辑
-				if (userStore) {
-					const promptId = isCustomMask ? "2000" : session.mask.prompt_id;
-					const data = {
-						user: userId,
-						id: session.mask.id,
-						prompt_id: promptId,
-						isworkflow: session.isworkflow,
-						mask: session.mask,
-						mjConfig: session.mjConfig,
-						topic: session.mask.topic ?? session.mask.name,
-						model: session.mask.modelConfig.model,
-						hide: false,
-					};
+				const promptId = session.mask.id;
+				const data: CreateChatSessionData = {
+					user: userId,
+					active: true,
+					agent: 1,
+					session_topic: session.topic,
+					session_summary: session.memoryPrompt,
+					session_description: "",
+					custom_agent_data: session.mask,
+				};
 
-					// 使用 async/await 优化异步请求处理
-					const res = await createChatSession(data);
-					console.log("createChatSession: ", res);
-
-					session.id = res.data.session_id || nanoid();
+				// 使用 async/await 优化异步请求处理
+				const res = await createChatSession(data);
+				if (res.id) {
+					session.id = res.id ?? nanoid();
 				}
 
 				set((state) => ({
@@ -299,7 +304,7 @@ export const useChatStore = createPersistStore(
 				const sessionid = deletedSession.id;
 
 				// update session
-				updateChatSession(sessionid, { hide: true });
+				updateChatSession({ active: false }, sessionid);
 
 				const sessions = get().sessions.slice();
 				sessions.splice(index, 1);
@@ -310,37 +315,37 @@ export const useChatStore = createPersistStore(
 					sessions.length - 1,
 				);
 
-				if (deletingLastSession) {
-					nextIndex = 0;
-					sessions.push(createEmptySession());
+				// if (deletingLastSession) {
+				// 	nextIndex = 0;
+				// 	sessions.push(createEmptySession());
 
-					// session id  设置为空
-					if (userStore) {
-						const user = userStore.user; // 从 userStore 中获取 user 对象
-						const userId = user.id; // 从 user 对象中获取 id 字段
-						const session = sessions.at(0);
-						if (!session) return;
+				// 	// session id  设置为空
+				// 	if (userStore) {
+				// 		const user = userStore.user; // 从 userStore 中获取 user 对象
+				// 		const userId = user.id; // 从 user 对象中获取 id 字段
+				// 		const session = sessions.at(0);
+				// 		if (!session) return;
 
-						const data = {
-							user: userId,
-							topic: session.mask.topic ?? session.mask.name,
-							isworkflow: session.isworkflow,
-							mask: session.mask,
-							mjConfig: session.mjConfig,
-							model: session.mask.modelConfig.model,
-							prompt_id: "100000",
-							hide: false,
-						};
-						createChatSession(data)
-							.then((res) => {
-								console.log(res);
-								session.id = res.data.session_id || nanoid();
-							})
-							.catch((err) => {
-								console.log(err);
-							});
-					}
-				}
+				// 		const data = {
+				// 			user: userId,
+				// 			topic: session.mask.topic ?? session.mask.name,
+				// 			isworkflow: session.isworkflow,
+				// 			mask: session.mask,
+				// 			mjConfig: session.mjConfig,
+				// 			model: session.mask.modelConfig.model,
+				// 			prompt_id: "100000",
+				// 			hide: false,
+				// 		};
+				// 		createChatSession(data)
+				// 			.then((res) => {
+				// 				console.log(res);
+				// 				session.id = res.data.session_id || nanoid();
+				// 			})
+				// 			.catch((err) => {
+				// 				console.log(err);
+				// 			});
+				// 	}
+				// }
 
 				// for undo delete action
 				const restoreState = {
@@ -359,7 +364,7 @@ export const useChatStore = createPersistStore(
 						text: Locale.Home.Revert,
 						onClick() {
 							set(() => restoreState);
-							updateChatSession(sessionid, { hide: false });
+							updateChatSession({ hide: false }, sessionid);
 						},
 					},
 					5000,
@@ -369,6 +374,9 @@ export const useChatStore = createPersistStore(
 			currentSession() {
 				let index = get().currentSessionIndex;
 				const sessions = get().sessions;
+				// console.log(
+				// 	`store debug - currentSessionIndex: ${index}, sessions length: ${sessions.length}`,
+				// );
 
 				if (index === undefined || index === null) {
 					throw new Error("Index is not defined");
@@ -399,20 +407,17 @@ export const useChatStore = createPersistStore(
 					session.messages = session.messages.concat();
 					session.lastUpdate = Date.now();
 				});
-				get().updateStat(message);
 				summarizeSession();
 			},
 
-			addMessageToSession(sessionId: string, newMessage: ChatMessage) {
+			addMessageToSession: (sessionId: string, newMessage: ChatMessage) => {
 				set((state) => ({
-					sessions: state.sessions.map((session) =>
-						session.id === sessionId
-							? {
-									...session,
-									messages: [...session.messages, newMessage],
-								}
-							: session,
-					),
+					sessions: state.sessions.map((session) => {
+						if (session.session_id === sessionId) {
+							session.messages = [...session.messages, newMessage];
+						}
+						return session;
+					}),
 				}));
 			},
 			sortSession() {
@@ -462,44 +467,26 @@ export const useChatStore = createPersistStore(
 				const messageIndex = get().currentSession().messages.length + 1;
 
 				const userStore = useUserStore.getState();
-
+				const total_token_count =
+					estimateTokenLength(recentMessages.join("\n")) +
+					estimateTokenLength(content);
+				const content_type = "chatsession";
 				const createChatData: CreateChatData = {
-					user: userStore.user.id, // 替换为实际的用户 ID
-					chat_session: sessionId, // 替换为实际的聊天会话 ID
-					message: content, // 使用用户输入作为 message 参数
+					user: userStore.user.id,
+					object_id: sessionId, // 替换为实际的聊天会话 ID
+					content: content, // 使用用户输入作为 message 参数
 					memory: recentMessages,
-					role: "user",
-					model: session.mask.modelConfig.model,
+					chat_role: "user",
+					chat_model: session.mask.modelConfig.model,
+					content_type: content_type,
+					sender_name: userStore.user.nickname,
+					token_counts_total: total_token_count,
 				};
 				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
 
 				// if chatResponse code return 4000 or 401 , throw error
 
-				const data = chatResponse.data;
-				const user_chat_id = data.chat_id;
-				const newSessionId = data.chat_session;
-				// console.log("user_chat_id: ", user_chat_id);
-				// console.log("newSessionId: ", newSessionId);
-
-				if (sessionId !== newSessionId) {
-					get().updateSession(sessionId, (session: ChatSession) => {
-						session.id = newSessionId;
-					});
-				}
-
-				if (sessionModel === "midjourney") {
-					const mjparams = {
-						content: content,
-						image_url: "",
-						_session: session,
-						action: undefined,
-						taskId: undefined,
-						index: undefined,
-						chat_id: user_chat_id,
-					};
-					await midjourneyOnUserInput(mjparams);
-					return;
-				}
+				const chat_id = chatResponse.chat_id;
 
 				const userContent = content;
 				console.log("[User Input] after template: ", userContent);
@@ -526,7 +513,7 @@ export const useChatStore = createPersistStore(
 				}
 
 				const userMessage: ChatMessage = createMessage({
-					id: user_chat_id,
+					id: chat_id,
 					role: "user",
 					content: mContent,
 					fileInfos: attachFiles,
@@ -570,7 +557,7 @@ export const useChatStore = createPersistStore(
 				session: ChatSession,
 				botMessageId: string,
 				content: string,
-				imageUrl = "",
+				imageUrl = [],
 				mjresult?: MJMessage,
 			) {
 				const chatStoreState = useChatStore.getState();
@@ -700,6 +687,7 @@ export const useChatStore = createPersistStore(
 					...contextPrompts,
 					...reversedRecentMessages.reverse(),
 				];
+				//  update session tokenCount
 
 				return recentMessages;
 			},
@@ -723,13 +711,6 @@ export const useChatStore = createPersistStore(
 				});
 			},
 
-			updateStat(message: ChatMessage) {
-				get().updateCurrentSession((session) => {
-					session.stat.charCount += message.content.length;
-					// TODO: should update chat count and word count
-				});
-			},
-
 			updateCurrentSession(updater: (session: ChatSession) => void) {
 				const sessions = get().sessions;
 				const index = get().currentSessionIndex;
@@ -742,13 +723,20 @@ export const useChatStore = createPersistStore(
 				// add another parameter to control whether to sync with backend, default is true
 				sync = true,
 			) {
+				const userId = useUserStore.getState().user.id;
 				if (sessionId) {
 					set((state) => ({
 						sessions: state.sessions.map((session) => {
 							if (session.id === sessionId) {
+								// 直接应用 updater 回调函数
 								updater(session);
 								if (sync) {
-									updateChatSession(sessionId, session);
+									const data: CreateChatSessionData = {
+										...session,
+										session_topic: session.topic,
+										user: userId,
+									};
+									updateChatSession(data, sessionId);
 								}
 							}
 							return session;
@@ -758,7 +746,6 @@ export const useChatStore = createPersistStore(
 					this.updateCurrentSession(updater);
 				}
 			},
-
 			setworkflow(_session: ChatSession, isworkflow: boolean) {
 				const sessionId = _session.id;
 				set((state) => ({
@@ -768,7 +755,7 @@ export const useChatStore = createPersistStore(
 							const data = {
 								isworkflow: isworkflow,
 							};
-							updateChatSession(sessionId, session);
+							updateChatSession(session, sessionId);
 						}
 						return session;
 					}),
@@ -789,7 +776,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.4,
+		version: 3.5,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(
@@ -855,6 +842,9 @@ export const useChatStore = createPersistStore(
 					s.mask.modelConfig.enableRelatedQuestions = false;
 					s.mask.modelConfig.enableUserInfos = true;
 				});
+			}
+			if (version < 3.5) {
+				//准备更新内容
 			}
 
 			return newState as any;

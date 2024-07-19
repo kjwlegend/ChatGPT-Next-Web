@@ -6,12 +6,9 @@ import { message } from "antd";
 import { LoginResult } from "@/app/types";
 import { use, useState, useEffect } from "react";
 import { User } from "@/app/store";
-import { ChatSessionData, getChatSession } from "@/app/api/backend/chat";
-import { createEmptyMask } from "@/app/store/mask";
 import { useUserStore } from "@/app/store";
 import { useChatStore } from "@/app/store";
-import { ChatSession } from "@/app/types/chat";
-import { UpdateChatSessions } from "@/app/services/chatService";
+
 import PasswordResetModal from "./PasswordResetModal";
 import { query } from "express";
 // 登录页面
@@ -43,23 +40,6 @@ export default function Login() {
 	const handleCancel = () => {
 		setShowResetPassword(false);
 	};
-
-	useEffect(() => {
-		const fetchAndStoreSessions = async () => {
-			const param: ChatSessionData = {
-				user: user?.id || 0,
-				limit: 30,
-			};
-			try {
-				const chatSessionList = await getChatSession(param);
-				// 直接使用 chatStore 的方法更新 sessions
-				UpdateChatSessions(chatSessionList.data);
-			} catch (error) {
-				console.log("get chatSession list error", error);
-			}
-		};
-		fetchAndStoreSessions();
-	}, [user]);
 
 	const onFinish = async (values: any) => {
 		try {

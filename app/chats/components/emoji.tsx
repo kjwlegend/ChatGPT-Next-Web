@@ -4,10 +4,10 @@ import EmojiPicker, {
 	Theme as EmojiTheme,
 } from "emoji-picker-react";
 
-import { ModelType } from "../store";
-import { Mask } from "../types/";
-import BotIcon from "../icons/bot.svg";
-import BlackBotIcon from "../icons/black-bot.svg";
+import { ModelType } from "../../store";
+import { Mask } from "@/app/types/mask";
+import BotIcon from "@/app/icons/bot.svg";
+import BlackBotIcon from "@/app/icons/black-bot.svg";
 
 export function getEmojiUrl(unified: string, style: EmojiStyle) {
 	return `https://cdn.staticfile.org/emoji-datasource-apple/14.0.0/img/${style}/64/${unified}.png`;

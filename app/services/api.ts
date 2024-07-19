@@ -92,6 +92,14 @@ request.post = async function (
 	return service.post(url, data, config);
 };
 
+request.put = async function (
+	url: string,
+	data?: any,
+	config?: AxiosRequestConfig,
+) {
+	return service.put(url, data, config);
+};
+
 export default request;
 
 export const handleError = (error: any) => {
@@ -100,7 +108,10 @@ export const handleError = (error: any) => {
 };
 
 export const api = (appurl: string, endpoint: string) => {
-	return async (params?: any) => {
+	return async (params?: any, id?: string) => {
+		const url = id
+			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
+			: `/${appurl}${endpoint}`;
 		try {
 			const response = await request.post(`/${appurl}${endpoint}`, params);
 			return response.data;
@@ -111,9 +122,26 @@ export const api = (appurl: string, endpoint: string) => {
 };
 
 export const apiGet = (appurl: string, endpoint: string) => {
-	return async (params?: any) => {
+	return async (params?: any, id?: string) => {
+		const url = id
+			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
+			: `/${appurl}${endpoint}`;
 		try {
-			const response = await request.get(`/${appurl}${endpoint}`, { params });
+			const response = await request.get(url, { params });
+			return response.data;
+		} catch (error) {
+			return handleError(error);
+		}
+	};
+};
+
+export const apiPut = (appurl: string, endpoint: string) => {
+	return async (params: any, id?: string) => {
+		const url = id
+			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
+			: `/${appurl}${endpoint}`;
+		try {
+			const response = await request.put(url, params);
 			return response.data;
 		} catch (error) {
 			return handleError(error);

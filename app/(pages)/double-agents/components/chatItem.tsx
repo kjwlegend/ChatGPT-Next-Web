@@ -1,4 +1,4 @@
-import BotIcon from "../icons/bot.png";
+import BotIcon from "@/app/icons/bot.png";
 
 import { DeleteIcon, EditIcon } from "@/app/icons";
 

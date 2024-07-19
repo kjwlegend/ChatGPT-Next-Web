@@ -5,10 +5,10 @@ import styles from "./new-chat.module.scss";
 import { Avatar, Card, Skeleton, Switch, Button, Row } from "antd";
 const { Meta } = Card;
 import { IconButton } from "@/app/components/button";
-import { EmojiAvatar } from "./emoji";
-import LeftIcon from "../icons/left.svg";
-import LightningIcon from "../icons/lightning.svg";
-import EyeIcon from "../icons/eye.svg";
+import { EmojiAvatar } from "./components/emoji";
+import LeftIcon from "@/app/icons/left.svg";
+import LightningIcon from "@/app/icons/lightning.svg";
+import EyeIcon from "@/app/icons/eye.svg";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMaskStore, createEmptyMask } from "../store/mask";

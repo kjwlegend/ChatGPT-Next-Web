@@ -1,15 +1,15 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 import styles from "./ui-lib.module.scss";
-import LoadingIcon from "../icons/three-dots.svg";
-import CloseIcon from "../icons/close.svg";
-import EyeIcon from "../icons/eye.svg";
-import EyeOffIcon from "../icons/eye-off.svg";
-import DownIcon from "../icons/down.svg";
-import ConfirmIcon from "../icons/confirm.svg";
-import CancelIcon from "../icons/cancel.svg";
-import MaxIcon from "../icons/max.svg";
-import MinIcon from "../icons/min.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
+import CloseIcon from "@/app/icons/close.svg";
+import EyeIcon from "@/app/icons/eye.svg";
+import EyeOffIcon from "@/app/icons/eye-off.svg";
+import DownIcon from "@/app/icons/down.svg";
+import ConfirmIcon from "@/app/icons/confirm.svg";
+import CancelIcon from "@/app/icons/cancel.svg";
+import MaxIcon from "@/app/icons/max.svg";
+import MinIcon from "@/app/icons/min.svg";
 
 import Locale from "../locales";
 

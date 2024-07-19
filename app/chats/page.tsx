@@ -5,8 +5,8 @@ require("../polyfill");
 import { useState, useEffect } from "react";
 import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 import styles from "./home.module.scss";
-import LoadingIcon from "../icons/three-dots.svg";
-import BotIcon from "../icons/bot.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
+import BotIcon from "@/app/icons/bot.svg";
 
 import { getCSSVar, useMobileScreen } from "../utils";
 
@@ -201,27 +201,27 @@ function Screen() {
 			expiresDateTime,
 		);
 
-		if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
-			console.log("cookie已过期");
-			message.error("登录已过期，请重新登录");
+		// if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
+		// 	console.log("cookie已过期");
+		// 	message.error("登录已过期，请重新登录");
 
-			logoutHook()
-				.then(() => {
-					timeoutId = setTimeout(() => {
-						router.push("/auth");
-					}, 1500);
-				})
-				.catch((e) => {
-					console.log("logout error", e);
-				});
-		}
+		// 	logoutHook()
+		// 		.then(() => {
+		// 			timeoutId = setTimeout(() => {
+		// 				router.push("/auth");
+		// 			}, 1500);
+		// 		})
+		// 		.catch((e) => {
+		// 			console.log("logout error", e);
+		// 		});
+		// }
 
-		// 清理函数，组件卸载时取消定时器
-		return () => {
-			if (timeoutId) {
-				clearTimeout(timeoutId);
-			}
-		};
+		// // 清理函数，组件卸载时取消定时器
+		// return () => {
+		// 	if (timeoutId) {
+		// 		clearTimeout(timeoutId);
+		// 	}
+		// };
 	}, [isAuthenticated, logoutHook]);
 	return (
 		<div

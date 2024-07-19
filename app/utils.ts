@@ -3,6 +3,7 @@ import { showToast } from "./components/ui-lib";
 import Locale from "./locales";
 import { RequestMessage } from "./client/api";
 import { DEFAULT_MODELS } from "./constant";
+import { ChatMessage } from "./types/chat";
 
 export function trimTopic(topic: string) {
 	// Fix an issue where double quotes still show in the Indonesian language
@@ -241,10 +242,18 @@ export function getMessageTextContent(message: RequestMessage) {
 	return "";
 }
 
-export function getMessageImages(message: RequestMessage): string[] {
+export function getMessageImages(message: ChatMessage): string[] {
+	// console.log("get image function", message);
+	// console.log("get image function - image url", message.image_url);
+
+	if (message.image_url) {
+		return message.image_url;
+	}
+
 	if (typeof message.content === "string") {
 		return [];
 	}
+
 	const urls: string[] = [];
 	for (const c of message.content) {
 		if (c.type === "image_url") {

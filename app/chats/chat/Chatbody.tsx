@@ -49,7 +49,6 @@ import {
 	ClearContextDivider,
 } from "./chat-controller";
 
-import { CreateChatData, createChat } from "@/app/api/backend/chat";
 import { useMobileScreen } from "@/app/utils";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
@@ -57,7 +56,7 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { message } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
-import { getChat } from "@/app/api/backend/chat";
+import { getChat, CreateChatData, createChat } from "@/app/services/chats";
 import { UpdateChatMessages } from "@/app/services/chatService";
 import { useRouter } from "next/navigation";
 import { FloatButton } from "antd";
@@ -199,7 +198,7 @@ export function Chatbody(props: {
 								...createMessage({
 									role: "assistant",
 									content: "……",
-									image_url: "",
+									image_url: [],
 								}),
 								preview: true,
 							},

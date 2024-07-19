@@ -46,12 +46,6 @@ import {
 	useMobileScreen,
 } from "@/app/utils";
 
-import { api } from "@/app/client/api";
-
-import dynamic from "next/dynamic";
-
-import { ChatControllerPool } from "@/app/client/controller";
-import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
@@ -67,27 +61,16 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 
-import { useLocation, useNavigate } from "react-router-dom";
-
-import {
-	CHAT_PAGE_SIZE,
-	LAST_INPUT_KEY,
-	MAX_RENDER_MSG_COUNT,
-	Path,
-	REQUEST_TIMEOUT_MS,
-} from "@/app/constant";
 import { BotAvatar } from "@/app/components/emoji";
 import { Avatar as UserAvatar } from "antd";
 import {
 	ContextPrompts,
 	MaskAvatar,
 	MaskConfig,
-} from "@/app/chats/mask-components";
+} from "@/app/chats/components/mask-modal";
 
 import { useMaskStore } from "@/app/store/mask";
-import { ChatMessage, ChatSession} from "@/app/types/chat";
-
-import { prop } from "cheerio/lib/api/attributes";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 export function SessionConfigModel(props: {
 	onClose: () => void;
@@ -165,7 +148,7 @@ export function SessionConfigModel(props: {
 						updater(mask);
 						chatStore.updateSession(
 							sessionId,
-							() => (session.mask = mask),
+							(session) => (session.mask = mask),
 							false,
 						);
 					}}

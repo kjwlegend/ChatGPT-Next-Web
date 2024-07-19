@@ -50,12 +50,6 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
-
 import { prettyObject } from "@/app/utils/format";
 import { ExportMessageModal } from "@/app/chats/exporter";
 import { getClientConfig } from "@/app/config/client";
@@ -149,7 +143,39 @@ export function EditMessageModal(props: {
 		</div>
 	);
 }
+const MaskModal = (props: {
+	session?: ChatSession;
+	index?: number;
+	isworkflow: boolean;
+	showModal?: boolean;
+	setShowModal: (_: boolean) => void;
+	doubleAgent?: boolean;
+}) => {
+	const chatStore = useChatStore();
+	let session: ChatSession;
+	// isworkflow = true then, session use props.session. else use currentSession
+	if (props.isworkflow && props.session) {
+		session = props.session;
+	} else {
+		session = chatStore.currentSession();
+	}
+	const sessionId = session.id;
 
+	const context = session.mask?.context;
+
+	return (
+		<div className={styles["prompt-toast"]} key="prompt-toast">
+			{props.showModal && (
+				<SessionConfigModel
+					onClose={() => props.setShowModal(false)}
+					session={session}
+					index={props.index}
+					isworkflow={props.isworkflow}
+				/>
+			)}
+		</div>
+	);
+};
 export function PromptToast(props: {
 	showToast?: boolean;
 	showModal?: boolean;
@@ -157,7 +183,6 @@ export function PromptToast(props: {
 	isworkflow: boolean;
 	index?: number;
 	session?: ChatSession;
-	doubleAgent?: boolean;
 }) {
 	const chatStore = useChatStore();
 	let session: ChatSession;
@@ -185,14 +210,6 @@ export function PromptToast(props: {
 						{Locale.Context.Toast(context.length)}
 					</span>
 				</div>
-			)}
-			{props.showModal && (
-				<SessionConfigModel
-					onClose={() => props.setShowModal(false)}
-					session={session}
-					index={props.index}
-					isworkflow={props.isworkflow}
-				/>
 			)}
 		</div>
 	);
@@ -462,6 +479,13 @@ export function WindowHeader(props: {
 
 			<PromptToast
 				showToast={!hitBottom}
+				showModal={showPromptModal}
+				setShowModal={setShowPromptModal}
+				session={session}
+				index={index}
+				isworkflow={props.isworkflow}
+			/>
+			<MaskModal
 				showModal={showPromptModal}
 				setShowModal={setShowPromptModal}
 				session={session}

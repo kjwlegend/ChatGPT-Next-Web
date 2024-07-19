@@ -100,11 +100,7 @@ import {
 	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 
-import {
-	ContextPrompts,
-	MaskAvatar,
-	MaskConfig,
-} from "@/app/chats/mask-components";
+
 
 import { Radio, Switch } from "antd";
 import { useMaskStore } from "@/app/store/mask";
@@ -880,7 +876,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								...createMessage({
 									role: "assistant",
 									content: "……",
-									image_url: "",
+									image_url: [""],
 								}),
 								preview: true,
 							},
@@ -894,7 +890,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 								...createMessage({
 									role: "user",
 									content: userInput,
-									image_url: "",
+									image_url: [""],
 								}),
 								preview: true,
 							},

@@ -1,4 +1,4 @@
-import BotIcon from "../icons/bot.png";
+import BotIcon from "@/app/icons/bot.png";
 
 import { DeleteIcon } from "@/app/icons";
 
@@ -67,9 +67,9 @@ export function ChatItem(props: {
 						<>
 							<div className={styles["chat-item-title"]}>
 								{props.title}
-								<span className={styles["chat-item-info"]}>
+								{/* <span className={styles["chat-item-info"]}>
 									{Locale.ChatItem.ChatItemCount(props.count)}
-								</span>
+								</span> */}
 							</div>
 							<div className={styles["chat-item-date"]}>{props.time}</div>
 						</>

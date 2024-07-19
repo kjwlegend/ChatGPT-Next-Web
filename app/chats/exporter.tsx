@@ -22,19 +22,19 @@ import {
 	useMobileScreen,
 } from "../utils";
 
-import CopyIcon from "../icons/copy.svg";
-import LoadingIcon from "../icons/three-dots.svg";
-import ChatGptIcon from "../icons/chatgpt.png";
-import ShareIcon from "../icons/share.svg";
-import BotIcon from "../icons/bot.png";
+import CopyIcon from "@/app/icons/copy.svg";
+import LoadingIcon from "@/app/icons/three-dots.svg";
+import ChatGptIcon from "@/app/icons/chatgpt.png";
+import ShareIcon from "@/app/icons/share.svg";
+import BotIcon from "@/app/icons/bot.png";
 
-import DownloadIcon from "../icons/download.svg";
+import DownloadIcon from "@/app/icons/download.svg";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
 	MessageSelector,
 	useMessageSelector,
 } from "../components/message-selector";
-import { Avatar } from "./emoji";
+import { Avatar } from "./components/emoji";
 import dynamic from "next/dynamic";
 import NextImage from "next/image";
 
@@ -48,9 +48,12 @@ import { ClientApi } from "../client/api";
 import { getMessageTextContent } from "../utils";
 import { identifyDefaultClaudeModel } from "@/app/utils/checkers";
 
-const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
-	loading: () => <LoadingIcon />,
-});
+const Markdown = dynamic(
+	async () => (await import("./components/markdown")).Markdown,
+	{
+		loading: () => <LoadingIcon />,
+	},
+);
 
 export function ExportMessageModal(props: { onClose: () => void }) {
 	return (
@@ -659,7 +662,7 @@ export function MarkdownPreviewer(props: {
 					? `## ${Locale.Export.MessageFromYou}:\n${getMessageTextContent(m)}`
 					: `## ${Locale.Export.MessageFromChatGPT}:\n${getMessageTextContent(
 							m,
-					  ).trim()}`;
+						).trim()}`;
 			})
 			.join("\n\n");
 

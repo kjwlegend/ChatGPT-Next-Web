@@ -30,7 +30,7 @@ import {
 	Select,
 	showConfirm,
 } from "@/app/components/ui-lib";
-import { Avatar } from "../emoji";
+import { Avatar } from "../components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../../locales";
 import { useLocation, useNavigate } from "react-router-dom";
 
