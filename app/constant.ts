@@ -132,67 +132,59 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 
 export const DEFAULT_MODELS = [
 	{
-		name: "gpt-4o",
-		available: true,
-		displayName: "小光Pro-(5积分/次)",
-		proModel: true,
-		supportFunctionCall: true,
-		provider: {
-			id: "openai",
-			providerName: "OpenAI",
-			providerType: "openai",
-		},
-	},
-
-	{
-		name: "gpt-3.5-turbo",
-		displayName: "小光基础(1积分/次)",
-		available: true,
-		proModel: false,
-		supportFunctionCall: true,
-
-		provider: {
-			id: "openai",
-			providerName: "OpenAI",
-			providerType: "openai",
-		},
+		provider: "openai",
+		models: [
+			{
+				key: "pro",
+				name: "gpt-4o",
+				displayName: "小光Pro-(5积分/次)",
+				available: true,
+				proModel: true,
+				supportFunctionCall: true,
+			},
+			{
+				key: "base",
+				name: "gpt-3.5-turbo",
+				displayName: "小光基础(1积分/次)",
+				available: true,
+				proModel: false,
+				supportFunctionCall: true,
+			},
+		],
 	},
 	{
-		name: "deepseek-chat",
-		available: true,
-		displayName: "Deepseek模型(1积分/次)",
-		proModel: true,
-		supportFunctionCall: true,
-		provider: {
-			id: "deepseek",
-			providerName: "deepseek",
-			providerType: "deepseek",
-		},
+		provider: "Deepseek",
+		models: [
+			{
+				key: "base",
+				name: "deepseek-chat",
+				displayName: "Deepseek模型(1积分/次)",
+				available: true,
+				proModel: true,
+				supportFunctionCall: true,
+			},
+			{
+				key: "code",
+				name: "deepseek-code",
+				displayName: "Deepseek编程(1积分/次)",
+				available: true,
+				proModel: false,
+				supportFunctionCall: false,
+			},
+		],
 	},
-	{
-		name: "deepseek-code",
-		available: true,
-		displayName: "Deepseek编程(1积分/次)",
-		proModel: false,
-		supportFunctionCall: false,
-		provider: {
-			id: "deepseek",
-			providerName: "deepseek",
-			providerType: "deepseek",
-		},
-	},
-	{
-		name: "midjourney",
-		available: true,
-		displayName: "Midjourney(2积分/次)",
-		proModel: false,
-		supportFunctionCall: false,
-		provider: {
-			id: "midjourney",
-			providerName: "midjourney",
-			providerType: "midjourney",
-		},
-	},
+	// {
+	// 	name: "midjourney",
+	// 	available: true,
+	// 	displayName: "Midjourney(2积分/次)",
+	// 	proModel: false,
+	// 	supportFunctionCall: false,
+	// 	provider: {
+	// 		id: "midjourney",
+	// 		providerName: "midjourney",
+	// 		providerType: "midjourney",
+	// 	},
+	// },
 ] as const;
 
 import { getServerSideConfig } from "@/app/config/server";

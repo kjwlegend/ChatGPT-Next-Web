@@ -296,8 +296,10 @@ export function isSupportRAGModel(modelName: string) {
 	];
 	if (specialModels.some((keyword) => modelName === keyword)) return true;
 	if (isVisionModel(modelName)) return false;
-	return DEFAULT_MODELS.filter((model) => model.provider.id === "openai").some(
-		(model) => model.name === modelName,
+	return DEFAULT_MODELS.filter(
+		(provider) => provider.provider === "openai",
+	).some((provider) =>
+		provider.models.some((model) => model.name === modelName),
 	);
 }
 

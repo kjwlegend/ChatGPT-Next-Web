@@ -50,9 +50,8 @@ import MjActions from "../midjourney";
 import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy, useMobileScreen } from "@/app/utils";
 import { ChatAction } from "../Inputpanel";
-import {
-	MaskAvatar,
-} from "@/app/chats/components/mask-modal";
+import { MaskAvatar } from "@/app/chats/components/mask-modal";
+import { Avatar } from "../../components/avatar";
 
 // 常量
 import Locale from "@/app/locales";
@@ -77,6 +76,7 @@ interface MessageItemProps {
 }
 
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
+import IconTooltipButton from "../../components/iconButton";
 
 const Markdown = dynamic(
 	async () => (await import("../../components/markdown")).Markdown,
@@ -90,21 +90,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	session,
 	i,
 	context,
-	isMobileScreen,
 	clearContextIndex,
+	isMobileScreen,
 	onUserStop,
 	onResend,
 	onDelete,
 	onPinMessage,
 	onPlayAudio,
-	// 其他属性和方法
 }) => {
-	// 你的其他逻辑和方法
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
-	const workflowStore = useWorkflowStore();
-	const config = useAppConfig();
-	const fontSize = config.fontSize;
 	const {
 		hitBottom,
 		setHitBottom,
@@ -119,40 +112,41 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 		setUserImage,
 	} = useContext(ChatContext);
 
+	const chatStore = useChatStore();
+	const userStore = useUserStore();
+	const workflowStore = useWorkflowStore();
+	const config = useAppConfig();
+	const fontSize = config.fontSize;
+	const router = useRouter();
+
 	const sessionId = session.id;
 	const isworkflow = session.isworkflow;
 	const messages = session.messages;
 	const authHook = useAuth();
 	const { updateUserInfo } = authHook;
-	const router = useRouter();
 
 	const messageText = getMessageTextContent(message);
 	const messageImages = getMessageImages(message);
-
 	const isUser = message.role === "user";
 	const mjstatus = message.mjstatus;
 	const actions = mjstatus?.action;
-
 	const isContext = i < context.length;
 	const showActions =
 		i > 0 && !(message.preview || messageText.length === 0) && !isContext;
 	const showTyping = message.preview || message.streaming;
-
 	const shouldShowClearContextDivider = i === clearContextIndex - 1;
+
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
 	useEffect(() => {
-		const botMessage = message.role === "assistant" ? messageText : null;
-
 		if (
 			enableAutoFlow &&
 			message.isFinished &&
 			message.isTransfered == false &&
 			!isUser &&
-			botMessage !== ""
+			messageText !== ""
 		) {
 			onNextworkflow(messageText);
-			// 将session 的 responseState 转为false
 			chatStore.updateSession(sessionId, () => {
 				session.responseStatus = false;
 				message.isTransfered = true;
@@ -160,11 +154,10 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 		}
 	}, [message.isFinished]);
 
+	/**
+	 * @description: 下一个工作流
+	 */
 	const onNextworkflow = (message: string) => {
-		// 点击后将该条 message 传递到下一个 session
-		// 找到当前 session 的 ID
-
-		// 找到当前 session 所在的 workflow group
 		const workflowGroup = Object.values(workflowStore.workflowGroup).find(
 			(group) => group.sessions.includes(sessionId),
 		);
@@ -173,18 +166,13 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 			return;
 		}
 
-		// 在当前 workflow group 中找到当前 session 的索引
 		const currentSessionIndex = workflowGroup.sessions.indexOf(sessionId);
-
-		// 找到下一个 session 的索引
 		const nextSessionIndex = workflowGroup.sessions.findIndex(
 			(s, i) => i > currentSessionIndex,
 		);
 
-		// 如果找到了下一个 session，则进行相应的操作
 		if (nextSessionIndex !== -1) {
 			const nextSessionId = workflowGroup.sessions[nextSessionIndex];
-			// 这里可以添加代码来处理下一个 session
 			console.log("下一个 session 的 ID 是：", nextSessionId);
 		} else {
 			console.log("没有找到下一个 workflow session");
@@ -196,13 +184,10 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
 		chatStore
 			.onUserInput(message, undefined, undefined, nextSession)
-			.then(() => {
-				updateUserInfo(userStore.user.id);
-			})
+			.then(() => updateUserInfo(userStore.user.id))
 			.catch((error) => {
 				messageApi.error(error.message);
 
-				// chatStore.clearAllData();
 				if (error.message.includes("登录")) {
 					setTimeout(() => {
 						authHook.logoutHook();
@@ -214,30 +199,87 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 		localStorage.setItem(LAST_INPUT_KEY, userInput);
 	};
 
+	/**
+	 * @description: 消息右键点击事件
+	 */
 	const onRightClick = (e: any, message: ChatMessage) => {
 		if (selectOrCopy(e.currentTarget, messageText)) {
-			if (userInput.length === 0) {
-				setUserInput(messageText);
-			}
-
+			if (userInput.length === 0) setUserInput(messageText);
 			e.preventDefault();
 		}
 	};
 
-	const renderedUserAvatar = useMemo(() => {
-		if (userStore.user.avatar) {
-			return <UserAvatar size="large" src={userStore.user.avatar} />;
-		} else {
-			return (
-				<UserAvatar
-					style={{ backgroundColor: "rgb(91, 105, 230)" }}
-					size="large"
-				>
-					{userStore.user.nickname}
-				</UserAvatar>
-			);
-		}
+	/**
+	 * @description: 渲染用户头像
+	 */
+	const RenderedUserAvatar = useMemo(() => {
+		// if (userStore.user.avatar)
+		// 	return <UserAvatar size="large" src={userStore.user.avatar} />;
+
+		// return (
+		// 	<UserAvatar style={{ backgroundColor: "rgb(91,105,230)" }} size="large">
+		// 		{userStore.user.nickname}
+		// 	</UserAvatar>
+		// );
+		return (
+			<Avatar
+				avatar={userStore.user.avatar}
+				nickname={userStore.user.nickname}
+			/>
+		);
 	}, [userStore.user.avatar, userStore.user.nickname]);
+
+	/**
+	 * @description: 渲染消息操作按钮
+	 */
+	const RenderMessageActions = useMemo(() => {
+		if (!showActions || message.streaming || message.isError) return null;
+
+		return (
+			<div>
+				<IconTooltipButton
+					text={Locale.Chat.Actions.Retry}
+					icon={<ResetIcon />}
+					onClick={() => (onResend ? onResend(message) : null)}
+					tooltipProps={{}}
+					shape="circle"
+				/>
+
+				<IconTooltipButton
+					text={Locale.Chat.Actions.Delete}
+					icon={<DeleteIcon />}
+					onClick={() => (onDelete ? onDelete(message.id ?? i) : null)}
+					tooltipProps={{}}
+					shape="circle"
+				/>
+
+				<IconTooltipButton
+					text={Locale.Chat.Actions.Pin}
+					icon={<PinIcon />}
+					onClick={() => (onPinMessage ? onPinMessage(message) : null)}
+					tooltipProps={{}}
+					shape="circle"
+				/>
+
+				<IconTooltipButton
+					text={Locale.Chat.Actions.Copy}
+					icon={<CopyIcon />}
+					onClick={() => copyToClipboard(messageText)}
+					tooltipProps={{}}
+					shape="circle"
+				/>
+
+				{/* next icon */}
+				{isworkflow && (
+					<ChatAction
+						text={Locale.Chat.Actions.Next}
+						icon={<NextIcon />}
+						onClick={() => onNextworkflow(messageText)}
+					/>
+				)}
+			</div>
+		);
+	}, [showActions, isUser, message.streaming, message.isError]);
 
 	return (
 		<Fragment key={message.id}>
@@ -250,81 +292,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 				<div className={styles["chat-message-container"]}>
 					<div className={styles["chat-message-header"]}>
 						<div className={styles["chat-message-avatar"]}>
-							<div className={styles["chat-message-edit"]}>
-								<IconButton
-									icon={<EditIcon />}
-									onClick={async () => {
-										const newMessage = await showPrompt(
-											Locale.Chat.Actions.Edit,
-											messageText,
-											10,
-										);
-										chatStore.updateSession(sessionId, () => {
-											const m = session.mask.context
-												.concat(session.messages)
-												.find((m) => m.id === message.id);
-											if (m) {
-												m.content = newMessage;
-											}
-										});
-									}}
-								></IconButton>
-							</div>
-							{isUser ? renderedUserAvatar : <MaskAvatar mask={session.mask} />}
+							{isUser ? RenderedUserAvatar : <MaskAvatar mask={session.mask} />}
 						</div>
-
-						{showActions && (
-							<div className={styles["chat-message-actions"]}>
-								<div className={styles["chat-input-actions"]}>
-									{message.streaming ? (
-										<ChatAction
-											text={Locale.Chat.Actions.Stop}
-											icon={<StopIcon />}
-											onClick={() =>
-												onUserStop
-													? onUserStop(message.nanoid ?? message.id)
-													: null
-											}
-										/>
-									) : (
-										<>
-											<ChatAction
-												text={Locale.Chat.Actions.Retry}
-												icon={<ResetIcon />}
-												onClick={() => (onResend ? onResend(message) : null)}
-											/>
-											<ChatAction
-												text={Locale.Chat.Actions.Delete}
-												icon={<DeleteIcon />}
-												onClick={() =>
-													onDelete ? onDelete(message.id ?? i) : null
-												}
-											/>
-											<ChatAction
-												text={Locale.Chat.Actions.Pin}
-												icon={<PinIcon />}
-												onClick={() =>
-													onPinMessage ? onPinMessage(message) : null
-												}
-											/>
-											<ChatAction
-												text={Locale.Chat.Actions.Copy}
-												icon={<CopyIcon />}
-												onClick={() => copyToClipboard(messageText)}
-											/>
-											{/* next icon */}
-											{isworkflow && (
-												<ChatAction
-													text={Locale.Chat.Actions.Next}
-													icon={<NextIcon />}
-													onClick={() => onNextworkflow(messageText)}
-												/>
-											)}
-										</>
-									)}
-								</div>
-							</div>
-						)}
 					</div>
 					{!isUser &&
 						message.toolMessages &&
@@ -332,28 +301,21 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 							<div className={styles["chat-message-tools-status"]} key={index}>
 								<div className={styles["chat-message-tools-name"]}>
 									<CheckmarkIcon className={styles["chat-message-checkmark"]} />
-									{tool.toolName}:
+									{tool.toolName} //todo
 									<code className={styles["chat-message-tools-details"]}>
 										{tool.toolInput}
+										// todo
 									</code>
 								</div>
 							</div>
 						))}
 
-					{showTyping && (
-						<div className={styles["chat-message-status"]}>
-							{Locale.Chat.Typing}
-						</div>
-					)}
+					{/* 消息内容 */}
 					<div className={styles["chat-message-item"]}>
-						{/* 只有等于roleplay 时才展示playicon */}
+						{/* 播放按钮 */}
 						{session.mask.type === "roleplay" && !isUser && (
 							<div
-								className={`${
-									isUser
-										? styles["user"] + " " + styles["play"]
-										: styles["bot"] + " " + styles["play"]
-								}`}
+								className={`${isUser ? styles["user"] + " " + styles["play"] : styles["bot"] + " " + styles["play"]}`}
 							>
 								<button
 									onClick={() => (onPlayAudio ? onPlayAudio(message) : null)}
@@ -362,7 +324,16 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 								</button>
 							</div>
 						)}
+						{/* 显示打字状态 */}
+						{showTyping && (
+							<div className={styles["chat-message-status"]}>
+								{Locale.Chat.Typing}
+							</div>
+						)}
+						{/* 用户消息加载状态 */}
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
+
+						{/* Markdown 渲染消息内容 */}
 						<Markdown
 							content={messageText}
 							loading={
@@ -379,6 +350,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 							parentRef={scrollRef}
 							defaultShow={i >= messages.length - 6}
 						/>
+
+						{/* 文件信息展示 */}
 						{message.fileInfos && message.fileInfos.length > 0 && (
 							<nav
 								className={styles["chat-message-item-files"]}
@@ -402,6 +375,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 								})}
 							</nav>
 						)}
+
+						{/* 单张图片展示 */}
 						{getMessageImages(message).length == 1 && (
 							<img
 								className={styles["chat-message-item-image"]}
@@ -409,6 +384,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 								alt=""
 							/>
 						)}
+
+						{/* 多张图片展示 */}
 						{getMessageImages(message).length > 1 && (
 							<div
 								className={styles["chat-message-item-images"]}
@@ -430,7 +407,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 								})}
 							</div>
 						)}
-						{/* 针对 Midjourney显示4个按钮, 分别是放大: 左上,右上,左下,右下 */}
+
+						{/* Midjourney 操作按钮 */}
 						{!isUser &&
 							mjstatus &&
 							actions &&
@@ -438,13 +416,32 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 							mjstatus.status == "SUCCESS" && (
 								<MjActions session={session} taskid={mjstatus.id} />
 							)}
-					</div>
-
-					<div className={styles["chat-message-action-date"]}>
-						{isContext ? Locale.Chat.IsContext : message.date}
+						{/* 消息操作按钮和日期显示 */}
+						<div className={styles["chat-message-actions"]}>
+							<div className={styles["chat-input-actions"]}>
+								{message.streaming ? (
+									<ChatAction
+										text={Locale.Chat.Actions.Stop}
+										icon={<StopIcon />}
+										onClick={() =>
+											onUserStop
+												? onUserStop(message.nanoid ?? message.id)
+												: null
+										}
+									/>
+								) : (
+									RenderMessageActions
+								)}
+							</div>
+							<div className={styles["chat-message-action-date"]}>
+								{isContext ? Locale.Chat.IsContext : message.date}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
+
+			{/* 清除上下文分隔线 */}
 			{shouldShowClearContextDivider && (
 				<ClearContextDivider sessionId={sessionId} />
 			)}
@@ -498,7 +495,7 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 		}
 	};
 
-	const renderedUserAvatar = useMemo(() => {
+	const RenderedUserAvatar = useMemo(() => {
 		if (userStore.user.avatar) {
 			return <UserAvatar size="large" src={userStore.user.avatar} />;
 		} else {
@@ -524,7 +521,7 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 				<div className={styles["chat-message-container"]}>
 					<div className={styles["chat-message-header"]}>
 						<div className={styles["chat-message-avatar"]}>
-							{/* {isUser ? renderedUserAvatar : <MaskAvatar mask={session.mask} />} */}
+							{/* {isUser ? RenderedUserAvatar : <MaskAvatar mask={session.mask} />} */}
 						</div>
 					</div>
 					{message.toolMessages &&
@@ -540,13 +537,13 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 							</div>
 						))}
 
-					{showTyping && (
-						<div className={styles["chat-message-status"]}>
-							{Locale.Chat.Typing}
-						</div>
-					)}
 					<div className={styles["chat-message-item"]}>
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
+						{showTyping && (
+							<div className={styles["chat-message-status"]}>
+								{Locale.Chat.Typing}
+							</div>
+						)}
 						<Markdown
 							content={messageText}
 							loading={

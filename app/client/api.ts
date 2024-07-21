@@ -107,11 +107,18 @@ export interface LLMUsage {
 	total: number;
 }
 
-export interface LLMModel {
+interface Model {
+	key?: string;
 	name: string;
 	available: boolean;
-	provider: LLMModelProvider;
 	displayName?: string;
+	proModel?: boolean;
+	[key: string]: any;
+}
+
+export interface LLMModel {
+	provider: string;
+	models: readonly Model[];
 }
 export interface LLMModelProvider {
 	id: string;
@@ -129,12 +136,6 @@ export abstract class LLMApi {
 	abstract models(): Promise<LLMModel[]>;
 }
 type ProviderName = "openai" | "azure" | "claude" | "palm";
-
-interface Model {
-	name: string;
-	provider: ProviderName;
-	ctxlen: number;
-}
 
 interface ChatProvider {
 	name: ProviderName;

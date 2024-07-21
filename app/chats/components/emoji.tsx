@@ -4,15 +4,9 @@ import EmojiPicker, {
 	Theme as EmojiTheme,
 } from "emoji-picker-react";
 
-import { ModelType } from "../../store";
-import { Mask } from "@/app/types/mask";
-import BotIcon from "@/app/icons/bot.svg";
-import BlackBotIcon from "@/app/icons/black-bot.svg";
-
 export function getEmojiUrl(unified: string, style: EmojiStyle) {
 	return `https://cdn.staticfile.org/emoji-datasource-apple/14.0.0/img/${style}/64/${unified}.png`;
 }
-import { Avatar as CustomAvatar } from "antd";
 
 export function AvatarPicker(props: {
 	onEmojiClick: (emojiId: string) => void;
@@ -26,35 +20,6 @@ export function AvatarPicker(props: {
 				props.onEmojiClick(e.unified);
 			}}
 		/>
-	);
-}
-
-export function Avatar(props: { model?: Mask; avatar?: string }) {
-	if (props.model) {
-		return (
-			<div className="no-dark">
-				{props.model.avatar?.startsWith("a-") ? (
-					<CustomAvatar src={`/avatars/${props.avatar}.png`}>
-						{props.model.name}
-					</CustomAvatar>
-				) : (
-					<BotIcon className="user-avatar" />
-				)}
-			</div>
-		);
-	}
-
-	return (
-		<div className="user-avatar">
-			{props.avatar && props.avatar.startsWith("a-") ? (
-				<>
-					<CustomAvatar src={`/avatars/${props.avatar}.png`} />
-					{/* <i className="icon-weixin" /> */}
-				</>
-			) : (
-				<EmojiAvatar avatar={props.avatar || ""} />
-			)}
-		</div>
 	);
 }
 

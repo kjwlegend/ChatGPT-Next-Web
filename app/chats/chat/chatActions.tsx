@@ -24,8 +24,9 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import { message, Switch, Tooltip } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { message, Switch, Tooltip, Dropdown } from "antd";
+import type { MenuProps } from "antd";
+import { DownOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 import styles from "./chats.module.scss";
 import { isProModel } from "@/app/utils";
@@ -45,6 +46,31 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 
 	const model = session.mask.modelConfig.model;
 
+	const items: MenuProps["items"] = [
+		{
+			key: "gpt-3.5-turbo",
+			label: "gpt35",
+			onClick: (item) => {
+				handelMenuClick(item.key);
+			},
+		},
+		// {
+		// 	key: "stable-diffusion",
+		// 	label: "Stable Diffusion",
+		// },
+		// {
+		// 	key: "dall-e",
+		// 	label: "Dall-E",
+		// },
+	];
+
+	const handelMenuClick = (key: string) => {
+		console.log(`click ${key}`);
+		chatStore.updateSession(sessionId, (session) => {
+			session.mask.modelConfig.model = key as ModelType;
+			return session;
+		});
+	};
 	const unCheckedChildrenText = "基础模型";
 	const checkedChildrenText = "高级模型";
 	const [modelType, setModelType] = useState<"基础" | "高级">("基础");
@@ -104,7 +130,15 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 		<div className={styles["chat-model"]}>
 			{showSwitch && (
 				<>
-					<span className={styles["chat-header-model"]}>模型: </span>
+					<Dropdown menu={{ items }} arrow={true}>
+						<span
+							className={styles["chat-header-model"]}
+							style={{ fontSize: 12, cursor: "pointer" }}
+						>
+							模型
+							<DownOutlined style={{ margin: "0 3px" }} />
+						</span>
+					</Dropdown>
 					<Switch
 						checkedChildren={checkedChildrenText}
 						unCheckedChildren={unCheckedChildrenText}
