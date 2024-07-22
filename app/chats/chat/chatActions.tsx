@@ -35,52 +35,37 @@ import { isProModel } from "@/app/utils";
 
 export function LLMModelSwitch(props: { session: ChatSession }) {
 	const config = useAppConfig();
-	const user = useUserStore();
 	const chatStore = useChatStore();
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const session = props.session ? props.session : chatStore.currentSession();
-	// console.log("session", session);
-
 	const sessionId = session.id;
 
 	const model = session.mask.modelConfig.model;
+	const availableModels = config.models;
 
-	const items: MenuProps["items"] = [
-		{
-			key: "gpt-3.5-turbo",
-			label: "gpt35",
-			onClick: (item) => {
-				handelMenuClick(item.key);
-			},
-		},
-		// {
-		// 	key: "stable-diffusion",
-		// 	label: "Stable Diffusion",
-		// },
-		// {
-		// 	key: "dall-e",
-		// 	label: "Dall-E",
-		// },
-	];
-
-	const handelMenuClick = (key: string) => {
-		console.log(`click ${key}`);
-		chatStore.updateSession(sessionId, (session) => {
-			session.mask.modelConfig.model = key as ModelType;
-			return session;
-		});
-	};
-	const unCheckedChildrenText = "基础模型";
-	const checkedChildrenText = "高级模型";
 	const [modelType, setModelType] = useState<"基础" | "高级">("基础");
-
 	const [cost, setCost] = useState(1);
 	const [checked, setChecked] = useState(false);
 	const [showSwitch, setShowSwitch] = useState(false);
 	const [disabled, setDisabled] = useState(false);
+	const [currentProvider, setCurrentProvider] = useState(
+		availableModels[0].provider,
+	);
 
-	const handleModelChange = (model: any) => {
+	useEffect(() => {
+		// 找到当前激活的 provider 和 key
+		const currentProviderModel = availableModels.find((providerModel) =>
+			providerModel.models.some((m) => m.key === model),
+		);
+		if (currentProviderModel) {
+			setCurrentProvider(currentProviderModel.provider);
+		}
+	}, [model, availableModels]);
+
+	const handleModelChange = (model: string) => {
+		console.log("model change", model);
+		if (!model) return;
 		// 设置模型类型和成本
 		const isPro = isProModel(model);
 		const modelType = isPro ? "高级" : "基础";
@@ -88,7 +73,7 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 
 		// 更新会话模型配置
 		chatStore.updateSession(sessionId, (session) => {
-			session.mask.modelConfig.model = model;
+			session.mask.modelConfig.model = model as ModelType;
 			return session;
 		});
 
@@ -105,26 +90,68 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 		setCost(checked ? 5 : 1);
 
 		// 更新模型
-		const newModel = checked ? "gpt-4o" : "gpt-3.5-turbo";
-		await handleModelChange(newModel);
+		const currentProviderModels = availableModels.find(
+			(providerModel) => providerModel.provider === currentProvider,
+		)?.models;
+		const newModel = checked
+			? currentProviderModels?.[1]?.name
+			: currentProviderModels?.[0]?.name;
+		if (newModel) {
+			await handleModelChange(newModel);
+		}
 	};
 
 	useEffect(() => {
-		// 根据模型类型显示或隐藏切换按钮
-		setShowSwitch(model !== "midjourney");
-
 		const isPro = isProModel(model);
 
 		// 根据模型类型设置选中状态、模型类型和成本
 		const modelType = isPro ? "高级" : "基础";
 		const cost = isPro ? 5 : 1;
-		setChecked(isPro);
 		setModelType(modelType);
 		setCost(cost);
 
 		// 打印当前模型类型、选中状态和成本
 		console.log("modelType", modelType, checked, cost);
 	}, [model]);
+
+	const items: MenuProps["items"] = availableModels.map((providerModel) => ({
+		key: providerModel.provider,
+		label: providerModel.provider,
+		onClick: (item) => {
+			setCurrentProvider(providerModel.provider);
+			const firstModelKey = providerModel.models[0].key;
+			handelMenuClick(firstModelKey);
+		},
+	}));
+
+	const handelMenuClick = (key: string) => {
+		console.log(`click ${key}`);
+		chatStore.updateSession(sessionId, (session) => {
+			session.mask.modelConfig.model = key as ModelType;
+			return session;
+		});
+	};
+
+	const currentProviderModels = availableModels.find(
+		(providerModel) => providerModel.provider === currentProvider,
+	)?.models;
+	const unCheckedChildrenText = currentProviderModels?.[0]?.key ?? "";
+	const checkedChildrenText = currentProviderModels?.[1]?.key ?? "";
+
+	useEffect(() => {
+		// 如果模型数量小于2，不显示开关
+
+		if (!currentProviderModels) return;
+		setShowSwitch(currentProviderModels && currentProviderModels.length >= 2);
+		// 更新当前session的model为currentProvider的第一个模型
+		if (currentProviderModels && currentProviderModels.length > 0) {
+			const firstModelKey = currentProviderModels[0].name;
+			chatStore.updateSession(sessionId, (session) => {
+				session.mask.modelConfig.model = firstModelKey as ModelType;
+				return session;
+			});
+		}
+	}, [currentProvider, availableModels]);
 
 	return (
 		<div className={styles["chat-model"]}>
@@ -135,7 +162,7 @@ export function LLMModelSwitch(props: { session: ChatSession }) {
 							className={styles["chat-header-model"]}
 							style={{ fontSize: 12, cursor: "pointer" }}
 						>
-							模型
+							{currentProvider}
 							<DownOutlined style={{ margin: "0 3px" }} />
 						</span>
 					</Dropdown>

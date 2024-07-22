@@ -117,11 +117,13 @@ export function handleChatCallbacks(
 				const botResponse = createChat(createChatData); // 替换为实际的API调用
 				//  botResponse 为 Promise 对象 , 获取其中的 chat_id 作为 botMessage 的 id
 				botResponse.then((res) => {
-					const data = res.data;
+					const data = res;
 					if (data) {
-						botMessage.id = data.chat_id.toString();
+						botMessage.id = data.id;
+						botMessage.chat_id = data.chat_id.toString();
 						botMessage.isFinished = true;
 						botMessage.isTransfered = false;
+						botMessage.token_counts_total = tokenCount;
 						// console.log("botMessage id: ", botMessage.id);
 						// 需要替换原本的message id 为新的id
 						chatStoreState.onNewMessage(botMessage);

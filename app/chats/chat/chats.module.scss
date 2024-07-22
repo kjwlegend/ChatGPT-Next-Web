@@ -414,6 +414,11 @@
 	transform: translateZ(0px);
 }
 
+.chat-tool-message-container {
+	background-color: var(--white);
+	padding: 15px;
+	margin-bottom: 15px;
+}
 .chat-message-tools-status {
 	display: flex;
 	justify-content: center;
@@ -425,11 +430,12 @@
 
 .chat-message-tools-name {
 	color: #aaa;
+	font-weight: bold;
 }
 
 .chat-message-tools-details {
 	margin-left: 5px;
-	font-weight: bold;
+	font-weight: normal;
 	color: #999;
 }
 
@@ -551,7 +557,7 @@
 	}
 }
 
-.chat-message-action-date {
+.chat-message-notes {
 	font-size: 12px;
 	opacity: 0.2;
 	white-space: nowrap;

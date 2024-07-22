@@ -368,7 +368,7 @@ const cn = {
 		},
 	},
 	Store: {
-		DefaultTopic: "小光(通用)",
+		DefaultTopic: "未命名话题",
 		BotHello:
 			"你好!我是小光, 我是你的超级助手, 我能解决您绝大多数的问题, 但如果碰到专业性或特殊任务需求, 可以去[角色](/#/new-chat)页面挑选专业伙伴获得更好质量回答, 也可以去角色页面问问我的其他伙伴",
 		Error: "出错了，稍后重试吧",
@@ -501,7 +501,7 @@ const cn = {
 type DeepPartial<T> = T extends object
 	? {
 			[P in keyof T]?: DeepPartial<T[P]>;
-	  }
+		}
 	: T;
 
 export type LocaleType = typeof cn;

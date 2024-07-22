@@ -180,11 +180,11 @@ export function DoubleAgentChatbody(props: {
 								...createMessage({
 									role: "assistant",
 									content: "……",
-									image_url: "",
+									image_url: [],
 								}),
 								preview: true,
 							},
-					  ]
+						]
 					: [],
 			)
 			.concat(
@@ -198,7 +198,7 @@ export function DoubleAgentChatbody(props: {
 								}),
 								preview: true,
 							},
-					  ]
+						]
 					: [],
 			);
 	}, [
@@ -206,7 +206,6 @@ export function DoubleAgentChatbody(props: {
 		context,
 		isLoading,
 		session.messages,
-		userInput,
 		userImage?.fileUrl,
 	]);
 

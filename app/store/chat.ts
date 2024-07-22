@@ -4,12 +4,7 @@ import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask } from "./mask";
-import {
-	DEFAULT_MODELS,
-	KnowledgeCutOffDate,
-	StoreKey,
-	SUMMARIZE_MODEL,
-} from "../constant";
+import { StoreKey, SUMMARIZE_MODEL } from "../constant";
 
 import {
 	DEFAULT_INPUT_TEMPLATE,
@@ -72,7 +67,7 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	};
 }
 
-export const DEFAULT_TOPIC = Locale.Store.DefaultTopic || "默认话题";
+export const DEFAULT_TOPIC = Locale.Store.DefaultTopic || "未命名话题";
 
 export const BOT_HELLO: ChatMessage = createMessage({
 	role: "assistant",
@@ -464,12 +459,23 @@ export const useChatStore = createPersistStore(
 
 				// get recent messages
 				const recentMessages = get().getMessagesWithMemory(session);
-				const messageIndex = get().currentSession().messages.length + 1;
+				const recentMessagesText = recentMessages
+					.map((m) => m.content)
+					.join("\n");
 
+				const messageIndex = get().currentSession().messages.length + 1;
 				const userStore = useUserStore.getState();
-				const total_token_count =
-					estimateTokenLength(recentMessages.join("\n")) +
-					estimateTokenLength(content);
+				const recentMessagesTokenCount =
+					estimateTokenLength(recentMessagesText);
+				const contentTokenCount = estimateTokenLength(content);
+				const total_token_count = recentMessagesTokenCount + contentTokenCount;
+				// console.log(
+				// 	recentMessagesText,
+				// 	"recent message token",
+				// 	recentMessagesTokenCount,
+				// );
+				// console.log(content, "content token", contentTokenCount);
+				// console.log(total_token_count, "total token");
 				const content_type = "chatsession";
 				const createChatData: CreateChatData = {
 					user: userStore.user.id,
@@ -482,11 +488,14 @@ export const useChatStore = createPersistStore(
 					sender_name: userStore.user.nickname,
 					token_counts_total: total_token_count,
 				};
+
+				// 调用发送消息函数
 				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
 
 				// if chatResponse code return 4000 or 401 , throw error
 
 				const chat_id = chatResponse.chat_id;
+				const id = chatResponse.id;
 
 				const userContent = content;
 				console.log("[User Input] after template: ", userContent);
@@ -513,10 +522,13 @@ export const useChatStore = createPersistStore(
 				}
 
 				const userMessage: ChatMessage = createMessage({
-					id: chat_id,
+					id: id,
+					chat_id: chat_id,
 					role: "user",
 					content: mContent,
+					image_url: attachImages,
 					fileInfos: attachFiles,
+					token_counts_total: total_token_count,
 				});
 
 				console.log("[userMessage] ", userMessage);
@@ -557,7 +569,7 @@ export const useChatStore = createPersistStore(
 				session: ChatSession,
 				botMessageId: string,
 				content: string,
-				imageUrl = [],
+				imageUrl = [] as string[],
 				mjresult?: MJMessage,
 			) {
 				const chatStoreState = useChatStore.getState();
@@ -729,6 +741,7 @@ export const useChatStore = createPersistStore(
 						sessions: state.sessions.map((session) => {
 							if (session.id === sessionId) {
 								// 直接应用 updater 回调函数
+								console.log("store session check", session);
 								updater(session);
 								if (sync) {
 									const data: CreateChatSessionData = {

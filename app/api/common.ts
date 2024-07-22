@@ -91,10 +91,7 @@ export async function requestOpenai(req: NextRequest) {
 	// #1815 try to refuse gpt4 request
 	if (serverConfig.customModels && clonedBody) {
 		try {
-			const modelTable = collectModelTable(
-				DEFAULT_MODELS,
-				serverConfig.customModels,
-			);
+			const modelTable = collectModelTable(DEFAULT_MODELS);
 			const clonedBody = await req.text();
 			fetchOptions.body = clonedBody;
 

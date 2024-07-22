@@ -10,7 +10,7 @@ import React, {
 import { useRouter } from "next/navigation";
 
 import { Avatar as UserAvatar, message as messagepop } from "antd";
-import { Loading3QuartersOutlined } from "@ant-design/icons";
+import { Loading3QuartersOutlined, ToolOutlined } from "@ant-design/icons";
 
 // 全局状态管理和上下文
 import { useAppConfig } from "@/app/store";
@@ -213,14 +213,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	 * @description: 渲染用户头像
 	 */
 	const RenderedUserAvatar = useMemo(() => {
-		// if (userStore.user.avatar)
-		// 	return <UserAvatar size="large" src={userStore.user.avatar} />;
-
-		// return (
-		// 	<UserAvatar style={{ backgroundColor: "rgb(91,105,230)" }} size="large">
-		// 		{userStore.user.nickname}
-		// 	</UserAvatar>
-		// );
 		return (
 			<Avatar
 				avatar={userStore.user.avatar}
@@ -295,20 +287,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 							{isUser ? RenderedUserAvatar : <MaskAvatar mask={session.mask} />}
 						</div>
 					</div>
-					{!isUser &&
-						message.toolMessages &&
-						message.toolMessages.map((tool, index) => (
-							<div className={styles["chat-message-tools-status"]} key={index}>
-								<div className={styles["chat-message-tools-name"]}>
-									<CheckmarkIcon className={styles["chat-message-checkmark"]} />
-									{tool.toolName} //todo
-									<code className={styles["chat-message-tools-details"]}>
-										{tool.toolInput}
-										// todo
-									</code>
-								</div>
-							</div>
-						))}
 
 					{/* 消息内容 */}
 					<div className={styles["chat-message-item"]}>
@@ -333,6 +311,31 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 						{/* 用户消息加载状态 */}
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
 
+						{message.toolMessages && message.toolMessages.length > 0 && (
+							<div className={styles["chat-tool-message-container"]}>
+								<span>
+									{" "}
+									<ToolOutlined style={{ marginRight: 5 }} />
+									插件调用
+								</span>
+								{message.toolMessages.map((tool, index) => (
+									<div
+										className={styles["chat-message-tools-status"]}
+										key={index}
+									>
+										<div className={styles["chat-message-tools-name"]}>
+											<CheckmarkIcon
+												className={styles["chat-message-checkmark"]}
+											/>
+											{tool.toolName}:
+											<code className={styles["chat-message-tools-details"]}>
+												{tool.toolInput}
+											</code>
+										</div>
+									</div>
+								))}
+							</div>
+						)}
 						{/* Markdown 渲染消息内容 */}
 						<Markdown
 							content={messageText}
@@ -433,8 +436,12 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 									RenderMessageActions
 								)}
 							</div>
-							<div className={styles["chat-message-action-date"]}>
-								{isContext ? Locale.Chat.IsContext : message.date}
+							<div className={styles["chat-message-notes"]}>
+								<div>
+									Token counts: {message.token_counts_total} |{" "}
+									{isContext ? Locale.Chat.IsContext : message.date}
+									messageid: {message.id}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -496,18 +503,12 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 	};
 
 	const RenderedUserAvatar = useMemo(() => {
-		if (userStore.user.avatar) {
-			return <UserAvatar size="large" src={userStore.user.avatar} />;
-		} else {
-			return (
-				<UserAvatar
-					style={{ backgroundColor: "rgb(91, 105, 230)" }}
-					size="large"
-				>
-					{userStore.user.nickname}
-				</UserAvatar>
-			);
-		}
+		return (
+			<Avatar
+				avatar={userStore.user.avatar}
+				nickname={userStore.user.nickname}
+			/>
+		);
 	}, [userStore.user.avatar, userStore.user.nickname]);
 
 	return (
@@ -524,18 +525,6 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 							{/* {isUser ? RenderedUserAvatar : <MaskAvatar mask={session.mask} />} */}
 						</div>
 					</div>
-					{message.toolMessages &&
-						message.toolMessages.map((tool, index) => (
-							<div className={styles["chat-message-tools-status"]} key={index}>
-								<div className={styles["chat-message-tools-name"]}>
-									<CheckmarkIcon className={styles["chat-message-checkmark"]} />
-									{tool.toolName}:
-									<code className={styles["chat-message-tools-details"]}>
-										{tool.toolInput}
-									</code>
-								</div>
-							</div>
-						))}
 
 					<div className={styles["chat-message-item"]}>
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
@@ -544,6 +533,25 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 								{Locale.Chat.Typing}
 							</div>
 						)}
+						<div className={styles["chat-tool-message-container"]}>
+							{message.toolMessages &&
+								message.toolMessages.map((tool, index) => (
+									<div
+										className={styles["chat-message-tools-status"]}
+										key={index}
+									>
+										<div className={styles["chat-message-tools-name"]}>
+											<CheckmarkIcon
+												className={styles["chat-message-checkmark"]}
+											/>
+											{tool.toolName}:
+											<code className={styles["chat-message-tools-details"]}>
+												{tool.toolInput}
+											</code>
+										</div>
+									</div>
+								))}
+						</div>
 						<Markdown
 							content={messageText}
 							loading={
@@ -613,7 +621,7 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 						)}
 					</div>
 
-					<div className={styles["chat-message-action-date"]}>
+					<div className={styles["chat-message-notes"]}>
 						{Locale.Chat.IsContext ?? message.date.toLocaleString()}
 					</div>
 				</div>

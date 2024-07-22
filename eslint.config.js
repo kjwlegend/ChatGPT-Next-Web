@@ -1,39 +1,38 @@
-
-// module.exports = {
-//   root: true,
-//   env: {
-//     node: true,
-//     es6: true,
-//   },
-//   parserOptions: {
-//     ecmaVersion: 8,
-//   },
-//   ignorePatterns: ['node_modules/*', '.next/*', 'out/*', 'dist/*'],
-//   extends: [
-//     'eslint:recommended',
-//     // Add other extends or plugins here
-//   ],
-//   overrides: [
-//     {
-//       files: ['**/*.ts', '**/*.tsx'],
-//       parser: '@typescript-eslint/parser',
-//       settings: { react: { version: 'detect' } },
-//       env: {
-//         browser: true,
-//         node: true,
-//         es6: true,
-//       },
-//       extends: [
-//         'eslint:recommended',
-//         'plugin:@typescript-eslint/recommended', // TypeScript rules
-//         'plugin:react/recommended', // React rules
-//         'plugin:react-hooks/recommended', // React hooks rules
-//         'plugin:jsx-a11y/recommended', // Accessibility rules
-//         'next/core-web-vitals'
-//       ],
-//       rules: {
-//         // You can add custom rules here
-//       },
-//     },
-//   ],
-// }
+module.exports = {
+  root: true,
+  env: {
+    node: true,
+    es6: true,
+  },
+  parserOptions: {
+    ecmaVersion: 2020, // 推荐使用最新的 ECMAScript 版本
+  },
+  ignorePatterns: ['node_modules/*', '.next/*', 'out/*', 'dist/*'],
+  extends: [
+    'eslint:recommended',
+    'next/core-web-vitals'
+  ],
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      settings: { react: { version: 'detect' } },
+      env: {
+        browser: true,
+        node: true,
+        es6: true,
+      },
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react/recommended',
+        'plugin:react-hooks/recommended',
+        'plugin:jsx-a11y/recommended',
+      ],
+      rules: {
+        // 你可以在这里添加自定义规则
+      },
+    },
+  ],
+  // 移除不再支持的选项
+}

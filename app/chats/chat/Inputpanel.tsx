@@ -100,8 +100,6 @@ import {
 	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 
-
-
 import { Radio, Switch } from "antd";
 import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
@@ -897,13 +895,7 @@ export function Inputpanel(props: { session?: ChatSession; index?: number }) {
 						]
 					: [],
 			);
-	}, [
-		config.sendPreviewBubble,
-		context,
-		isLoading,
-		session.messages,
-		userInput,
-	]);
+	}, [config.sendPreviewBubble, context, isLoading, session.messages]);
 
 	const [msgRenderIndex, _setMsgRenderIndex] = useState(
 		Math.max(0, renderMessages.length - CHAT_PAGE_SIZE),

@@ -84,7 +84,7 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 
 	return (
 		<>
-			{session.mask.modelConfig.model == "midjourney" && <MJFloatButton />}
+			{/* {session.mask.modelConfig.model == "midjourney" && <MJFloatButton />} */}
 			{messages.map((message, i) => {
 				const isUser = message.role === "user";
 				const mjstatus = message.mjstatus;

@@ -132,22 +132,22 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 
 export const DEFAULT_MODELS = [
 	{
-		provider: "openai",
+		provider: "Openai",
 		models: [
 			{
-				key: "pro",
+				key: "Mini",
+				name: "gpt-4o-mini",
+				displayName: "小光基础(1积分/次)",
+				available: true,
+				proModel: false,
+				supportFunctionCall: true,
+			},
+			{
+				key: "Pro",
 				name: "gpt-4o",
 				displayName: "小光Pro-(5积分/次)",
 				available: true,
 				proModel: true,
-				supportFunctionCall: true,
-			},
-			{
-				key: "base",
-				name: "gpt-3.5-turbo",
-				displayName: "小光基础(1积分/次)",
-				available: true,
-				proModel: false,
 				supportFunctionCall: true,
 			},
 		],
@@ -156,7 +156,7 @@ export const DEFAULT_MODELS = [
 		provider: "Deepseek",
 		models: [
 			{
-				key: "base",
+				key: "通用",
 				name: "deepseek-chat",
 				displayName: "Deepseek模型(1积分/次)",
 				available: true,
@@ -164,7 +164,7 @@ export const DEFAULT_MODELS = [
 				supportFunctionCall: true,
 			},
 			{
-				key: "code",
+				key: "编程",
 				name: "deepseek-code",
 				displayName: "Deepseek编程(1积分/次)",
 				available: true,

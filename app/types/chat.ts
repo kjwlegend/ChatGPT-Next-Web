@@ -15,6 +15,7 @@ export type ChatMessage = RequestMessage & {
 	isError?: boolean;
 	preview?: boolean;
 	isFinished?: boolean;
+	token_counts_total?: number;
 	[key: string]: any;
 };
 

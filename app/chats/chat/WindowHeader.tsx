@@ -131,14 +131,6 @@ export function EditMessageModal(props: {
 						></input>
 					</ListItem>
 				</List>
-				{/* <ContextPrompts
-					context={messages}
-					updateContext={(updater) => {
-						const newMessages = messages.slice();
-						updater(newMessages);
-						setMessages(newMessages);
-					}}
-				/> */}
 			</Modal>
 		</div>
 	);
@@ -159,9 +151,6 @@ const MaskModal = (props: {
 	} else {
 		session = chatStore.currentSession();
 	}
-	const sessionId = session.id;
-
-	const context = session.mask?.context;
 
 	return (
 		<div className={styles["prompt-toast"]} key="prompt-toast">
@@ -251,7 +240,7 @@ function WindowHeaderTitle({
 					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
 				</div>
 				<div className="window-header-sub-title">
-					{Locale.Chat.SubTitle(currentSession.messages?.length ?? 0)}
+					Agent: {session?.mask.name} | id: {session?.id}
 				</div>
 			</div>
 			{isEditingMessage && (

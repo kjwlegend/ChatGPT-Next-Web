@@ -14,7 +14,7 @@ import {
 	updateWorkflowSession,
 } from "../../api/backend/chat";
 import { group } from "console";
-import { UpdateChatSessions } from "../../services/chatService";
+import { updateChatSessions } from "../../services/chatService";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
@@ -267,7 +267,7 @@ export const WorkflowProvider = ({
 				}
 			}
 			//  更新会话到chatstore
-			UpdateChatSessions(sessions);
+			updateChatSessions(sessions);
 
 			// 更新workflowGroup
 

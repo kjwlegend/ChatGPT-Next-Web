@@ -34,7 +34,7 @@ import {
 	MessageSelector,
 	useMessageSelector,
 } from "../components/message-selector";
-import { Avatar } from "./components/emoji";
+import { Avatar } from "./components/avatar";
 import dynamic from "next/dynamic";
 import NextImage from "next/image";
 

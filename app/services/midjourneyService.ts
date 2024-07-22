@@ -151,7 +151,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 			id: user_chat_id,
 			role: "user",
 			content: ` ${newcontent}`,
-			image_url: image_url,
+			image_url: image_url ? [image_url] : undefined,
 		});
 
 		response = await change(changeParams);
@@ -165,7 +165,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 			id: chat_id,
 			role: "user",
 			content: content,
-			image_url: image_url,
+			image_url: image_url ? [image_url] : undefined,
 		});
 
 		chatOptions.messages = [
@@ -189,7 +189,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 			const botMessage: ChatMessage = createMessage({
 				role: "assistant",
 				content: "由于某些原因导致生成失败, 请重试. 本次对话不消耗费用",
-				image_url: image_url,
+				image_url: image_url ? [image_url] : undefined,
 			});
 			createChatData = {
 				user: userid, // 替换为实际的用户 ID
@@ -232,7 +232,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 		const botMessage: ChatMessage = createMessage({
 			role: "assistant",
 			content: message,
-			image_url: image_url,
+			image_url: image_url ? [image_url] : undefined,
 			mjstatus: res,
 		});
 
@@ -281,7 +281,7 @@ export async function midjourneyOnUserInput(params: MidJourneyInputParams) {
 		const botMessage: ChatMessage = createMessage({
 			role: "assistant",
 			content: "由于某些原因导致生成失败, 请重试. 本次对话不消耗费用",
-			image_url: image_url,
+			image_url: image_url ? [image_url] : undefined,
 		});
 
 		createChatData = {
@@ -335,7 +335,7 @@ export async function pollForProgress(
 		const elapsedTime = currentTime - startTime;
 
 		let content = "";
-		let imageUrl = "";
+		let imageUrl = [] as string[];
 
 		const createChatData: CreateChatData = {
 			user: userid, // 替换为实际的用户 ID

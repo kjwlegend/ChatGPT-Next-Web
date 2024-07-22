@@ -246,8 +246,11 @@ export function getMessageImages(message: ChatMessage): string[] {
 	// console.log("get image function", message);
 	// console.log("get image function - image url", message.image_url);
 
-	if (message.image_url) {
-		return message.image_url;
+	//  if message.image_url 不为[] 则直接返回 message.image_url
+	//  return message.image_url
+
+	if (message.image_url?.length > 0) {
+		return message.image_url ?? [];
 	}
 
 	if (typeof message.content === "string") {
@@ -272,6 +275,7 @@ export function getMessageImages(message: ChatMessage): string[] {
 export function isVisionModel(model: string) {
 	// Note: This is a better way using the TypeScript feature instead of `&&` or `||` (ts v5.5.0-dev.20240314 I've been using)
 
+	if (typeof model !== "string") return false;
 	const visionKeywords = [
 		"vision",
 		"claude-3",
@@ -297,7 +301,7 @@ export function isSupportRAGModel(modelName: string) {
 	if (specialModels.some((keyword) => modelName === keyword)) return true;
 	if (isVisionModel(modelName)) return false;
 	return DEFAULT_MODELS.filter(
-		(provider) => provider.provider === "openai",
+		(provider) => provider.provider === "Openai",
 	).some((provider) =>
 		provider.models.some((model) => model.name === modelName),
 	);
@@ -310,12 +314,16 @@ export function isSupportRAGModel(modelName: string) {
  * @returns A boolean indicating whether the model is a Pro model.
  * Pro models are identified by the presence of "pro" or "midjourney" in their names.
  */
-export function isProModel(model: string) {
+export function isProModel(model: string | undefined | null) {
 	const proKeywords = ["pro", "gpt-4", "claude-3"];
-	//
+
+	// 确保 model 是一个字符串
+	if (typeof model !== "string") {
+		return false;
+	}
+
 	return proKeywords.some((keyword) => model.includes(keyword));
 }
-
 /**
  * check
  */

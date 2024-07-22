@@ -158,13 +158,13 @@ function Screen() {
 	const location = useLocation();
 	const isAuth = location.pathname === Path.Auth;
 	const isHome = location.pathname === Path.Home;
-	const isMobileScreen = useMobileScreen();
+	// const isMobileScreen = useMobileScreen();
 	const { logoutHook } = useAuth();
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
 	const router = useRouter();
 
-	getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
+	// getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
 
 	useEffect(() => {
 		loadAsyncGoogleFont();

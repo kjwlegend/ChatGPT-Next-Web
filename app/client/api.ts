@@ -108,7 +108,7 @@ export interface LLMUsage {
 }
 
 interface Model {
-	key?: string;
+	key: string;
 	name: string;
 	available: boolean;
 	displayName?: string;
@@ -254,7 +254,8 @@ export function getHeaders(ignoreHeaders?: boolean) {
 	const modelConfig =
 		useChatStore.getState().currentSession()?.mask.modelConfig ||
 		DEFAULT_CONFIG.modelConfig;
-	const isGoogle = modelConfig.model.startsWith("gemini");
+	const models = modelConfig.model ?? "gpt-3.5-turbo";
+	const isGoogle = models.startsWith("gemini");
 	if (!ignoreHeaders && !isGoogle) {
 		headers = {
 			"Content-Type": "application/json",

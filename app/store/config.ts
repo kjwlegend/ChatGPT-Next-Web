@@ -6,7 +6,8 @@ import { DEFAULT_MODELS, DEFAULT_SIDEBAR_WIDTH, StoreKey } from "../constant";
 import { DEFAULT_INPUT_TEMPLATE } from "../chains/base";
 import { createPersistStore } from "../utils/store";
 
-export type ModelType = (typeof DEFAULT_MODELS)[number]["name"];
+export type ModelType =
+	(typeof DEFAULT_MODELS)[number]["models"][number]["name"];
 
 export enum SubmitKey {
 	Enter = "Enter",
@@ -35,7 +36,6 @@ export const DEFAULT_CONFIG = {
 	sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
 	// comment
 	disablePromptHint: false,
-
 	dontShowMaskSplashScreen: false, // dont show splash screen when create chat
 	hideBuiltinMasks: false, // dont add builtin masks
 
@@ -43,7 +43,7 @@ export const DEFAULT_CONFIG = {
 	models: DEFAULT_MODELS as any as LLMModel[],
 
 	modelConfig: {
-		model: "gpt-3.5-turbo-16k" as ModelType,
+		model: "gpt-3.5-turbo" as ModelType,
 		temperature: 0.5,
 		top_p: 1,
 		max_tokens: 3000,
@@ -124,21 +124,16 @@ export const useAppConfig = createPersistStore(
 				return;
 			}
 
-			const oldModels = get().models;
-			const modelMap: Record<string, LLMModel> = {};
-
-			for (const model of oldModels) {
-				model.available = false;
-				modelMap[model.name] = model;
+			// Ensure all new models are marked as available
+			for (const providerModel of newModels) {
+				for (const model of providerModel.models) {
+					model.available = true;
+				}
 			}
 
-			for (const model of newModels) {
-				model.available = true;
-				modelMap[model.name] = model;
-			}
-
+			// Directly set new models
 			set(() => ({
-				models: Object.values(modelMap),
+				models: newModels,
 			}));
 		},
 

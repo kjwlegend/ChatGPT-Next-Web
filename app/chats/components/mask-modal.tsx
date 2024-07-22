@@ -313,6 +313,8 @@ export function ContextPrompts(props: {
 export function MaskConfig(props: {
 	mask: Mask;
 	updateMask: Updater<Mask>;
+	session: ChatSession;
+	onSave: (sessionData: ChatSession) => void; // 新增的回调函数
 	extraListItems?: JSX.Element;
 	readonly?: boolean;
 	shouldSyncFromGlobal?: boolean;
@@ -322,6 +324,23 @@ export function MaskConfig(props: {
 	const [tabPosition, setTabPosition] = useState<TabPosition>("left");
 
 	const allModels = useAllModels();
+	const session = props.session;
+
+	const [sessionData, setSessionData] = useState<ChatSession>(session);
+
+	useEffect(() => {
+		if (session) {
+			setSessionData(session);
+		}
+	}, [session]);
+
+	const handleSetSessionData = (key: string, value: any) => {
+		setSessionData((prev) => ({ ...prev, [key]: value }));
+	};
+	// 当父组件调用 onSave 时，将本地的 sessionData 传递回去
+	useEffect(() => {
+		props.onSave(sessionData);
+	}, [props.onSave, sessionData]);
 
 	// set tab position to top on mobile screen
 	useEffect(() => {
@@ -350,6 +369,42 @@ export function MaskConfig(props: {
 
 	const globalConfig = useAppConfig();
 
+	// 会话管理模块
+	const ChatSessionManage = (
+		<List>
+			<ListItem
+				title={`主题: ${sessionData.topic}`}
+				subTitle={`session_id: ${sessionData.id} `}
+			>
+				<input
+					type="textarea"
+					value={sessionData.topic}
+					style={{
+						width: "50%",
+						border: "1px solid #d9d9d9",
+						padding: "5px",
+						borderRadius: "5px",
+					}}
+					onInput={(e) => handleSetSessionData("topic", e.currentTarget.value)}
+				></input>
+			</ListItem>
+			<ListItem
+				title="信息"
+				subTitle={`创建时间: ${sessionData.created_at} | 最后更新时间:  ${sessionData.updated_at}`}
+			>
+				<p>{sessionData.messages.length} 条对话</p>
+			</ListItem>
+			{session.mask.modelConfig.sendMemory ? (
+				<ListItem
+					title={`${Locale.Memory.Title} (${session.lastSummarizeIndex} of ${session.messages.length})`}
+					subTitle={session.memoryPrompt || Locale.Memory.EmptyContent}
+				></ListItem>
+			) : (
+				<></>
+			)}
+		</List>
+	);
+
 	// 提示词管理模块
 	const PromptsManage = (
 		<ContextPrompts
@@ -365,20 +420,6 @@ export function MaskConfig(props: {
 	//  角色管理模块
 	const RolesManage = (
 		<List>
-			{/* <ListItem title={Locale.Mask.Config.Avatar}>
-    <Popover
-        content={<div>Avatar</div>}
-        open={showPicker}
-        onClose={() => setShowPicker(false)}
-    >
-        <div
-            onClick={() => setShowPicker(true)}
-            style={{ cursor: "pointer" }}
-        >
-            <MaskAvatar mask={props.mask} />
-        </div>
-    </Popover>
-</ListItem> */}
 			<ListItem title={Locale.Mask.Config.Name}>
 				<input
 					type="text"
@@ -521,6 +562,11 @@ export function MaskConfig(props: {
 				defaultActiveKey="1"
 				tabPosition={tabPosition}
 				items={[
+					{
+						key: "0",
+						label: "对话设置",
+						children: ChatSessionManage,
+					},
 					{
 						key: "1",
 						label: "角色基础",

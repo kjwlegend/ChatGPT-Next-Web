@@ -189,8 +189,15 @@ export function Chatbody(props: {
 	}
 
 	const renderMessages = useMemo(() => {
+		// 将 date 字段从字符串转换为 Date 对象
+		const sortedMessages = [...session.messages].sort((a, b) => {
+			const dateA = new Date(a.date);
+			const dateB = new Date(b.date);
+			return dateA.getTime() - dateB.getTime();
+		});
+
 		return context
-			.concat(session.messages as RenderMessage[])
+			.concat(sortedMessages as RenderMessage[])
 			.concat(
 				isLoading
 					? [
@@ -225,7 +232,7 @@ export function Chatbody(props: {
 		isLoading,
 		session.messages,
 		session.lastUpdate,
-		userInput,
+		// userInput,
 		userImage?.fileUrl,
 	]);
 

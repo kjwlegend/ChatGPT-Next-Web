@@ -2,5 +2,41 @@
   "extends": "next/core-web-vitals",
   "plugins": [
     "prettier"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "settings": {
+        "react": {
+          "version": "detect"
+        }
+      },
+      "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+      },
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:jsx-a11y/recommended",
+        "next/core-web-vitals"
+      ],
+      "rules": {
+        // 你可以在这里添加自定义规则
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/*",
+    ".next/*",
+    "out/*",
+    "dist/*"
   ]
 }

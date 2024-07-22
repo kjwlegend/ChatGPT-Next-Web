@@ -26,17 +26,7 @@ import {
 import { api } from "@/app/client/api";
 import { ChatControllerPool } from "@/app/client/controller";
 import { Prompt, usePromptStore } from "@/app/store/prompt";
-import { useMaskStore } from "@/app/store/mask";
-import { useChatCommand, useCommand } from "@/app/command";
-import { getClientConfig } from "@/app/config/client";
-import useAuth from "@/app/hooks/useAuth";
-import { getISOLang, getLang } from "@/app/locales";
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "@/app/utils";
+
 import {
 	CHAT_PAGE_SIZE,
 	LAST_INPUT_KEY,
@@ -46,16 +36,10 @@ import {
 } from "@/app/constant";
 import { prettyObject } from "@/app/utils/format";
 
-import BrainIcon from "@/app/icons/brain.svg";
-import LoadingIcon from "@/app/icons/three-dots.svg";
-
 import styles from "./chats.module.scss";
 
-import { ChatActions, ChatAction, Inputpanel } from "./Inputpanel";
-
 import { WindowHeader } from "./WindowHeader";
-import { Chatbody } from "./Chatbody";
-import Upload from "@/app/chats/knowledge/upload";
+
 import { useScrollToBottom } from "./chat-controller";
 import { useNavigate } from "react-router-dom";
 
@@ -129,35 +113,6 @@ export function _Chat(props: {
 	const { autoScroll, setAutoScroll, scrollDomToBottom, scrollRef } =
 		useScrollToBottom();
 
-	// const config = useAppConfig();
-
-	// useEffect(() => {
-	// 	chatStore.updateSession(sessionId, (session) => {
-	// 		const stopTiming = Date.now() - REQUEST_TIMEOUT_MS;
-	// 		session.messages.forEach((m) => {
-	// 			// check if should stop all stale messages
-	// 			if (m.isError || new Date(m.date).getTime() < stopTiming) {
-	// 				if (m.streaming) {
-	// 					m.streaming = false;
-	// 				}
-
-	// 				if (m.content.length === 0) {
-	// 					m.isError = true;
-	// 					m.content = prettyObject({
-	// 						error: true,
-	// 						message: "empty response",
-	// 					});
-	// 				}
-	// 			}
-	// 		});
-	// 		// auto sync mask config from global config
-	// 		if (session.mask.syncGlobalConfig) {
-	// 			console.log("[Mask] syncing from global, name = ", session.mask.name);
-	// 			session.mask.modelConfig = { ...config.modelConfig };
-	// 		}
-	// 	});
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, []);
 	if (!session) return null;
 
 	return (

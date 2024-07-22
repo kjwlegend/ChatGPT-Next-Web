@@ -680,16 +680,19 @@ export class ChatGPTApi implements LLMApi {
 			return [];
 		}
 
-		return chatModels.map((m) => ({
+		const openaiModels = chatModels.map((m) => ({
+			key: m.id,
 			name: m.id,
 			available: true,
 			displayName: m.id,
-			provider: {
-				id: "openai",
-				providerName: "OpenAI",
-				providerType: "openai",
-			},
 		}));
+
+		const allModels = [
+			...DEFAULT_MODELS,
+			{ provider: "openai", models: openaiModels },
+		];
+
+		return allModels;
 	}
 }
 export { OpenaiPath };

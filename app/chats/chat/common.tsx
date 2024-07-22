@@ -72,6 +72,8 @@ import {
 import { useMaskStore } from "@/app/store/mask";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
+// import { cloneDeep } from "lodash";
+
 export function SessionConfigModel(props: {
 	onClose: () => void;
 	index?: number;
@@ -89,6 +91,20 @@ export function SessionConfigModel(props: {
 	const sessionId = session.id;
 
 	const maskStore = useMaskStore();
+	// 用于保存子组件的 session 数据
+	const [childSessionData, setChildSessionData] =
+		React.useState<ChatSession>(session);
+
+	const handleSave = () => {
+		chatStore.updateSession(
+			sessionId,
+			(session) => {
+				Object.assign(session, childSessionData);
+			},
+			true,
+		);
+		props.onClose();
+	};
 
 	return (
 		<div className="modal-mask">
@@ -96,35 +112,13 @@ export function SessionConfigModel(props: {
 				title={Locale.Context.Edit}
 				onClose={() => props.onClose()}
 				actions={[
-					// <IconButton
-					// 	key="reset"
-					// 	icon={<ResetIcon />}
-					// 	bordered
-					// 	text={Locale.Chat.Config.Reset}
-					// 	onClick={async () => {
-					// 		if (await showConfirm(Locale.Memory.ResetConfirm)) {
-					// 			chatStore.updateSession(
-					// 				sessionId,
-					// 				() => (session.memoryPrompt = ""),
-					// 			);
-					// 		}
-					// 	}}
-					// />,
-					// 保存并更新session
 					<IconButton
 						key="save"
 						icon={<CopyIcon />}
 						bordered
 						text={"保存"}
 						onClick={() => {
-							chatStore.updateSession(
-								sessionId,
-								() => {
-									session.mask = { ...session.mask };
-								},
-								true,
-							);
-							props.onClose();
+							handleSave();
 						}}
 					/>,
 
@@ -152,17 +146,9 @@ export function SessionConfigModel(props: {
 							false,
 						);
 					}}
+					session={session}
+					onSave={setChildSessionData}
 					shouldSyncFromGlobal
-					extraListItems={
-						session.mask.modelConfig.sendMemory ? (
-							<ListItem
-								title={`${Locale.Memory.Title} (${session.lastSummarizeIndex} of ${session.messages.length})`}
-								subTitle={session.memoryPrompt || Locale.Memory.EmptyContent}
-							></ListItem>
-						) : (
-							<></>
-						)
-					}
 				></MaskConfig>
 			</Modal>
 		</div>
