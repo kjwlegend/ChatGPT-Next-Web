@@ -31,6 +31,7 @@ import {
 	showPrompt,
 	showToast,
 } from "@/app/components/ui-lib";
+
 import {
 	EditIcon,
 	StopIcon,
@@ -439,7 +440,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 							<div className={styles["chat-message-notes"]}>
 								<div>
 									Token counts: {message.token_counts_total} |{" "}
-									{isContext ? Locale.Chat.IsContext : message.date}
+									{isContext ? Locale.Chat.IsContext : message.date} |
 									messageid: {message.id}
 								</div>
 							</div>

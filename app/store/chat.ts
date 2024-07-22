@@ -74,11 +74,15 @@ export const BOT_HELLO: ChatMessage = createMessage({
 	content: Locale.Store.BotHello,
 });
 
-function createEmptySession(): ChatSession {
+function createEmptySession(props: {
+	id?: string;
+	topic?: string;
+	mask?: Mask;
+}): ChatSession {
 	return {
-		id: nanoid(),
+		id: props.id ?? nanoid(),
 		session_id: "",
-		topic: DEFAULT_TOPIC,
+		topic: props.topic ?? DEFAULT_TOPIC,
 		memoryPrompt: "",
 		messages: [],
 		stat: {
@@ -86,7 +90,7 @@ function createEmptySession(): ChatSession {
 		},
 		lastUpdate: Date.now(),
 		lastSummarizeIndex: 0,
-		mask: createEmptyMask(),
+		mask: props.mask ?? createEmptyMask(),
 		isworkflow: false,
 		mjConfig: { size: "", quality: "", stylize: "", model: "" },
 		isDoubleAgent: false,
@@ -137,7 +141,7 @@ function countMessages(msgs: ChatMessage[]) {
 }
 
 const DEFAULT_CHAT_STATE = {
-	sessions: [createEmptySession()],
+	sessions: [createEmptySession({})],
 	currentSessionIndex: 0,
 	currentSessionId: "",
 };
@@ -155,7 +159,7 @@ export const useChatStore = createPersistStore(
 		const methods = {
 			clearSessions() {
 				set(() => ({
-					sessions: [createEmptySession()],
+					sessions: [],
 					currentSessionIndex: 0,
 				}));
 			},
@@ -234,7 +238,7 @@ export const useChatStore = createPersistStore(
 			) {
 				console.log("newsession");
 				const config = useAppConfig.getState();
-				const session = createEmptySession();
+				let session: ChatSession;
 				const userId = useUserStore.getState().user.id;
 				const globalModelConfig = config.modelConfig;
 
@@ -243,44 +247,49 @@ export const useChatStore = createPersistStore(
 				const selectedMask: any = mask ?? DEFAULT_MASK;
 
 				// 如果 selectedMask 没有 'id' 属性，我们提供一个默认值
-				session.mask = {
-					...selectedMask,
-					id: defaultMaskId ?? selectedMask.id,
-					modelConfig: {
-						...globalModelConfig,
-						...selectedMask.modelConfig,
-					},
-				};
-
-				session.topic = selectedMask.name;
-				if (isworkflow) {
-					session.isworkflow = true;
-				}
 
 				// 处理 userStore 相关逻辑
-				const promptId = session.mask.id;
 				const data: CreateChatSessionData = {
 					user: userId,
 					active: true,
 					agent: 1,
-					session_topic: session.topic,
-					session_summary: session.memoryPrompt,
+					session_topic: DEFAULT_TOPIC,
+					session_summary: "",
 					session_description: "",
-					custom_agent_data: session.mask,
+					custom_agent_data: selectedMask,
 				};
 
 				// 使用 async/await 优化异步请求处理
 				const res = await createChatSession(data);
 				if (res.id) {
-					session.id = res.id ?? nanoid();
-				}
+					session = createEmptySession({
+						id: res.id,
+						topic: DEFAULT_TOPIC,
+						mask: mask,
+					});
 
-				set((state) => ({
-					currentSessionIndex: 0,
-					currentSessionId: session.id,
-					sessions: [session].concat(state.sessions),
-				}));
-				return session;
+					// session.topic = selectedMask.name;
+					if (isworkflow) {
+						session.isworkflow = true;
+					}
+
+					session.mask = {
+						...selectedMask,
+						id: defaultMaskId ?? selectedMask.id,
+						modelConfig: {
+							...globalModelConfig,
+							...selectedMask.modelConfig,
+						},
+					};
+					set((state) => ({
+						currentSessionIndex: 0,
+						currentSessionId: session.id,
+						sessions: [session].concat(state.sessions),
+					}));
+					return session;
+				} else {
+					return null;
+				}
 			},
 
 			nextSession(delta: number) {
