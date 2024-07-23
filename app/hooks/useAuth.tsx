@@ -39,9 +39,8 @@ export default function useAuth() {
 	const loginHook = async (params: LoginParams): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await authStore.login(params);
+			const user = await authStore.login(params);
 
-			const user = authStore.user;
 			if (user) {
 				const updatedUser = {
 					...user,

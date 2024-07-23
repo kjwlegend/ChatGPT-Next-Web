@@ -16,7 +16,7 @@ export interface AuthState {
 	accessToken: string | null;
 	refreshToken: string | null;
 	user: User | null;
-	login: (params: LoginParams) => Promise<void>;
+	login: (params: LoginParams) => Promise<User>;
 	logout: () => Promise<void>;
 	getAccessToken: () => string | null;
 	getRefreshToken: () => string | null;
@@ -48,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
 						refreshToken: result.refresh,
 						user: result.user,
 					});
+					return result.user;
 				} catch (error) {
 					console.error("登录失败:", error);
 					throw new Error("用户名或密码错误");
