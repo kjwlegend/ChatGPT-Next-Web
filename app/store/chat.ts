@@ -52,6 +52,7 @@ import { Mask } from "../types/index";
 import { FileInfo } from "../client/platforms/utils";
 import { fillTemplateWith } from "@/app/chains/base";
 import { MultimodalContent } from "../client/api";
+import { Tracing } from "trace_events";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
@@ -459,14 +460,12 @@ export const useChatStore = createPersistStore(
 				attachFiles?: FileInfo[],
 				_session?: ChatSession,
 			) {
-				// if sessionID is not provided, use current session, else use the session with the provided ID
-
 				const session = get().getSession(_session);
 				const sessionId = session.id;
 				const sessionModel = session.mask.modelConfig.model;
 				const modelConfig = session.mask.modelConfig;
 
-				// get recent messages
+				// 获取最近的消息
 				const recentMessages = get().getMessagesWithMemory(session);
 				const recentMessagesText = recentMessages
 					.map((m) => m.content)
@@ -478,18 +477,13 @@ export const useChatStore = createPersistStore(
 					estimateTokenLength(recentMessagesText);
 				const contentTokenCount = estimateTokenLength(content);
 				const total_token_count = recentMessagesTokenCount + contentTokenCount;
-				// console.log(
-				// 	recentMessagesText,
-				// 	"recent message token",
-				// 	recentMessagesTokenCount,
-				// );
-				// console.log(content, "content token", contentTokenCount);
-				// console.log(total_token_count, "total token");
+
 				const content_type = "chatsession";
 				const createChatData: CreateChatData = {
 					user: userStore.user.id,
 					object_id: sessionId, // 替换为实际的聊天会话 ID
 					content: content, // 使用用户输入作为 message 参数
+					chat_images: attachImages,
 					memory: recentMessages,
 					chat_role: "user",
 					chat_model: session.mask.modelConfig.model,
@@ -498,82 +492,123 @@ export const useChatStore = createPersistStore(
 					token_counts_total: total_token_count,
 				};
 
-				// 调用发送消息函数
-				const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+				let userMessage: ChatMessage;
+				let botMessage: ChatMessage;
+				let sendMessages: ChatMessage[];
 
-				// if chatResponse code return 4000 or 401 , throw error
+				try {
+					const chatResponse = await createChat(createChatData); // 替换为实际的API调用
 
-				const chat_id = chatResponse.chat_id;
-				const id = chatResponse.id;
+					if (!chatResponse || !chatResponse.id) {
+						throw new Error(
+							`API 请求失败，原因: ${chatResponse.error || chatResponse.status}`,
+						);
+					}
 
-				const userContent = content;
-				console.log("[User Input] after template: ", userContent);
+					const chat_id = chatResponse.chat_id;
+					const id = chatResponse.id;
 
-				let mContent: string | MultimodalContent[] = userContent;
+					const userContent = content;
+					console.log("[User Input] after template: ", userContent);
 
-				if (attachImages && attachImages.length > 0) {
-					mContent = [
-						{
-							type: "text",
-							text: userContent,
-						},
-					];
-					mContent = mContent.concat(
-						attachImages.map((url) => {
-							return {
+					let mContent: string | MultimodalContent[] = userContent;
+
+					if (attachImages && attachImages.length > 0) {
+						mContent = [
+							{
+								type: "text",
+								text: userContent,
+							},
+						];
+						mContent = mContent.concat(
+							attachImages.map((url) => ({
 								type: "image_url",
-								image_url: {
-									url: url,
-								},
-							};
-						}),
-					);
-				}
+								image_url: { url },
+							})),
+						);
+					}
 
-				const userMessage: ChatMessage = createMessage({
-					id: id,
-					chat_id: chat_id,
-					role: "user",
-					content: mContent,
-					image_url: attachImages,
-					fileInfos: attachFiles,
-					token_counts_total: total_token_count,
-				});
-
-				console.log("[userMessage] ", userMessage);
-
-				const botMessage: ChatMessage = createMessage({
-					role: "assistant",
-					streaming: true,
-					model: modelConfig.model,
-					toolMessages: [],
-					isFinished: false,
-				});
-				// console.log("[botMessage] ", botMessage);
-				const sendMessages = recentMessages.concat(userMessage);
-
-				get().updateSession(sessionId, (session: ChatSession) => {
-					const savedUserMessage = {
-						...userMessage,
+					userMessage = createMessage({
+						id,
+						chat_id,
+						role: "user",
 						content: mContent,
-					};
-					session.messages = session.messages.concat([
-						savedUserMessage,
-						botMessage,
-					]);
-					session.responseStatus = false;
-					session.lastUpdate = Date.now();
-					set((state) => ({ currentSessionIndex: 0 }));
-				});
-				console.log("click send: ", session.topic, session.responseStatus);
+						image_url: attachImages,
+						fileInfos: attachFiles,
+						token_counts_total: total_token_count,
+					});
 
-				sendChatMessage(
+					console.log("[userMessage] ", userMessage);
+
+					botMessage = createMessage({
+						role: "assistant",
+						streaming: true,
+						model: modelConfig.model,
+						toolMessages: [],
+						isFinished: false,
+					});
+
+					sendMessages = recentMessages.concat(userMessage);
+
+					// 更新会话
+					get().updateSession(sessionId, (session: ChatSession) => {
+						const savedUserMessage = { ...userMessage, content: mContent };
+						session.messages = session.messages.concat([
+							savedUserMessage,
+							botMessage,
+						]);
+						session.responseStatus = false;
+						session.lastUpdate = Date.now();
+						set((state) => ({ currentSessionIndex: 0 }));
+					});
+
+					console.log("click send: ", session.topic, session.responseStatus);
+
 					// 调用发送消息函数
-					session,
-					sendMessages,
-					handleChatCallbacks(botMessage, userMessage, messageIndex, session),
-				);
+					sendChatMessage(
+						session,
+						sendMessages,
+						handleChatCallbacks(botMessage, userMessage, messageIndex, session),
+					);
+					console.log("click send: ", session.topic, session.responseStatus);
+				} catch (error: any) {
+					// const botError = "API 请求失败, 请重新登录后重试";
+					const botError = error.message as string;
+
+					console.error("[Error] createChat API call failed:", error);
+					userMessage = createMessage({
+						id: nanoid(),
+						chat_id: undefined,
+						role: "user",
+						content: content,
+						image_url: attachImages,
+						fileInfos: attachFiles,
+						token_counts_total: total_token_count,
+					});
+
+					botMessage = createMessage({
+						role: "assistant",
+						streaming: false,
+						model: modelConfig.model,
+						toolMessages: [],
+						isFinished: false,
+						content: botError,
+					});
+
+					// 更新会话
+					get().updateSession(sessionId, (session: ChatSession) => {
+						const savedUserMessage = { ...userMessage, content };
+						session.messages = session.messages.concat([
+							savedUserMessage,
+							botMessage,
+						]);
+						session.responseStatus = false;
+						session.lastUpdate = Date.now();
+						set((state) => ({ currentSessionIndex: 0 }));
+					});
+				}
 			},
+
 			updateSessionMessage(
 				session: ChatSession,
 				botMessageId: string,

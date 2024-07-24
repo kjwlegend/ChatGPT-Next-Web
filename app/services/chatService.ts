@@ -261,7 +261,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 // 获取服务器消息列表
 export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 	const chatStore = useChatStore.getState();
-	const session = chatStore.sessions.find((s) => s.id === id);
+	const session = chatStore.sessions.find((s: ChatSession) => s.id === id);
 	if (!session) return;
 	const session_id = session?.session_id;
 

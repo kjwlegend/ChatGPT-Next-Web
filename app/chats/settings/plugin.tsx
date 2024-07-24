@@ -3,13 +3,6 @@ import { IconButton } from "@/app/components/button";
 import styles from "./plugin.module.scss";
 
 import DownloadIcon from "@/app/icons/download.svg";
-import UploadIcon from "@/app/icons/upload.svg";
-import EditIcon from "@/app/icons/edit.svg";
-import AddIcon from "@/app/icons/add.svg";
-import CloseIcon from "@/app/icons/close.svg";
-import DeleteIcon from "@/app/icons/delete.svg";
-import EyeIcon from "@/app/icons/eye.svg";
-import CopyIcon from "@/app/icons/copy.svg";
 import LeftIcon from "@/app/icons/left.svg";
 
 import { Plugin, usePluginStore } from "../../store/plugin";
@@ -30,7 +23,6 @@ import {
 	Select,
 	showConfirm,
 } from "@/app/components/ui-lib";
-import { Avatar } from "../components/emoji";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "../../locales";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -40,7 +32,6 @@ import { copyToClipboard, downloadAs, readFromFile } from "../../utils";
 import { Updater } from "../../typing";
 import { FileName, Path } from "../../constant";
 import { BUILTIN_PLUGIN_STORE } from "../../plugins";
-import { nanoid } from "nanoid";
 import { getISOLang, getLang } from "../../locales";
 
 // export function PluginConfig(props: {
