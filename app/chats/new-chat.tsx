@@ -74,7 +74,7 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
 					/>
 				</div>
 				<div className={styles.description}>
-					<p>{mask.constellation}</p>
+					<p>{mask.zodiac}</p>
 					<p style={{ whiteSpace: "pre-line" }}>{mask.description}</p>
 				</div>
 			</div>

@@ -8,6 +8,12 @@ interface LoginParams {
 	password: string;
 }
 
+interface BalanceType {
+	balance_type: string;
+	balance_sub_type: string;
+	current_balance: number;
+}
+
 export default function useAuth() {
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -42,6 +48,7 @@ export default function useAuth() {
 			const user = await authStore.login(params);
 
 			if (user) {
+				const balance = updateUserBalance(user);
 				const updatedUser = {
 					...user,
 					membership_level: handleMembershipLevel(user.membership_level),
@@ -50,9 +57,11 @@ export default function useAuth() {
 					),
 					user_balance: {
 						...user.user_balance,
-						chat_balance: 1000, // 应该从其他地方获取这个值
+						...balance,
 					},
 				};
+				console.log(updatedUser);
+
 				userStore.setUser(updatedUser);
 			}
 		} catch (error) {
@@ -63,7 +72,39 @@ export default function useAuth() {
 		}
 	};
 
+	const updateUserBalance = (user: User) => {
+		// 获取 User 对象中的 user_balance 进行重构，并输出新的 user_balance
+
+		const getBalance = (balanceObj: BalanceType) => {
+			// 解构 balanceObj 中的 balance_type 和 balance_sub_type
+			const { balance_type, balance_sub_type, current_balance } = balanceObj;
+
+			// 拼接 balance_type 和 balance_sub_type 作为 key，采用 current_balance 作为 value
+			return {
+				[`${balance_sub_type.toLowerCase()}_${balance_type.toLowerCase()}_balance`]:
+					current_balance,
+			};
+		};
+
+		// 假设 latest_balance 是一个数组，包含多个 BalanceType 对象
+		const balanceObjects = user.latest_balance as [BalanceType];
+		console.log(balanceObjects);
+		// 使用 reduce 来构建新的余额对象
+		const newBalance = balanceObjects.reduce((acc, element) => {
+			const balanceEntry = getBalance(element);
+			return { ...acc, ...balanceEntry }; // 合并当前余额到累加器中
+		}, {});
+
+		// 输出新的 user_balance
+		console.log(newBalance);
+
+		return newBalance; // 如果需要返回新的余额对象，可以这样做
+	};
+
 	const updateUserInfo = async (id: number): Promise<void | Error> => {
+		// TODO
+		// 这里的方法还需要重做主
+		// 目的是刷新信息
 		try {
 			const user = (await authStore.updateUserInfo(id)) as User | Error;
 

@@ -340,7 +340,7 @@ export function ChatActions(props: {
 	const chatStore = useChatStore();
 	const session = props.session ? props.session : chatStore.currentSession();
 	const sessionId = session.id;
-	const { chat_balance } = useUserStore().user.user_balance;
+	const { basic_chat_balance } = useUserStore().user.user_balance;
 
 	const accessStore = useAccessStore();
 	const isEnableRAG = useMemo(
@@ -709,7 +709,7 @@ export function ChatActions(props: {
 				<div>
 					{/* 展示用户余额 */}
 					<span className={styles["chat-balance"]}>
-						对话余额: {chat_balance}
+						对话余额: {basic_chat_balance}
 					</span>
 				</div>
 			</div>

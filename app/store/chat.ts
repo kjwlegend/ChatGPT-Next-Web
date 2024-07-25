@@ -785,7 +785,7 @@ export const useChatStore = createPersistStore(
 						sessions: state.sessions.map((session) => {
 							if (session.id === sessionId) {
 								// 直接应用 updater 回调函数
-								console.log("store session check", session);
+								// console.log("store session check", session);
 								updater(session);
 								if (sync) {
 									const data: CreateChatSessionData = {

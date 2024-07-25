@@ -8,13 +8,13 @@ export function getUserInfo() {
 	const user = useUserStore.getState().user;
 	const gender =
 		user.gender === "0" ? "未知" : user.gender === "1" ? "男" : "女";
-	const constellation = user.constellation === "" ? "未知" : user.constellation;
+	const zodiac = user.zodiac === "" ? "未知" : user.zodiac;
 	const nickname = user.nickname === "" ? "神秘人" : user.nickname;
 
 	const userData = {
 		nickname,
 		gender,
-		constellation,
+		zodiac,
 		birthday: user.birthday === "" ? "未知" : user.birthday,
 	};
 	return userData;
@@ -38,13 +38,13 @@ Current time: ${vars.time}`;
 function getUserInfoTemplate() {
 	const user = getUserInfo();
 
-	const { nickname, gender, constellation, birthday } = user;
+	const { nickname, gender, zodiac, birthday } = user;
 
 	return `
 ## User Info
 - 用户的名字是: ${nickname}
 - 性别是 : ${gender}
-- 星座是 : ${constellation}
+- 星座是 : ${zodiac}
 - 生日是 : ${birthday} 
 Your answers must be related to the user's information.
   `;

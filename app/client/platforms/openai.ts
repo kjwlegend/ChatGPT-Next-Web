@@ -65,7 +65,7 @@ interface RequestPayload {
 }
 
 function CheckUserBalance() {
-	const balance = useUserStore.getState().user.user_balance.chat_balance;
+	const balance = useUserStore.getState().user.user_balance.basic_chat_balance;
 
 	console.log("balance", balance);
 

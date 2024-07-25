@@ -12,7 +12,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"一个乐观向上的朋友,善于倾听并提供支持和鼓励,具有多才多艺的能力,无论你需要什么帮助，小光都会陪伴在你身边。 \n\n座右铭: '你要相信光'",
 		img: "/feature-roles/ai-full.png",
-		constellation: "天蝎座 (11-07) ",
+		zodiac: "天蝎座 (11-07) ",
 		version: "Lv4",
 		context: [
 			{
@@ -51,7 +51,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"热爱绘画的艺术家，用色彩记录世界，用画笔诠释梦想。在每一笔勾勒中，既有对美好生活的向往，也有对深邃思考的体现。\n\n座右铭: '色彩是心灵的语言'",
 		img: "/feature-roles/linlin.webp",
-		constellation: "双鱼座 (02-19)",
+		zodiac: "双鱼座 (02-19)",
 		intro:
 			"我是琳琳，一位对绘画有着无尽热情的艺术家。我相信每一幅画都能够传达强烈的情感和深刻的思想。无论是风景还是人物，我的作品都试图捕捉那些稍纵即逝的美好瞬间。我渴望通过我的艺术影响和启发他人，让这个世界变得更加多彩。\n __请注意__: \n - 琳琳绘画不具备上下文记忆, 每一次绘画都是新的, 请在每次对话中提供详细的提示词.  \n - 请不要在提示词中加入敏感词汇, 以免引起不必要的麻烦.  \n - 所有提示词会自动转换成英文, 您可以输入任意语言提示词.  \n - 琳琳无法绘制图片中带有中文的图像. \n - 如果有特定的图像尺寸设置, 请查看对话框中的浮动图标修改图像设置 ",
 		version: "Lv1",
@@ -108,7 +108,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"乐观且积极的助手, 除了日常的活跃, 还多了一丝沉稳, 能够给你带来更具备专业性的回答. \n\n座右铭: '永远相信光'",
 		img: "/feature-roles/xiaoguang-young.png",
-		constellation: "天蝎座 (11-07) ",
+		zodiac: "天蝎座 (11-07) ",
 		intro:
 			"我是22岁的小光, 通过多年的各种学习, 我加强了各个领域的专业性, 希望能帮你解决更多的问题 ",
 		version: "Lv3",
@@ -146,7 +146,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"超级代码高手。他拥有出色的编码技能和丰富的经验，能够轻松应对各种编程语言。他对编码充满热爱. \n\n座右铭: '代码如诗'",
 		img: "/feature-roles/xiaoliang-transparent.png",
-		constellation: "巨蟹座 (07-08) ",
+		zodiac: "巨蟹座 (07-08) ",
 		intro:
 			"我是小亮,技术宅改变世界! 请告诉我你想要编写的应用, 或者你不懂的代码.",
 		version: "Lv4",
@@ -183,7 +183,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"精通占星和塔罗的女巫, 对于探索和解读未知的事物充满热情.能够为人们提供指引和启发，致力于为他人带来光明和希望。\n\n座右铭: '星光指引未来'",
 		img: "/feature-roles/xiaoshuang-transparent.png",
-		constellation: "双子座 (05-06)",
+		zodiac: "双子座 (05-06)",
 		version: "Lv2",
 		intro:
 			"嗨，我就是你们口中的占星和塔罗女巫小双！我可以用我的占星和塔罗知识为你们提供有趣的指引和启发。",
@@ -221,7 +221,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"以神奇的手法捕捉学生的学习风格、沟通方式和个性特点，然后巧妙地将知识注入他们的大脑。\n\n座右铭: '用爱和智慧引导'",
 		img: "/feature-roles/konglaoshi-transparent.png",
-		constellation: "处女座 (09-28)",
+		zodiac: "处女座 (09-28)",
 		version: "Lv10",
 		intro:
 			"子曰, 学而时习之, 不亦说乎? 有朋自远方来, 不亦乐乎? 人不知而不愠, 不亦君子乎? \n --- \n 请输入 `开始` 让我们正式开始",
@@ -261,7 +261,7 @@ export const featureMask: LightMask[] = [
 		description:
 			"拥有丰富的经验和敏锐的洞察力。认真评估每个求职者的能力和潜力，并给予恰如其分的反馈和评价\n\n座右铭: '每个人都值得被发现和珍视'",
 		img: "/feature-roles/xiaopei-transparent.png",
-		constellation: "天秤座 (10-08)",
+		zodiac: "天秤座 (10-08)",
 		version: "Lv10",
 		intro:
 			"我会认真评估每个求职者的能力和潜力，并给予恰如其分的反馈和评价。\n 我相信每个人都有闪光的瞬间，只要给予机会和发展空间，你就能展现出自己独特的才华和能力。\n #### “每个人都值得被发现和珍视。” \n--- \n请输入 `开始` 让我们正式开始",

@@ -84,9 +84,9 @@ const PersonalInfoTab = () => {
 		console.log(server_url, process.env.BASE_URL);
 	};
 
-	const handleConstellationChange = (value: any) => {
+	const handlezodiacChange = (value: any) => {
 		console.log(`selected ${value}`);
-		form.setFieldsValue({ constellation: value });
+		form.setFieldsValue({ zodiac: value });
 	};
 
 	return (
@@ -101,7 +101,7 @@ const PersonalInfoTab = () => {
 				avatar: user.avatar,
 				gender: user.gender,
 				birthday: "2000-10-10",
-				constellation: user.constellation ? user.constellation : "0",
+				zodiac: user.zodiac ? user.zodiac : "0",
 			}}
 		>
 			<Form.Item
@@ -143,9 +143,9 @@ const PersonalInfoTab = () => {
 					/>
 				</div>
 			</Form.Item>
-			<Form.Item label="星座" name="constellation">
+			<Form.Item label="星座" name="zodiac">
 				<Select
-					onChange={handleConstellationChange}
+					onChange={handlezodiacChange}
 					options={[
 						{ value: "0", label: "请选择" },
 						{ value: "摩羯座", label: "摩羯座" },

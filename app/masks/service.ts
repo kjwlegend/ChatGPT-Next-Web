@@ -19,7 +19,7 @@ interface Prompt {
 	topic?: string;
 	avatar: string;
 	featureMask?: boolean;
-	constellation?: string;
+	zodiac?: string;
 	img?: string;
 	description?: string;
 	intro?: string;
@@ -73,7 +73,7 @@ export async function createPrompt(data: Prompt) {
 			return err.message;
 		});
 }
-export async function updatePrompt(id:string, data: Prompt) {
+export async function updatePrompt(id: string, data: Prompt) {
 	return request({
 		url: `/gpt/prompts-public/${id}/`,
 		method: "put",

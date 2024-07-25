@@ -84,7 +84,7 @@ const DEFAULT_MASK = {
 	description:
 		"一个乐观向上的朋友,善于倾听并提供支持和鼓励,具有多才多艺的能力,无论你需要什么帮助，小光都会陪伴在你身边。 \n\n座右铭: '你要相信光'",
 	img: "/feature-roles/ai-full.png",
-	constellation: "天蝎座 (11-07) ",
+	zodiac: "天蝎座 (11-07) ",
 	version: "Lv4",
 	context: [
 		{

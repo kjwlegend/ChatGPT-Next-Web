@@ -103,9 +103,10 @@ const MembershipTab = () => {
 		membership_expiry_date,
 		last_refresh_date,
 		id,
+		virtual_currency,
 	} = user;
 
-	const { xgb_balance, chat_balance, draw_balance } = user_balance;
+	const { basic_chat_balance, draw_balance } = user_balance;
 
 	// 定义4种会员的价格
 	const [price, setPrice] = useState({
@@ -261,12 +262,12 @@ const MembershipTab = () => {
 						<p className={styles["service"]}>
 							购买的服务：{selectedMembershipName}
 						</p>
-						<p className={styles["balance"]}>当前余额：{xgb_balance}</p>
+						<p className={styles["balance"]}>当前余额：{virtual_currency}</p>
 						<p className={styles["deduction"]}>
 							扣款金额：{getPrice(selectedMembershipType)}
 						</p>
 						<p className={styles["remaining"]}>
-							剩余金额：{xgb_balance - getPrice(selectedMembershipType)}
+							剩余金额：{virtual_currency - getPrice(selectedMembershipType)}
 						</p>
 						<Radio.Group
 							onChange={handlePaymentMethodChange}
@@ -294,12 +295,12 @@ const MembershipTab = () => {
 				</Col>
 				{/* xgb */}
 				<Col xs={12} sm={4}>
-					<Statistic title="小光币" value={xgb_balance || ""} />
+					<Statistic title="小光币" value={virtual_currency || ""} />
 				</Col>
 				<Col xs={12} sm={4}>
 					<Statistic
 						title="剩余对话次数"
-						value={chat_balance || ""}
+						value={basic_chat_balance || ""}
 						groupSeparator=""
 					/>
 				</Col>

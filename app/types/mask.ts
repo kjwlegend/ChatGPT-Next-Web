@@ -7,7 +7,7 @@ export interface roleSettingType {
 	tone?: string;
 	age?: string;
 	bloodType?: string;
-	constellation?: string;
+	zodiac?: string;
 	personality?: string;
 	hobby?: string;
 	feature?: string;
@@ -23,7 +23,7 @@ export type Mask = {
 	topic?: string;
 	avatar: string;
 	featureMask?: boolean;
-	constellation?: string;
+	zodiac?: string;
 	img?: string;
 	description?: string;
 	intro?: string;

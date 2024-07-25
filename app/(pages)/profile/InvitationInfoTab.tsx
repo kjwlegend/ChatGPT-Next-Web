@@ -14,7 +14,7 @@ const { Paragraph } = Typography;
 const InvitePage = () => {
 	const { user } = useUserStore();
 	const { invite_code, invite_count } = user;
-	const { xgb_balance } = user.user_balance;
+	const { virtual_currency } = user;
 
 	useEffect(() => {
 		// 在这里可以根据需要加载邀请人数和邀请点数的数据
@@ -31,7 +31,7 @@ const InvitePage = () => {
 					<Statistic title="邀请人数" value={invite_count} />
 				</Col>
 				<Col xs={12} sm={8}>
-					<Statistic title="小光币" value={xgb_balance} />
+					<Statistic title="小光币" value={virtual_currency} />
 				</Col>
 				<Col xs={12} sm={8}>
 					<Statistic

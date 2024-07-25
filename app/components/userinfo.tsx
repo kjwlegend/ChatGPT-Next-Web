@@ -53,11 +53,6 @@ export default function UserInfo() {
 			label: `到期时间: ${user?.membership_expiry_date} `,
 			key: "2",
 		},
-		// 对话次数
-		{
-			label: `对话剩余: ${user?.user_balance?.chat_balance}`,
-			key: "3",
-		},
 
 		{
 			label: <Link href="/profile#4">邀请得礼</Link>,
