@@ -23,7 +23,6 @@ import { showConfirm } from "@/app/components/ui-lib";
 import { useUserStore } from "../../store";
 import { useWorkflowStore } from "../../store/workflow";
 import { useMobileScreen } from "../../utils";
-import { ChatData, getChat } from "../../api/backend/chat";
 import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem, ChatItemShort } from "./chatItem";
 import { PaginationData, getChatSessionChats } from "@/app/services/chats";
@@ -51,15 +50,6 @@ export function ChatList(props: { narrow?: boolean }) {
 		// setChatlist(sessions);
 	}, [sessions, sortSession]);
 
-	const filteredSessions = useMemo(() => {
-		//  exlude workflow chat
-		const newSessions = sessions.filter(
-			(session) => session.isworkflow !== true,
-		);
-		return newSessions;
-	}, [sessions]);
-
-	// console.log("filteredSessions", filteredSessions);
 	const workflowStore = useWorkflowStore();
 	const navigate = useNavigate();
 	const userStore = useUserStore();
@@ -105,10 +95,10 @@ export function ChatList(props: { narrow?: boolean }) {
 							ref={provided.innerRef}
 							{...provided.droppableProps}
 						>
-							{filteredSessions.length === 0 ? (
+							{sessions.length === 0 ? (
 								<div className={styles["no-conversations"]}>暂无对话</div>
 							) : (
-								filteredSessions.map((item, i) => (
+								sessions.map((item, i) => (
 									<ChatItem
 										title={item.topic}
 										time={
@@ -128,13 +118,8 @@ export function ChatList(props: { narrow?: boolean }) {
 										index={i}
 										selected={item.id === currentSessionId}
 										onClick={() => {
-											console.log(
-												`debug item.id: ${item.id}, currentSessionId: ${currentSessionId}`,
-											);
-
 											selectSessionById(item.id);
 											navigate(Path.Chat);
-
 											getMessages(item.id);
 										}}
 										onDelete={async () => {

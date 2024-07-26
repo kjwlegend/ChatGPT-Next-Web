@@ -5,24 +5,15 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import { AgentMessageItem, MessageItem } from "./MessageItem";
 
-import { MJFloatButton } from "../midjourney";
 import { useContext, useRef, useState, useMemo, Fragment } from "react";
 import { useScrollToBottom } from "../chat-controller";
-import { UpdateChatMessages } from "@/app/services/chatService";
-import { getChat } from "@/app/api/backend/chat";
 import { copyToClipboard, useMobileScreen } from "@/app/utils";
-import { message } from "antd";
-import { createMessage } from "@/app/store";
-import { useAppConfig } from "@/app/store";
+
 import { CHAT_PAGE_SIZE } from "@/app/constant";
-import { useAccessStore } from "@/app/store";
-import { BOT_HELLO } from "@/app/store";
 import Locale from "@/app/locales";
-import styles from "../chats.module.scss";
 import { ChatContext } from "../main";
 import { useMessageActions } from "./useMessageActions";
-import { useChatPagination } from "./useChatPagination";
-import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+
 
 export type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -31,7 +22,6 @@ interface ChatMessageListProps {
 	messages: ChatMessage[];
 	isLoading: boolean;
 	hasNextPage: boolean;
-	getMessages: (sessionId: string, page: number) => void;
 }
 
 export const MessageList: React.FC<ChatMessageListProps> = ({
@@ -39,7 +29,6 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 	messages,
 	isLoading,
 	hasNextPage,
-	getMessages,
 }) => {
 	const {
 		hitBottom,

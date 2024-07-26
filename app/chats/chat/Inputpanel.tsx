@@ -657,28 +657,7 @@ export function ChatActions(props: {
 					text={enableUserInfo ? "个性化" : "通用"}
 				/>
 
-				{showModelSelector && (
-					<Selector
-						defaultSelectedValue={currentModel}
-						items={models.map((m) => ({
-							title: m.title ? m.title : m.value,
-							value: m.value,
-						}))}
-						onClose={() => setShowModelSelector(false)}
-						onSelection={(s) => {
-							if (s.length === 0) return;
-							chatStore.updateSession(sessionId, () => {
-								session.mask.modelConfig.model = s[0] as ModelType;
-								session.mask.syncGlobalConfig = false;
-								// session.mask.usePlugins = /^gpt(?!.*03\d{2}$).*$/.test(
-								// 	session.mask.modelConfig.model,
-								// );
-								console.log(session.mask.modelConfig);
-							});
-							showToast(s[0]);
-						}}
-					/>
-				)}
+
 				{currentModel !== "midjourney" && (
 					<ChatAction
 						text={Locale.Chat.InputActions.Clear}

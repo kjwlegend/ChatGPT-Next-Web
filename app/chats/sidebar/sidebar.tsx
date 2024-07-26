@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import React from "react";
 
-import styles from "../home.module.scss";
+import styles from "./sidebar.module.scss";
 
 import { IconButton } from "../../components/button";
 
@@ -235,35 +235,15 @@ export function SideBar(props: { className?: string }) {
 			className={`${styles.sidebar}
        ${props.className} ${shouldNarrow && styles["narrow-sidebar"]}`}
 		>
-			<div className="flex-container row m-b-20">
-				{isMobileScreen && (
-					<>
-						<DrawerMenu />
-						<UserInfo />
-					</>
-				)}
-
-				{/* {!shouldNarrow && <UserInfo />} */}
-			</div>
+			{/* */}
 
 			<div className={styles["sidebar-header-bar"]}>
+				{isMobileScreen && (
+					<div className="flex-container row m-b-20">
+						<DrawerMenu />
+					</div>
+				)}
 				{/* <IconButton
-					icon={<MaskIcon />}
-					text={shouldNarrow ? undefined : Locale.Mask.Name}
-					className={styles["sidebar-bar-button"]}
-					onClick={() => {
-						if (config.dontShowMaskSplashScreen !== true) {
-							navigate(Path.NewChat, {
-								state: { fromHome: true },
-							});
-						} else {
-							navigate(Path.Masks, { state: { fromHome: true } });
-						}
-					}}
-					shadow
-				/> */}
-
-				<IconButton
 					icon={<PluginIcon />}
 					text={shouldNarrow ? undefined : "画廊"}
 					className={styles["sidebar-bar-button"]}
@@ -280,39 +260,7 @@ export function SideBar(props: { className?: string }) {
 						navigate(Path.Knowledge, { state: { fromHome: true } })
 					}
 					shadow
-				/>
-			</div>
-
-			<div
-				className={styles["sidebar-body"]}
-				onClick={(e) => {
-					if (e.target === e.currentTarget) {
-						navigate(Path.Home);
-					}
-				}}
-			>
-				<ChatList narrow={shouldNarrow} />
-				<div ref={loadRef}> ...</div>
-			</div>
-
-			<div className={styles["sidebar-tail"]}>
-				<div className={styles["sidebar-actions"]}>
-					<div className={styles["sidebar-action"] + " " + styles.mobile}>
-						<IconButton
-							icon={<CloseIcon />}
-							onClick={async () => {
-								if (await showConfirm(Locale.Home.DeleteChat)) {
-									chatStore.deleteSession(chatStore.currentSessionIndex);
-								}
-							}}
-						/>
-					</div>
-					<div className={styles["sidebar-action"]}>
-						<Link to={Path.Settings}>
-							<IconButton icon={<SettingsIcon />} shadow />
-						</Link>
-					</div>
-				</div>
+				/> */}
 				<div>
 					<IconButton
 						icon={<AddIcon />}
@@ -328,6 +276,22 @@ export function SideBar(props: { className?: string }) {
 						shadow
 					/>
 				</div>
+			</div>
+
+			<div
+				className={styles["sidebar-body"]}
+				onClick={(e) => {
+					if (e.target === e.currentTarget) {
+						navigate(Path.Home);
+					}
+				}}
+			>
+				<ChatList narrow={shouldNarrow} />
+				<div ref={loadRef}> ...</div>
+			</div>
+
+			<div className={styles["sidebar-tail"]}>
+				<UserInfo />
 			</div>
 
 			<div

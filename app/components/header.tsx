@@ -40,58 +40,10 @@ import { ChatAction } from "../chats/chat/Inputpanel";
 import LightIcon from "@/app/icons/light.svg";
 import DarkIcon from "@/app/icons/dark.svg";
 import AutoIcon from "@/app/icons/auto.svg";
+import { ThemeSwitcher } from "./themeSwitcher";
 interface Props {
 	displayMobileVersion: boolean;
 }
-
-const ThemeSwitcher = () => {
-	const config = useAppConfig();
-	const updateConfig = config.update;
-	const currentTheme = config.theme;
-
-	const [theme, setTheme] = useState(currentTheme as Theme);
-	const newTheme = theme === "light" ? "dark" : "light";
-
-	useEffect(() => {
-		// set theme
-		document.body.className = theme;
-	}, [theme]);
-
-	const toggleTheme = () => {
-		setTheme(newTheme as Theme);
-		localStorage.setItem("theme", newTheme);
-		document.body.className = newTheme;
-
-		updateConfig((config) => {
-			config.theme = newTheme as Theme;
-		});
-	};
-	const iconStyle = {
-		top: "2px",
-		position: "relative",
-	};
-
-	const ThemeIcon =
-		theme == "dark" ? (
-			<DarkIcon style={iconStyle} />
-		) : (
-			<LightIcon style={iconStyle} />
-		);
-	return (
-		<>
-			<Button onClick={toggleTheme}>
-				{/* {Locale.Chat.InputActions.Theme[theme]} */}
-				<span
-					style={{
-						top: "5px",
-					}}
-				>
-					{ThemeIcon}
-				</span>
-			</Button>
-		</>
-	);
-};
 
 export default function MainNav() {
 	const isMobileScreen = useMobileScreen();
@@ -201,7 +153,6 @@ export default function MainNav() {
 						/>
 					</div>
 					<div style={{ display: "flex", alignItems: "center", flexGrow: "1" }}>
-						<UserInfo />
 						<ThemeSwitcher />
 					</div>
 				</Header>

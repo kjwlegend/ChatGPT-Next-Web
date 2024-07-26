@@ -6,15 +6,6 @@ import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask } from "./mask";
 import { StoreKey, SUMMARIZE_MODEL } from "../constant";
 
-import {
-	DEFAULT_INPUT_TEMPLATE,
-	DEFAULT_SYSTEM_TEMPLATE,
-	getDefaultSystemTemplate,
-} from "@/app/chains/base";
-
-import { api, RequestMessage } from "../client/api";
-import { ChatControllerPool } from "../client/controller";
-import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 
@@ -29,7 +20,6 @@ import { midjourneyOnUserInput } from "../services/midjourneyService";
 import { createPersistStore } from "../utils/store";
 
 import { summarizeTitle, summarizeSession } from "../chains/summarize";
-import { getChat } from "../api/backend/chat";
 import {
 	CreateChatData,
 	CreateChatSessionData,
@@ -37,7 +27,6 @@ import {
 	createChatSession,
 	updateChatSession,
 } from "@/app/services/chats";
-import { is } from "cheerio/lib/api/traversing";
 
 import { getMessageTextContent, getMessageImages } from "../utils";
 
@@ -166,29 +155,22 @@ export const useChatStore = createPersistStore(
 			},
 
 			selectSession(index: number) {
+				console.log("selectSession: ", index);
 				set({
 					currentSessionIndex: index,
 					currentSessionId: get().sessions[index].id,
 				});
 			},
 			selectSessionById(id: string) {
-				console.log("selectSessionById called with id:", id);
-
 				const index = get().sessions.findIndex((session) => session.id === id);
-				console.log("Index found:", index);
 
 				if (index !== -1) {
-					console.log(
-						"Valid index found, calling selectSession with index:",
-						index,
-					);
 					get().selectSession(index);
 				} else {
 					console.log("No session found with the given id:", id);
 				}
 
 				set(() => ({ currentSessionId: id }));
-				console.log("currentSessionId set to:", id);
 			},
 			moveSession(from: number, to: number, _sessions?: any) {
 				set((state) => {
@@ -369,7 +351,7 @@ export const useChatStore = createPersistStore(
 						text: Locale.Home.Revert,
 						onClick() {
 							set(() => restoreState);
-							updateChatSession({ hide: false }, sessionid);
+							updateChatSession({ active: true }, sessionid);
 						},
 					},
 					5000,
@@ -551,16 +533,21 @@ export const useChatStore = createPersistStore(
 					sendMessages = recentMessages.concat(userMessage);
 
 					// 更新会话
-					get().updateSession(sessionId, (session: ChatSession) => {
-						const savedUserMessage = { ...userMessage, content: mContent };
-						session.messages = session.messages.concat([
-							savedUserMessage,
-							botMessage,
-						]);
-						session.responseStatus = false;
-						session.lastUpdate = Date.now();
-						set((state) => ({ currentSessionIndex: 0 }));
-					});
+					get().updateSession(
+						sessionId,
+						(session: ChatSession) => {
+							console.log("session: ", session);
+							const savedUserMessage = { ...userMessage, content: mContent };
+							session.messages = session.messages.concat([
+								savedUserMessage,
+								botMessage,
+							]);
+							session.responseStatus = false;
+							session.lastUpdate = Date.now();
+							set((state) => ({ currentSessionIndex: 0 }));
+						},
+						false,
+					);
 
 					console.log("click send: ", session.topic, session.responseStatus);
 
@@ -596,16 +583,20 @@ export const useChatStore = createPersistStore(
 					});
 
 					// 更新会话
-					get().updateSession(sessionId, (session: ChatSession) => {
-						const savedUserMessage = { ...userMessage, content };
-						session.messages = session.messages.concat([
-							savedUserMessage,
-							botMessage,
-						]);
-						session.responseStatus = false;
-						session.lastUpdate = Date.now();
-						set((state) => ({ currentSessionIndex: 0 }));
-					});
+					get().updateSession(
+						sessionId,
+						(session: ChatSession) => {
+							const savedUserMessage = { ...userMessage, content };
+							session.messages = session.messages.concat([
+								savedUserMessage,
+								botMessage,
+							]);
+							session.responseStatus = false;
+							session.lastUpdate = Date.now();
+							set((state) => ({ currentSessionIndex: 0 }));
+						},
+						false,
+					);
 				}
 			},
 
@@ -794,6 +785,7 @@ export const useChatStore = createPersistStore(
 										user: userId,
 									};
 									updateChatSession(data, sessionId);
+									console.log("store 同步触发");
 								}
 							}
 							return session;
@@ -845,7 +837,7 @@ export const useChatStore = createPersistStore(
 
 				const oldSessions = state.sessions;
 				for (const oldSession of oldSessions) {
-					const newSession = createEmptySession();
+					const newSession = createEmptySession({});
 					newSession.topic = oldSession.topic;
 					newSession.messages = [...oldSession.messages];
 					newSession.mask.modelConfig.sendMemory = true;

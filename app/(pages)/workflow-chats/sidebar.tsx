@@ -44,7 +44,7 @@ import DrawerMenu from "../../components/drawer-menu";
 
 import { getChatSession } from "../../api/backend/chat";
 import { ChatSessionData } from "../../api/backend/chat";
-import { UpdateChatSessions } from "../../services/chatService";
+import { updateChatSessions } from "../../services/chatService";
 import { useUserStore } from "../../store/user";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 

@@ -97,28 +97,9 @@
 		color: var(--black);
 	}
 }
-.login-wrapper {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-
-	.avatar {
-		margin: 10px;
-		position: relative;
-		display: inline;
-	}
-	// 在该clas是下所有的子元素 margin 都为 0 10px
-	> * {
-		margin: 0 10px;
-	}
-}
 
 // mobile version
 @media (max-width: 768px) {
-	.login-wrapper {
-		width: unset;
-	}
-
 	.header {
 		height: 40px;
 		padding: 0 10px;

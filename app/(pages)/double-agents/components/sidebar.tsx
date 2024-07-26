@@ -42,7 +42,7 @@ import DrawerMenu from "@/app/components/drawer-menu";
 
 import { getChatSession } from "@/app/api/backend/chat";
 import { ChatSessionData } from "@/app/api/backend/chat";
-import { UpdateChatSessions } from "@/app/services/chatService";
+import { updateChatSessions } from "@/app/services/chatService";
 import { useUserStore } from "@/app/store/user";
 import useDoubleAgentStore from "@/app/store/doubleAgents";
 
@@ -180,7 +180,7 @@ export function DoubleAgentSideBar(props: { className?: string }) {
 			try {
 				const chatSessionList = await getChatSession(param);
 				console.log("chatSessionList", chatSessionList.data);
-				UpdateChatSessions(chatSessionList.data);
+				updateChatSessions(chatSessionList.data);
 				setPage((prevPage) => prevPage + 1);
 				setHasMore(chatSessionList.is_next); // 根据返回的is_next更新是否还有更多数据
 			} catch (error) {

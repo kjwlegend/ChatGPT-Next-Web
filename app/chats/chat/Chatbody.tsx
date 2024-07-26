@@ -129,37 +129,37 @@ export function Chatbody(props: {
 	// }, [messages]);
 
 	const getMessages = async (sessionid: string, page: number) => {
-		setIsLoading(true);
-		if (!isAuthenticated) return;
-		try {
-			const param = {
-				chat_session: sessionid,
-				user: userStore.user.id,
-				page: page,
-				limit: 50,
-			};
-			const chatSessionList = await getChat(param);
-			if (chatSessionList.data.length == 0) {
-				setHasNextPage(false);
-			} else {
-				setMessages((prevMessages) => {
-					// 创建一个包含之前消息 ID 的集合
-					const existingIds = new Set(prevMessages.map((msg: any) => msg.id));
-					// 过滤掉已经存在的消息
-					const newMessages = chatSessionList.data.filter(
-						(msg: any) => !existingIds.has(msg.id),
-					);
-					// 返回新的消息数组，不包含重复的消息
-					return [...prevMessages, ...newMessages];
-				});
-				setHasNextPage(chatSessionList.is_next);
-				UpdateChatMessages(sessionId, chatSessionList.data);
-			}
-		} catch (error: any) {
-			// messageApi.error("Failed to load messages: " + error.toString());
-		} finally {
-			setIsLoading(false);
-		}
+		// setIsLoading(true);
+		// if (!isAuthenticated) return;
+		// try {
+		// 	const param = {
+		// 		chat_session: sessionid,
+		// 		user: userStore.user.id,
+		// 		page: page,
+		// 		limit: 50,
+		// 	};
+		// 	const chatSessionList = await getChat(param);
+		// 	if (chatSessionList.data.length == 0) {
+		// 		setHasNextPage(false);
+		// 	} else {
+		// 		setMessages((prevMessages) => {
+		// 			// 创建一个包含之前消息 ID 的集合
+		// 			const existingIds = new Set(prevMessages.map((msg: any) => msg.id));
+		// 			// 过滤掉已经存在的消息
+		// 			const newMessages = chatSessionList.data.filter(
+		// 				(msg: any) => !existingIds.has(msg.id),
+		// 			);
+		// 			// 返回新的消息数组，不包含重复的消息
+		// 			return [...prevMessages, ...newMessages];
+		// 		});
+		// 		setHasNextPage(chatSessionList.is_next);
+		// 		UpdateChatMessages(sessionId, chatSessionList.data);
+		// 	}
+		// } catch (error: any) {
+		// 	// messageApi.error("Failed to load messages: " + error.toString());
+		// } finally {
+		// 	setIsLoading(false);
+		// }
 	};
 
 	function setMsgRenderIndex(newIndex: number) {
@@ -313,7 +313,6 @@ export function Chatbody(props: {
 				messages={messagesfinal}
 				isLoading={isLoading}
 				hasNextPage={hasNextPage}
-				getMessages={getMessages}
 			/>
 		</div>
 	);

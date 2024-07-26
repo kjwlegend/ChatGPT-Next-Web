@@ -27,10 +27,12 @@ export const submitChatMessage = async (
 	try {
 		const response = await createChat(createChatData); // 替换为实际的API调用
 		const data = response.data;
-
+		console.log("submit chat message createChatData: ", createChatData);
 		if (data) {
 			// console.log("createChat success:", response);
 			const newSessionId = data.chat_session;
+
+			console.log("newSessionId: ", newSessionId);
 
 			if (createChatData.chat_session !== newSessionId) {
 				chatStore.updateSession(
@@ -252,7 +254,6 @@ export function updateChatSessions(newSessionsData: any[]) {
 
 			if (newSession.lastUpdate! > existingSession.lastUpdate) {
 				chatStore.updateSession(newSession.id!, () => newSession);
-				console.log("update session: ", newSession.id);
 			}
 		}
 	});
@@ -269,7 +270,7 @@ export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 		// 检查是否已经存在该消息
 		const exists = session?.messages.some((m) => m.id == messageData.id);
 		if (exists) {
-			console.log("message already exists: ", messageData.id);
+			// console.log("message already exists: ", messageData.id);
 			return;
 		}
 

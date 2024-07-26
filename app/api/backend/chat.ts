@@ -153,19 +153,6 @@ export interface UpdateChatSessionData {
 	[property: string]: any;
 }
 
-export async function updateChatSession(
-	id: string,
-	data: UpdateChatSessionData,
-) {
-	return request({
-		url: `/gpt/chat-sessions/by_session_id/${id}/`,
-		method: "put",
-		data,
-	})
-		.then(handleResponse)
-		.catch(handleError);
-}
-
 export interface ChatData {
 	chat_session: string;
 	user: number;

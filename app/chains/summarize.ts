@@ -11,11 +11,8 @@ import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
-import {
-	createChatSession,
-	updateChatSession,
-	UpdateChatSessionData,
-} from "../api/backend/chat";
+import { createChatSession, UpdateChatSessionData } from "../api/backend/chat";
+import { updateChatSession } from "../services/chats";
 import { UserStore, useUserStore } from "@/app/store/user";
 import { BUILTIN_MASKS } from "../masks";
 import { Plugin, usePluginStore } from "../store/plugin";
@@ -41,7 +38,7 @@ export async function summarizeTitle(
 	const session = chatStoreState.getSession(_session);
 
 	const messages = session.messages;
-	const SUMMARIZE_MIN_LEN = 50;
+	const SUMMARIZE_MIN_LEN = 200;
 
 	if (
 		session.topic === DEFAULT_TOPIC &&
@@ -132,7 +129,7 @@ export async function summarizeSession(_session?: ChatSession) {
 			updateObject.topic = title;
 		}
 
-		await updateChatSession(session.id, updateObject);
+		await updateChatSession(updateObject, session.id);
 	}
 }
 

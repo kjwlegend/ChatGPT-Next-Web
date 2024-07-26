@@ -1,0 +1,35 @@
+.user-info-wrapper {
+	padding: 5px 0;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 5px;
+	width: 100%;
+	background-color: rgba(255, 255, 255, 0.3);
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	backdrop-filter: blur(15px);
+
+	.user-info {
+		// 第一个占比1, 第二个占比2 第三个占比1
+		display: grid;
+		grid-template-columns: 1fr 3fr 1fr;
+		align-items: center;
+		flex-grow: 1;
+
+		.user-details {
+			font-size: 12px;
+			line-height: 1;
+
+			p {
+				margin: 0.875rem 0;
+			}
+		}
+	}
+
+	// mobile version
+	@media (max-width: 768px) {
+		.login-wrapper {
+			width: unset;
+		}
+	}
+}

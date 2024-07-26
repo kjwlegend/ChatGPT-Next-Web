@@ -4,7 +4,6 @@ import { LLMModel } from "../client/api";
 export function collectModelTable(models: readonly LLMModel[]) {
 	const modelTable: Record<string, boolean> = {};
 
-	console.log("models", models);
 	// default models
 	models.forEach((provider) => {
 		// 将provider 的 models 中availabe为true 的放入modelTable中
