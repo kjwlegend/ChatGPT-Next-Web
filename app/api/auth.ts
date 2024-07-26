@@ -96,7 +96,7 @@ export interface RegisterParams {
 	username: string;
 	password: string;
 	nickname?: string;
-	gender?: number;
+	gender?: string;
 	email: string;
 	invite_code?: string;
 }

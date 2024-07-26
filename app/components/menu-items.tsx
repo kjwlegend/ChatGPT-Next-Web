@@ -16,7 +16,7 @@ export interface MenuItem {
 	label: string;
 	title?: string;
 	key: string;
-	icon: ReactNode;
+	icon?: ReactNode;
 	url: string;
 	children?: MenuItem[];
 	disabled?: boolean;
@@ -58,12 +58,32 @@ export const TopMenuItems: MenuItem[] = [
 		url: "/workflow-chats",
 	},
 
-	// {
-	//   label: "商城(开发中)",
-	//   key: "mall",
-	//   disabled: true,
-	//   url: "/mall",
-	// },
+	{
+		label: "绘图",
+		key: "draw",
+		disabled: true,
+		url: "/draw",
+	},
+	{
+		label: "音乐",
+		key: "music",
+		disabled: true,
+		url: "/music",
+	},
+	{
+		label: "商城(开发中)",
+		key: "mall",
+		disabled: true,
+		url: "/mall",
+	},
+
+	{
+		label: "社区(开发中)",
+		key: "test",
+		icon: <IconFont type="iconfont-lightfill" />,
+		disabled: true,
+		url: "/updates",
+	},
 ];
 
 export const BottomMenuItems = [
@@ -71,13 +91,6 @@ export const BottomMenuItems = [
 		label: "版本日志",
 		key: "updates",
 		icon: <IconFont type="iconfont-Timeline" />,
-		url: "/updates",
-	},
-	{
-		label: "社区(开发中)",
-		key: "test",
-		icon: <IconFont type="iconfont-lightfill" />,
-		disabled: true,
 		url: "/updates",
 	},
 ];
