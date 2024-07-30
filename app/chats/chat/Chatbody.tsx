@@ -196,36 +196,34 @@ export function Chatbody(props: {
 			return dateA.getTime() - dateB.getTime();
 		});
 
-		return context
-			.concat(sortedMessages as RenderMessage[])
-			.concat(
-				isLoading
-					? [
-							{
-								...createMessage({
-									role: "assistant",
-									content: "……",
-									image_url: [],
-								}),
-								preview: true,
-							},
-						]
-					: [],
-			)
-			.concat(
-				userInput.length > 0 && config.sendPreviewBubble
-					? [
-							{
-								...createMessage({
-									role: "user",
-									content: userInput,
-									image_url: userImage?.fileUrl,
-								}),
-								preview: true,
-							},
-						]
-					: [],
-			);
+		return context.concat(sortedMessages as RenderMessage[]).concat(
+			isLoading
+				? [
+						{
+							...createMessage({
+								role: "assistant",
+								content: "……",
+								image_url: [],
+							}),
+							preview: true,
+						},
+					]
+				: [],
+		);
+		// .concat(
+		// 	userInput.length > 0 && config.sendPreviewBubble
+		// 		? [
+		// 				{
+		// 					...createMessage({
+		// 						role: "user",
+		// 						content: userInput,
+		// 						image_url: userImage?.fileUrl,
+		// 					}),
+		// 					preview: true,
+		// 				},
+		// 			]
+		// 		: [],
+		// );
 	}, [
 		config.sendPreviewBubble,
 		context,

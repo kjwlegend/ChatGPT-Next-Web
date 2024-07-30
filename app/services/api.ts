@@ -108,7 +108,7 @@ export const handleError = (error: any) => {
 };
 
 export const api = (appurl: string, endpoint: string) => {
-	return async (params?: any, id?: string) => {
+	return async (params?: any, id?: string | number) => {
 		const url = id
 			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
 			: `/${appurl}${endpoint}`;
@@ -122,7 +122,7 @@ export const api = (appurl: string, endpoint: string) => {
 };
 
 export const apiGet = (appurl: string, endpoint: string) => {
-	return async (params?: any, id?: string) => {
+	return async (params?: any, id?: string | number) => {
 		const url = id
 			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
 			: `/${appurl}${endpoint}`;

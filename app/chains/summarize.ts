@@ -41,7 +41,7 @@ export async function summarizeTitle(
 	const SUMMARIZE_MIN_LEN = 200;
 
 	if (
-		session.topic === DEFAULT_TOPIC &&
+		(session.topic === DEFAULT_TOPIC || session.topic === "闲聊") &&
 		countMessages(messages) >= SUMMARIZE_MIN_LEN
 	) {
 		const topicMessages: RequestMessage[] = messages.map((msg) => ({

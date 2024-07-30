@@ -5,6 +5,7 @@ import { login, logout } from "../services/auth";
 import { getUserInfo } from "../api/backend/user";
 
 import { User } from "./user";
+import { getUser } from "../services/user";
 
 interface LoginParams {
 	username: string;
@@ -20,7 +21,7 @@ export interface AuthState {
 	logout: () => Promise<void>;
 	getAccessToken: () => string | null;
 	getRefreshToken: () => string | null;
-	updateUserInfo: (id: number) => Promise<void | Error>;
+	updateUserInfo: (id: string | number) => Promise<void | Error>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -73,9 +74,9 @@ export const useAuthStore = create<AuthState>()(
 			getRefreshToken: () => {
 				return get().refreshToken;
 			},
-			updateUserInfo: async (id: number) => {
+			updateUserInfo: async (id: string | number) => {
 				try {
-					const user = await getUserInfo(id);
+					const user = await getUser({}, id);
 
 					if (user.code === 401) {
 						await get().logout();

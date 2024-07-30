@@ -41,37 +41,6 @@ export default function useAuth() {
 		}
 		return date.slice(0, 10);
 	};
-
-	const loginHook = async (params: LoginParams): Promise<void> => {
-		setIsLoading(true);
-		try {
-			const user = await authStore.login(params);
-
-			if (user) {
-				const balance = updateUserBalance(user);
-				const updatedUser = {
-					...user,
-					membership_level: handleMembershipLevel(user.membership_level),
-					membership_expiry_date: handleMembershipExpiryDate(
-						user.membership_expiry_date,
-					),
-					user_balance: {
-						...user.user_balance,
-						...balance,
-					},
-				};
-				console.log(updatedUser);
-
-				userStore.setUser(updatedUser);
-			}
-		} catch (error) {
-			console.error("登录失败:", error);
-			throw new Error("用户名或密码错误");
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	const updateUserBalance = (user: User) => {
 		// 获取 User 对象中的 user_balance 进行重构，并输出新的 user_balance
 
@@ -101,6 +70,40 @@ export default function useAuth() {
 		return newBalance; // 如果需要返回新的余额对象，可以这样做
 	};
 
+	const updateUserStore = (user: User) => {
+		const balance = updateUserBalance(user);
+		const updatedUser = {
+			...user,
+			membership_level: handleMembershipLevel(user.membership_level),
+			membership_expiry_date: handleMembershipExpiryDate(
+				user.membership_expiry_date,
+			),
+			user_balance: {
+				...user.user_balance,
+				...balance,
+			},
+		};
+		console.log(updatedUser);
+
+		userStore.setUser(updatedUser);
+	};
+
+	const loginHook = async (params: LoginParams): Promise<void> => {
+		setIsLoading(true);
+		try {
+			const user = await authStore.login(params);
+
+			if (user) {
+				updateUserStore(user);
+			}
+		} catch (error) {
+			console.error("登录失败:", error);
+			throw new Error("用户名或密码错误");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const updateUserInfo = async (id: number): Promise<void | Error> => {
 		// TODO
 		// 这里的方法还需要重做主
@@ -108,17 +111,14 @@ export default function useAuth() {
 		try {
 			const user = (await authStore.updateUserInfo(id)) as User | Error;
 
+			console.log(user, "hook debug");
 			if (user instanceof Error) {
 				logoutHook();
-				return user;
+				return;
 			}
 
 			if (user) {
-				user.membership_level = handleMembershipLevel(user.membership_level);
-				user.membership_expiry_date = handleMembershipExpiryDate(
-					user.membership_expiry_date,
-				);
-				userStore.updateUser(user);
+				updateUserStore(user);
 			}
 		} catch (error) {
 			console.error("更新用户信息失败:", error);

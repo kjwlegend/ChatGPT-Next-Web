@@ -11,7 +11,7 @@ export interface UpdateUserParams {
 
 const appnamespace = AppMapping.user;
 
-export const getUser = api(appnamespace, "/users/:id/");
+export const getUser = apiGet(appnamespace, "/users/:id/");
 export const updateUser = apiPut(appnamespace, "/users/:id/");
 export const getLatestBalance = apiGet(
 	appnamespace,
