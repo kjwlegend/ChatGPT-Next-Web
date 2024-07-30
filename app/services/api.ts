@@ -41,7 +41,7 @@ async function refreshTokenAndRetryRequest(error: any, originalRequest: any) {
 	} catch (refreshError) {
 		// 刷新令牌失败的处理逻辑
 		useAuthStore.getState().logout(); // 清除过期的 token
-		window.location.href = "/auth/login"; // 重定向到登录页面
+		window.location.href = "/auth"; // 重定向到登录页面
 		throw new Error("刷新令牌失败，请重新登录");
 	}
 }
