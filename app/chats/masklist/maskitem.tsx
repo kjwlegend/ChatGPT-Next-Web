@@ -21,7 +21,7 @@ import {
 	Select,
 	showConfirm,
 } from "@/app/components/ui-lib";
-import { Card } from "antd";
+import { Card, Tag } from "antd";
 import { IconButton } from "@/app/components/button";
 import { BotAvatar } from "@/app/components/emoji";
 import { Avatar } from "antd";
@@ -90,7 +90,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 		}
 	};
 
-	const renderCard = () => {
+	const renderPublicAgent = () => {
 		return (
 			<Card
 				title={
@@ -99,8 +99,38 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 						{mask.version ? mask.version : ""}
 					</div>
 				}
-				headStyle={{ padding: 5 }}
-				extra={
+				styles={{
+					body: {
+						padding: 10,
+					},
+					header: {
+						padding: 5,
+					},
+				}}
+				// extra={
+
+				// }
+				hoverable
+				// bordered={true}
+				className={`${styles["mask-item"]} ${styles["mask-item-card"]}`}
+				onClick={() => onChat()}
+			>
+				<Meta
+					description={
+						mask.description ? mask.description : "作者很懒, 还没有上传介绍"
+					}
+				/>
+				<div className={styles.tags}>
+					{mask.tags?.map((tag, index) => (
+						<span className={styles["label"]} key={`${mask.id}-${index}`}>
+							{tag}
+						</span>
+					))}
+				</div>
+
+				<div className={styles.cardFooter}>
+					<div className={styles.author}>作者: @{mask.author}</div>
+					<div className={styles.author}>Agent_id: {mask.id}</div>
 					<IconButton
 						icon={<EyeIcon />}
 						key="view"
@@ -108,28 +138,19 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 						className={styles.hotness}
 						// onClick={() => setEditingMaskId(mask.id)}
 					/>
-				}
-				hoverable
-				bordered={true}
-				className={`${styles["mask-item"]} ${getCardStyle()}`}
-				bodyStyle={{ padding: 10 }}
-				onClick={() => onChat()}
-			>
-				<Meta
-					// avatar={<MaskAvatar mask={mask} />}
-
-					description={
-						mask.description ? mask.description : "作者很懒, 还没有上传介绍"
-					}
-				/>
-				<div className={styles.tags}>
-					<span className={styles["label"]} key={mask.id}>
-						{mask.category}
-					</span>
 				</div>
-				<div className={styles.cardFooter}>
-					<div className={styles.author}>@{mask.author}</div>
-					{!mask.builtin && (
+			</Card>
+		);
+	};
+
+	const rendPrivateAgent = () => {
+		return (
+			<div className={styles["mask-item-info"]}>
+				<h3>{mask.name}</h3>
+				<p>{mask.description}</p>
+				<button onClick={onChat}>Chat</button>
+				{!mask.builtin && <button onClick={onDelete}>Delete</button>}
+				{/* {!mask.builtin && (
 						<div className={styles.actions}>
 							<IconButton
 								icon={<EditIcon />}
@@ -152,19 +173,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 								}}
 							/>
 						</div>
-					)}
-				</div>
-			</Card>
-		);
-	};
-
-	const renderInfo = () => {
-		return (
-			<div className={styles["mask-item-info"]}>
-				<h3>{mask.name}</h3>
-				<p>{mask.description}</p>
-				<button onClick={onChat}>Chat</button>
-				{!mask.builtin && <button onClick={onDelete}>Delete</button>}
+					)} */}
 			</div>
 		);
 	};
@@ -174,82 +183,13 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 		return ColorList[Math.floor(Math.random() * ColorList.length)];
 	};
 
-	const renderRoleplay = () => {
-		const author = mask.author || "@创世神";
-
-		return (
-			<div
-				className={styles["mask-item-roleplay"]}
-				onClick={() => onChat()}
-				key={mask.id}
-			>
-				{/* when mask.img exists, use transparent backgroundColor , otherwise use getRandomColor*/}
-				<Avatar
-					style={{
-						backgroundColor: mask.img ? "transparent" : getRandomColor(),
-						fontSize: 30,
-					}}
-					size={100}
-					src={mask.img}
-				>
-					{mask.name}
-				</Avatar>
-
-				<h1 className={styles["name"]}>{mask.name}</h1>
-				{/* use mask.category to create a label with background color */}
-				<span className={styles["label"]}>{mask.category}</span>
-
-				<p className={styles["description"]}>
-					{mask.description ?? "作者很懒, 还没有上传介绍"}
-				</p>
-				<div className={styles["actions"]}>
-					{mask.builtin ? (
-						<IconButton
-							icon={<EyeIcon />}
-							key="view"
-							text={`热度: ${mask.hotness ? mask.hotness : "0"}`}
-							// onClick={() => setEditingMaskId(mask.id)}
-						/>
-					) : (
-						<IconButton
-							icon={<EditIcon />}
-							key="edit"
-							text={Locale.Mask.Item.Edit}
-							onClick={(e) => {
-								e.stopPropagation(); // prevent click event from bubbling up to the card
-								setEditingMaskId(mask.id);
-							}}
-						/>
-					)}
-
-					{!mask.builtin && (
-						<IconButton
-							icon={<DeleteIcon />}
-							text={Locale.Mask.Item.Delete}
-							key="delete"
-							onClick={async (e) => {
-								e.stopPropagation(); // prevent click event from bubbling up to the card
-								if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
-									onDelete();
-								}
-							}}
-						/>
-					)}
-				</div>
-				<div className={styles["author"]}>作者: {author}</div>
-			</div>
-		);
-	};
-
 	const renderComponent = () => {
 		if (styleName === "assistant") {
-			return renderCard();
+			return renderPublicAgent();
 		} else if (styleName === "info") {
-			return renderInfo();
-		} else if (styleName === "roleplay") {
-			return renderRoleplay();
+			return rendPrivateAgent();
 		} else {
-			return renderCard();
+			return renderPublicAgent();
 		}
 	};
 

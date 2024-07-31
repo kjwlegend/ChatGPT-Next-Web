@@ -8,8 +8,8 @@ interface Props {
 	onTagsChange: (selectedTags: string[]) => void; // 用于接收选中标签数组的回调函数
 }
 
-const App: React.FC<Props> = ({ tagsData, onTagsChange }) => {
-	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
+const MultipleTag: React.FC<Props> = ({ tagsData, onTagsChange }) => {
+	const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
 	const handleChange = (tag: string, checked: boolean) => {
 		const nextSelectedTags = checked
@@ -22,7 +22,6 @@ const App: React.FC<Props> = ({ tagsData, onTagsChange }) => {
 
 	return (
 		<>
-			<span style={{ marginRight: 8 }}>分类:</span>
 			<Space size={[0, 7]} wrap>
 				{tagsData.map((tag) => (
 					<CheckableTag
@@ -38,4 +37,4 @@ const App: React.FC<Props> = ({ tagsData, onTagsChange }) => {
 	);
 };
 
-export default App;
+export default MultipleTag;

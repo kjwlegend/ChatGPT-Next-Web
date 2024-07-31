@@ -22,7 +22,7 @@ import { FileApi, FileInfo } from "./platforms/utils";
 export const ROLES = ["system", "user", "assistant"] as const;
 export type MessageRole = (typeof ROLES)[number];
 
-export const Models = ["gpt-3.5-turbo", "gpt-4"] as const;
+export const Models = ["gpt-4o-mini", "gpt-4"] as const;
 export type ChatModel = ModelType;
 
 export interface MultimodalContent {
@@ -254,7 +254,7 @@ export function getHeaders(ignoreHeaders?: boolean) {
 	const modelConfig =
 		useChatStore.getState().currentSession()?.mask.modelConfig ||
 		DEFAULT_CONFIG.modelConfig;
-	const models = modelConfig.model ?? "gpt-3.5-turbo";
+	const models = modelConfig.model ?? "gpt-4o-mini";
 	const isGoogle = models.startsWith("gemini");
 	if (!ignoreHeaders && !isGoogle) {
 		headers = {

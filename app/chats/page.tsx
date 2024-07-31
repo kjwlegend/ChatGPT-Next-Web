@@ -58,9 +58,12 @@ const Chat = dynamic(async () => (await import("./chat/main")).Chat, {
 	loading: () => <Loading noLogo />,
 });
 
-const NewChat = dynamic(async () => (await import("./new-chat")).NewChat, {
-	loading: () => <Loading noLogo />,
-});
+const NewChat = dynamic(
+	async () => (await import("./masklist/new-chat")).NewChat,
+	{
+		loading: () => <Loading noLogo />,
+	},
+);
 
 const Knowledge = dynamic(async () => await import("./knowledge/main"), {
 	loading: () => <Loading noLogo />,

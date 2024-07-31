@@ -1,3 +1,4 @@
+import { Protocol } from "@aws-sdk/client-s3"
 import webpack from "webpack"
 
 const mode = process.env.BUILD_MODE ?? "standalone"
@@ -29,6 +30,14 @@ const nextConfig = {
   output: mode,
   images: {
     unoptimized: mode === "export",
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8000',
+        pathname: '/media/**',
+      },
+    ],
   },
   reactStrictMode: false,
   experimental: {

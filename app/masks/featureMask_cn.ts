@@ -25,7 +25,7 @@ export const featureMask: LightMask[] = [
 		],
 		syncGlobalConfig: true,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -122,7 +122,7 @@ export const featureMask: LightMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.3,
 			max_tokens: 4000,
 			presence_penalty: 0,
@@ -160,7 +160,7 @@ export const featureMask: LightMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			max_tokens: 4000,
 			presence_penalty: 0,

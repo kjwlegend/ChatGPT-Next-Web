@@ -13,7 +13,7 @@ interface Prompt {
 	id: string;
 	prompt_id?: number;
 	name: string;
-	category: string;
+	tags?: string[] | undefined;
 	author?: string;
 	prompt_type?: string;
 	topic?: string;

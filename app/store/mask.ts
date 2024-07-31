@@ -9,13 +9,13 @@ import { type } from "os";
 import { Plugin } from "./plugin";
 
 import { ChatMessage } from "../types/chat";
-import { Mask } from "../types/mask";
-import { useMasks } from "../masks/useMasks";
+import { Mask, Tags } from "../types/mask";
+import { useMasks } from "../hooks/useMasks";
 import { createPrompt, deletePrompt, updatePrompt } from "../masks/service";
 
 export const DEFAULT_MASK_STATE = {
 	masks: {} as Record<string, Mask>,
-	maskslist: [] as Mask[],
+	tags: {} as Record<string, Tags>,
 	total: 0,
 };
 
@@ -26,7 +26,7 @@ export const createEmptyMask = () =>
 	({
 		id: nanoid(),
 		avatar: DEFAULT_MASK_AVATAR,
-		category: "通用",
+		tags: ["通用"],
 		author: "",
 		topic: "",
 		name: "未命名自定义助手",
@@ -56,7 +56,7 @@ export const useMaskStore = createPersistStore(
 			const masks = get().masks;
 			let id, res;
 			let newmask: Partial<Mask> = { ...mask, id: id, prompt_id: 0 };
-
+			console.log("create stage");
 			try {
 				res = await createPrompt({
 					...createEmptyMask(),
@@ -86,23 +86,34 @@ export const useMaskStore = createPersistStore(
 			set((state) => ({ ...state, ...any }));
 		},
 		add(mask: Mask) {
-			const existingMasks = get().masks;
-			const newMask = { ...mask };
+			const { masks } = get(); // 从 store 获取当前的 masks 对象
+			let newMask; // 声明 newMask 变量以便后续使用
 
 			// 如果传入的 mask 包含 id，则更新对应的 mask；
 			// 否则，生成一个新的 id 并添加到 masks 对象中。
-			if (newMask.id) {
-				existingMasks[newMask.id] = newMask;
-			} else {
-				const id = nanoid(); // 生成一个新的唯一标识符
-				newMask.id = id;
-				newMask.builtin = false; // 假设添加的 mask 不是内置的
-				existingMasks[id] = newMask;
+			if (mask.id) {
+				// console.log("Updating existing mask with id:", mask.id); // 输出正在更新的 mask id
+				newMask = { ...mask }; // 更新已有的 mask
+				masks[mask.id] = newMask; // 更新 masks 对象中的对应 mask
 			}
 
-			set(() => ({ masks: existingMasks }));
-			return existingMasks[newMask.id];
+			set({ masks }); // 更新 store 中的 masks 对象
+
+			return masks; // 返回更新后的 masks 对象
 		},
+		addTags(tags: Tags) {
+			const { tags: currentTags } = get();
+
+			let currentTagsCopy = { ...currentTags };
+
+			if (tags.tag_id) {
+				currentTagsCopy[tags.tag_id] = tags;
+			}
+
+			set({ tags: currentTagsCopy });
+			return currentTagsCopy;
+		},
+
 		updateMask(id: string, updater: (mask: Mask) => void) {
 			const masks = get().masks;
 			const mask = masks[id];
@@ -146,10 +157,7 @@ export const useMaskStore = createPersistStore(
 		},
 		filter: (
 			filterOptions: {
-				lang?: string;
-				builtin?: boolean;
 				tags?: string[];
-				type?: string;
 				searchTerm?: string;
 				author?: string;
 			},
@@ -159,33 +167,12 @@ export const useMaskStore = createPersistStore(
 			let filteredMasks = maskslist;
 			console.log(filterOptions);
 
-			// 根据语言过滤
-			if (filterOptions.lang) {
-				filteredMasks = filteredMasks.filter(
-					(mask) => mask.lang === filterOptions.lang,
-				);
-			}
+			// 将tags 中的空字符串剔除
+			const tags = filterOptions.tags?.filter((tag) => tag.trim() !== "") || [];
 
-			// // 根据是否内置过滤
-			if (filterOptions.builtin !== undefined) {
-				filteredMasks = filteredMasks.filter(
-					(mask) => mask.builtin === filterOptions.builtin,
-				);
-			}
-
-			if (
-				filterOptions.tags !== undefined &&
-				!filterOptions.tags.includes("全部") &&
-				!filterOptions.tags.includes("default")
-			) {
-				filteredMasks = filteredMasks.filter(
-					(mask) => filterOptions.tags?.includes(mask.category),
-				);
-			}
-
-			if (filterOptions.type) {
-				filteredMasks = filteredMasks.filter(
-					(mask) => mask.prompt_type === filterOptions.type,
+			if (tags.length >= 1) {
+				filteredMasks = filteredMasks.filter((mask) =>
+					mask.tags?.some((tag: string) => filterOptions.tags?.includes(tag)),
 				);
 			}
 
@@ -194,7 +181,7 @@ export const useMaskStore = createPersistStore(
 					(mask) =>
 						mask.name.includes(filterOptions.searchTerm!) ||
 						mask.description?.includes(filterOptions.searchTerm!) ||
-						mask.tags?.includes(filterOptions.searchTerm),
+						mask.tags?.includes(filterOptions.searchTerm!),
 				);
 			}
 

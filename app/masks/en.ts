@@ -17,7 +17,7 @@ export const EN_MASKS: LightMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 1,
 			top_p: 1,
 			max_tokens: 2000,
@@ -124,7 +124,7 @@ export const EN_MASKS: LightMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			max_tokens: 2000,
 			presence_penalty: 0,
@@ -157,7 +157,7 @@ export const EN_MASKS: LightMask[] = [
 			},
 		],
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			max_tokens: 2000,
 			presence_penalty: 0,

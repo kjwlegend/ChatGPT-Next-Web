@@ -17,7 +17,7 @@ export type Mask = {
 	id: string;
 	prompt_id?: number;
 	name: string;
-	category: string;
+	tags?: string[] | undefined;
 	author?: string;
 	prompt_type?: string;
 	topic?: string;
@@ -51,5 +51,14 @@ export type BuiltinMask = Mask & {
 
 export type LightMask = Omit<Mask, "context" | "modelConfig" | "lang"> & {
 	modelConfig: Partial<ModelConfig>;
+	[key: string]: any;
+};
+
+export type Tags = {
+	tag_id: string;
+	tag_key: string;
+	tag_name: string;
+	tag_type?: string;
+	description?: string;
 	[key: string]: any;
 };

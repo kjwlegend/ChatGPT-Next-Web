@@ -95,6 +95,9 @@
 			justify-content: space-around;
 			row-gap: 10px;
 			align-items: stretch;
+			display: flex;
+			flex-wrap: wrap;
+
 			font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
 				"Helvetica", "Arial", sans-serif, "Noto Sans", "SF Pro SC",
 				"SF Pro Text", "SF Pro Icons";
@@ -104,6 +107,7 @@
 				flex-direction: row;
 				justify-content: space-between;
 				align-items: center;
+				border-top: 1px solid var(--bar-color);
 			}
 			.author {
 				color: #777;
@@ -117,12 +121,13 @@
 				// border: var(--border-in-default);
 				animation: slide-in ease 0.3s;
 				padding-bottom: 1px;
+				background-color: rgb(243 243 243 / 46%);
 
 				&:hover {
 					box-shadow:
-						0 1px 2px -2px rgba(0, 0, 0, 0.16),
-						0 3px 6px 0 rgb(0 215 255 / 29%),
-						0 5px 12px 4px rgba(0, 0, 0, 0.09);
+						0 2px 1px -1px rgb(65 88 146 / 16%),
+						0 4px 6px 0 rgb(115 74 127 / 29%),
+						0 1px 8px 1px rgb(67 49 49 / 9%);
 				}
 
 				.mask-header {
@@ -131,9 +136,9 @@
 					justify-content: flex-start;
 					column-gap: 1rem;
 					font-size: 0.85rem;
-					font-weight: 400;
+					font-weight: 600;
 					letter-spacing: 2px;
-					color: var(--light-gray);
+					color: var(--black);
 				}
 
 				:global .ant-card-actions > li {
@@ -146,6 +151,7 @@
 
 				:global .ant-card-meta-description {
 					height: 100%;
+					color: var(--light-gray);
 					text-overflow: ellipsis; /* 显示省略号 */
 					display: -webkit-box; /* 将元素设置为弹性盒子 */
 					-webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
@@ -177,12 +183,17 @@
 					flex-direction: row;
 				}
 				.label {
-					background: rgb(237, 241, 241);
+					background: rgb(255, 255, 255);
+					border: 1px solid rgb(238 238 238);
 					padding: 4px 5px;
 					margin-top: 5px;
 					font-size: 10px;
 					color: rgb(66, 66, 66);
 					border-radius: 5px;
+
+					&:not(:last-child) {
+						margin-right: 8px;
+					}
 				}
 				&.develop {
 					background-color: aquamarine;
@@ -194,70 +205,6 @@
 				justify-content: flex-end;
 				align-items: center;
 				margin-top: 5px;
-			}
-			.mask-item-roleplay {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: flex-start;
-				text-align: center;
-				padding: 20px;
-				background-color: #ffffff;
-				border-radius: 8px;
-				box-shadow: 5px 3px 15px 0px rgba(0, 0, 0, 0.08);
-				width: 19%;
-				margin: 10px 2px;
-				transition: ease-in 0.3s;
-				cursor: pointer;
-
-				&:hover {
-					box-shadow:
-						3px 15px 15px 0px rgb(107 105 247 / 16%),
-						0 3px 6px 0 #bfbfbf,
-						14px -6px 12px 4px rgb(255 165 165 / 9%);
-				}
-
-				@media screen and (max-width: 768px) {
-					width: 40%;
-					margin: 10px 0;
-					padding: 10px;
-				}
-
-				:global .ant-avatar > img {
-					height: unset;
-				}
-				.name {
-					font-size: 16px;
-					font-weight: bold;
-					color: #333333;
-					margin-bottom: 10px;
-				}
-				.label {
-					background: rgb(21, 193, 236);
-					margin-top: 5px;
-					padding: 4px 5px;
-					font-size: 10px;
-					color: white;
-					border-radius: 5px;
-				}
-
-				.description {
-					font-size: 14px;
-					color: var(--light-gray);
-					margin-bottom: 20px;
-					text-align: left;
-					text-overflow: ellipsis;
-					-webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
-					height: 60px;
-					display: -webkit-box; /* 将元素设置为弹性盒子 */
-					-webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
-					overflow: hidden;
-				}
-				.author {
-					font-size: 12px;
-					color: var(--light-gray);
-					margin-top: 10px;
-				}
 			}
 		}
 	}

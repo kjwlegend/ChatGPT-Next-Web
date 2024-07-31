@@ -61,7 +61,7 @@ import { useMaskStore } from "../../store/mask";
 import { useWorkflowContext } from "./workflowContext";
 
 import { List, Input, Form, Row, Col } from "antd";
-import { Avatar } from "../../chats/components/emoji";
+import { Avatar } from "../../chats/components/avatar";
 import { CopyOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;

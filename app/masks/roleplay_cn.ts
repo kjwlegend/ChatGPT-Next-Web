@@ -24,7 +24,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -63,7 +63,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -102,7 +102,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -142,7 +142,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -181,7 +181,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -220,7 +220,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -260,7 +260,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -299,7 +299,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -338,7 +338,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -377,7 +377,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,
@@ -416,7 +416,7 @@ export const RolePlay: LightMask[] = [
 		],
 		syncGlobalConfig: false,
 		modelConfig: {
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini",
 			temperature: 0.5,
 			top_p: 1,
 			max_tokens: 3000,

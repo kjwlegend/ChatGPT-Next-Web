@@ -122,7 +122,7 @@ export const Google = {
 	ChatPath: (modelName: string) => `v1beta/models/${modelName}:generateContent`,
 };
 
-export const SUMMARIZE_MODEL = "gpt-3.5-turbo-16k";
+export const SUMMARIZE_MODEL = "gpt-4o-mini";
 
 export const KnowledgeCutOffDate: Record<string, string> = {
 	default: "2021-09",

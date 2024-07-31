@@ -1,29 +1,30 @@
 import { useEffect, useRef, useState } from "react";
-import { Path, SlotID } from "../constant";
+import { Path, SlotID } from "../../constant";
 import styles from "./new-chat.module.scss";
 
 import { Avatar, Card, Skeleton, Switch, Button, Row } from "antd";
 const { Meta } = Card;
 import { IconButton } from "@/app/components/button";
-import { EmojiAvatar } from "./components/emoji";
+import { EmojiAvatar } from "../components/emoji";
 import LeftIcon from "@/app/icons/left.svg";
 import LightningIcon from "@/app/icons/lightning.svg";
 import EyeIcon from "@/app/icons/eye.svg";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { useMaskStore, createEmptyMask } from "../store/mask";
-import { Mask } from "../types/mask";
-import { useUserStore } from "../store";
-import Locale from "../locales";
-import { useAppConfig, useChatStore } from "../store";
-import { MaskAvatar } from "./masklist/mask";
-import { useCommand } from "../command";
+import { useMaskStore, createEmptyMask } from "../../store/mask";
+import { Mask } from "../../types/mask";
+import { useUserStore } from "../../store";
+import Locale from "../../locales";
+import { useAppConfig, useChatStore } from "../../store";
+import { MaskAvatar } from "./mask";
+import { useCommand } from "../../command";
 import { showConfirm } from "@/app/components/ui-lib";
-import { BUILTIN_MASK_STORE } from "../masks";
+import { BUILTIN_MASK_STORE } from "../../masks";
 import Image from "next/image";
 import { type } from "os";
-import { useMasks } from "../masks/useMasks";
-import { useAuthStore } from "../store/auth";
+import { useMasks } from "../../hooks/useMasks";
+import { useAuthStore } from "../../store/auth";
+import { featureMask } from "../../masks/featureMask_cn";
 
 function MaskItem(props: { mask: Mask; onClick?: () => void }) {
 	return (
@@ -37,15 +38,13 @@ function MaskItem(props: { mask: Mask; onClick?: () => void }) {
 function featureMaskGroup(masks: Mask[]) {
 	// 2个filter , build-in mask 和 feature mask
 	const featureMasks = masks.filter(
-		(mask) =>
-			mask.featureMask === true &&
-			mask.builtin === true &&
-			mask.type !== "roleplay",
+		(mask) => mask.featureMask === true && mask.type !== "roleplay",
 	);
 	return [...featureMasks];
 }
 
 function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
+	console.log("item", mask);
 	return (
 		<Card
 			style={{ maxWidth: 300 }}
@@ -86,7 +85,11 @@ export function NewChat() {
 	const chatStore = useChatStore();
 	const maskStore = useMaskStore();
 	const userStore = useUserStore();
-	const { masks: maskfetch, fetchPrompts } = useMasks();
+	const {
+		masks: maskfetch,
+		fetchPromptsCallback,
+		fetchTagsCallback,
+	} = useMasks();
 	const { isAuthenticated } = useAuthStore();
 
 	const navigate = useNavigate();
@@ -96,14 +99,17 @@ export function NewChat() {
 
 	useEffect(() => {
 		const initialize = async () => {
-			const { data, total, is_next } = await fetchPrompts(1, 100);
-			// set maskStore.total
-
-			const featureMasks = featureMaskGroup(data);
-
-			setFeatureGroup(featureMasks);
-			setMasks(data);
-			maskStore.updatestate({ total });
+			try {
+				const { data, total, is_next } = await fetchPromptsCallback(1, 100);
+				const featureMasks = featureMaskGroup(data);
+				console.log("feature", featureMasks); // 确保这里输出的是有效的数组
+				const tags = await fetchTagsCallback(1, 100);
+				setFeatureGroup(featureMasks);
+				setMasks(data);
+				maskStore.updatestate({ total });
+			} catch (error) {
+				console.error("Error fetching prompts:", error);
+			}
 		};
 		initialize();
 	}, []);
@@ -135,13 +141,6 @@ export function NewChat() {
 				<div className={styles["title"]}>{Locale.NewChat.Title}</div>
 				<div className={styles["sub-title"]}>{Locale.NewChat.SubTitle}</div>
 				<div className={styles["actions"]}>
-					{/* <IconButton
-						key="return"
-						icon={<LeftIcon />}
-						text={Locale.NewChat.Return}
-						onClick={() => navigate(Path.Home)}
-						shadow
-					></IconButton> */}
 					<IconButton
 						key="skip"
 						text={Locale.NewChat.Skip}
@@ -159,23 +158,6 @@ export function NewChat() {
 						icon={<EyeIcon />}
 						shadow
 					/>
-
-					{/* {!state?.fromHome && (
-						<IconButton
-							key="not-show"
-							text={Locale.NewChat.NotShow}
-							onClick={async () => {
-								if (await showConfirm(Locale.NewChat.ConfirmNoShow)) {
-									startChat();
-									config.update(
-										(config) => (config.dontShowMaskSplashScreen = true),
-									);
-								}
-							}}
-							icon={<EyeIcon />}
-							shadow
-						></IconButton>
-					)} */}
 				</div>
 			</div>
 			<Row
@@ -184,7 +166,11 @@ export function NewChat() {
 				className={styles["feature-masks"]}
 			>
 				{isAuthenticated ? (
-					featureGroup.map((mask) => FeatureMaskItem(mask, startChat))
+					featureGroup.length > 0 ? (
+						featureGroup.map((mask) => FeatureMaskItem(mask, startChat))
+					) : (
+						<div>没有可用的特征面具</div>
+					)
 				) : (
 					<>请登录后开启该功能</>
 				)}

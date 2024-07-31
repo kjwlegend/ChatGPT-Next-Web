@@ -3,17 +3,11 @@ import { useRef } from "react";
 import { IconButton } from "@/app/components/button";
 import { ErrorBoundary } from "@/app/components/error";
 
-import styles from "./mask.module.scss";
-
 import DownloadIcon from "@/app/icons/download.svg";
 import UploadIcon from "@/app/icons/upload.svg";
 import EditIcon from "@/app/icons/edit.svg";
 import AddIcon from "@/app/icons/add.svg";
 import CloseIcon from "@/app/icons/close.svg";
-import DeleteIcon from "@/app/icons/delete.svg";
-import EyeIcon from "@/app/icons/eye.svg";
-import CopyIcon from "@/app/icons/copy.svg";
-import DragIcon from "@/app/icons/drag.svg";
 
 import { DEFAULT_MASK_AVATAR, useMaskStore } from "@/app/store/mask";
 import { Mask } from "@/app/types/mask";
@@ -22,6 +16,7 @@ import {
 	ModelConfig,
 	useAppConfig,
 	useChatStore,
+	useUserStore,
 } from "@/app/store";
 import { ROLES } from "@/app/client/api";
 import {
@@ -53,15 +48,17 @@ import {
 } from "@hello-pangea/dnd";
 
 import { Card, Button, Switch, Segmented, Checkbox } from "antd";
-import MaskComponent from "./maskitem";
-
-import { MaskConfig } from "../components/mask-modal";
 
 import MultipleTag from "@/app/components/multipletags";
 import { on } from "events";
 import { filter } from "cheerio/lib/api/traversing";
-import { useMasks } from "@/app/masks/useMasks";
-import { FilterOptions } from "react-markdown/lib/react-markdown";
+import { useMasks } from "@/app/hooks/useMasks";
+
+import SegmentedControl from "./SegmentedControl";
+import FilterOptions from "./FilterOptions";
+import MaskList from "./MaskList";
+import MaskModal from "./MaskModal";
+import styles from "./mask.module.scss";
 
 const { Meta } = Card;
 
@@ -83,49 +80,36 @@ export function MaskAvatar(props: { mask: Mask }) {
 
 export function MaskPage() {
 	const navigate = useNavigate();
-
 	const maskStore = useMaskStore();
-	const { masks: maskfetch, fetchPrompts } = useMasks();
-
-	const { masks: originalMask, maskslist } = maskStore;
+	const { masks: maskfetch, fetchPromptsCallback } = useMasks();
 	const chatStore = useChatStore();
-	const [selectedTags, setSelectedTags] = useState<string[]>(["全部"]);
+	const user = useUserStore().user;
+	const { username, nickname } = user;
+
+	const [selectedTags, setSelectedTags] = useState<string[]>(["通用"]);
 	const [isBuiltin, setisBuiltin] = useState<boolean | undefined>(true);
 	const [filterLang, setFilterLang] = useState<Lang>("cn");
-	const [filterCategory, setFilterCategory] = useState<typeof MaskCategory>();
 	const [searchText, setSearchText] = useState("");
 	const [cardStyle, setCardStyle] = useState<
 		"roleplay" | "assistant" | "workflow"
 	>("assistant");
-
-	const [segmentValue, setsegmentValue] = useState<string | number>("场景助手");
+	const [segmentValue, setsegmentValue] = useState<string | number>("public");
 	const [filterOptions, setFilterOptions] = useState<Object>({
-		lang: "",
 		tags: [],
-		builtin: false,
-		type: "",
 		searchTerm: "",
 		author: "",
 	});
 
 	const [allMasks, setallMasks] = useState<Mask[]>([]);
 	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
-	const [userMasks, setUserMasks] = useState<Mask[]>([]);
-	const [author, setAuthor] = useState<string | undefined>("");
-
+	const [author, setAuthor] = useState<string | undefined>(undefined);
 	const [totalPrompts, setTotalPrompts] = useState(0);
 	const [isNext, setIsNext] = useState(true);
 	const [page, setPage] = useState(1);
 
-	// create a scroll ref to detect scroll container
-	const scrollRef = useRef<HTMLDivElement>(null);
-	const limit = 25; // 或者其他你需要的限制数
-	const loaderRef = useRef(null);
-
 	const loadMore = useCallback(async () => {
-		console.log(isNext, page, totalPrompts);
 		if (isNext) {
-			const result = await fetchPrompts(page, limit);
+			const result = await fetchPromptsCallback(page, 25);
 			if (result.is_next !== undefined) {
 				setIsNext(result.is_next);
 			}
@@ -134,135 +118,24 @@ export function MaskPage() {
 			}
 			setPage((prevPage) => prevPage + 1);
 		}
-	}, [isNext, page, limit]);
-
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting) {
-					loadMore();
-				}
-			},
-			{ threshold: 1.0 },
-		);
-
-		if (loaderRef.current) {
-			observer.observe(loaderRef.current);
-		}
-
-		return () => {
-			if (loaderRef.current) {
-				observer.unobserve(loaderRef.current);
-			}
-		};
-	}, [loadMore]);
-
-	const segmentOptions = [
-		{ label: "场景助手", value: "场景助手", disabled: false },
-		{ label: "角色对话", value: "角色对话", disabled: false },
-		{ label: "工作流", value: "工作流", disabled: true },
-	];
-
-	const handleSegmentChange = (value: string | number) => {
-		setsegmentValue(value);
-		console.log("value = ", value);
-		// set card style
-		switch (value) {
-			case "场景助手":
-				setCardStyle("assistant");
-				break;
-			case "角色对话":
-				setCardStyle("roleplay");
-				break;
-			case "工作流":
-				setCardStyle("workflow");
-				break;
-			default:
-				break;
-		}
-	};
-
-	const handleSwitchChange = (checked: boolean) => {
-		setisBuiltin(checked);
-		console.log("checked = ", checked);
-	};
-
-	const handleTagsChange = (selectedTags: string[]) => {
-		console.log("tags", selectedTags);
-		setSelectedTags(selectedTags);
-	};
-
-	const checkOptions = [
-		{ label: "官方", value: "builtin" },
-		{ label: "用户", value: "user" },
-		{ label: "自建", value: "private" },
-	];
-	const defaultValue = ["builtin", "user"];
-	const handleCheckChange = (checkedValues: any[]) => {
-		console.log("option", checkedValues);
-
-		// 定义局部变量来存储新的状态值
-		const isBuiltinChecked = checkedValues.includes("builtin");
-		const isUserChecked = checkedValues.includes("user");
-		const isPrivateChecked = checkedValues.includes("private");
-
-		// // 计算 isBuiltin 的新值
-		// const newIsBuiltin = isBuiltinChecked && !isUserChecked;
-		// 计算 isBuiltin 的新值，如果同时选择了 builtin 和 user，则设置为 undefined
-		const newIsBuiltin = isBuiltinChecked
-			? isUserChecked
-				? undefined
-				: true
-			: false;
-		// 计算 author 的新值
-		const newAuthor = isPrivateChecked ? "kjw1" : undefined;
-
-		console.log("newIsBuiltin", newIsBuiltin, "newAuthor", newAuthor);
-
-		// 更新状态
-		setisBuiltin(newIsBuiltin);
-		setAuthor(newAuthor);
-
-		// 更新 filterOptions 状态
-		setFilterOptions((prevOptions) => ({
-			...prevOptions,
-			builtin: newIsBuiltin,
-			author: newAuthor,
-		}));
-	};
-	const onFilter = () => {
-		// 如果存在 filterLang，添加到过滤条件中
-		// const filterOptions = {
-		// 	lang: filterLang,
-		// };
-		const newFilterOptions = {
-			...filterOptions,
-			...(filterLang !== undefined && { lang: filterLang }),
-			...(selectedTags && { tags: selectedTags }),
-			...(isBuiltin !== undefined && { builtin: isBuiltin }),
-			...(cardStyle !== undefined && { type: cardStyle }),
-			...(searchText !== undefined && { searchTerm: searchText }),
-		};
-
-		// 调用新的 filter 方法，并传递过滤条件对象
-		const data = maskStore.filter(newFilterOptions);
-
-		// 更新状态
-		return data;
-	};
+	}, [isNext, page]);
 
 	useEffect(() => {
 		const masksData = maskStore.getAll();
-
-		console.log("masksData", masksData.length);
 		setallMasks(masksData);
 	}, [maskStore]);
 
-	// 依赖项数组中包含所有可能影响过滤的变量
 	useEffect(() => {
-		let filteredMasks = onFilter();
-		filteredMasks = maskStore.sort("createdAt", filteredMasks);
-		setFilterMasks(filteredMasks);
+		const newFilterOptions = {
+			...filterOptions,
+			...(selectedTags && { tags: selectedTags }),
+			...(searchText !== undefined && { searchTerm: searchText }),
+			...(author !== undefined && { author: author }),
+		};
+
+		const data = maskStore.filter(newFilterOptions);
+		console.log("list", data);
+		setFilterMasks(maskStore.sort("hotness", data));
 	}, [
 		filterLang,
 		selectedTags,
@@ -273,14 +146,27 @@ export function MaskPage() {
 		maskStore,
 	]);
 
-	function deleteHandler() {
-		console.log("item delete");
-	}
+	const handleSegmentChange = (value: string | number) => {
+		setsegmentValue(value);
+		switch (value) {
+			case "public":
+				setAuthor(undefined);
+				break;
+			case "private":
+				setAuthor(nickname || username);
+				break;
+			default:
+				break;
+		}
+	};
+
+	const handleTagsChange = (selectedTags: string[]) => {
+		setSelectedTags(selectedTags);
+	};
 
 	const onSearch = (text: string) => {
 		setSearchText(text);
 	};
-	const masks = filterMasks;
 
 	const [editingMaskId, setEditingMaskId] = useState<string | undefined>();
 	const editingMask =
@@ -303,7 +189,6 @@ export function MaskPage() {
 					}
 					return;
 				}
-				//if the content is a single mask.
 				if (importMasks.name) {
 					maskStore.create(importMasks);
 				}
@@ -314,16 +199,13 @@ export function MaskPage() {
 	return (
 		<ErrorBoundary>
 			<div className={styles["mask-page"]}>
-				<div className="window-header">
+				{/* <div className="window-header">
 					<div className="window-header-title">
 						<div className="window-header-main-title">
 							{Locale.Mask.Page.Title}
 						</div>
-						<div className="window-header-submai-title">
-							{Locale.Mask.Page.SubTitle(maskStore.total)}
-						</div>
+						<div className="window-header-submai-title"></div>
 					</div>
-
 					<div className="window-actions">
 						<div className="window-action-button">
 							<IconButton
@@ -349,47 +231,17 @@ export function MaskPage() {
 							/>
 						</div>
 					</div>
-				</div>
-
+				</div> */}
 				<div className={styles["mask-page-body"]}>
-					{/* ====顶部筛选器==== */}
-					<div>
-						<Segmented
-							options={segmentOptions}
-							value={segmentValue}
-							block
-							onChange={handleSegmentChange}
-							size="large"
-						/>
-					</div>
-					<div className={styles["mask-category"]}>
-						<span className={styles["builtin"]}>
-							{/* <Switch
-								defaultChecked={isBuiltin}
-								onChange={handleSwitchChange}
-								unCheckedChildren="只看官方"
-								checkedChildren="查看全部"
-							/>
-							<Switch
-								defaultChecked={isBuiltin}
-								onChange={handleSwitchChange}
-								unCheckedChildren="只看自己"
-								checkedChildren="查看全部"
-							/> */}
-							<Checkbox.Group
-								options={checkOptions}
-								defaultValue={defaultValue}
-								onChange={handleCheckChange}
-							/>
-						</span>
-						<MultipleTag
-							tagsData={MaskCategory.filter((c) => c.scene === cardStyle).map(
-								(c) => c.value,
-							)}
-							onTagsChange={handleTagsChange}
-						/>
-					</div>
-
+					{Locale.Mask.Page.SubTitle(maskStore.total)}
+					<SegmentedControl
+						segmentValue={segmentValue}
+						handleSegmentChange={handleSegmentChange}
+					/>
+					<FilterOptions
+						handleTagsChange={handleTagsChange}
+						cardStyle={cardStyle}
+					/>
 					<div className={styles["mask-filter"]}>
 						<input
 							type="text"
@@ -397,29 +249,6 @@ export function MaskPage() {
 							placeholder={Locale.Mask.Page.Search}
 							onInput={(e) => onSearch(e.currentTarget.value)}
 						/>
-
-						{/* <Select
-							className={styles["mask-filter-lang"]}
-							value={filterLang ?? Locale.Settings.Lang.All}
-							onChange={(e) => {
-								const value = e.currentTarget.value;
-								if (value === Locale.Settings.Lang.All) {
-									setFilterLang(undefined);
-								} else {
-									setFilterLang(value as Lang);
-								}
-							}}
-						>
-							<option key="all" value={Locale.Settings.Lang.All}>
-								{Locale.Settings.Lang.All}
-							</option>
-							{AllLangs.map((lang) => (
-								<option value={lang} key={lang}>
-									{ALL_LANG_OPTIONS[lang]}
-								</option>
-							))}
-						</Select> */}
-
 						<IconButton
 							className={styles["mask-create"]}
 							icon={<AddIcon />}
@@ -431,69 +260,19 @@ export function MaskPage() {
 							}}
 						/>
 					</div>
-					{/* ====顶部end==== */}
-
-					<div>
-						<div
-							className={`${styles["mask-list"]} flex-container`}
-							ref={scrollRef}
-						>
-							{masks.map((m) => (
-								<MaskComponent
-									mask={m}
-									key={m.id}
-									styleName={cardStyle}
-									setEditingMaskId={(id) => setEditingMaskId(id)}
-								/>
-							))}
-							<div ref={loaderRef} style={{ height: "1px" }} />
-						</div>
-					</div>
+					<MaskList
+						masks={filterMasks}
+						cardStyle={cardStyle}
+						loadMore={loadMore}
+					/>
 				</div>
 			</div>
-
-			{editingMask && (
-				<div className="modal-mask">
-					<Modal
-						title={Locale.Mask.EditModal.Title(editingMask?.builtin)}
-						onClose={closeMaskModal}
-						actions={[
-							<p key="description">新建角色可以享受 1小光币奖励</p>,
-							<IconButton
-								icon={<DownloadIcon />}
-								text={Locale.Mask.EditModal.Download}
-								key="export"
-								bordered
-								onClick={() =>
-									downloadAs(
-										JSON.stringify(editingMask),
-										`${editingMask.name}.json`,
-									)
-								}
-							/>,
-							<IconButton
-								key="save"
-								icon={<CopyIcon />}
-								bordered
-								text={"保存助手"}
-								onClick={() => {
-									// navigate(Path.Masks);
-									maskStore.saveMask(editingMaskId!);
-									setEditingMaskId(undefined);
-								}}
-							/>,
-						]}
-					>
-						<MaskConfig
-							mask={editingMask}
-							updateMask={(updater) =>
-								maskStore.updateMask(editingMaskId!, updater)
-							}
-							readonly={editingMask.builtin}
-						/>
-					</Modal>
-				</div>
-			)}
+			<MaskModal
+				editingMask={editingMask}
+				closeMaskModal={closeMaskModal}
+				saveMask={(id) => maskStore.saveMask(id)}
+				updateMask={(id, updater) => maskStore.updateMask(id, updater)}
+			/>
 		</ErrorBoundary>
 	);
 }
