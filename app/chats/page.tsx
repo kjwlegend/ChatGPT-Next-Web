@@ -41,7 +41,11 @@ import { SEOHeader } from "../components/seo-header";
 import { getChatSession, getChatSessionChats } from "@/app/services/chats";
 import { PaginationData } from "@/app/services/chats";
 import { ChatList } from "./sidebar/chatList";
-import { UpdateChatMessages } from "../services/chatService";
+import {
+	UpdateChatMessages,
+	updateChatSessions,
+} from "../services/chatService";
+import { useChatService } from "../hooks/useChatHook";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -243,50 +247,13 @@ function Screen() {
 		// };
 	}, [isAuthenticated, logoutHook]);
 
-	const loadMoreSessions = async (page: number) => {
-		const param: PaginationData = {
-			limit: 20,
-			page,
-		};
-		return await getChatSession(param);
-	};
-
-	const handleAddClick = () => {
-		if (config.dontShowMaskSplashScreen) {
-			chatStore.newSession();
-			navigate(Path.Chat);
-		} else {
-			navigate(Path.NewChat);
-		}
-	};
-
-	const handleChatItemClick = (id: string) => {
-		const getMessages = async (sessionid: string) => {
-			const param: PaginationData = {
-				limit: 60,
-			};
-			try {
-				const chatSessionList = await getChatSessionChats(param, sessionid);
-				// 直接使用 chatStore 的方法更新 sessions
-				const chats = chatSessionList.results;
-
-				UpdateChatMessages(sessionid, chats);
-			} catch (error) {
-				console.log("get chatSession list error", error);
-			}
-		};
-		// 处理点击聊天项的逻辑
-		selectSessionById(id);
-		navigate(Path.Chat);
-		getMessages(id);
-	};
-
-	const handleChatItemDelete = (id: number) => {
-		// 处理删除聊天项的逻辑
-		async () => {
-			chatStore.deleteSession(id);
-		};
-	};
+	const {
+		chatSessions,
+		loadMoreSessions,
+		handleAddClick,
+		handleChatItemClick,
+		handleChatItemDelete,
+	} = useChatService();
 
 	return (
 		<div
@@ -300,6 +267,7 @@ function Screen() {
 			<>
 				<SideBar
 					className={isHome ? styles["sidebar-show"] : ""}
+					chatSessions={chatSessions}
 					loadMoreSessions={loadMoreSessions}
 					onAddClick={handleAddClick}
 					onChatItemClick={handleChatItemClick}

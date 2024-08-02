@@ -26,7 +26,7 @@ import { useWorkflowStore } from "../../store/workflow";
 import { useMobileScreen } from "../../utils";
 import { ChatData, getChat } from "../../api/backend/chat";
 import { UpdateChatMessages } from "../../services/chatService";
-import { ChatItem } from "../double-agents/components/chatItem";
+// import { ChatItem } from "../double-agents/components/chatItem";
 import { Modal } from "@/app/components/ui-lib";
 import usedoubleAgent, {
 	DoubleAgentChatSession,

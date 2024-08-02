@@ -24,7 +24,7 @@ export enum Theme {
 }
 
 export const DEFAULT_CONFIG = {
-	lastUpdate: Date.now(), // timestamp, to merge state
+	lastUpdateTime: Date.now(), // timestamp, to merge state
 	submitKey: isMacOS() ? SubmitKey.MetaEnter : SubmitKey.CtrlEnter,
 	avatar: "1f603",
 	fontSize: 14,
@@ -169,7 +169,7 @@ export const useAppConfig = createPersistStore(
 			}
 
 			if (version < 3.8) {
-				state.lastUpdate = Date.now();
+				state.lastUpdateTime = Date.now();
 			}
 
 			return state as any;

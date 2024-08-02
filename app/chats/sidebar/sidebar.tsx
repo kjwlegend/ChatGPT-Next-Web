@@ -154,6 +154,7 @@ interface SideBarProps {
 	onAddClick: () => void;
 	onChatItemClick: (id: string) => void;
 	onChatItemDelete: (id: number) => void;
+	chatSessions: any[];
 	ChatListComponent: React.ComponentType<{
 		narrow?: boolean;
 		chatSessions: any[];
@@ -168,6 +169,7 @@ export function SideBar({
 	onAddClick,
 	onChatItemClick,
 	onChatItemDelete,
+	chatSessions,
 	ChatListComponent,
 }: SideBarProps) {
 	const chatStore = useChatStore();
@@ -181,29 +183,29 @@ export function SideBar({
 		() => isIOS() && isMobileScreen,
 		[isMobileScreen],
 	);
-	const [chatSessions, setChatSessions] = useState<any[]>([]); // 根据你的数据结构调整类型
+	// const [chatSessions, setChatSessions] = useState<any[]>([]); // 根据你的数据结构调整类型
 	useHotKey();
 
 	// 加载更多会话
-
 	const handleLoadMore = async () => {
 		if (hasMore) {
 			console.log("load chat session");
 			try {
 				const chatSessionList = await loadMoreSessions(page);
-				setChatSessions((prevSessions) => [
-					...prevSessions,
-					...chatSessionList.data,
-				]);
+				// setChatSessions((prevSessions) => {
+				// 	const updatedSessions = [...chatSessionList.data];
+				// 	// 在这里可以执行依赖于更新后的状态的逻辑
+
+				// 	return updatedSessions;
+				// });
 				setPage((prevPage) => prevPage + 1);
 				setHasMore(chatSessionList.is_next);
-				console.log("ChatSessionlist", chatSessionList);
-				console.log("data after setChatSession", chatSessions);
 			} catch (error) {
 				console.log("get chatSession list error", error);
 			}
 		}
 	};
+
 	useEffect(() => {
 		console.log("Updated chat sessions:", chatSessions);
 	}, [chatSessions]);

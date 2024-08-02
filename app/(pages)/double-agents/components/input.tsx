@@ -251,7 +251,7 @@ export function DoubleAgentInput() {
 					: conversation.topic,
 			initialInput: userInput,
 			paused: newPausedState,
-			lastUpdateTime: new Date().toISOString(),
+			lastUpdateTime: new Date().getTime(),
 		};
 		console.log("conversation", updateConversation);
 		console.log("开始对话");

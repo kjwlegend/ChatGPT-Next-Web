@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/calcTextareaHeight.ts",
+    "app/calcTextareaHeight.ts", "app/hooks/useMultipleAgentsHook.ts",
   ],
   "exclude": [
     "node_modules"

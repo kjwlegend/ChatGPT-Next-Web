@@ -44,7 +44,7 @@ export interface ChatSession {
 	memoryPrompt: string;
 	messages: ChatMessage[];
 	stat: ChatStat;
-	lastUpdate: any;
+	lastUpdateTime: any;
 	lastSummarizeIndex: number;
 	clearContextIndex?: number;
 	mask: Mask;

@@ -41,7 +41,8 @@ const nextConfig = {
   },
   reactStrictMode: false,
   experimental: {
-    forceSwcTransforms: true,
+    forceSwcTransforms: true
+    // esmExternals: false
   },
 }
 

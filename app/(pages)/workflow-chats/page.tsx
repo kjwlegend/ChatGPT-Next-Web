@@ -206,7 +206,7 @@ function AgentList() {
 									{orderedSessions.map((item, i) => (
 										<ChatItemShort
 											title={item.topic}
-											time={new Date(item.lastUpdate).toLocaleString()}
+											time={new Date(item.lastUpdateTime).toLocaleString()}
 											count={item.messages.length}
 											key={item.id}
 											id={item.id}

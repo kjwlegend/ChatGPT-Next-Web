@@ -42,7 +42,10 @@ export const useAuthStore = create<AuthState>()(
 
 					document.cookie = `authenticated=true; expires=${newExpirationDate.toUTCString()}; path=/`;
 					document.cookie = `user_id=${result.user.username}; expires=${newExpirationDate.toUTCString()}; path=/`;
+					//  add token to cookie
 
+					document.cookie = `access_token=${result.access}; expires=${newExpirationDate.toUTCString()}; path=/`;
+					document.cookie = `refresh_token=${result.refresh}; expires=${newExpirationDate.toUTCString()}; path=/`;
 					set({
 						isAuthenticated: true,
 						accessToken: result.access,
@@ -67,6 +70,11 @@ export const useAuthStore = create<AuthState>()(
 					"authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 				document.cookie =
 					"user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+				document.cookie =
+					"access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+				document.cookie =
+					"refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 			},
 			getAccessToken: () => {
 				return get().accessToken;
@@ -77,7 +85,6 @@ export const useAuthStore = create<AuthState>()(
 			updateUserInfo: async (id: string | number) => {
 				try {
 					const user = await getUser({}, id);
-
 					if (user.code === 401) {
 						await get().logout();
 						return new Error("登录过期，请重新登录");

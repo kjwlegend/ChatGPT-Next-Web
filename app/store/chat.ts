@@ -78,7 +78,7 @@ function createEmptySession(props: {
 		stat: {
 			tokenCount: 0,
 		},
-		lastUpdate: Date.now(),
+		lastUpdateTime: Date.now(),
 		lastSummarizeIndex: 0,
 		mask: props.mask ?? createEmptyMask(),
 		isworkflow: false,
@@ -282,44 +282,51 @@ export const useChatStore = createPersistStore(
 				get().selectSession(limit(i + delta));
 			},
 
-			deleteSession(index: number) {
-				const deletingLastSession = get().sessions.length === 1;
-				const deletedSession = get().sessions.at(index);
+			deleteSession(sessionId: string) {
+				const sessions = get().sessions;
+				const sessionIndex = sessions.findIndex(
+					(session) => session.id === sessionId,
+				);
 
-				if (!deletedSession) return;
+				// 如果没有找到对应的会话，直接返回
+				if (sessionIndex === -1) return;
 
-				const sessionid = deletedSession.id;
+				const deletingLastSession = sessions.length === 1;
+				const deletedSession = sessions[sessionIndex];
 
-				// update session
-				updateChatSession({ active: false }, sessionid);
+				// 更新会话状态
+				updateChatSession({ active: false }, sessionId);
 
-				const sessions = get().sessions.slice();
-				sessions.splice(index, 1);
+				// 创建一个新的会话数组，删除指定的会话
+				const updatedSessions = sessions.slice();
+				updatedSessions.splice(sessionIndex, 1);
 
 				const currentIndex = get().currentSessionIndex;
 				let nextIndex = Math.min(
-					currentIndex - Number(index < currentIndex),
-					sessions.length - 1,
+					currentIndex - Number(sessionIndex < currentIndex),
+					updatedSessions.length - 1,
 				);
 
-				// for undo delete action
+				// 用于撤销删除操作的状态
 				const restoreState = {
 					currentSessionIndex: get().currentSessionIndex,
-					sessions: get().sessions.slice(),
+					sessions: sessions.slice(),
 				};
 
+				// 更新状态
 				set(() => ({
 					currentSessionIndex: nextIndex,
-					sessions,
+					sessions: updatedSessions,
 				}));
 
+				// 显示撤销删除的提示
 				showToast(
 					Locale.Home.DeleteToast,
 					{
 						text: Locale.Home.Revert,
 						onClick() {
 							set(() => restoreState);
-							updateChatSession({ active: true }, sessionid);
+							updateChatSession({ active: true }, sessionId);
 						},
 					},
 					5000,
@@ -360,7 +367,7 @@ export const useChatStore = createPersistStore(
 			onNewMessage(message: ChatMessage) {
 				get().updateCurrentSession((session) => {
 					session.messages = session.messages.concat();
-					session.lastUpdate = Date.now();
+					session.lastUpdateTime = Date.now();
 				});
 				summarizeSession();
 			},
@@ -379,7 +386,7 @@ export const useChatStore = createPersistStore(
 				set((state) => {
 					// Create a new sorted array instead of modifying the existing state directly
 					const sortedSessions = [...state.sessions].sort(
-						(a, b) => b.lastUpdate - a.lastUpdate,
+						(a, b) => b.lastUpdateTime - a.lastUpdateTime,
 					);
 
 					// Check if the sorted array is different from the current state to avoid unnecessary updates
@@ -499,7 +506,6 @@ export const useChatStore = createPersistStore(
 					});
 
 					sendMessages = recentMessages.concat(userMessage);
-
 					// 更新会话
 					get().updateSession(
 						sessionId,
@@ -511,13 +517,14 @@ export const useChatStore = createPersistStore(
 								botMessage,
 							]);
 							session.responseStatus = false;
-							session.lastUpdate = Date.now();
+							session.lastUpdateTime = Date.now();
 							set((state) => ({ currentSessionIndex: 0 }));
 						},
 						false,
 					);
 
 					console.log("click send: ", session.topic, session.responseStatus);
+					get().sortSession();
 
 					// 调用发送消息函数
 					sendChatMessage(
@@ -560,7 +567,7 @@ export const useChatStore = createPersistStore(
 								botMessage,
 							]);
 							session.responseStatus = false;
-							session.lastUpdate = Date.now();
+							session.lastUpdateTime = Date.now();
 							set((state) => ({ currentSessionIndex: 0 }));
 						},
 						false,
@@ -599,7 +606,7 @@ export const useChatStore = createPersistStore(
 								session.messages[messageIndex] = updatedBotMessage;
 							}
 						}
-						session.lastUpdate = Date.now();
+						session.lastUpdateTime = Date.now();
 					},
 					sync,
 				);

@@ -243,7 +243,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 			chat_count: 0,
 			updated_at: sessionData.updated_at,
 			created_at: sessionData.created_at,
-			lastUpdate: Date.parse(sessionData.updated_at),
+			lastUpdateTime: Date.parse(sessionData.updated_at),
 		};
 
 		if (!exists) {
@@ -252,7 +252,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 		} else {
 			const existingSession = chatStore.sessions[existingSessionIndex];
 
-			if (newSession.lastUpdate! > existingSession.lastUpdate) {
+			if (newSession.lastUpdateTime! > existingSession.lastUpdateTime) {
 				chatStore.updateSession(newSession.id!, () => newSession);
 			}
 		}

@@ -41,7 +41,14 @@ const ConversationWindow: React.FC = () => {
 	return (
 		<>
 			{shouldRender && conversation ? (
-				<Card bodyStyle={{ padding: 0 }} style={{ height: "100%" }}>
+				<Card
+					style={{ height: "100%" }}
+					styles={{
+						body: {
+							padding: 0,
+						},
+					}}
+				>
 					<DoubleAgentWindowHeader session={conversation} />
 					<div style={{ marginBottom: 16 }}>
 						<Chatbody _session={conversation} />

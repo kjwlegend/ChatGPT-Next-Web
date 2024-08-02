@@ -23,7 +23,7 @@ import {
 
 import usedoubleAgentStore from "@/app/store/doubleAgents";
 import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
-import { useUserStore } from "@/app/store";
+import { useAccessStore, useAppConfig, useUserStore } from "@/app/store";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
@@ -32,6 +32,11 @@ import {
 	RightSquareOutlined,
 } from "@ant-design/icons";
 import { useAuthStore } from "@/app/store/auth";
+import { Loading } from "@/app/components/ui-lib";
+import { getClientConfig } from "@/app/config/client";
+import { getCSSVar } from "@/app/utils";
+import { getISOLang } from "@/app/locales";
+
 const DoubleAgentSideBar = dynamic(
 	async () => (await import("./components/sidebar")).DoubleAgentSideBar,
 	{
@@ -39,7 +44,6 @@ const DoubleAgentSideBar = dynamic(
 		ssr: false,
 	},
 );
-// import Footer from "./components/Footer";
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -154,6 +158,7 @@ const DoulbeAgentLayout: React.FC = () => {
 				>
 					<Content id={SlotID.AppBody}>
 						<Routes>
+							<Route path={"/"} element={<MainScreen />} />
 							<Route path={Path.Chat} element={<MainScreen />} />
 						</Routes>
 					</Content>
@@ -163,7 +168,70 @@ const DoulbeAgentLayout: React.FC = () => {
 	);
 };
 
+const useHasHydrated = () => {
+	const [hasHydrated, setHasHydrated] = useState<boolean>(false);
+
+	useEffect(() => {
+		setHasHydrated(true);
+	}, []);
+
+	return hasHydrated;
+};
+
+function useSwitchTheme() {
+	const config = useAppConfig();
+
+	useEffect(() => {
+		document.body.classList.remove("light");
+		document.body.classList.remove("dark");
+
+		if (config.theme === "dark") {
+			document.body.classList.add("dark");
+		} else if (config.theme === "light") {
+			document.body.classList.add("light");
+		}
+
+		const metaDescriptionDark = document.querySelector(
+			'meta[name="theme-color"][media*="dark"]',
+		);
+		const metaDescriptionLight = document.querySelector(
+			'meta[name="theme-color"][media*="light"]',
+		);
+
+		if (config.theme === "auto") {
+			metaDescriptionDark?.setAttribute("content", "#151515");
+			metaDescriptionLight?.setAttribute("content", "#fafafa");
+		} else {
+			const themeColor = getCSSVar("--theme-color");
+			metaDescriptionDark?.setAttribute("content", themeColor);
+			metaDescriptionLight?.setAttribute("content", themeColor);
+		}
+	}, [config.theme]);
+}
+
+function useHtmlLang() {
+	useEffect(() => {
+		const lang = getISOLang();
+		const htmlLang = document.documentElement.lang;
+
+		if (lang !== htmlLang) {
+			document.documentElement.lang = lang;
+		}
+	}, []);
+}
+
 export default function App() {
+	useSwitchTheme();
+	useHtmlLang();
+	useEffect(() => {
+		console.log("[Config] got config from build time", getClientConfig());
+		useAccessStore.getState().fetch();
+	}, []);
+
+	if (!useHasHydrated()) {
+		return <Loading />;
+	}
+
 	return (
 		<Router>
 			<DoulbeAgentLayout />

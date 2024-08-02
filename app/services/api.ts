@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import { useAuthStore } from "../store/auth";
-import { Stats } from "fs";
+// import { useAuthStore } from "../store/auth";
 
 type AppMappingType = {
 	[key: string]: string;
@@ -27,8 +26,26 @@ const service: AxiosInstance = axios.create({
 	timeout: 15000,
 });
 
+function getCookie(name: string): string | null {
+	const value = `; ${document.cookie}`; // 在 cookie 字符串前加分号以便于分割
+	const parts = value.split(`; ${name}=`); // 分割字符串以获取特定 cookie
+
+	// 如果 parts 的长度大于 1，说明找到了指定的 cookie
+	if (parts.length > 1) {
+		// 返回 cookie 的值，并去除可能存在的前后空格
+		return parts.pop().split(";")[0].trim() || null;
+	}
+	return null; // 如果没有找到，返回 null
+}
 async function refreshTokenAndRetryRequest(error: any, originalRequest: any) {
-	const refreshToken = useAuthStore.getState().getRefreshToken();
+	// get refreshToekn from cookie
+	const refreshToken = getCookie("refresh_token");
+
+	if (!refreshToken) {
+		return Promise.reject(error);
+	}
+	// 刷新 token
+
 	try {
 		const response = await service.post("/gpt/token/refresh/", {
 			refreshToken,
@@ -40,7 +57,6 @@ async function refreshTokenAndRetryRequest(error: any, originalRequest: any) {
 		return service(originalRequest); // 重新发送原始请求
 	} catch (refreshError) {
 		// 刷新令牌失败的处理逻辑
-		useAuthStore.getState().logout(); // 清除过期的 token
 		window.location.href = "/auth"; // 重定向到登录页面
 		throw new Error("刷新令牌失败，请重新登录");
 	}
@@ -48,10 +64,11 @@ async function refreshTokenAndRetryRequest(error: any, originalRequest: any) {
 
 service.interceptors.request.use(
 	(config) => {
-		const accessToken = useAuthStore.getState().getAccessToken(); // 获取 token 的新方式
+		const accessToken = getCookie("access_token");
 		if (accessToken) {
 			config.headers.Authorization = `Bearer ${accessToken}`;
 		}
+		config.withCredentials = true;
 		return config;
 	},
 	(error) => {
@@ -136,7 +153,7 @@ export const apiGet = (appurl: string, endpoint: string) => {
 };
 
 export const apiPut = (appurl: string, endpoint: string) => {
-	return async (params: any, id?: string) => {
+	return async (params: any, id?: string | number) => {
 		const url = id
 			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
 			: `/${appurl}${endpoint}`;
