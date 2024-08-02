@@ -43,7 +43,6 @@ export const DoubleAgentMessageList: React.FC<
 	DoubleAgentChatMessageListProps
 > = ({ messages, isLoading, hasNextPage }) => {
 	let session: any = null;
-
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const isMobileScreen = useMobileScreen();
 

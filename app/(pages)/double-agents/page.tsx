@@ -94,7 +94,7 @@ const EmptyIntro = () => {
 	);
 };
 
-const App: React.FC = () => {
+const DoulbeAgentLayout: React.FC = () => {
 	const doubleagents = usedoubleAgentStore();
 	const userid = useUserStore.getState().user.id;
 	const isAuth = useAuthStore.getState().isAuthenticated;
@@ -111,6 +111,39 @@ const App: React.FC = () => {
 		setLocalConversations(conversations);
 	}, [conversations]);
 
+	const MainScreen = () => {
+		return !isAuth ? (
+			<div className={styles["welcome-container"]}>
+				<div className={styles["logo"]}>
+					<Image
+						className={styles["logo-image"]}
+						src="/logo-2.png"
+						alt="Logo"
+						width={200}
+						height={253}
+					/>
+				</div>
+				<div className={styles["title"]}>您还未登录, 请登录后开启该功能</div>
+				<div className={styles["actions"]}>
+					<Button
+						type="default"
+						className={styles["action-button"]}
+						icon={<PlusCircleOutlined />}
+						onClick={() => {
+							window.location.href = "/auth/";
+						}}
+					>
+						登录
+					</Button>
+				</div>
+			</div>
+		) : localconversations.length >= 1 ? (
+			<ChatArea />
+		) : (
+			<EmptyIntro />
+		);
+	};
+
 	return (
 		<DoubleAgentChatProvider>
 			<Layout style={{ flexDirection: "row" }}>
@@ -120,39 +153,9 @@ const App: React.FC = () => {
 					className={`${styles2["window-content"]} ${styles["background"]}`}
 				>
 					<Content id={SlotID.AppBody}>
-						{!isAuth ? (
-							<div className={styles["welcome-container"]}>
-								<div className={styles["logo"]}>
-									<Image
-										className={styles["logo-image"]}
-										src="/logo-2.png"
-										alt="Logo"
-										width={200}
-										height={253}
-									/>
-								</div>
-								<div className={styles["title"]}>
-									您还未登录, 请登录后开启该功能
-								</div>
-
-								<div className={styles["actions"]}>
-									<Button
-										type="default"
-										className={styles["action-button"]}
-										icon={<PlusCircleOutlined />}
-										onClick={() => {
-											window.location.href = "/auth/";
-										}}
-									>
-										登录
-									</Button>
-								</div>
-							</div>
-						) : localconversations.length >= 1 ? (
-							<ChatArea />
-						) : (
-							<EmptyIntro />
-						)}
+						<Routes>
+							<Route path={Path.Chat} element={<MainScreen />} />
+						</Routes>
 					</Content>
 				</Layout>
 			</Layout>
@@ -160,4 +163,10 @@ const App: React.FC = () => {
 	);
 };
 
-export default App;
+export default function App() {
+	return (
+		<Router>
+			<DoulbeAgentLayout />
+		</Router>
+	);
+}

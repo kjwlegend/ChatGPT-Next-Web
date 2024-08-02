@@ -282,7 +282,7 @@ export const useChatStore = createPersistStore(
 				get().selectSession(limit(i + delta));
 			},
 
-			deleteSession(index: number, userStore?: UserStore) {
+			deleteSession(index: number) {
 				const deletingLastSession = get().sessions.length === 1;
 				const deletedSession = get().sessions.at(index);
 
@@ -301,38 +301,6 @@ export const useChatStore = createPersistStore(
 					currentIndex - Number(index < currentIndex),
 					sessions.length - 1,
 				);
-
-				// if (deletingLastSession) {
-				// 	nextIndex = 0;
-				// 	sessions.push(createEmptySession());
-
-				// 	// session id  设置为空
-				// 	if (userStore) {
-				// 		const user = userStore.user; // 从 userStore 中获取 user 对象
-				// 		const userId = user.id; // 从 user 对象中获取 id 字段
-				// 		const session = sessions.at(0);
-				// 		if (!session) return;
-
-				// 		const data = {
-				// 			user: userId,
-				// 			topic: session.mask.topic ?? session.mask.name,
-				// 			isworkflow: session.isworkflow,
-				// 			mask: session.mask,
-				// 			mjConfig: session.mjConfig,
-				// 			model: session.mask.modelConfig.model,
-				// 			prompt_id: "100000",
-				// 			hide: false,
-				// 		};
-				// 		createChatSession(data)
-				// 			.then((res) => {
-				// 				console.log(res);
-				// 				session.id = res.data.session_id || nanoid();
-				// 			})
-				// 			.catch((err) => {
-				// 				console.log(err);
-				// 			});
-				// 	}
-				// }
 
 				// for undo delete action
 				const restoreState = {

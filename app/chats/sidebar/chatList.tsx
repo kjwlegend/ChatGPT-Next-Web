@@ -26,120 +26,174 @@ import { useMobileScreen } from "../../utils";
 import { UpdateChatMessages } from "../../services/chatService";
 import { ChatItem, ChatItemShort } from "./chatItem";
 import { PaginationData, getChatSessionChats } from "@/app/services/chats";
-export function ChatList(props: { narrow?: boolean }) {
-	const [
+
+// export function ChatList(props: { narrow?: boolean }) {
+// 	const [
+// 		currentSessionId,
+// 		selectSession,
+// 		selectSessionById,
+// 		moveSession,
+// 		sortSession,
+// 	] = useChatStore((state) => [
+// 		state.currentSessionId,
+// 		state.selectSession,
+// 		state.selectSessionById,
+// 		state.moveSession,
+// 		state.sortSession,
+// 	]);
+// 	const chatStore = useChatStore();
+// 	const { sessions } = chatStore;
+
+// 	const [chatlist, setChatlist] = useState(sessions);
+
+// 	useEffect(() => {
+// 		sortSession();
+// 		// setChatlist(sessions);
+// 	}, [sessions, sortSession]);
+
+// 	const workflowStore = useWorkflowStore();
+// 	const navigate = useNavigate();
+// 	const userStore = useUserStore();
+// 	const isMobileScreen = useMobileScreen();
+
+// 	const onDragEnd: OnDragEndResponder = (result) => {
+// 		const { destination, source } = result;
+// 		if (!destination) {
+// 			return;
+// 		}
+
+// 		if (
+// 			destination.droppableId === source.droppableId &&
+// 			destination.index === source.index
+// 		) {
+// 			return;
+// 		}
+
+// 		moveSession(source.index, destination.index);
+// 	};
+
+// 	return (
+// 		<DragDropContext onDragEnd={onDragEnd}>
+// 			<Droppable droppableId="chat-list">
+// 				{(provided) => {
+// 					return (
+// 						<div
+// 							className={styles["chat-list"]}
+// 							ref={provided.innerRef}
+// 							{...provided.droppableProps}
+// 						>
+// 							{sessions.length === 0 ? (
+// 								<div className={styles["no-conversations"]}>暂无对话</div>
+// 							) : (
+// 								sessions.map((item, i) => (
+// 									<ChatItem
+// 										title={item.topic}
+// 										time={
+// 											new Date(item.lastUpdate).toLocaleDateString(undefined, {
+// 												month: "2-digit",
+// 												day: "2-digit",
+// 											}) +
+// 											" " +
+// 											new Date(item.lastUpdate).toLocaleTimeString(undefined, {
+// 												hour: "2-digit",
+// 												minute: "2-digit",
+// 											})
+// 										}
+// 										count={item.chat_count ?? item.messages.length}
+// 										key={item.id}
+// 										id={item.id}
+// 										index={i}
+// 										selected={item.id === currentSessionId}
+// 										onClick={() => {
+
+// 										}}
+// 										onDelete={async () => {
+// 											if (
+// 												(!props.narrow && !isMobileScreen) ||
+// 												(await showConfirm(Locale.Home.DeleteChat))
+// 											) {
+// 												chatStore.deleteSession(i, userStore);
+// 											}
+// 										}}
+// 										narrow={props.narrow}
+// 										mask={item.mask}
+// 									/>
+// 								))
+// 							)}
+// 							{provided.placeholder}
+// 						</div>
+// 					);
+// 				}}
+// 			</Droppable>
+// 		</DragDropContext>
+// 	);
+// }
+
+interface ChatListProps {
+	narrow?: boolean;
+	chatSessions: any[];
+	onChatItemClick: (id: string) => void;
+	onChatItemDelete: (id: number) => void;
+}
+
+export function ChatList({
+	narrow,
+	chatSessions,
+	onChatItemClick,
+	onChatItemDelete,
+}: ChatListProps) {
+	const [chatlist, setChatlist] = useState(chatSessions);
+	const chatStore = useChatStore();
+	const {
 		currentSessionId,
 		selectSession,
 		selectSessionById,
 		moveSession,
 		sortSession,
-	] = useChatStore((state) => [
-		state.currentSessionId,
-		state.selectSession,
-		state.selectSessionById,
-		state.moveSession,
-		state.sortSession,
-	]);
-	const chatStore = useChatStore();
-	const { sessions } = chatStore;
+	} = chatStore;
 
-	const [chatlist, setChatlist] = useState(sessions);
+	// useEffect(() => {
+	// 	setChatlist(chatSessions);
+	// }, [chatSessions]);
 
-	useEffect(() => {
-		sortSession();
-		// setChatlist(sessions);
-	}, [sessions, sortSession]);
+	const [selectedChatId, setSelectedChatId] = useState<string | null>(null); // 管理选中的聊天项
 
-	const workflowStore = useWorkflowStore();
-	const navigate = useNavigate();
-	const userStore = useUserStore();
-	const isMobileScreen = useMobileScreen();
-
-	const getMessages = async (sessionid: string) => {
-		const param: PaginationData = {
-			limit: 60,
-		};
-		try {
-			const chatSessionList = await getChatSessionChats(param, sessionid);
-			// 直接使用 chatStore 的方法更新 sessions
-			const chats = chatSessionList.results;
-
-			UpdateChatMessages(sessionid, chats);
-		} catch (error) {
-			console.log("get chatSession list error", error);
-		}
-	};
-	const onDragEnd: OnDragEndResponder = (result) => {
-		const { destination, source } = result;
-		if (!destination) {
-			return;
-		}
-
-		if (
-			destination.droppableId === source.droppableId &&
-			destination.index === source.index
-		) {
-			return;
-		}
-
-		moveSession(source.index, destination.index);
+	const handleChatItemClick = (id: string) => {
+		setSelectedChatId(id); // 更新选中的聊天项
+		onChatItemClick(id); // 调用外部的点击处理函数
 	};
 
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
-			<Droppable droppableId="chat-list">
-				{(provided) => {
-					return (
-						<div
-							className={styles["chat-list"]}
-							ref={provided.innerRef}
-							{...provided.droppableProps}
-						>
-							{sessions.length === 0 ? (
-								<div className={styles["no-conversations"]}>暂无对话</div>
-							) : (
-								sessions.map((item, i) => (
-									<ChatItem
-										title={item.topic}
-										time={
-											new Date(item.lastUpdate).toLocaleDateString(undefined, {
-												month: "2-digit",
-												day: "2-digit",
-											}) +
-											" " +
-											new Date(item.lastUpdate).toLocaleTimeString(undefined, {
-												hour: "2-digit",
-												minute: "2-digit",
-											})
-										}
-										count={item.chat_count ?? item.messages.length}
-										key={item.id}
-										id={item.id}
-										index={i}
-										selected={item.id === currentSessionId}
-										onClick={() => {
-											selectSessionById(item.id);
-											navigate(Path.Chat);
-											getMessages(item.id);
-										}}
-										onDelete={async () => {
-											if (
-												(!props.narrow && !isMobileScreen) ||
-												(await showConfirm(Locale.Home.DeleteChat))
-											) {
-												chatStore.deleteSession(i, userStore);
-											}
-										}}
-										narrow={props.narrow}
-										mask={item.mask}
-									/>
-								))
-							)}
-							{provided.placeholder}
-						</div>
-					);
-				}}
-			</Droppable>
-		</DragDropContext>
+		<div className={styles["chat-list"]}>
+			{chatlist.length === 0 ? (
+				<div className={styles["no-conversations"]}>暂无对话</div>
+			) : (
+				chatlist.map((item, i) => (
+					<ChatItem
+						title={item.topic}
+						time={
+							new Date(item.lastUpdate).toLocaleDateString(undefined, {
+								month: "2-digit",
+								day: "2-digit",
+							}) +
+							" " +
+							new Date(item.lastUpdate).toLocaleTimeString(undefined, {
+								hour: "2-digit",
+								minute: "2-digit",
+							})
+						}
+						count={item.chat_count ?? item.messages.length}
+						key={item.id}
+						id={item.id}
+						index={i}
+						selected={item.id === currentSessionId}
+						onClick={() => handleChatItemClick(item.id)} // 处理点击事件
+						onDelete={() => onChatItemDelete(item.id)}
+						narrow={narrow}
+						mask={item.mask}
+					/>
+				))
+			)}
+		</div>
 	);
 }

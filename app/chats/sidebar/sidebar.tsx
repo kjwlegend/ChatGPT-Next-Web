@@ -42,12 +42,10 @@ import DrawerMenu from "../../components/drawer-menu";
 import UserInfo from "../../components/userinfo";
 import { Divider } from "antd";
 import Upload from "@/app/chats/knowledge/upload";
-import { getChatSession } from "@/app/services/chats";
-import { PaginationData } from "@/app/services/chats";
+
 import { updateChatSessions } from "../../services/chatService";
 import { useUserStore } from "../../store/user";
-import { useDebounce } from "use-debounce";
-import { debounce } from "@/app/utils/debounce";
+import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 
 const ChatList = dynamic(async () => (await import("./chatList")).ChatList, {
 	loading: () => null,
@@ -146,84 +144,77 @@ function useDragSideBar() {
 	};
 }
 
-export function SideBar(props: { className?: string }) {
+type LoadMoreSessions = (
+	page: number,
+) => Promise<{ data: any[]; is_next: boolean }>; // 根据你的数据结构调整类型
+
+interface SideBarProps {
+	className?: string;
+	loadMoreSessions: LoadMoreSessions;
+	onAddClick: () => void;
+	onChatItemClick: (id: string) => void;
+	onChatItemDelete: (id: number) => void;
+	ChatListComponent: React.ComponentType<{
+		narrow?: boolean;
+		chatSessions: any[];
+		onChatItemClick: (id: string) => void;
+		onChatItemDelete: (id: number) => void;
+	}>; // 传递 ChatList 组件
+}
+
+export function SideBar({
+	className,
+	loadMoreSessions,
+	onAddClick,
+	onChatItemClick,
+	onChatItemDelete,
+	ChatListComponent,
+}: SideBarProps) {
 	const chatStore = useChatStore();
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
-
-	// drag side bar
 	const { onDragStart, shouldNarrow } = useDragSideBar();
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const config = useAppConfig();
 	const isMobileScreen = useMobileScreen();
 	const isIOSMobile = useMemo(
 		() => isIOS() && isMobileScreen,
 		[isMobileScreen],
 	);
-
+	const [chatSessions, setChatSessions] = useState<any[]>([]); // 根据你的数据结构调整类型
 	useHotKey();
 
-	const [page, setPage] = useState(1);
-	const [hasMore, setHasMore] = useState(true);
-	const loadRef = useRef<HTMLDivElement | null>(null);
-
 	// 加载更多会话
-	const loadMoreSessions = async () => {
+
+	const handleLoadMore = async () => {
 		if (hasMore) {
-			const param: PaginationData = {
-				limit: 20,
-				page: page, // 使用当前页码
-			};
+			console.log("load chat session");
 			try {
-				const chatSessionList = await getChatSession(param);
-				console.log("chatSessionList", chatSessionList.data);
-				updateChatSessions(chatSessionList.data);
+				const chatSessionList = await loadMoreSessions(page);
+				setChatSessions((prevSessions) => [
+					...prevSessions,
+					...chatSessionList.data,
+				]);
 				setPage((prevPage) => prevPage + 1);
-				setHasMore(chatSessionList.is_next); // 根据返回的is_next更新是否还有更多数据
+				setHasMore(chatSessionList.is_next);
+				console.log("ChatSessionlist", chatSessionList);
+				console.log("data after setChatSession", chatSessions);
 			} catch (error) {
 				console.log("get chatSession list error", error);
 			}
 		}
 	};
-
 	useEffect(() => {
-		const listElement = loadRef.current; // 通过ref获取DOM元素
-		let observer: IntersectionObserver;
+		console.log("Updated chat sessions:", chatSessions);
+	}, [chatSessions]);
 
-		if (listElement) {
-			const options = {
-				root: null,
-				rootMargin: "0px",
-				threshold: 1.0,
-			};
-
-			const debouncedLoadMoreSessions = debounce(
-				() => loadMoreSessions(),
-				1000,
-			);
-
-			observer = new IntersectionObserver((entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						debouncedLoadMoreSessions();
-					}
-				});
-			}, options);
-
-			observer.observe(listElement);
-		}
-
-		return () => {
-			if (observer) {
-				observer.disconnect();
-			}
-		};
-	}, [hasMore, page]); // 依赖项数组
+	const { page, loadRef, hasMore, setHasMore, setPage } =
+		useInfiniteScroll(handleLoadMore);
 
 	if (isMobileScreen && !authStore.isAuthenticated) {
 		return (
 			<div
-				className={`${styles.sidebar} ${props.className} ${styles["narrow-sidebar"]} ${styles["login"]}`}
+				className={`${styles.sidebar} ${className} ${styles["narrow-sidebar"]} ${styles["login"]}`}
 			>
 				<AuthPage />
 			</div>
@@ -233,7 +224,7 @@ export function SideBar(props: { className?: string }) {
 	return (
 		<div
 			className={`${styles.sidebar}
-       ${props.className} ${shouldNarrow && styles["narrow-sidebar"]}`}
+       ${className} ${shouldNarrow && styles["narrow-sidebar"]}`}
 		>
 			{/* */}
 
@@ -265,14 +256,7 @@ export function SideBar(props: { className?: string }) {
 					<IconButton
 						icon={<AddIcon />}
 						text={shouldNarrow ? undefined : Locale.Home.NewChat}
-						onClick={() => {
-							if (config.dontShowMaskSplashScreen) {
-								chatStore.newSession();
-								navigate(Path.Chat);
-							} else {
-								navigate(Path.NewChat);
-							}
-						}}
+						onClick={onAddClick}
 						shadow
 					/>
 				</div>
@@ -282,11 +266,16 @@ export function SideBar(props: { className?: string }) {
 				className={styles["sidebar-body"]}
 				onClick={(e) => {
 					if (e.target === e.currentTarget) {
-						navigate(Path.Home);
+						// navigate(Path.Home);
 					}
 				}}
 			>
-				<ChatList narrow={shouldNarrow} />
+				<ChatListComponent
+					narrow={shouldNarrow}
+					chatSessions={chatSessions}
+					onChatItemClick={onChatItemClick}
+					onChatItemDelete={onChatItemDelete}
+				/>
 				<div ref={loadRef}> ...</div>
 			</div>
 

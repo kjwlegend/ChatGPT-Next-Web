@@ -61,19 +61,19 @@ export const createChat = api(appnamespace, "/user/chats/");
 
 export const createMultipleAgentSession = api(
 	appnamespace,
-	"/multiagentchatsessions/",
+	"/user/multiagentchatsessions/",
 );
 export const updateMultiAgentSession = apiPut(
 	appnamespace,
-	"/multiagentchatsessions/:id/",
+	"/user/multiagentchatsessions/:id/",
 );
 export const getMultiAgentSession = apiGet(
 	appnamespace,
-	"/multiagentchatsessions/",
+	"/user/multiagentchatsessions/",
 );
 export const getMultiAgentSessionChats = apiGet(
 	appnamespace,
-	"/multiagentchatsessions/:id/chats",
+	"/user/multiagentchatsessions/:id/chats",
 );
 
 export const getWorkflowSession = apiGet(appnamespace, "/workflowsessions/");
@@ -82,7 +82,7 @@ export const updateWorkflowSession = apiPut(appnamespace, "/workflowsessions/");
 export const deleteWorkflowSession = api(appnamespace, "/workflowsessions/");
 export const getWorkflowSessionChatGroups = apiGet(
 	appnamespace,
-	"/workflowsessions/:id/chatgroups",
+	"/user/workflowsessions/:id/chatgroups",
 );
 
 export const getPromptHotness = apiGet(appnamespace, "/prompthotness/");
