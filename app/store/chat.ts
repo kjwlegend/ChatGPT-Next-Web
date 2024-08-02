@@ -235,7 +235,7 @@ export const useChatStore = createPersistStore(
 				const data: CreateChatSessionData = {
 					user: userId,
 					active: true,
-					agent: 1,
+					agent: mask?.id ?? 1,
 					session_topic: DEFAULT_TOPIC,
 					session_summary: "",
 					session_description: "",

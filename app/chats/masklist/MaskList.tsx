@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback, useEffect, useState } from "react";
 import { Mask } from "@/app/types/mask";
 import MaskItem from "./maskitem";
 import styles from "./mask.module.scss";
@@ -9,17 +9,30 @@ interface MaskListProps {
 }
 
 const MaskList: React.FC<MaskListProps> = ({ masks, cardStyle, loadMore }) => {
+	const [visibleCount, setVisibleCount] = useState(25);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const loaderRef = useRef<HTMLDivElement>(null);
 
+	const handleLoadMore = useCallback(() => {
+		setVisibleCount((prevCount) => prevCount + 5);
+		console.log("loadmore", visibleCount);
+		loadMore();
+	}, [loadMore]);
+
 	useEffect(() => {
+		console.log("Observer initialized");
 		const observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) {
-					loadMore();
+					console.log("Loader is intersecting, loading more items...");
+					handleLoadMore();
 				}
 			},
-			{ threshold: 1.0 },
+			{
+				root: null,
+				rootMargin: "0px",
+				threshold: 1.0,
+			},
 		);
 
 		if (loaderRef.current) {
@@ -31,11 +44,10 @@ const MaskList: React.FC<MaskListProps> = ({ masks, cardStyle, loadMore }) => {
 				observer.unobserve(loaderRef.current);
 			}
 		};
-	}, [loadMore]);
-
+	}, [handleLoadMore]);
 	return (
 		<div ref={scrollRef} className={styles["mask-list"]}>
-			{masks.map((m) => (
+			{masks.slice(0, visibleCount).map((m) => (
 				<MaskItem
 					mask={m}
 					key={m.id}

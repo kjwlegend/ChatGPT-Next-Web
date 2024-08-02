@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Space, Tag } from "antd";
+import { Space, Tag, ConfigProvider } from "antd";
+import styles from "./tags.module.scss";
 
 const { CheckableTag } = Tag;
 
@@ -28,6 +29,7 @@ const MultipleTag: React.FC<Props> = ({ tagsData, onTagsChange }) => {
 						key={tag}
 						checked={selectedTags.includes(tag)}
 						onChange={(checked) => handleChange(tag, checked)}
+						className={`${styles.CheckableTag} ${selectedTags.includes(tag) ? styles.checked : ""}`}
 					>
 						{tag}
 					</CheckableTag>

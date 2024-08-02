@@ -68,9 +68,9 @@ export function useMasks() {
 				img: item.image || "", // 使用 image 字段作为 img
 				description: item.description,
 				intro: item.chat_intro,
-				hideContext: false, // 默认值，视具体需求而定
+				hideContext: true, // 默认值，视具体需求而定
 				version: undefined, // 如果有对应字段可以填入
-				context: [], // 假设这是一个空数组，视具体需求而定
+				context: item.prompts_data || [],
 				modelConfig: item.modelconfig || {}, // 处理 modelconfig 字段，确保符合类型
 				lang: item.language || "zh-CN", // 默认语言
 				builtin: false, // 默认值，视具体需求而定

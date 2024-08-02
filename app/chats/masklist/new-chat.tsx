@@ -44,7 +44,6 @@ function featureMaskGroup(masks: Mask[]) {
 }
 
 function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
-	console.log("item", mask);
 	return (
 		<Card
 			style={{ maxWidth: 300 }}
@@ -102,7 +101,6 @@ export function NewChat() {
 			try {
 				const { data, total, is_next } = await fetchPromptsCallback(1, 100);
 				const featureMasks = featureMaskGroup(data);
-				console.log("feature", featureMasks); // 确保这里输出的是有效的数组
 				const tags = await fetchTagsCallback(1, 100);
 				setFeatureGroup(featureMasks);
 				setMasks(data);

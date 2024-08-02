@@ -1,0 +1,7 @@
+.CheckableTag {
+	background-color: var(--color-canvas-subtle);
+
+	&.checked {
+		background-color: rgb(120, 152, 255);
+	}
+}

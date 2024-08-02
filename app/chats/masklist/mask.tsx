@@ -86,7 +86,7 @@ export function MaskPage() {
 	const user = useUserStore().user;
 	const { username, nickname } = user;
 
-	const [selectedTags, setSelectedTags] = useState<string[]>(["通用"]);
+	const [selectedTags, setSelectedTags] = useState<string[]>([]);
 	const [isBuiltin, setisBuiltin] = useState<boolean | undefined>(true);
 	const [filterLang, setFilterLang] = useState<Lang>("cn");
 	const [searchText, setSearchText] = useState("");
@@ -134,7 +134,7 @@ export function MaskPage() {
 		};
 
 		const data = maskStore.filter(newFilterOptions);
-		console.log("list", data);
+		// console.log("list", data, "options", newFilterOptions);
 		setFilterMasks(maskStore.sort("hotness", data));
 	}, [
 		filterLang,
@@ -238,10 +238,7 @@ export function MaskPage() {
 						segmentValue={segmentValue}
 						handleSegmentChange={handleSegmentChange}
 					/>
-					<FilterOptions
-						handleTagsChange={handleTagsChange}
-						cardStyle={cardStyle}
-					/>
+
 					<div className={styles["mask-filter"]}>
 						<input
 							type="text"
@@ -260,6 +257,7 @@ export function MaskPage() {
 							}}
 						/>
 					</div>
+					<FilterOptions handleTagsChange={handleTagsChange} />
 					<MaskList
 						masks={filterMasks}
 						cardStyle={cardStyle}
