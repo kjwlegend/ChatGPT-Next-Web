@@ -221,7 +221,7 @@ export function WorkflowSidebar(props: { className?: string }) {
 			if (listElement && listElement.removeEventListener) {
 				listElement.removeEventListener("scroll", handleScroll);
 			}
-		};      
+		};
 	}, [page]); // 移除了 hasMore，因为它的值在组件挂载后不会改变
 
 	if (typeof window === undefined) {

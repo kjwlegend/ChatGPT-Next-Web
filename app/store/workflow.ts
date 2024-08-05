@@ -9,23 +9,17 @@ import {
 import { useUserStore } from "./user";
 import { nanoid } from "nanoid";
 
-export interface workflowGroup {
+export interface WorkflowGroup {
 	id: string;
 	topic: string;
 	description: string;
 	lastUpdateTime: string;
-	sessions: string[];
+	sessions: ChatSession[];
 }
 
 type State = {
 	workflowGroup: {
-		[groupId: string]: {
-			id: string;
-			topic: string;
-			description: string;
-			lastUpdateTime: string;
-			sessions: string[];
-		};
+		[groupId: string]: WorkflowGroup;
 	};
 	selectedId: string;
 	setselectedId: (index: string) => void;
@@ -35,12 +29,12 @@ type State = {
 		updates: {
 			groupName?: string;
 			lastUpdateTime?: string;
-			sessions?: string[];
+			sessions?: ChatSession[];
 		},
 	) => void;
 
 	deleteWorkflowGroup: (groupId: string) => void;
-	addSessionToGroup: (groupId: string, session: string) => Promise<void>;
+	addSessionToGroup: (groupId: string, session: ChatSession) => Promise<void>;
 	moveSession: (
 		groupId: string,
 		sourceIndex: number,
@@ -68,7 +62,6 @@ export const useWorkflowStore = create<State>()(
 						},
 					},
 				}));
-
 				get().setselectedId(groupId);
 			},
 			updateWorkflowGroup: (groupId, updates) => {
@@ -146,7 +139,7 @@ export const useWorkflowStore = create<State>()(
 				set((state) => {
 					const group = state.workflowGroup[groupId];
 					const newSessions = group.sessions.filter(
-						(session) => session !== sessionId,
+						(session) => session.id !== sessionId,
 					);
 					return {
 						workflowGroup: {
@@ -159,7 +152,9 @@ export const useWorkflowStore = create<State>()(
 			getWorkflowSessionId: (groupId: string) => {
 				// get all sessions id from one group and return as a list
 				const group = get().workflowGroup[groupId];
-				const sessions = group ? group.sessions : [];
+				const sessions = group
+					? group.sessions.map((session) => session.id)
+					: [];
 				return sessions;
 			},
 		}),

@@ -8,11 +8,10 @@ import { message } from "antd";
 
 import {
 	createWorkflowSession,
-	deleteWorkflowSession,
-	getSingleChatSession,
 	getWorkflowSession,
 	updateWorkflowSession,
-} from "../../api/backend/chat";
+	deleteWorkflowSession,
+} from "@/app/services/chats";
 import { group } from "console";
 import { updateChatSessions } from "../../services/chatService";
 
@@ -140,10 +139,13 @@ export const WorkflowProvider = ({
 			try {
 				moveSession(groupId, sourceIndex, destinationIndex);
 				const newSessions = getWorkflowSessionId(groupId);
-				const res = await updateWorkflowSession(groupId, {
-					chat_sessions: newSessions,
-					user: userid,
-				});
+				const res = await updateWorkflowSession(
+					{
+						chat_sessions: newSessions,
+						user: userid,
+					},
+					groupId,
+				);
 				if (res.code === 401) {
 					throw new Error("登录状态已过期, 请重新登录");
 				}
@@ -166,10 +168,13 @@ export const WorkflowProvider = ({
 			try {
 				deleteSessionFromGroup(groupId, sessionId);
 				const newSessions = getWorkflowSessionId(groupId);
-				const res = await updateWorkflowSession(groupId, {
-					chat_sessions: newSessions,
-					user: userid,
-				});
+				const res = await updateWorkflowSession(
+					{
+						chat_sessions: newSessions,
+						user: userid,
+					},
+					groupId,
+				);
 				if (res.code === 401) {
 					throw new Error("登录状态已过期, 请重新登录");
 				}
@@ -240,6 +245,7 @@ export const WorkflowProvider = ({
 
 	const updateWorkflowGroupHandler = (newData: any) => {
 		// 更新workflowGroup
+		// TODO :: 这里需要根据新的架构进行重新调整
 
 		// 遍历新的数据，更新workflowGroup
 		newData.forEach(async (item: any) => {

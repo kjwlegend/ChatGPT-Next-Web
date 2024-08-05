@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/auth";
 import { useUserStore, User } from "../store/user";
+import { useChatStore } from "../store";
 
 interface LoginParams {
 	username: string;
@@ -19,6 +20,7 @@ export default function useAuth() {
 
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
+	const chatStore = useChatStore();
 
 	const handleMembershipLevel = (level: string): string => {
 		switch (level) {
@@ -129,6 +131,7 @@ export default function useAuth() {
 	const logoutHook = async () => {
 		await authStore.logout();
 		userStore.clearUser();
+		chatStore.clearChatData();
 	};
 
 	return {
