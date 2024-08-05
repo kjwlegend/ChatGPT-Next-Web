@@ -8,10 +8,10 @@ import { getMultiAgentSession } from "../services/chats";
 import usedoubleAgent, {
 	DoubleAgentChatSession,
 } from "@/app/store/doubleAgents";
-import { useDoubleAgentChatContext } from "../(pages)/double-agents/doubleAgentContext";
+import { useDoubleAgentChatContext } from "../(chat-pages)/double-agents/doubleAgentContext";
 import { useUserStore } from "../store";
 import { useWorkflowStore } from "../store/workflow";
-import { useWorkflowContext } from "../(pages)/workflow-chats/workflowContext";
+import { useWorkflowContext } from "../(chat-pages)/workflow-chats/workflowContext";
 
 export const useSimpleWorkflowService = () => {
 	const navigate = useNavigate();

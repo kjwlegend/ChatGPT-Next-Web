@@ -8,7 +8,7 @@ import { getMultiAgentSession } from "../services/chats";
 import usedoubleAgent, {
 	DoubleAgentChatSession,
 } from "@/app/store/doubleAgents";
-import { useDoubleAgentChatContext } from "../(pages)/double-agents/doubleAgentContext";
+import { useDoubleAgentChatContext } from "../(chat-pages)/double-agents/doubleAgentContext";
 import { useUserStore } from "../store";
 
 export const useMultipleAgentsChatService = () => {
