@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { useWorkflowStore } from "../../store/workflow";
-import { useUserStore } from "../../store";
+import { useWorkflowStore, WorkflowGroup } from "@/app/store/workflow";
+import { useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import { message } from "antd";
@@ -13,24 +13,17 @@ import {
 	deleteWorkflowSession,
 } from "@/app/services/chats";
 import { group } from "console";
-import { updateChatSessions } from "../../services/chatService";
+import { updateChatSessions } from "@/app/services/chatService";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
-// 定义WorkflowContext接口
 interface WorkflowContextType {
-	workflowGroup: {
-		[groupId: string]: {
-			id: string;
-			topic: string;
-			lastUpdateTime: string;
-			sessions: string[];
-		};
-	};
+	workflowGroups: WorkflowGroup[];
 	selectedId: string;
-	setselectedId: (index: string) => void;
+	setSelectedId: (index: string) => void;
 	addWorkflowGroup: () => void;
-	deleteWorkflowGroup: (groupId: string) => void;
+	deleteWorkflowGroup: (groupId: number) => void;
+	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	addSessionToGroup: (groupId: string, session: string) => void;
 	moveSession: (
 		groupId: string,
@@ -42,24 +35,23 @@ interface WorkflowContextType {
 	updateSingleWorkflowGroup: (groupId: string, newGroup: any) => void;
 }
 
-// 创建上下文
 export const WorkflowContext = createContext<WorkflowContextType | null>(null);
 
-// WorkflowProvider组件
 export const WorkflowProvider = ({
 	children,
 }: {
 	children: React.ReactNode;
 }) => {
 	const {
-		workflowGroup,
+		workflowGroups,
 		selectedId,
-		setselectedId,
+		setSelectedId,
 		addWorkflowGroup,
 		updateWorkflowGroup,
 		deleteWorkflowGroup,
 		addSessionToGroup,
 		moveSession,
+		fetchNewWorkflowGroup,
 		deleteSessionFromGroup,
 		getWorkflowSessionId,
 	} = useWorkflowStore();
@@ -67,7 +59,7 @@ export const WorkflowProvider = ({
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const userid = useUserStore.getState().user.id;
-	// 添加工作流的处理函数
+
 	const addWorkflowGroupHandler = useCallback(async () => {
 		messageApi.open({
 			content: "工作流组创建中",
@@ -76,34 +68,37 @@ export const WorkflowProvider = ({
 		try {
 			const res = await createWorkflowSession({
 				user: userid,
-				topic: WORKFLOW_DEFAULT_TITLE,
+				session_topic: WORKFLOW_DEFAULT_TITLE,
 			});
-
-			if (res.code === 401) {
-				throw new Error("登录状态已过期, 请重新登录");
+			console.log(res, "workflow");
+			if (res.id) {
+				addWorkflowGroup(res.id, WORKFLOW_DEFAULT_TITLE);
+				messageApi.destroy();
+				messageApi.success("工作流组创建成功");
 			}
 
-			await addWorkflowGroup(res.data.id, WORKFLOW_DEFAULT_TITLE);
-			messageApi.destroy();
-			messageApi.success("工作流组创建成功");
+			if (res.code === 401) {
+				messageApi.error("创建失败, 请尝试重新登录");
+				throw new Error("登录状态已过期, 请重新登录");
+			}
 		} catch (error: any) {
 			messageApi.error(`工作流组创建失败: ${error}`);
 		}
 	}, [addWorkflowGroup]);
-	// 删除工作流的处理函数
+
 	const deleteWorkflowGroupHandler = useCallback(
-		async (groupId: string) => {
+		async (groupId: number) => {
 			messageApi.open({
 				content: "工作流组删除中",
 				type: "loading",
 			});
 			try {
-				const res = await deleteWorkflowSession(groupId);
+				const res = await deleteWorkflowSession({ active: false }, groupId);
 				if (res.code === 401) {
 					throw new Error("登录状态已过期, 请重新登录");
 				}
 
-				await deleteWorkflowGroup(groupId);
+				deleteWorkflowGroup(groupId);
 				messageApi.destroy();
 				messageApi.success("工作流组删除成功");
 			} catch (error: any) {
@@ -112,7 +107,7 @@ export const WorkflowProvider = ({
 		},
 		[deleteWorkflowGroup],
 	);
-	// 添加会话到工作流的处理函数
+
 	const addSessionToGroupHandler = useCallback(
 		async (groupId: string, session: string) => {
 			messageApi.open({
@@ -129,7 +124,7 @@ export const WorkflowProvider = ({
 		},
 		[addSessionToGroup],
 	);
-	// 移动会话的处理函数
+
 	const moveSessionHandler = useCallback(
 		async (groupId: string, sourceIndex: number, destinationIndex: number) => {
 			messageApi.open({
@@ -158,7 +153,7 @@ export const WorkflowProvider = ({
 		},
 		[moveSession],
 	);
-	// 从工作流中删除会话的处理函数
+
 	const deleteSessionFromGroupHandler = useCallback(
 		async (groupId: string, sessionId: string) => {
 			messageApi.open({
@@ -188,7 +183,6 @@ export const WorkflowProvider = ({
 		[deleteSessionFromGroup],
 	);
 
-	// 获取工作流会话的处理函数
 	const getworkFlowSessions = useCallback(async (param: any) => {
 		const data = {
 			user: userid,
@@ -201,7 +195,6 @@ export const WorkflowProvider = ({
 			throw new Error("登录状态已过期, 请重新登录");
 		}
 
-		// 更新workflowGroup
 		if (res.data) {
 			updateWorkflowGroupHandler(res.data);
 		}
@@ -210,10 +203,6 @@ export const WorkflowProvider = ({
 	}, []);
 
 	const updateSingleWorkflowGroup = async (groupId: string, newGroup: any) => {
-		//  including messageapi and updateworkflowsession
-
-		// 更新workflowGroup
-
 		messageApi.open({
 			content: "内容更新中",
 			type: "loading",
@@ -229,7 +218,7 @@ export const WorkflowProvider = ({
 		};
 
 		try {
-			const res = await updateWorkflowSession(groupId, workflowGroupData);
+			const res = await updateWorkflowSession(workflowGroupData, groupId);
 
 			if (res.code === 401) {
 				throw new Error("登录状态已过期, 请重新登录");
@@ -244,23 +233,20 @@ export const WorkflowProvider = ({
 	};
 
 	const updateWorkflowGroupHandler = (newData: any) => {
-		// 更新workflowGroup
-		// TODO :: 这里需要根据新的架构进行重新调整
-
-		// 遍历新的数据，更新workflowGroup
 		newData.forEach(async (item: any) => {
-			const groupId = item.id; // 假设item.id是workflowGroup的key
-			const topic = item.topic; // 假设item.topic是workflowGroup中group的名字
+			const groupId = item.id;
+			const topic = item.topic;
 			const lastUpdateTime = item.last_updated;
 			const sessionIds = item.chat_sessions;
 			let sessions: any = [];
-			if (!workflowGroup[groupId]) {
-				// 如果workflowGroup中没有这个groupId，则创建一个新的group
+			const existingGroup = workflowGroups.find(
+				(group) => group.id === groupId,
+			);
+
+			if (!existingGroup) {
 				console.log("workflowGroup", groupId);
 				console.log("sessionIds", sessionIds);
 			}
-
-			// 遍历 sessions ,通过 getSingleChatSession 获取会话的详细信息
 
 			if (sessionIds) {
 				for (const session of sessionIds) {
@@ -272,10 +258,7 @@ export const WorkflowProvider = ({
 					}
 				}
 			}
-			//  更新会话到chatstore
 			updateChatSessions(sessions);
-
-			// 更新workflowGroup
 
 			const newGroup = {
 				id: groupId,
@@ -288,19 +271,19 @@ export const WorkflowProvider = ({
 		});
 	};
 
-	// 提供上下文值
 	return (
 		<WorkflowContext.Provider
 			value={{
-				workflowGroup,
+				workflowGroups,
 				selectedId,
-				setselectedId,
+				setSelectedId,
+				fetchNewWorkflowGroup,
 				addWorkflowGroup: addWorkflowGroupHandler,
 				deleteWorkflowGroup: deleteWorkflowGroupHandler,
 				addSessionToGroup: addSessionToGroupHandler,
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
-				getworkFlowSessions: getworkFlowSessions,
+				getworkFlowSessions,
 				updateSingleWorkflowGroup,
 			}}
 		>

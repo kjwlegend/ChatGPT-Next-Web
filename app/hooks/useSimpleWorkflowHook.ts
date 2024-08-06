@@ -17,22 +17,23 @@ export const useSimpleWorkflowService = () => {
 	const navigate = useNavigate();
 	const userid = useUserStore((state) => state.user?.id);
 	const {
-		workflowGroup,
+		workflowGroups,
 		selectedId,
-		setselectedId,
+		setSelectedId,
 		deleteWorkflowGroup,
+		addWorkflowGroup,
 		updateSingleWorkflowGroup,
+		fetchNewWorkflowGroup,
 	} = useWorkflowContext();
 
-	const [chatSessions, setChatSessions] = useState<any[]>(workflowGroup);
-	const { startNewConversation } = useDoubleAgentChatContext();
+	const [chatSessions, setChatSessions] = useState<any[]>(workflowGroups);
 
 	const loadMoreSessions = async (page: number) => {
 		const param = { limit: 20, page };
 		try {
 			const res = await getMultiAgentSession(param);
-			getNewConversations(res.data);
-			const newsessions = conversations;
+			fetchNewWorkflowGroup(res.data);
+			const newsessions = workflowGroups;
 			console.log("loadmore sessions", newsessions);
 			return { data: newsessions, is_next: res.is_next };
 		} catch {
@@ -42,15 +43,15 @@ export const useSimpleWorkflowService = () => {
 	// 监听 chatStore.sessions 的变化
 	useEffect(() => {
 		const updateChatSessions = () => {
-			setChatSessions(conversations);
+			setChatSessions(workflowGroups);
 		};
 
 		updateChatSessions(); // 初始化时更新一次
-	}, [conversations, loadMoreSessions]);
+	}, [workflowGroups, loadMoreSessions]);
 
 	const handleAddClick = () => {
 		console.log("click");
-		startNewConversation();
+		addWorkflowGroup();
 	};
 
 	const handleChatItemClick = async (id: string) => {
@@ -62,19 +63,19 @@ export const useSimpleWorkflowService = () => {
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}
-		setCurrentConversationId(id);
+		setSelectedId(id);
 		// getMessages(item.id);
 		navigate(Path.Chat);
 	};
 
-	const handleChatItemDelete = async (id: string | number) => {
+	const handleChatItemDelete = async (id: number) => {
 		try {
 			// await chatStore.deleteSession(id);
 			const res = await updateMultiAgentSession(
 				{ user: userid, active: false },
 				id,
 			);
-			deleteConversation(id);
+			deleteWorkflowGroup(id);
 		} catch (error) {
 			console.log("Delete chat session error", error);
 		}

@@ -43,7 +43,7 @@ type StoreState = {
 	conversations: DoubleAgentChatSession[]; // 会话列表
 	startNewConversation: (topic: string, userid: number) => Promise<string>;
 	setCurrentConversationId: (id: string) => void;
-	getNewConversations: (data: any) => void;
+	fetchNewConversations: (data: any) => void;
 	currentSession: () => DoubleAgentChatSession;
 	setAIConfig: (
 		conversationId: string,
@@ -150,7 +150,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			({} as DoubleAgentChatSession)
 		);
 	},
-	getNewConversations(data) {
+	fetchNewConversations(data) {
 		const existingConversations = get().conversations;
 
 		const newConversations: DoubleAgentChatSession[] = data.map(

@@ -18,11 +18,10 @@ export interface WorkflowGroup {
 }
 
 type State = {
-	workflowGroup: {
-		[groupId: string]: WorkflowGroup;
-	};
+	workflowGroups: WorkflowGroup[];
+	workflowGroupIndex: { [groupId: string]: number }; // 索引对象
 	selectedId: string;
-	setselectedId: (index: string) => void;
+	setSelectedId: (index: string) => void;
 	addWorkflowGroup: (groupId: string, groupName: string) => void;
 	updateWorkflowGroup: (
 		groupId: string,
@@ -32,8 +31,9 @@ type State = {
 			sessions?: ChatSession[];
 		},
 	) => void;
-
-	deleteWorkflowGroup: (groupId: string) => void;
+	deleteWorkflowGroup: (groupId: string | number) => void;
+	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
+	sortWorkflowGroups: () => void;
 	addSessionToGroup: (groupId: string, session: ChatSession) => Promise<void>;
 	moveSession: (
 		groupId: string,
@@ -43,75 +43,143 @@ type State = {
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getWorkflowSessionId: (groupId: string) => string[];
 };
+
 export const useWorkflowStore = create<State>()(
 	persist(
 		(set, get) => ({
-			workflowGroup: {},
+			workflowGroups: [],
+			workflowGroupIndex: {},
 			selectedId: "",
-			setselectedId: (index) => set({ selectedId: index }),
-			addWorkflowGroup: (groupId, groupName) => {
-				set((state) => ({
-					workflowGroup: {
-						...state.workflowGroup,
-						[groupId]: {
-							id: groupId,
-							topic: groupName,
-							description: "等待你创作无限的可能",
-							lastUpdateTime: new Date().toISOString(),
-							sessions: [],
+			setSelectedId: (index) => set({ selectedId: index }),
+			addWorkflowGroup: (groupId, topic) => {
+				const newGroup: WorkflowGroup = {
+					id: groupId,
+					topic: topic,
+					description: "等待你创作无限的可能",
+					lastUpdateTime: new Date().toISOString(),
+					sessions: [],
+				};
+				set((state) => {
+					const newIndex = state.workflowGroups.length;
+					return {
+						workflowGroups: [...state.workflowGroups, newGroup],
+						workflowGroupIndex: {
+							...state.workflowGroupIndex,
+							[groupId]: newIndex,
 						},
-					},
-				}));
-				get().setselectedId(groupId);
+					};
+				});
+				get().setSelectedId(groupId);
+				get().sortWorkflowGroups();
 			},
 			updateWorkflowGroup: (groupId, updates) => {
 				set((state) => {
-					const { workflowGroup } = state;
-					// 创建一个新对象，包含传入的更新
-					const updatedWorkflowGroup = {
-						...workflowGroup,
-						[groupId]: {
-							...workflowGroup[groupId],
-							...updates,
-						},
+					const index = state.workflowGroupIndex[groupId];
+					if (index === undefined) return state;
+
+					const updatedGroup = {
+						...state.workflowGroups[index],
+						...updates,
 					};
-					return { workflowGroup: updatedWorkflowGroup };
+					const updatedGroups = [...state.workflowGroups];
+					updatedGroups[index] = updatedGroup;
+
+					return { workflowGroups: updatedGroups };
 				});
+				get().sortWorkflowGroups();
 			},
 			deleteWorkflowGroup: (groupId) => {
-				set((state) => ({
-					workflowGroup: Object.keys(state.workflowGroup)
-						.filter((key) => key !== groupId)
-						.reduce(
-							(obj, key) => ({ ...obj, [key]: state.workflowGroup[key] }),
-							{},
-						),
-				}));
-				// when delete the last workflow group, set selectedId to empty
-				if (Object.keys(get().workflowGroup).length === 0) {
-					get().setselectedId("");
+				set((state) => {
+					const index = state.workflowGroupIndex[groupId];
+					if (index === undefined) return state;
+
+					const updatedGroups = state.workflowGroups.filter(
+						(_, i) => i !== index,
+					);
+					const updatedIndex: { [key: string]: number } = {};
+					updatedGroups.forEach((group, i) => {
+						updatedIndex[group.id] = i;
+					});
+
+					return {
+						workflowGroups: updatedGroups,
+						workflowGroupIndex: updatedIndex,
+					};
+				});
+				if (Object.keys(get().workflowGroupIndex).length === 0) {
+					get().setSelectedId("");
 				}
-				// when delete the selected workflow group, set selectedId to the first group
 				if (get().selectedId === groupId) {
-					const firstGroup = Object.keys(get().workflowGroup)[0];
-					get().setselectedId(firstGroup);
+					const firstGroup = get().workflowGroups[0]?.id || "";
+					get().setSelectedId(firstGroup);
 				}
 			},
-			addSessionToGroup: async (groupId, session) => {
-				set((state) => ({
-					workflowGroup: {
-						...state.workflowGroup,
-						[groupId]: {
-							...state.workflowGroup[groupId],
-							sessions: [
-								...(state.workflowGroup[groupId].sessions || []),
-								session,
-							],
-						},
-					},
-				}));
+			fetchNewWorkflowGroup: (data: WorkflowGroup[]) => {
+				const existingGroups = get().workflowGroups;
+				const existingIndex = get().workflowGroupIndex;
 
-				console.log(session, "workflowsession");
+				const updatedGroups = [...existingGroups];
+				const updatedIndex = { ...existingIndex };
+
+				data.forEach((item) => {
+					const { id, topic, description, lastUpdateTime, sessions } = item;
+					const existingGroupIndex = existingIndex[id];
+					if (
+						existingGroupIndex === undefined ||
+						new Date(lastUpdateTime) >
+							new Date(existingGroups[existingGroupIndex].lastUpdateTime)
+					) {
+						const newGroup = {
+							id,
+							topic,
+							description,
+							lastUpdateTime,
+							sessions: sessions !== undefined ? sessions : [],
+						};
+						if (existingGroupIndex === undefined) {
+							updatedIndex[id] = updatedGroups.length;
+							updatedGroups.push(newGroup);
+						} else {
+							updatedGroups[existingGroupIndex] = newGroup;
+						}
+					}
+				});
+
+				set(() => ({
+					workflowGroups: updatedGroups,
+					workflowGroupIndex: updatedIndex,
+				}));
+				get().sortWorkflowGroups();
+			},
+			sortWorkflowGroups: () => {
+				set((state) => {
+					return {
+						workflowGroups: state.workflowGroups.sort(
+							(a, b) =>
+								new Date(b.lastUpdateTime).getTime() -
+								new Date(a.lastUpdateTime).getTime(),
+						),
+					};
+				});
+			},
+			addSessionToGroup: async (groupId, session) => {
+				set((state) => {
+					const index = state.workflowGroupIndex[groupId];
+					if (index === undefined) return state;
+
+					const updatedGroup = {
+						...state.workflowGroups[index],
+						sessions: [
+							...(state.workflowGroups[index].sessions || []),
+							session,
+						],
+					};
+					const updatedGroups = [...state.workflowGroups];
+					updatedGroups[index] = updatedGroup;
+
+					return { workflowGroups: updatedGroups };
+				});
+
 				const newSessions = get().getWorkflowSessionId(groupId);
 				const res = await updateWorkflowSession(groupId, {
 					chat_sessions: newSessions,
@@ -123,35 +191,41 @@ export const useWorkflowStore = create<State>()(
 			},
 			moveSession: async (groupId, sourceIndex, destinationIndex) => {
 				set((state) => {
-					const group = state.workflowGroup[groupId];
+					const index = state.workflowGroupIndex[groupId];
+					if (index === undefined) return state;
+
+					const group = state.workflowGroups[index];
 					const newSessions = [...group.sessions];
 					const [removed] = newSessions.splice(sourceIndex, 1);
 					newSessions.splice(destinationIndex, 0, removed);
-					return {
-						workflowGroup: {
-							...state.workflowGroup,
-							[groupId]: { ...group, sessions: newSessions },
-						},
-					};
+
+					const updatedGroup = { ...group, sessions: newSessions };
+					const updatedGroups = [...state.workflowGroups];
+					updatedGroups[index] = updatedGroup;
+
+					return { workflowGroups: updatedGroups };
 				});
 			},
 			deleteSessionFromGroup: (groupId, sessionId) => {
 				set((state) => {
-					const group = state.workflowGroup[groupId];
+					const index = state.workflowGroupIndex[groupId];
+					if (index === undefined) return state;
+
+					const group = state.workflowGroups[index];
 					const newSessions = group.sessions.filter(
 						(session) => session.id !== sessionId,
 					);
-					return {
-						workflowGroup: {
-							...state.workflowGroup,
-							[groupId]: { ...group, sessions: newSessions },
-						},
-					};
+
+					const updatedGroup = { ...group, sessions: newSessions };
+					const updatedGroups = [...state.workflowGroups];
+					updatedGroups[index] = updatedGroup;
+
+					return { workflowGroups: updatedGroups };
 				});
 			},
 			getWorkflowSessionId: (groupId: string) => {
-				// get all sessions id from one group and return as a list
-				const group = get().workflowGroup[groupId];
+				const index = get().workflowGroupIndex[groupId];
+				const group = index !== undefined ? get().workflowGroups[index] : null;
 				const sessions = group
 					? group.sessions.map((session) => session.id)
 					: [];

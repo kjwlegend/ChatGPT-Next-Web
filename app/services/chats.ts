@@ -76,10 +76,22 @@ export const getMultiAgentSessionChats = apiGet(
 	"/user/multiagentchatsessions/:id/chats",
 );
 
-export const getWorkflowSession = apiGet(appnamespace, "/workflowsessions/");
-export const createWorkflowSession = api(appnamespace, "/workflowsessions/");
-export const updateWorkflowSession = apiPut(appnamespace, "/workflowsessions/");
-export const deleteWorkflowSession = api(appnamespace, "/workflowsessions/");
+export const getWorkflowSession = apiGet(
+	appnamespace,
+	"/user/workflowsessions/",
+);
+export const createWorkflowSession = api(
+	appnamespace,
+	"/user/workflowsessions/",
+);
+export const updateWorkflowSession = apiPut(
+	appnamespace,
+	"/user/workflowsessions/",
+);
+export const deleteWorkflowSession = api(
+	appnamespace,
+	"/user/workflowsessions/",
+);
 export const getWorkflowSessionChatGroups = apiGet(
 	appnamespace,
 	"/user/workflowsessions/:id/chatgroups",

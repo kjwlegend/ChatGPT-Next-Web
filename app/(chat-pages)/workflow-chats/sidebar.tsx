@@ -65,6 +65,8 @@ export function WorkflowSidebar(props: { className?: string }) {
 		handleChatItemDelete,
 	} = useSimpleWorkflowService();
 
+	//  change chatsessions from object type to array type
+
 	return (
 		<SideBar
 			className={styles["sidebar-show"]}

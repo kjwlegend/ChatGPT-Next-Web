@@ -20,7 +20,7 @@ export const useMultipleAgentsChatService = () => {
 		currentConversationId,
 		setCurrentConversationId,
 		deleteConversation,
-		getNewConversations,
+		fetchNewConversations,
 		sortedConversations,
 	} = usedoubleAgent();
 
@@ -31,7 +31,7 @@ export const useMultipleAgentsChatService = () => {
 		const param = { limit: 20, page };
 		try {
 			const res = await getMultiAgentSession(param);
-			getNewConversations(res.data);
+			fetchNewConversations(res.data);
 			const newsessions = conversations;
 			console.log("loadmore sessions", newsessions);
 			return { data: newsessions, is_next: res.is_next };

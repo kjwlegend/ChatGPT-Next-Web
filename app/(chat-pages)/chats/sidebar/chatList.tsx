@@ -49,7 +49,7 @@ export function ChatList({
 								minute: "2-digit",
 							})
 						}
-						count={item.chat_count ?? item.messages.length}
+						count={item.chat_count ? item.messages.length : 0}
 						key={item.id}
 						id={item.id}
 						index={i}
