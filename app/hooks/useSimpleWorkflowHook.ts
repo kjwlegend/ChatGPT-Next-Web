@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
-import { updateMultiAgentSession } from "@/app/services/chats";
+import {
+	getWorkflowSession,
+	updateMultiAgentSession,
+} from "@/app/services/chats";
 
 import { Path } from "../constant";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +34,7 @@ export const useSimpleWorkflowService = () => {
 	const loadMoreSessions = async (page: number) => {
 		const param = { limit: 20, page };
 		try {
-			const res = await getMultiAgentSession(param);
+			const res = await getWorkflowSession(param);
 			fetchNewWorkflowGroup(res.data);
 			const newsessions = workflowGroups;
 			console.log("loadmore sessions", newsessions);

@@ -13,8 +13,15 @@ export interface WorkflowGroup {
 	id: string;
 	topic: string;
 	description: string;
-	lastUpdateTime: string;
-	sessions: ChatSession[];
+	summary: string;
+	agent_numbers: number;
+	chat_session_ids: string[];
+	sessions?: ChatSession[];
+	updated_at: string;
+	created_at: string;
+	lastUpdateTime: number | string | Date;
+
+	[key: string]: any;
 }
 
 type State = {
@@ -55,8 +62,13 @@ export const useWorkflowStore = create<State>()(
 				const newGroup: WorkflowGroup = {
 					id: groupId,
 					topic: topic,
+					chat_session_ids: [],
+					agent_numbers: 0,
+					summary: "",
 					description: "等待你创作无限的可能",
-					lastUpdateTime: new Date().toISOString(),
+					lastUpdateTime: new Date().getTime(),
+					created_at: new Date().toISOString(),
+					updated_at: new Date().toISOString(),
 					sessions: [],
 				};
 				set((state) => {
@@ -115,6 +127,7 @@ export const useWorkflowStore = create<State>()(
 				}
 			},
 			fetchNewWorkflowGroup: (data: WorkflowGroup[]) => {
+				console.log("adding workflow", data);
 				const existingGroups = get().workflowGroups;
 				const existingIndex = get().workflowGroupIndex;
 
@@ -122,7 +135,19 @@ export const useWorkflowStore = create<State>()(
 				const updatedIndex = { ...existingIndex };
 
 				data.forEach((item) => {
-					const { id, topic, description, lastUpdateTime, sessions } = item;
+					const {
+						id,
+						session_id,
+						session_topic,
+						session_description,
+						session_summary,
+						agent_numbers,
+						chat_session_ids,
+						updated_at,
+						created_at,
+					} = item;
+					// convert updated_at string to Date timestamp
+					const lastUpdateTime = new Date(updated_at).toISOString();
 					const existingGroupIndex = existingIndex[id];
 					if (
 						existingGroupIndex === undefined ||
@@ -131,10 +156,15 @@ export const useWorkflowStore = create<State>()(
 					) {
 						const newGroup = {
 							id,
-							topic,
-							description,
+							topic: session_topic,
+							summary: session_summary,
+							description: session_description,
+							created_at: created_at,
+							updated_at: updated_at,
+							agent_numbers: agent_numbers,
 							lastUpdateTime,
-							sessions: sessions !== undefined ? sessions : [],
+							chat_session_ids:
+								chat_session_ids !== undefined ? chat_session_ids : [],
 						};
 						if (existingGroupIndex === undefined) {
 							updatedIndex[id] = updatedGroups.length;
