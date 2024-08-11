@@ -86,11 +86,11 @@ export const createWorkflowSession = api(
 );
 export const updateWorkflowSession = apiPut(
 	appnamespace,
-	"/user/workflowsessions/",
+	"/user/workflowsessions/:id/",
 );
-export const deleteWorkflowSession = api(
+export const deleteWorkflowSession = apiPut(
 	appnamespace,
-	"/user/workflowsessions/",
+	"/user/workflowsessions/:id/",
 );
 export const getWorkflowSessionChatGroups = apiGet(
 	appnamespace,

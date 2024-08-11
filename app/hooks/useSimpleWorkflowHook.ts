@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 
 import {
+	deleteWorkflowSession,
 	getWorkflowSession,
 	updateMultiAgentSession,
+	updateWorkflowSession,
 } from "@/app/services/chats";
 
 import { Path } from "../constant";
@@ -73,11 +75,6 @@ export const useSimpleWorkflowService = () => {
 
 	const handleChatItemDelete = async (id: number) => {
 		try {
-			// await chatStore.deleteSession(id);
-			const res = await updateMultiAgentSession(
-				{ user: userid, active: false },
-				id,
-			);
 			deleteWorkflowGroup(id);
 		} catch (error) {
 			console.log("Delete chat session error", error);
