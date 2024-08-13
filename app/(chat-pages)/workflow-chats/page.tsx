@@ -16,7 +16,7 @@ import { useChatStore, useUserStore } from "../../store";
 import { ChatControllerPool } from "../../client/controller";
 import { Prompt, usePromptStore } from "../../store/prompt";
 import { useMaskStore } from "../../store/mask";
-import Locale from "../../locales";
+import Locale, { Lang } from "../../locales";
 
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
@@ -40,27 +40,19 @@ import {
 	Flex,
 } from "antd";
 
-import type { MenuProps } from "antd";
-import { ChatItemShort } from "@/app/(chat-pages)/chats/sidebar/chatItem";
-
 import { _Chat } from "@/app/(chat-pages)/chats/chat/main";
-import {
-	DragDropContext,
-	Droppable,
-	Draggable,
-	OnDragEndResponder,
-	OnDragUpdateResponder,
-} from "@hello-pangea/dnd";
+
 import { useWorkflowStore } from "../../store/workflow";
 import { useAuthStore } from "../../store/auth";
 import { WorkflowSidebar } from "./sidebar";
 import { message } from "antd";
 import Image from "next/image";
-import { IconButton } from "../../components/button";
-import { WORKFLOW_DEFAULT_TITLE } from "./workflowContext";
-import { SEOHeader } from "@/app/components/seo-header";
+
 import Router, { useRouter } from "next/navigation";
 import AgentList from "./components/agentList";
+import { Modal } from "@/app/components/ui-lib";
+import MaskList from "../chats/masklist/MaskList";
+import { useMasks } from "@/app/hooks/useMasks";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -78,7 +70,7 @@ const useHasHydrated = (): boolean => {
 const SimpleWorkflow: React.FC = () => {
 	const chatStore = useChatStore();
 	const isAuthenticated = useAuthStore().isAuthenticated;
-
+	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
 	const { selectedId, workflowGroups, addWorkflowGroup } = useWorkflowContext();
 
 	const sessionIds = workflowGroups.map((group) => group.id);
@@ -87,8 +79,41 @@ const SimpleWorkflow: React.FC = () => {
 	const [messageApi, contextHolder] = message.useMessage();
 
 	console.log("orderedSessions", orderedSessions);
-
+	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const [isBuiltin, setisBuiltin] = useState<boolean | undefined>(true);
+	const [filterLang, setFilterLang] = useState<Lang>("cn");
+	const [searchText, setSearchText] = useState("");
+	const maskStore = useMaskStore();
 	const [isAuth, setIsAuth] = useState(false);
+	const [showAgentList, setShowAgentList] = useState(false);
+	const { masks: maskfetch, fetchPromptsCallback } = useMasks();
+	const [totalPrompts, setTotalPrompts] = useState(0);
+	const [filterOptions, setFilterOptions] = useState<Object>({
+		tags: [],
+		searchTerm: "",
+		author: "",
+	});
+	const [author, setAuthor] = useState<string | undefined>(undefined);
+
+	const handleModalClick = () => {
+		// toggle
+		setShowAgentList(!showAgentList);
+	};
+	const [page, setPage] = useState(1);
+	const [isNext, setIsNext] = useState(true);
+
+	const loadMore = useCallback(async () => {
+		if (isNext) {
+			const result = await fetchPromptsCallback(page, 25);
+			if (result.is_next !== undefined) {
+				setIsNext(result.is_next);
+			}
+			if (result.total !== undefined) {
+				setTotalPrompts(result.total);
+			}
+			setPage((prevPage) => prevPage + 1);
+		}
+	}, [isNext, page]);
 
 	const router = useRouter();
 
@@ -98,6 +123,19 @@ const SimpleWorkflow: React.FC = () => {
 	useEffect(() => {
 		setIsAuth(isAuthenticated);
 	}, []);
+
+	useEffect(() => {
+		const newFilterOptions = {
+			...filterOptions,
+			...(selectedTags && { tags: selectedTags }),
+			...(searchText !== undefined && { searchTerm: searchText }),
+			...(author !== undefined && { author: author }),
+		};
+
+		const data = maskStore.filter(newFilterOptions);
+		// console.log("list", data, "options", newFilterOptions);
+		setFilterMasks(maskStore.sort("hotness", data));
+	}, [filterLang, selectedTags, isBuiltin, searchText, author, maskStore]);
 
 	// useEffect(() => {
 	// 	// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
@@ -176,18 +214,16 @@ const SimpleWorkflow: React.FC = () => {
 						/>
 					</div>
 					<div className={styles["title"]}>
-						点击
-						<Dropdown menu={{}} autoAdjustOverflow={true} autoFocus={true}>
-							<a onClick={(e) => e.preventDefault()}>
-								<Button
-									type="dashed"
-									className={styles["plus"]}
-									icon={<PlusCircleOutlined />}
-								>
-									新增助手
-								</Button>
-							</a>
-						</Dropdown>{" "}
+						<a onClick={(e) => e.preventDefault()}>
+							<Button
+								type="dashed"
+								className={styles["plus"]}
+								icon={<PlusCircleOutlined />}
+								onClick={() => handleModalClick()}
+							>
+								新增助手
+							</Button>
+						</a>
 						来开启工作流
 					</div>
 					<div className={styles["sub-title"]}>
@@ -237,6 +273,17 @@ const SimpleWorkflow: React.FC = () => {
 				<div className={styles["chats-container"]}>
 					<MainScreen />
 				</div>
+				{showAgentList && (
+					<div className="modal-mask">
+						<Modal title="选择" onClose={handleModalClick}>
+							<MaskList
+								masks={filterMasks}
+								cardStyle={"cardStyle"}
+								loadMore={loadMore}
+							/>
+						</Modal>
+					</div>
+				)}
 			</Layout>
 		</Layout>
 	);

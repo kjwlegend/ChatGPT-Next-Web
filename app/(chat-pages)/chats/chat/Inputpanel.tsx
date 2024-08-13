@@ -656,33 +656,6 @@ export function ChatActions(props: {
 					onClick={handleInjectUserInfo}
 					text={enableUserInfo ? "个性化" : "通用"}
 				/>
-
-
-				{currentModel !== "midjourney" && (
-					<ChatAction
-						text={Locale.Chat.InputActions.Clear}
-						icon={<BreakIcon />}
-						onClick={() => {
-							console.log("=-====clear====");
-
-							chatStore.updateSession(sessionId, () => {
-								if (session.clearContextIndex === session.messages.length) {
-									session.clearContextIndex = undefined;
-								} else {
-									session.clearContextIndex = session.messages.length;
-									session.memoryPrompt = ""; // will clear memory
-								}
-								console.log(
-									"session",
-									sessionId,
-									"clearContextIndex",
-									session.clearContextIndex,
-								);
-							});
-						}}
-						hidetext={props.workflows ? true : false}
-					/>
-				)}
 			</div>
 			<div>
 				<div>
