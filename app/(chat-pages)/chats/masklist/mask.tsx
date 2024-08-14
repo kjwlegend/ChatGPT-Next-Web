@@ -78,29 +78,26 @@ export function MaskAvatar(props: { mask: Mask }) {
 	);
 }
 
-export function MaskPage() {
-	const navigate = useNavigate();
+interface MaskPageProps {
+	onChat: (mask: Mask) => void;
+	onDelete: (mask: Mask) => void;
+}
+
+export const MaskPage: React.FC<MaskPageProps> = ({ onChat, onDelete }) => {
 	const maskStore = useMaskStore();
-	const { masks: maskfetch, fetchPromptsCallback } = useMasks();
-	const chatStore = useChatStore();
+	const { fetchPromptsCallback } = useMasks();
 	const user = useUserStore().user;
 	const { username, nickname } = user;
 
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
-	const [isBuiltin, setisBuiltin] = useState<boolean | undefined>(true);
 	const [filterLang, setFilterLang] = useState<Lang>("cn");
 	const [searchText, setSearchText] = useState("");
-	const [cardStyle, setCardStyle] = useState<
-		"roleplay" | "assistant" | "workflow"
-	>("assistant");
-	const [segmentValue, setsegmentValue] = useState<string | number>("public");
+	const [segmentValue, setSegmentValue] = useState<string | number>("public");
 	const [filterOptions, setFilterOptions] = useState<Object>({
 		tags: [],
 		searchTerm: "",
 		author: "",
 	});
-
-	const [allMasks, setallMasks] = useState<Mask[]>([]);
 	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
 	const [author, setAuthor] = useState<string | undefined>(undefined);
 	const [totalPrompts, setTotalPrompts] = useState(0);
@@ -122,7 +119,7 @@ export function MaskPage() {
 
 	useEffect(() => {
 		const masksData = maskStore.getAll();
-		setallMasks(masksData);
+		setFilterMasks(masksData);
 	}, [maskStore]);
 
 	useEffect(() => {
@@ -134,20 +131,11 @@ export function MaskPage() {
 		};
 
 		const data = maskStore.filter(newFilterOptions);
-		// console.log("list", data, "options", newFilterOptions);
 		setFilterMasks(maskStore.sort("hotness", data));
-	}, [
-		filterLang,
-		selectedTags,
-		isBuiltin,
-		cardStyle,
-		searchText,
-		author,
-		maskStore,
-	]);
+	}, [filterLang, selectedTags, searchText, author, maskStore]);
 
 	const handleSegmentChange = (value: string | number) => {
-		setsegmentValue(value);
+		setSegmentValue(value);
 		switch (value) {
 			case "public":
 				setAuthor(undefined);
@@ -167,11 +155,6 @@ export function MaskPage() {
 	const onSearch = (text: string) => {
 		setSearchText(text);
 	};
-
-	const [editingMaskId, setEditingMaskId] = useState<string | undefined>();
-	const editingMask =
-		maskStore.get(editingMaskId) ?? BUILTIN_MASK_STORE.get(editingMaskId);
-	const closeMaskModal = () => setEditingMaskId(undefined);
 
 	const downloadAll = () => {
 		downloadAs(JSON.stringify(BUILTIN_MASKS), FileName.Masks);
@@ -199,46 +182,12 @@ export function MaskPage() {
 	return (
 		<ErrorBoundary>
 			<div className={styles["mask-page"]}>
-				{/* <div className="window-header">
-					<div className="window-header-title">
-						<div className="window-header-main-title">
-							{Locale.Mask.Page.Title}
-						</div>
-						<div className="window-header-submai-title"></div>
-					</div>
-					<div className="window-actions">
-						<div className="window-action-button">
-							<IconButton
-								icon={<DownloadIcon />}
-								bordered
-								onClick={downloadAll}
-								text={Locale.UI.Export}
-							/>
-						</div>
-						<div className="window-action-button">
-							<IconButton
-								icon={<UploadIcon />}
-								text={Locale.UI.Import}
-								bordered
-								onClick={() => importFromFile()}
-							/>
-						</div>
-						<div className="window-action-button">
-							<IconButton
-								icon={<CloseIcon />}
-								bordered
-								onClick={() => navigate(-1)}
-							/>
-						</div>
-					</div>
-				</div> */}
 				<div className={styles["mask-page-body"]}>
 					{Locale.Mask.Page.SubTitle(maskStore.total)}
 					<SegmentedControl
 						segmentValue={segmentValue}
 						handleSegmentChange={handleSegmentChange}
 					/>
-
 					<div className={styles["mask-filter"]}>
 						<input
 							type="text"
@@ -246,31 +195,16 @@ export function MaskPage() {
 							placeholder={Locale.Mask.Page.Search}
 							onInput={(e) => onSearch(e.currentTarget.value)}
 						/>
-						<IconButton
-							className={styles["mask-create"]}
-							icon={<AddIcon />}
-							text={Locale.Mask.Page.Create}
-							bordered
-							onClick={async () => {
-								const createdMask = await maskStore.create();
-								setEditingMaskId(createdMask.id);
-							}}
-						/>
 					</div>
 					<FilterOptions handleTagsChange={handleTagsChange} />
 					<MaskList
 						masks={filterMasks}
-						cardStyle={cardStyle}
 						loadMore={loadMore}
+						onChat={onChat}
+						onDelete={onDelete}
 					/>
 				</div>
 			</div>
-			<MaskModal
-				editingMask={editingMask}
-				closeMaskModal={closeMaskModal}
-				saveMask={(id) => maskStore.saveMask(id)}
-				updateMask={(id, updater) => maskStore.updateMask(id, updater)}
-			/>
 		</ErrorBoundary>
 	);
-}
+};

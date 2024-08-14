@@ -16,7 +16,7 @@ export interface WorkflowGroup {
 	summary: string;
 	agent_numbers: number;
 	chat_session_ids: string[];
-	sessions?: ChatSession[];
+	sessions: ChatSession[];
 	updated_at: string;
 	created_at: string;
 	lastUpdateTime: number | string | Date;
@@ -165,6 +165,7 @@ export const useWorkflowStore = create<State>()(
 							lastUpdateTime,
 							chat_session_ids:
 								chat_session_ids !== undefined ? chat_session_ids : [],
+							sessions: [],
 						};
 						if (existingGroupIndex === undefined) {
 							updatedIndex[id] = updatedGroups.length;

@@ -11,6 +11,7 @@ import {
 	getWorkflowSession,
 	updateWorkflowSession,
 	deleteWorkflowSession,
+	createWorkflowSessionChatGroup,
 } from "@/app/services/chats";
 import { group } from "console";
 import { updateChatSessions } from "@/app/services/chatService";
@@ -59,6 +60,25 @@ export const WorkflowProvider = ({
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const userid = useUserStore.getState().user.id;
+
+	const getworkFlowSessions = useCallback(async (param: any) => {
+		const data = {
+			user: userid,
+			...param,
+		};
+
+		const res = await getWorkflowSession(data);
+
+		if (res.code === 401) {
+			throw new Error("登录状态已过期, 请重新登录");
+		}
+
+		if (res.data) {
+			updateWorkflowGroupHandler(res.data);
+		}
+
+		return res;
+	}, []);
 
 	const addWorkflowGroupHandler = useCallback(async () => {
 		messageApi.open({
@@ -109,12 +129,18 @@ export const WorkflowProvider = ({
 	);
 
 	const addSessionToGroupHandler = useCallback(
+		//
 		async (groupId: string, session: string) => {
 			messageApi.open({
 				content: "会话添加中",
 				type: "loading",
 			});
 			try {
+				const apidata = {
+					session,
+					groupId,
+				};
+				const res = await createWorkflowSessionChatGroup(apidata);
 				await addSessionToGroup(groupId, session);
 				messageApi.destroy();
 				messageApi.success("会话添加成功");
@@ -182,25 +208,6 @@ export const WorkflowProvider = ({
 		},
 		[deleteSessionFromGroup],
 	);
-
-	const getworkFlowSessions = useCallback(async (param: any) => {
-		const data = {
-			user: userid,
-			...param,
-		};
-
-		const res = await getWorkflowSession(data);
-
-		if (res.code === 401) {
-			throw new Error("登录状态已过期, 请重新登录");
-		}
-
-		if (res.data) {
-			updateWorkflowGroupHandler(res.data);
-		}
-
-		return res;
-	}, []);
 
 	const updateSingleWorkflowGroup = async (groupId: string, newGroup: any) => {
 		messageApi.open({

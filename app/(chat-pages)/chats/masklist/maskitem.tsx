@@ -34,9 +34,7 @@ import {
 	useChatStore,
 	useUserStore,
 } from "@/app/store";
-import { FileName, Path } from "@/app/constant";
 
-import { useNavigate } from "react-router-dom";
 
 const { Meta } = Card;
 
@@ -52,32 +50,17 @@ type MaskComponentProps = {
 	mask: Mask;
 	setEditingMaskId: (id: string) => void;
 	styleName?: string;
-	deleteCallback?: () => void;
+	onChat: (mask: Mask) => void;
+	onDelete: (mask: Mask) => void;
 };
 
 const MaskComponent: React.FC<MaskComponentProps> = ({
 	mask,
 	setEditingMaskId,
 	styleName = "",
+	onChat,
+	onDelete,
 }) => {
-	const navigate = useNavigate();
-
-	const maskStore = useMaskStore();
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
-
-	const onChat = () => {
-		setTimeout(() => {
-			chatStore.newSession(mask, userStore);
-		}, 10);
-		navigate(Path.Chat);
-	};
-
-	const onDelete = () => {
-		console.log("onDelete");
-		maskStore.delete(mask.id);
-	};
-
 	const getCardStyle = () => {
 		if (styleName === "assistant") {
 			return styles["mask-item-card"];
@@ -107,13 +90,9 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 						padding: 5,
 					},
 				}}
-				// extra={
-
-				// }
 				hoverable
-				// bordered={true}
 				className={`${styles["mask-item"]} ${styles["mask-item-card"]}`}
-				onClick={() => onChat()}
+				onClick={() => onChat(mask)}
 			>
 				<Meta
 					description={
@@ -136,7 +115,6 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 						key="view"
 						text={`${mask.hotness ? mask.hotness : "0"}`}
 						className={styles.hotness}
-						// onClick={() => setEditingMaskId(mask.id)}
 					/>
 				</div>
 			</Card>
@@ -148,39 +126,12 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 			<div className={styles["mask-item-info"]}>
 				<h3>{mask.name}</h3>
 				<p>{mask.description}</p>
-				<button onClick={onChat}>Chat</button>
-				{!mask.builtin && <button onClick={onDelete}>Delete</button>}
-				{/* {!mask.builtin && (
-						<div className={styles.actions}>
-							<IconButton
-								icon={<EditIcon />}
-								key="edit"
-								text={Locale.Mask.Item.Edit}
-								onClick={(event: any) => {
-									event.stopPropagation(); // prevent click event from bubbling up to the card
-									setEditingMaskId(mask.id);
-								}}
-							/>
-							<IconButton
-								icon={<DeleteIcon />}
-								text={Locale.Mask.Item.Delete}
-								key="delete"
-								onClick={async (e) => {
-									e.stopPropagation(); // prevent click event from bubbling up to the card
-									if (await showConfirm(Locale.Mask.Item.DeleteConfirm)) {
-										onDelete();
-									}
-								}}
-							/>
-						</div>
-					)} */}
+				<button onClick={() => onChat(mask)}>Chat</button>
+				{!mask.builtin && (
+					<button onClick={() => onDelete(mask)}>Delete</button>
+				)}
 			</div>
 		);
-	};
-
-	const ColorList = ["#f56a00", "#7265e6", "#ffbf00", "#00a2ae"];
-	const getRandomColor = () => {
-		return ColorList[Math.floor(Math.random() * ColorList.length)];
 	};
 
 	const renderComponent = () => {

@@ -50,9 +50,11 @@ import Image from "next/image";
 
 import Router, { useRouter } from "next/navigation";
 import AgentList from "./components/agentList";
-import { Modal } from "@/app/components/ui-lib";
 import MaskList from "../chats/masklist/MaskList";
 import { useMasks } from "@/app/hooks/useMasks";
+import { Modal } from "antd";
+import { MaskPage } from "../chats/masklist/mask";
+import { useAgentActions } from "@/app/hooks/useAgentActions";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -68,90 +70,21 @@ const useHasHydrated = (): boolean => {
 };
 
 const SimpleWorkflow: React.FC = () => {
-	const chatStore = useChatStore();
 	const isAuthenticated = useAuthStore().isAuthenticated;
-	const [filterMasks, setFilterMasks] = useState<Mask[]>([]);
 	const { selectedId, workflowGroups, addWorkflowGroup } = useWorkflowContext();
-
-	const sessionIds = workflowGroups.map((group) => group.id);
-
 	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
-	const [messageApi, contextHolder] = message.useMessage();
-
-	console.log("orderedSessions", orderedSessions);
-	const [selectedTags, setSelectedTags] = useState<string[]>([]);
-	const [isBuiltin, setisBuiltin] = useState<boolean | undefined>(true);
-	const [filterLang, setFilterLang] = useState<Lang>("cn");
-	const [searchText, setSearchText] = useState("");
-	const maskStore = useMaskStore();
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
-	const { masks: maskfetch, fetchPromptsCallback } = useMasks();
-	const [totalPrompts, setTotalPrompts] = useState(0);
-	const [filterOptions, setFilterOptions] = useState<Object>({
-		tags: [],
-		searchTerm: "",
-		author: "",
-	});
-	const [author, setAuthor] = useState<string | undefined>(undefined);
-
-	const handleModalClick = () => {
-		// toggle
-		setShowAgentList(!showAgentList);
-	};
-	const [page, setPage] = useState(1);
-	const [isNext, setIsNext] = useState(true);
-
-	const loadMore = useCallback(async () => {
-		if (isNext) {
-			const result = await fetchPromptsCallback(page, 25);
-			if (result.is_next !== undefined) {
-				setIsNext(result.is_next);
-			}
-			if (result.total !== undefined) {
-				setTotalPrompts(result.total);
-			}
-			setPage((prevPage) => prevPage + 1);
-		}
-	}, [isNext, page]);
-
 	const router = useRouter();
-
-	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
-	// checkout workflowGoup is not an empty object
+	const { onDelete, onChat } = useAgentActions();
 
 	useEffect(() => {
 		setIsAuth(isAuthenticated);
-	}, []);
+	}, [isAuthenticated]);
 
-	useEffect(() => {
-		const newFilterOptions = {
-			...filterOptions,
-			...(selectedTags && { tags: selectedTags }),
-			...(searchText !== undefined && { searchTerm: searchText }),
-			...(author !== undefined && { author: author }),
-		};
-
-		const data = maskStore.filter(newFilterOptions);
-		// console.log("list", data, "options", newFilterOptions);
-		setFilterMasks(maskStore.sort("hotness", data));
-	}, [filterLang, selectedTags, isBuiltin, searchText, author, maskStore]);
-
-	// useEffect(() => {
-	// 	// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
-	// 	const updatedSessions =
-	// 		sessionIds
-	// 			?.map((sessionId) =>
-	// 				chatStore.sessions.find((session) => session.id === sessionId),
-	// 			)
-	// 			.filter((session): session is ChatSession => session !== undefined) ??
-	// 		[]; // 使用类型保护来过滤 undefined 值
-
-	// 	setOrderedSessions(updatedSessions);
-
-	// 	// console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
-	// }, [sessionIds, chatStore.sessions]); // 添加 chatstore.sessions 作为依赖项
-	const userid = useUserStore.getState().user.id;
+	const handleModalClick = () => {
+		setShowAgentList(!showAgentList);
+	};
 
 	if (!useHasHydrated()) {
 		return (
@@ -161,8 +94,6 @@ const SimpleWorkflow: React.FC = () => {
 			</>
 		);
 	}
-
-	// use a better clear structure to render content
 
 	const MainScreen = () => {
 		if (!isAuth) {
@@ -178,7 +109,6 @@ const SimpleWorkflow: React.FC = () => {
 						/>
 					</div>
 					<div className={styles["title"]}>您还未登录, 请登录后开启该功能</div>
-
 					<div className={styles["actions"]}>
 						<Button
 							type="default"
@@ -201,7 +131,7 @@ const SimpleWorkflow: React.FC = () => {
 			));
 		}
 
-		if (workflowGroups.length != 0 && orderedSessions.length == 0) {
+		if (workflowGroups.length !== 0 && orderedSessions.length === 0) {
 			return (
 				<div className={styles["welcome-container"]}>
 					<div className={styles["logo"]}>
@@ -231,11 +161,10 @@ const SimpleWorkflow: React.FC = () => {
 						手机端无法使用.
 						<p>该功能属于会员功能, 目前限时开放.</p>
 					</div>
-					<div className={styles["actions"]}></div>
 				</div>
 			);
 		}
-		//  default case
+
 		return (
 			<div className={styles["welcome-container"]}>
 				<div className={styles["logo"]}>
@@ -269,20 +198,21 @@ const SimpleWorkflow: React.FC = () => {
 			<Layout
 				className={`${styles2["window-content"]} ${styles["background"]}`}
 			>
-				{selectedId != "" && <AgentList />}
+				{selectedId !== "" && <AgentList />}
 				<div className={styles["chats-container"]}>
 					<MainScreen />
 				</div>
 				{showAgentList && (
-					<div className="modal-mask">
-						<Modal title="选择" onClose={handleModalClick}>
-							<MaskList
-								masks={filterMasks}
-								cardStyle={"cardStyle"}
-								loadMore={loadMore}
-							/>
-						</Modal>
-					</div>
+					<Modal
+						open={showAgentList}
+						onCancel={handleModalClick}
+						footer={null}
+						width="70vw"
+						height="80vh"
+						style={{ overflow: "scroll" }}
+					>
+						<MaskPage onChat={onChat} onDelete={onDelete} />
+					</Modal>
 				)}
 			</Layout>
 		</Layout>

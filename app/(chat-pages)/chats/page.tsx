@@ -46,6 +46,7 @@ import {
 	updateChatSessions,
 } from "@/app/services/chatService";
 import { useChatService } from "@/app/hooks/useChatHook";
+import { useAgentActions } from "@/app/hooks/useAgentActions";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -223,28 +224,6 @@ function Screen() {
 			"expiresTimeStamp",
 			expiresDateTime,
 		);
-
-		// if (currentTimeStamp > expiresTimeStamp && expiresTimeStamp != null) {
-		// 	console.log("cookie已过期");
-		// 	message.error("登录已过期，请重新登录");
-
-		// 	logoutHook()
-		// 		.then(() => {
-		// 			timeoutId = setTimeout(() => {
-		// 				router.push("/auth");
-		// 			}, 1500);
-		// 		})
-		// 		.catch((e) => {
-		// 			console.log("logout error", e);
-		// 		});
-		// }
-
-		// // 清理函数，组件卸载时取消定时器
-		// return () => {
-		// 	if (timeoutId) {
-		// 		clearTimeout(timeoutId);
-		// 	}
-		// };
 	}, [isAuthenticated, logoutHook]);
 
 	const {
@@ -255,6 +234,7 @@ function Screen() {
 		handleChatItemDelete,
 	} = useChatService();
 
+	const { onDelete, onChat } = useAgentActions();
 	return (
 		<div
 			className={
@@ -280,7 +260,10 @@ function Screen() {
 						<Route path={Path.NewChat} element={<NewChat />} />
 						<Route path={Path.Knowledge} element={<Knowledge />} />
 						<Route path={Path.Paintings} element={<Paitings />} />
-						<Route path={Path.Masks} element={<MaskPage />} />
+						<Route
+							path={Path.Masks}
+							element={<MaskPage onChat={onChat} onDelete={onDelete} />}
+						/>
 						<Route path={Path.Plugins} element={<Plugins />} />
 						<Route path={Path.Chat} element={<Chat />} />
 						<Route path={Path.Settings} element={<Settings />} />

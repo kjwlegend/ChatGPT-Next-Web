@@ -4,11 +4,17 @@ import MaskItem from "./maskitem";
 import styles from "./mask.module.scss";
 interface MaskListProps {
 	masks: Mask[];
-	cardStyle: string;
 	loadMore: () => void;
+	onChat: (mask: Mask) => void;
+	onDelete: (mask: Mask) => void;
 }
 
-const MaskList: React.FC<MaskListProps> = ({ masks, cardStyle, loadMore }) => {
+const MaskList: React.FC<MaskListProps> = ({
+	masks,
+	loadMore,
+	onChat,
+	onDelete,
+}) => {
 	const [visibleCount, setVisibleCount] = useState(25);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const loaderRef = useRef<HTMLDivElement>(null);
@@ -45,16 +51,19 @@ const MaskList: React.FC<MaskListProps> = ({ masks, cardStyle, loadMore }) => {
 			}
 		};
 	}, [handleLoadMore]);
+
 	return (
 		<div ref={scrollRef} className={styles["mask-list"]}>
 			{masks.slice(0, visibleCount).map((m) => (
 				<MaskItem
 					mask={m}
 					key={m.id}
-					styleName={cardStyle}
+					styleName={"assistant"}
 					setEditingMaskId={() => {
 						console.log("click");
 					}}
+					onChat={onChat}
+					onDelete={onDelete}
 				/>
 			))}
 			<div ref={loaderRef} style={{ height: "1px" }} />
