@@ -55,6 +55,7 @@ import { useMasks } from "@/app/hooks/useMasks";
 import { Modal } from "antd";
 import { MaskPage } from "../chats/masklist/mask";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
+import { useSimpleWorkflowService } from "@/app/hooks/useSimpleWorkflowHook";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -72,15 +73,28 @@ const useHasHydrated = (): boolean => {
 const SimpleWorkflow: React.FC = () => {
 	const isAuthenticated = useAuthStore().isAuthenticated;
 	const { selectedId, workflowGroups, addWorkflowGroup } = useWorkflowContext();
-	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
 	const { onDelete, onChat } = useAgentActions();
 
+	const { handleAgentClick } = useSimpleWorkflowService();
+
 	useEffect(() => {
 		setIsAuth(isAuthenticated);
 	}, [isAuthenticated]);
+
+	// //  根据selectedID 获取对应的workflowGroup, 并获取其中的sessions
+	const currentWorkflowGroup = useMemo(() => {
+		return workflowGroups.find((group) => group.id === selectedId);
+	}, [selectedId, workflowGroups, handleAgentClick]);
+
+	console.log("currentWorkflowGroup", currentWorkflowGroup);
+	const currentSessions = useMemo(() => {
+		return currentWorkflowGroup?.sessions ?? [];
+	}, [currentWorkflowGroup]);
+
+	// const currentSessions: any = [];
 
 	const handleModalClick = () => {
 		setShowAgentList(!showAgentList);
@@ -125,13 +139,24 @@ const SimpleWorkflow: React.FC = () => {
 			);
 		}
 
-		if (orderedSessions.length !== 0) {
-			return orderedSessions.map((session, index) => (
-				<_Chat key={index} _session={session} index={index} isworkflow={true} />
-			));
+		if (currentSessions.length !== 0) {
+			return currentSessions.map((session, index) => {
+				console.log("session", session, "index", index);
+				return (
+					<>
+						{index} {session.id} {session.topic} ,
+						<_Chat
+							key={index}
+							_session={session}
+							index={index}
+							isworkflow={true}
+						/>
+					</>
+				);
+			});
 		}
 
-		if (workflowGroups.length !== 0 && orderedSessions.length === 0) {
+		if (workflowGroups.length !== 0 && currentSessions.length === 0) {
 			return (
 				<div className={styles["welcome-container"]}>
 					<div className={styles["logo"]}>
@@ -198,7 +223,9 @@ const SimpleWorkflow: React.FC = () => {
 			<Layout
 				className={`${styles2["window-content"]} ${styles["background"]}`}
 			>
-				{selectedId !== "" && <AgentList />}
+				{selectedId !== "" && (
+					<AgentList sessions={currentSessions} showModal={handleModalClick} />
+				)}
 				<div className={styles["chats-container"]}>
 					<MainScreen />
 				</div>
@@ -211,7 +238,7 @@ const SimpleWorkflow: React.FC = () => {
 						height="80vh"
 						style={{ overflow: "scroll" }}
 					>
-						<MaskPage onChat={onChat} onDelete={onDelete} />
+						<MaskPage onItemClick={handleAgentClick} onDelete={onDelete} />
 					</Modal>
 				)}
 			</Layout>

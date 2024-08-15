@@ -60,9 +60,11 @@ export function ChatItem(props: {
 			<div
 				className={styles["chat-item-delete"]}
 				onClickCapture={(e) => {
-					props.onDelete?.();
-					e.preventDefault();
-					e.stopPropagation();
+					e.stopPropagation(); // 先停止事件传播
+					e.preventDefault(); // 然后防止默认行为
+					props.onDelete &&
+						typeof props.onDelete === "function" &&
+						props.onDelete(); // 确保 onDelete 是一个函数再调用
 				}}
 			>
 				<DeleteIcon />

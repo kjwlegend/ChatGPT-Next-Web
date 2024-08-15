@@ -41,7 +41,7 @@ type State = {
 	deleteWorkflowGroup: (groupId: string | number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	sortWorkflowGroups: () => void;
-	addSessionToGroup: (groupId: string, session: ChatSession) => Promise<void>;
+	addSessionToGroup: (groupId: string, session: ChatSession) => void;
 	moveSession: (
 		groupId: string,
 		sourceIndex: number,
@@ -95,11 +95,12 @@ export const useWorkflowStore = create<State>()(
 					};
 					const updatedGroups = [...state.workflowGroups];
 					updatedGroups[index] = updatedGroup;
-
+					// console.log("store debug: updateWorkflowGroup", updatedGroup);
 					return { workflowGroups: updatedGroups };
 				});
 				get().sortWorkflowGroups();
 			},
+
 			deleteWorkflowGroup: (groupId) => {
 				set((state) => {
 					const index = state.workflowGroupIndex[groupId];
@@ -127,12 +128,12 @@ export const useWorkflowStore = create<State>()(
 				}
 			},
 			fetchNewWorkflowGroup: (data: WorkflowGroup[]) => {
-				console.log("adding workflow", data);
+				// console.log("store debug:adding workflow", data);
 				const existingGroups = get().workflowGroups;
 				const existingIndex = get().workflowGroupIndex;
 
-				const updatedGroups = [...existingGroups];
-				const updatedIndex = { ...existingIndex };
+				const updatedGroups = [...existingGroups]; // 创建一个新的工作组数组
+				const updatedIndex = { ...existingIndex }; // 创建一个新的索引对象
 
 				data.forEach((item) => {
 					const {
@@ -142,13 +143,15 @@ export const useWorkflowStore = create<State>()(
 						session_description,
 						session_summary,
 						agent_numbers,
-						chat_session_ids,
+						chat_groups,
 						updated_at,
 						created_at,
 					} = item;
-					// convert updated_at string to Date timestamp
-					const lastUpdateTime = new Date(updated_at).toISOString();
+
+					// Convert updated_at string to Date timestamp
+					const lastUpdateTime = new Date(updated_at).getTime();
 					const existingGroupIndex = existingIndex[id];
+
 					if (
 						existingGroupIndex === undefined ||
 						new Date(lastUpdateTime) >
@@ -163,15 +166,35 @@ export const useWorkflowStore = create<State>()(
 							updated_at: updated_at,
 							agent_numbers: agent_numbers,
 							lastUpdateTime,
-							chat_session_ids:
-								chat_session_ids !== undefined ? chat_session_ids : [],
+							chat_session_ids: chat_groups !== undefined ? chat_groups : [],
 							sessions: [],
 						};
+
 						if (existingGroupIndex === undefined) {
-							updatedIndex[id] = updatedGroups.length;
+							// console.log(
+							// 	"store debug:new group",
+							// 	newGroup,
+							// 	"index",
+							// 	existingGroupIndex,
+							// );
+							// 如果该组不存在，则将其添加到数组末尾
 							updatedGroups.push(newGroup);
+							updatedIndex[id] = updatedGroups.length - 1; // 更新索引以指向新组
 						} else {
-							updatedGroups[existingGroupIndex] = newGroup;
+							// 如果该组已存在，进行合并操作
+
+							updatedGroups[existingGroupIndex] = {
+								...updatedGroups[existingGroupIndex],
+								...newGroup, // 合并新组的属性
+								lastUpdateTime, // 确保更新时间被更新
+								chat_session_ids: [
+									...new Set([
+										...updatedGroups[existingGroupIndex].chat_session_ids,
+										...newGroup.chat_session_ids,
+									]), // 合并 chat_session_ids 并去重
+								],
+								sessions: updatedGroups[existingGroupIndex].sessions || [],
+							};
 						}
 					}
 				});
@@ -182,43 +205,59 @@ export const useWorkflowStore = create<State>()(
 				}));
 				get().sortWorkflowGroups();
 			},
+
 			sortWorkflowGroups: () => {
 				set((state) => {
+					const sortedGroups = state.workflowGroups.sort(
+						(a, b) =>
+							new Date(b.lastUpdateTime).getTime() -
+							new Date(a.lastUpdateTime).getTime(),
+					);
+
+					// 重新构建索引以匹配排序后的数组
+					const newIndex: { [key: string]: number } = {};
+					sortedGroups.forEach((group, index) => {
+						newIndex[group.id] = index;
+					});
+
 					return {
-						workflowGroups: state.workflowGroups.sort(
-							(a, b) =>
-								new Date(b.lastUpdateTime).getTime() -
-								new Date(a.lastUpdateTime).getTime(),
-						),
+						workflowGroups: sortedGroups,
+						workflowGroupIndex: newIndex, // 更新索引为新的顺序
 					};
 				});
 			},
-			addSessionToGroup: async (groupId, session) => {
+			addSessionToGroup: (groupId, session) => {
 				set((state) => {
 					const index = state.workflowGroupIndex[groupId];
 					if (index === undefined) return state;
 
+					// 确保 sessions 是一个数组，即使它是 undefined
+					const currentSessions = state.workflowGroups[index].sessions;
+
 					const updatedGroup = {
 						...state.workflowGroups[index],
-						sessions: [
-							...(state.workflowGroups[index].sessions || []),
-							session,
-						],
+						sessions: [...currentSessions, session],
 					};
+
+					//  debug current session length and new sessions length
+					console.log(
+						"store debug: current session length",
+						currentSessions.length,
+						"new sessions length",
+						updatedGroup.sessions.length,
+					);
+
 					const updatedGroups = [...state.workflowGroups];
 					updatedGroups[index] = updatedGroup;
 
+					console.log("store debug: currentGroup after update", updatedGroups);
+
 					return { workflowGroups: updatedGroups };
 				});
-
-				const newSessions = get().getWorkflowSessionId(groupId);
-				const res = await updateWorkflowSession(groupId, {
-					chat_sessions: newSessions,
-					user: useUserStore.getState().user.id,
-				});
-				if (res.code === 401) {
-					throw new Error("登录状态已过期, 请重新登录");
-				}
+				console.log(
+					"store debug: workflowgroup after update",
+					get().workflowGroups,
+				);
 			},
 			moveSession: async (groupId, sourceIndex, destinationIndex) => {
 				set((state) => {

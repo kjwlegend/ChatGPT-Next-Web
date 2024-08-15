@@ -58,7 +58,7 @@ import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
 import { ChatList } from "@/app/(chat-pages)/chats/sidebar/chatList";
 export function WorkflowSidebar(props: { className?: string }) {
 	const {
-		chatSessions,
+		WorkflowGroupData,
 		loadMoreSessions,
 		handleAddClick,
 		handleChatItemClick,
@@ -66,11 +66,12 @@ export function WorkflowSidebar(props: { className?: string }) {
 	} = useSimpleWorkflowService();
 
 	//  change chatsessions from object type to array type
+	console.log("WorkflowGroupData debug sidebar", WorkflowGroupData);
 
 	return (
 		<SideBar
 			className={styles["sidebar-show"]}
-			chatSessions={chatSessions}
+			chatSessions={WorkflowGroupData}
 			loadMoreSessions={loadMoreSessions}
 			onAddClick={handleAddClick}
 			onChatItemClick={handleChatItemClick}

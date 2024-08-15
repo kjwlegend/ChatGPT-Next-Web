@@ -14,14 +14,7 @@ import CancelIcon from "@/app/icons/cancel.svg";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAppConfig,
-	DEFAULT_TOPIC,
-} from "@/app/store";
+import { useChatStore, useAppConfig, DEFAULT_TOPIC } from "@/app/store";
 
 import { useNavigate } from "react-router-dom";
 import {
@@ -32,8 +25,6 @@ import {
 } from "@/app/utils";
 
 import { Path } from "@/app/constant";
-
-import { api } from "@/app/client/api";
 
 import Locale from "@/app/locales";
 
@@ -54,13 +45,11 @@ import { prettyObject } from "@/app/utils/format";
 import { ExportMessageModal } from "@/app/(chat-pages)/chats/exporter";
 import { getClientConfig } from "@/app/config/client";
 
-import useAuth from "@/app/hooks/useAuth";
 import { message, Switch } from "antd";
 
 import { SessionConfigModel } from "./common";
 
 import { ChatContext } from "./main";
-import { index, is } from "cheerio/lib/api/traversing";
 import doubleAgent, { DoubleAgentChatSession } from "@/app/store/doubleAgents";
 import { LLMModelSwitch } from "./chatActions";
 
@@ -411,29 +400,21 @@ function WindowActions(props: {
 }
 
 export function WindowHeader(props: {
-	session?: ChatSession;
+	_session?: ChatSession;
 	index?: number;
 	isworkflow: boolean;
 	doubleAgent?: boolean;
 }) {
 	const chatStore = useChatStore();
 	let session: ChatSession;
+	const { _session, index, isworkflow, doubleAgent } = props;
 	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
-	const sessionId = session.id;
-	const index = props.index ?? 0;
 
-	const config = useAppConfig();
-	const [showExport, setShowExport] = useState(false);
+	session = isworkflow && _session ? _session : chatStore.currentSession();
 
 	const {
 		hitBottom,
 		setHitBottom,
-
 		showPromptModal,
 		setShowPromptModal,
 		userInput,

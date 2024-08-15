@@ -64,7 +64,7 @@ export const BOT_HELLO: ChatMessage = createMessage({
 	content: Locale.Store.BotHello,
 });
 
-function createEmptySession(props: {
+export function createEmptySession(props: {
 	id?: string;
 	topic?: string;
 	mask?: Mask;
@@ -284,9 +284,16 @@ export const useChatStore = createPersistStore(
 
 			deleteSession(sessionId: string) {
 				const sessions = get().sessions;
-				const sessionIndex = sessions.findIndex(
-					(session) => session.id === sessionId,
-				);
+
+				const sessionIndex = sessions.findIndex((session) => {
+					// console.log(
+					// 	typeof session.id,
+					// 	session.id,
+					// 	typeof sessionId,
+					// 	sessionId,
+					// ); // 打印类型和内容
+					return session.id == sessionId; // 去掉可能存在的空白字符
+				});
 
 				// 如果没有找到对应的会话，直接返回
 				if (sessionIndex === -1) return;

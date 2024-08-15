@@ -94,23 +94,23 @@ export const deleteWorkflowSession = apiPut(
 );
 export const getWorkflowSessionChatGroups = apiGet(
 	appnamespace,
-	"/user/workflowsessions/:id/get-chatgroup",
+	"/user/workflowsessions/:id/get-chatgroup/",
 );
 
 // get chatgroup chats
 export const getWorkflowSessionChats = apiGet(
 	appnamespace,
-	"/user/workflowsessions/:id/get-chatgroup-chats",
-)
+	"/user/workflowsessions/:id/get-chatgroup-chats/",
+);
 // create workflowsession chatgroup
 export const createWorkflowSessionChatGroup = api(
 	appnamespace,
-	"/user/workflowsessions/:id/create-chatgroup",
-)
+	"/user/workflowsessions/:id/create-chatgroup/",
+);
 // delete workflowsession chatgroup
 export const deleteWorkflowSessionChatGroup = api(
 	appnamespace,
-	"/user/workflowsessions/:id/delete-chatgroup",
-)
+	"/user/workflowsessions/:id/delete-chatgroup/",
+);
 
 export const getPromptHotness = apiGet(appnamespace, "/prompthotness/");

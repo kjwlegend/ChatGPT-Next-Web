@@ -79,11 +79,14 @@ export function MaskAvatar(props: { mask: Mask }) {
 }
 
 interface MaskPageProps {
-	onChat: (mask: Mask) => void;
+	onItemClick: (mask: Mask) => void;
 	onDelete: (mask: Mask) => void;
 }
 
-export const MaskPage: React.FC<MaskPageProps> = ({ onChat, onDelete }) => {
+export const MaskPage: React.FC<MaskPageProps> = ({
+	onItemClick,
+	onDelete,
+}) => {
 	const maskStore = useMaskStore();
 	const { fetchPromptsCallback } = useMasks();
 	const user = useUserStore().user;
@@ -200,7 +203,7 @@ export const MaskPage: React.FC<MaskPageProps> = ({ onChat, onDelete }) => {
 					<MaskList
 						masks={filterMasks}
 						loadMore={loadMore}
-						onChat={onChat}
+						onItemClick={onItemClick}
 						onDelete={onDelete}
 					/>
 				</div>

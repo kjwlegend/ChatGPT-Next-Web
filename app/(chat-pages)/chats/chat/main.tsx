@@ -101,7 +101,10 @@ export function _Chat(props: {
 
 	// if props._session is not provided, use current session
 
-	const session = chatStore.getSession(_session);
+	const session = useMemo(
+		() => _session ?? chatStore.currentSession(),
+		[_session],
+	);
 
 	const sessionId = session.id;
 
@@ -120,7 +123,7 @@ export function _Chat(props: {
 			className={`${styles.chat} ${
 				props.isworkflow ? styles["workflow-chat"] : ""
 			}`}
-			key={session.id}
+			key={sessionId}
 		>
 			<ChatContext.Provider
 				value={{
@@ -139,8 +142,9 @@ export function _Chat(props: {
 					setUserImage,
 				}}
 			>
+				{/* TODO  windowheader 有bug */}
 				<WindowHeader
-					session={_session}
+					_session={_session}
 					index={index}
 					isworkflow={props.isworkflow}
 				/>
@@ -149,7 +153,7 @@ export function _Chat(props: {
 					index={index}
 					isworkflow={props.isworkflow}
 				/>
-				<InputpanelDynamic session={_session} index={index} />
+				<InputpanelDynamic _session={_session} index={index} />
 			</ChatContext.Provider>
 		</div>
 	);

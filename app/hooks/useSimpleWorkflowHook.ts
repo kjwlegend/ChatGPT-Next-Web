@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import {
 	deleteWorkflowSession,
@@ -17,6 +17,7 @@ import { useDoubleAgentChatContext } from "../(chat-pages)/double-agents/doubleA
 import { useUserStore } from "../store";
 import { useWorkflowStore } from "../store/workflow";
 import { useWorkflowContext } from "../(chat-pages)/workflow-chats/workflowContext";
+import { Mask } from "@/app/types/mask";
 
 export const useSimpleWorkflowService = () => {
 	const navigate = useNavigate();
@@ -27,33 +28,37 @@ export const useSimpleWorkflowService = () => {
 		setSelectedId,
 		deleteWorkflowGroup,
 		addWorkflowGroup,
-		updateSingleWorkflowGroup,
 		fetchNewWorkflowGroup,
+		addChatGrouptoWorkflow,
 	} = useWorkflowContext();
 
-	const [chatSessions, setChatSessions] = useState<any[]>(workflowGroups);
+	const [WorkflowGroupData, setWorkflowGroupData] =
+		useState<any[]>(workflowGroups);
 
-	const loadMoreSessions = async (page: number) => {
-		const param = { limit: 20, page };
-		try {
-			const res = await getWorkflowSession(param);
-			fetchNewWorkflowGroup(res.data);
-			const newsessions = workflowGroups;
-			console.log("loadmore sessions", newsessions);
-			return { data: newsessions, is_next: res.is_next };
-		} catch {
-			throw new Error("登录已过期");
-		}
-	};
-	// 监听 chatStore.sessions 的变化
+	const loadMoreSessions = useCallback(
+		async (page: number) => {
+			const param = { limit: 20, page };
+			try {
+				const res = await getWorkflowSession(param);
+				fetchNewWorkflowGroup(res.data);
+				const newsessions = workflowGroups;
+				console.log("loadmore sessions", newsessions);
+				return { data: newsessions, is_next: res.is_next };
+			} catch {
+				throw new Error("登录已过期");
+			}
+		},
+		[workflowGroups, addChatGrouptoWorkflow, fetchNewWorkflowGroup],
+	);
+
 	useEffect(() => {
-		const updateChatSessions = () => {
-			setChatSessions(workflowGroups);
+		const updateWorkflowGroup = () => {
+			setWorkflowGroupData(workflowGroups);
+			console.debug("workflowGroups context debug", workflowGroups);
 		};
 
-		updateChatSessions(); // 初始化时更新一次
-	}, [workflowGroups, loadMoreSessions]);
-
+		updateWorkflowGroup(); // 初始化时更新一次
+	}, [workflowGroups]);
 	const handleAddClick = () => {
 		console.log("click");
 		addWorkflowGroup();
@@ -81,11 +86,20 @@ export const useSimpleWorkflowService = () => {
 		}
 	};
 
+	const handleAgentClick = async (agent: Mask) => {
+		try {
+			addChatGrouptoWorkflow(selectedId, agent);
+		} catch (error) {
+			console.log("Add agent to group error", error);
+		}
+	};
+
 	return {
-		chatSessions,
+		WorkflowGroupData,
 		loadMoreSessions,
 		handleAddClick,
 		handleChatItemClick,
 		handleChatItemDelete,
+		handleAgentClick,
 	};
 };

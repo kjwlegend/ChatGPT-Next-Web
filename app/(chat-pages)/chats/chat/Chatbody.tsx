@@ -79,9 +79,6 @@ export function Chatbody(props: {
 	const userStore = useUserStore();
 
 	const authHook = useAuth();
-	const { isAuthenticated } = useAuthStore();
-	const router = useRouter();
-	const { updateUserInfo } = authHook;
 
 	const { _session, index, isworkflow } = props;
 
@@ -229,7 +226,7 @@ export function Chatbody(props: {
 		context,
 		isLoading,
 		session.messages,
-		session.lastUpdate,
+		session.lastUpdateTime,
 		// userInput,
 		userImage?.fileUrl,
 	]);

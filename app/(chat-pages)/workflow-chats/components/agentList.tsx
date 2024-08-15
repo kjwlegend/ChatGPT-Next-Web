@@ -45,79 +45,18 @@ import {
 	OnDragUpdateResponder,
 } from "@hello-pangea/dnd";
 
-const GenerateMenuItems = () => {
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
-	const maskStore = useMaskStore().getAll();
-
-	const { selectedId, addSessionToGroup } = useWorkflowContext();
-
-	const _isworkflow = true;
-
-	const handleMaskClick = async (mask: any) => {
-		const newsession: ChatSession = await chatStore.newSession(
-			mask,
-			userStore,
-			_isworkflow,
-		);
-
-		addSessionToGroup(selectedId, newsession.id);
-	};
-
-	const maskItems = Object.values(maskStore).reduce(
-		(result, mask) => {
-			const category = mask.category;
-			const categoryItem = result.find((item) => item.label === category);
-
-			if (categoryItem) {
-				categoryItem.children.push({
-					key: mask.id,
-					label: mask.name,
-					onClick: () => {
-						handleMaskClick(mask);
-					},
-				});
-			} else {
-				result.push({
-					key: category,
-					label: category,
-					children: [
-						{
-							key: mask.id,
-							label: mask.name,
-							onClick: () => {
-								handleMaskClick(mask);
-							},
-						},
-					],
-				});
-			}
-
-			return result;
-		},
-		[] as {
-			key: string;
-			label: string;
-			children: { key: string; label: string; onClick?: () => void }[];
-		}[],
-	);
-
-	return [
-		{
-			key: "1",
-			label: "选择助手",
-			children: maskItems,
-		},
-	];
-};
-
-export default function AgentList() {
+export default function AgentList(props: {
+	sessions: ChatSession[];
+	showModal: () => void;
+}) {
 	const [selectIndex, setSelectIndex] = useState(0);
 	const { selectedId, workflowGroups, deleteSessionFromGroup, moveSession } =
 		useWorkflowContext();
 	const chatstore = useChatStore();
 	const sessionIds = workflowGroups.map((group) => group.id);
-	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>([]);
+	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>(
+		props.sessions,
+	);
 
 	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
 
@@ -134,8 +73,6 @@ export default function AgentList() {
 	// 	setOrderedSessions(updatedSessions);
 	// 	// console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
 	// }, [sessionIds, chatstore.sessions]); // 添加 chatstore.sessions 作为依赖项
-
-	const items: MenuProps["items"] = GenerateMenuItems();
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
@@ -205,17 +142,14 @@ export default function AgentList() {
 
 				{/* 下拉菜单 */}
 
-				<Dropdown menu={{ items }}>
-					<a onClick={(e) => e.preventDefault()}>
-						<Button
-							type="dashed"
-							className={styles["plus"]}
-							icon={<PlusCircleOutlined />}
-						>
-							新增助手
-						</Button>
-					</a>
-				</Dropdown>
+				<Button
+					type="dashed"
+					className={styles["plus"]}
+					icon={<PlusCircleOutlined />}
+					onClick={() => props.showModal()}
+				>
+					新增助手
+				</Button>
 			</div>
 		</WorkflowProvider>
 	);

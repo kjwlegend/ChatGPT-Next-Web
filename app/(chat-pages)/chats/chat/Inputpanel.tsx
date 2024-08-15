@@ -688,10 +688,10 @@ export function DeleteFileButton(props: { deleteFile: () => void }) {
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 let voicetext: string[] = [];
 
-export function Inputpanel(props: { session?: ChatSession; index?: number }) {
+export function Inputpanel(props: { _session?: ChatSession; index?: number }) {
 	const config = useAppConfig();
 	const chatStore = useChatStore();
-	const session = props.session ? props.session : chatStore.currentSession();
+	const session = props._session ?? chatStore.currentSession();
 	const userStore = useUserStore();
 	const authHook = useAuth();
 	const promptStore = usePromptStore();

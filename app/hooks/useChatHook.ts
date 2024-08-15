@@ -70,6 +70,7 @@ export const useChatService = () => {
 	const handleChatItemDelete = async (id: number) => {
 		console.log("click delete", id);
 		try {
+			console.log("delete session", id);
 			await chatStore.deleteSession(id.toString());
 		} catch (error) {
 			console.log("Delete chat session error", error);

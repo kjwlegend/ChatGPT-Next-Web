@@ -35,7 +35,6 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-
 const { Meta } = Card;
 
 export function MaskAvatar(props: { mask: Mask }) {
@@ -50,7 +49,7 @@ type MaskComponentProps = {
 	mask: Mask;
 	setEditingMaskId: (id: string) => void;
 	styleName?: string;
-	onChat: (mask: Mask) => void;
+	onItemClick: (mask: Mask) => void;
 	onDelete: (mask: Mask) => void;
 };
 
@@ -58,7 +57,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 	mask,
 	setEditingMaskId,
 	styleName = "",
-	onChat,
+	onItemClick,
 	onDelete,
 }) => {
 	const getCardStyle = () => {
@@ -92,7 +91,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 				}}
 				hoverable
 				className={`${styles["mask-item"]} ${styles["mask-item-card"]}`}
-				onClick={() => onChat(mask)}
+				onClick={() => onItemClick(mask)}
 			>
 				<Meta
 					description={
@@ -126,7 +125,7 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 			<div className={styles["mask-item-info"]}>
 				<h3>{mask.name}</h3>
 				<p>{mask.description}</p>
-				<button onClick={() => onChat(mask)}>Chat</button>
+				<button onClick={() => onItemClick(mask)}>Chat</button>
 				{!mask.builtin && (
 					<button onClick={() => onDelete(mask)}>Delete</button>
 				)}

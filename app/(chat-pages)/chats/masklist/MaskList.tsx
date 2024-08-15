@@ -5,14 +5,14 @@ import styles from "./mask.module.scss";
 interface MaskListProps {
 	masks: Mask[];
 	loadMore: () => void;
-	onChat: (mask: Mask) => void;
+	onItemClick: (mask: Mask) => void;
 	onDelete: (mask: Mask) => void;
 }
 
 const MaskList: React.FC<MaskListProps> = ({
 	masks,
 	loadMore,
-	onChat,
+	onItemClick,
 	onDelete,
 }) => {
 	const [visibleCount, setVisibleCount] = useState(25);
@@ -62,7 +62,7 @@ const MaskList: React.FC<MaskListProps> = ({
 					setEditingMaskId={() => {
 						console.log("click");
 					}}
-					onChat={onChat}
+					onItemClick={onItemClick}
 					onDelete={onDelete}
 				/>
 			))}

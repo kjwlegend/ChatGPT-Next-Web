@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { useWorkflowStore, WorkflowGroup } from "@/app/store/workflow";
-import { useUserStore } from "@/app/store";
+import { createEmptySession, useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import { message } from "antd";
@@ -13,8 +13,8 @@ import {
 	deleteWorkflowSession,
 	createWorkflowSessionChatGroup,
 } from "@/app/services/chats";
-import { group } from "console";
 import { updateChatSessions } from "@/app/services/chatService";
+import { useMaskStore } from "@/app/store/mask";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
@@ -25,7 +25,7 @@ interface WorkflowContextType {
 	addWorkflowGroup: () => void;
 	deleteWorkflowGroup: (groupId: number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
-	addSessionToGroup: (groupId: string, session: string) => void;
+	addChatGrouptoWorkflow: (groupId: string, Mask: Mask) => void;
 	moveSession: (
 		groupId: string,
 		sourceIndex: number,
@@ -33,7 +33,7 @@ interface WorkflowContextType {
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
-	updateSingleWorkflowGroup: (groupId: string, newGroup: any) => void;
+	updateWorkflowChatGroup: (groupId: string, newGroup: any) => void;
 }
 
 export const WorkflowContext = createContext<WorkflowContextType | null>(null);
@@ -60,6 +60,7 @@ export const WorkflowProvider = ({
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const userid = useUserStore.getState().user.id;
+	const maskStore = useMaskStore();
 
 	const getworkFlowSessions = useCallback(async (param: any) => {
 		const data = {
@@ -104,7 +105,7 @@ export const WorkflowProvider = ({
 		} catch (error: any) {
 			messageApi.error(`工作流组创建失败: ${error}`);
 		}
-	}, [addWorkflowGroup]);
+	}, [addWorkflowGroup, userid]);
 
 	const deleteWorkflowGroupHandler = useCallback(
 		async (groupId: number) => {
@@ -128,20 +129,24 @@ export const WorkflowProvider = ({
 		[deleteWorkflowGroup],
 	);
 
-	const addSessionToGroupHandler = useCallback(
+	const addChatGrouptoWorkflowHandler = useCallback(
 		//
-		async (groupId: string, session: string) => {
+		async (groupId: string, agent: Mask) => {
 			messageApi.open({
 				content: "会话添加中",
 				type: "loading",
 			});
 			try {
 				const apidata = {
-					session,
-					groupId,
+					agent: agent.id,
+					workflow_session: groupId,
 				};
-				const res = await createWorkflowSessionChatGroup(apidata);
-				await addSessionToGroup(groupId, session);
+				console.log(apidata, "apidata");
+				const mask = maskStore.get(agent.id);
+				console.log(mask, "mask");
+				const res = await createWorkflowSessionChatGroup(apidata, groupId);
+				const newsession = createEmptySession({ id: res.id, mask });
+				addSessionToGroup(groupId, newsession);
 				messageApi.destroy();
 				messageApi.success("会话添加成功");
 			} catch (error: any) {
@@ -209,7 +214,7 @@ export const WorkflowProvider = ({
 		[deleteSessionFromGroup],
 	);
 
-	const updateSingleWorkflowGroup = async (groupId: string, newGroup: any) => {
+	const updateWorkflowChatGroup = async (groupId: string, newGroup: any) => {
 		messageApi.open({
 			content: "内容更新中",
 			type: "loading",
@@ -287,11 +292,11 @@ export const WorkflowProvider = ({
 				fetchNewWorkflowGroup,
 				addWorkflowGroup: addWorkflowGroupHandler,
 				deleteWorkflowGroup: deleteWorkflowGroupHandler,
-				addSessionToGroup: addSessionToGroupHandler,
+				addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
 				getworkFlowSessions,
-				updateSingleWorkflowGroup,
+				updateWorkflowChatGroup,
 			}}
 		>
 			{contextHolder}
