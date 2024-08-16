@@ -1,4 +1,4 @@
-import BotIcon from "@/app/icons/bot.png";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 import { DeleteIcon } from "@/app/icons";
 
@@ -16,8 +16,8 @@ import Locale from "@/app/locales";
 import { Link, useNavigate } from "react-router-dom";
 import { Path } from "@/app/constant";
 import { MaskAvatar } from "../masklist/mask";
+import { Avatar } from "@/app/components/avatar";
 import { Mask } from "@/app/types/";
-import { useRef, useEffect, useState, useCallback } from "react";
 
 export function ChatItem(props: {
 	onClick?: () => void;
@@ -42,7 +42,7 @@ export function ChatItem(props: {
 			{props.narrow ? (
 				<div className={styles["chat-item-narrow"]}>
 					<div className={styles["chat-item-avatar"] + " no-dark"}>
-						<MaskAvatar mask={props.mask} />
+						<Avatar model={props.mask} />
 					</div>
 				</div>
 			) : (
@@ -70,63 +70,5 @@ export function ChatItem(props: {
 				<DeleteIcon />
 			</div>
 		</div>
-	);
-}
-
-export function ChatItemShort(props: {
-	onClick?: () => void;
-	onDelete?: () => void;
-	title: string;
-	count: number;
-	time: string;
-	selected: boolean;
-	id: string;
-	index: number;
-	narrow?: boolean;
-	mask: Mask;
-}) {
-	const draggableRef = useRef<HTMLDivElement | null>(null);
-	useEffect(() => {
-		if (props.selected && draggableRef.current) {
-			draggableRef.current?.scrollIntoView({
-				block: "center",
-			});
-		}
-	}, [props.selected]);
-	return (
-		<Draggable draggableId={`${props.id}`} index={props.index}>
-			{(provided) => (
-				<div
-					className={`${styles["chat-item"]} ${styles["multi-chat"]} ${
-						props.selected && styles["chat-item-selected"]
-					}`}
-					onClick={props.onClick}
-					ref={(ele) => {
-						draggableRef.current = ele;
-						provided.innerRef(ele);
-					}}
-					{...provided.draggableProps}
-					{...provided.dragHandleProps}
-					title={`${props.title}\n${Locale.ChatItem.ChatItemCount(
-						props.count,
-					)}`}
-				>
-					<>
-						<div className={styles["chat-item-title"]}>{props.title}</div>
-					</>
-
-					<div
-						className={styles["chat-item-delete"]}
-						onClickCapture={(e) => {
-							props.onDelete?.();
-							e.preventDefault();
-							e.stopPropagation();
-						}}
-					>
-						<DeleteIcon />
-					</div>
-				</div>
-			)}
-		</Draggable>
 	);
 }

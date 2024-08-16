@@ -38,6 +38,12 @@ type State = {
 			sessions?: ChatSession[];
 		},
 	) => void;
+	updateWorkflowSession: (
+		groupId: string,
+		sessionId: string,
+		updates: Partial<ChatSession>,
+	) => void;
+
 	deleteWorkflowGroup: (groupId: string | number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	sortWorkflowGroups: () => void;
@@ -49,6 +55,7 @@ type State = {
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getWorkflowSessionId: (groupId: string) => string[];
+	getCurrentWorkflowGroup: (selectedId: string) => WorkflowGroup | null;
 };
 
 export const useWorkflowStore = create<State>()(
@@ -95,10 +102,39 @@ export const useWorkflowStore = create<State>()(
 					};
 					const updatedGroups = [...state.workflowGroups];
 					updatedGroups[index] = updatedGroup;
-					// console.log("store debug: updateWorkflowGroup", updatedGroup);
 					return { workflowGroups: updatedGroups };
 				});
 				get().sortWorkflowGroups();
+			},
+			updateWorkflowSession: (groupId, sessionId, updates) => {
+				set((state) => {
+					const groupIndex = state.workflowGroupIndex[groupId];
+					if (groupIndex === undefined) return state;
+
+					const group = state.workflowGroups[groupIndex];
+					const sessionIndex = group.sessions.findIndex(
+						(session) => session.id === sessionId,
+					);
+					if (sessionIndex === -1) return state;
+
+					const updatedSession = {
+						...group.sessions[sessionIndex],
+						...updates,
+					};
+
+					const updatedSessions = [...group.sessions];
+					updatedSessions[sessionIndex] = updatedSession;
+
+					const updatedGroup = {
+						...group,
+						sessions: updatedSessions,
+					};
+
+					const updatedGroups = [...state.workflowGroups];
+					updatedGroups[groupIndex] = updatedGroup;
+
+					return { workflowGroups: updatedGroups };
+				});
 			},
 
 			deleteWorkflowGroup: (groupId) => {
@@ -300,6 +336,11 @@ export const useWorkflowStore = create<State>()(
 					? group.sessions.map((session) => session.id)
 					: [];
 				return sessions;
+			},
+			getCurrentWorkflowGroup: (selectedId: string) => {
+				const index = get().workflowGroupIndex[selectedId];
+				const group = index !== undefined ? get().workflowGroups[index] : null;
+				return group;
 			},
 		}),
 		{

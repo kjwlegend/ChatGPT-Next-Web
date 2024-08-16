@@ -91,6 +91,7 @@ export const ChatContext = React.createContext<ChatContextType>({
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 export function _Chat(props: {
+	key?: number | string;
 	_session?: ChatSession;
 	index?: number | 0;
 	isworkflow: boolean;
@@ -124,6 +125,7 @@ export function _Chat(props: {
 				props.isworkflow ? styles["workflow-chat"] : ""
 			}`}
 			key={sessionId}
+			data-index={sessionId}
 		>
 			<ChatContext.Provider
 				value={{
@@ -144,7 +146,7 @@ export function _Chat(props: {
 			>
 				{/* TODO  windowheader 有bug */}
 				<WindowHeader
-					_session={_session}
+					_session={session}
 					index={index}
 					isworkflow={props.isworkflow}
 				/>

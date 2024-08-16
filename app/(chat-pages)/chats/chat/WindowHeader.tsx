@@ -324,7 +324,8 @@ function WindowActions(props: {
 
 	const isMobileScreen = useMobileScreen();
 	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+	const showMaxIcon =
+		!isMobileScreen && !clientConfig?.isApp && !props.isworkflow;
 
 	const [isEditingMessage, setIsEditingMessage] = useState(false);
 
@@ -400,17 +401,15 @@ function WindowActions(props: {
 }
 
 export function WindowHeader(props: {
-	_session?: ChatSession;
+	_session: ChatSession;
 	index?: number;
 	isworkflow: boolean;
 	doubleAgent?: boolean;
 }) {
-	const chatStore = useChatStore();
-	let session: ChatSession;
 	const { _session, index, isworkflow, doubleAgent } = props;
 	// isworkflow = true then, session use props.session. else use currentSession
 
-	session = isworkflow && _session ? _session : chatStore.currentSession();
+	const session = _session;
 
 	const {
 		hitBottom,
@@ -439,7 +438,7 @@ export function WindowHeader(props: {
 				isworkflow={props.isworkflow}
 			/>
 
-			<LLMModelSwitch session={session} />
+			<LLMModelSwitch session={session} isworkflow={props.isworkflow} />
 
 			<WindowActions
 				session={session}

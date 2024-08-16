@@ -32,9 +32,8 @@ import {
 	Layout,
 	Flex,
 } from "antd";
-
-import type { MenuProps } from "antd";
-import { ChatItemShort } from "@/app/(chat-pages)/chats/sidebar/chatItem";
+import { DeleteIcon } from "@/app/icons";
+import Locale from "@/app/locales";
 
 import { _Chat } from "@/app/(chat-pages)/chats/chat/main";
 import {
@@ -45,6 +44,64 @@ import {
 	OnDragUpdateResponder,
 } from "@hello-pangea/dnd";
 
+export function ChatItemShort(props: {
+	onClick?: () => void;
+	onDelete?: () => void;
+	title: string;
+	count: number;
+	time: string;
+	selected: boolean;
+	id: string;
+	index: number;
+	narrow?: boolean;
+	mask: Mask;
+}) {
+	const draggableRef = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		if (props.selected && draggableRef.current) {
+			draggableRef.current?.scrollIntoView({
+				block: "center",
+			});
+		}
+	}, [props.selected]);
+	return (
+		<Draggable draggableId={`${props.id}`} index={props.index}>
+			{(provided) => (
+				<div
+					className={`${styles2["chat-item"]} ${styles2["multi-chat"]} ${
+						props.selected && styles2["chat-item-selected"]
+					}`}
+					onClick={props.onClick}
+					ref={(ele) => {
+						draggableRef.current = ele;
+						provided.innerRef(ele);
+					}}
+					{...provided.draggableProps}
+					{...provided.dragHandleProps}
+					title={`${props.title}\n${Locale.ChatItem.ChatItemCount(
+						props.count,
+					)}`}
+				>
+					<>
+						<div className={styles2["chat-item-title"]}>{props.title}</div>
+					</>
+
+					<div
+						className={styles2["chat-item-delete"]}
+						onClickCapture={(e) => {
+							props.onDelete?.();
+							e.preventDefault();
+							e.stopPropagation();
+						}}
+					>
+						<DeleteIcon />
+					</div>
+				</div>
+			)}
+		</Draggable>
+	);
+}
+
 export default function AgentList(props: {
 	sessions: ChatSession[];
 	showModal: () => void;
@@ -52,27 +109,20 @@ export default function AgentList(props: {
 	const [selectIndex, setSelectIndex] = useState(0);
 	const { selectedId, workflowGroups, deleteSessionFromGroup, moveSession } =
 		useWorkflowContext();
-	const chatstore = useChatStore();
-	const sessionIds = workflowGroups.map((group) => group.id);
+
 	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>(
 		props.sessions,
 	);
 
-	// 获取workflowGroup中的sessions ids, 并在chatstore 的sessions 中获取session信息
+	// 根据 workflowGroups 的更新来修改 orderedSessions
+	useEffect(() => {
+		// 假设 workflowGroups 的结构是 { id: string, sessions: ChatSession[] }
+		const updatedSessions = workflowGroups.reduce((acc, group) => {
+			return acc.concat(group.sessions);
+		}, [] as ChatSession[]);
 
-	// useEffect(() => {
-	// 	// 保证 orderedSessions 的顺序与 sessionIds 的顺序一致
-	// 	const updatedSessions =
-	// 		sessionIds
-	// 			?.map((sessionId) =>
-	// 				chatstore.sessions.find((session) => session.id === sessionId),
-	// 			)
-	// 			.filter((session): session is ChatSession => session !== undefined) ??
-	// 		[]; // 使用类型保护来过滤 undefined 值
-
-	// 	setOrderedSessions(updatedSessions);
-	// 	// console.log("sessionsid", sessionIds, "orderedSessions", updatedSessions);
-	// }, [sessionIds, chatstore.sessions]); // 添加 chatstore.sessions 作为依赖项
+		setOrderedSessions(updatedSessions);
+	}, [workflowGroups]);
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
@@ -115,7 +165,7 @@ export default function AgentList(props: {
 								>
 									{orderedSessions.map((item, i) => (
 										<ChatItemShort
-											title={item.topic}
+											title={item.mask.name}
 											time={new Date(item.lastUpdateTime).toLocaleString()}
 											count={item.messages.length}
 											key={item.id}

@@ -66,7 +66,6 @@ export function WorkflowSidebar(props: { className?: string }) {
 	} = useSimpleWorkflowService();
 
 	//  change chatsessions from object type to array type
-	console.log("WorkflowGroupData debug sidebar", WorkflowGroupData);
 
 	return (
 		<SideBar

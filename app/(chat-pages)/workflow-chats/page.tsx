@@ -144,7 +144,7 @@ const SimpleWorkflow: React.FC = () => {
 				console.log("session", session, "index", index);
 				return (
 					<>
-						{index} {session.id} {session.topic} ,
+						{/* {index} {session.id} {session.topic} , */}
 						<_Chat
 							key={index}
 							_session={session}
