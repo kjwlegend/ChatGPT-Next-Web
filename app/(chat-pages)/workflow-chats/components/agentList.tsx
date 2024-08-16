@@ -43,6 +43,7 @@ import {
 	OnDragEndResponder,
 	OnDragUpdateResponder,
 } from "@hello-pangea/dnd";
+import { workflowChatSession } from "@/app/store/workflow";
 
 export function ChatItemShort(props: {
 	onClick?: () => void;
@@ -103,26 +104,20 @@ export function ChatItemShort(props: {
 }
 
 export default function AgentList(props: {
-	sessions: ChatSession[];
+	sessions: any[];
 	showModal: () => void;
 }) {
 	const [selectIndex, setSelectIndex] = useState(0);
 	const { selectedId, workflowGroups, deleteSessionFromGroup, moveSession } =
 		useWorkflowContext();
 
-	const [orderedSessions, setOrderedSessions] = useState<ChatSession[]>(
-		props.sessions,
-	);
+	const [orderedSessions, setOrderedSessions] = useState<any[]>(props.sessions);
 
-	// 根据 workflowGroups 的更新来修改 orderedSessions
 	useEffect(() => {
-		// 假设 workflowGroups 的结构是 { id: string, sessions: ChatSession[] }
-		const updatedSessions = workflowGroups.reduce((acc, group) => {
-			return acc.concat(group.sessions);
-		}, [] as ChatSession[]);
+		setOrderedSessions(props.sessions);
+	}, [props.sessions]);
 
-		setOrderedSessions(updatedSessions);
-	}, [workflowGroups]);
+	console.log("agentList", orderedSessions);
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;

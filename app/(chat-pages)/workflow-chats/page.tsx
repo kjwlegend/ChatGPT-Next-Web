@@ -72,7 +72,13 @@ const useHasHydrated = (): boolean => {
 
 const SimpleWorkflow: React.FC = () => {
 	const isAuthenticated = useAuthStore().isAuthenticated;
-	const { selectedId, workflowGroups, addWorkflowGroup } = useWorkflowContext();
+	const {
+		selectedId,
+		workflowGroups,
+		addWorkflowGroup,
+		workflowSessions,
+		workflowSessionsIndex,
+	} = useWorkflowContext();
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
@@ -84,15 +90,21 @@ const SimpleWorkflow: React.FC = () => {
 		setIsAuth(isAuthenticated);
 	}, [isAuthenticated]);
 
-	// //  根据selectedID 获取对应的workflowGroup, 并获取其中的sessions
+	// 根据 selectedID 获取对应的 workflowGroup
 	const currentWorkflowGroup = useMemo(() => {
 		return workflowGroups.find((group) => group.id === selectedId);
-	}, [selectedId, workflowGroups, handleAgentClick]);
+	}, [selectedId, workflowGroups]);
 
 	console.log("currentWorkflowGroup", currentWorkflowGroup);
+
+	// 根据 selectedID 获取对应的 sessions
 	const currentSessions = useMemo(() => {
-		return currentWorkflowGroup?.sessions ?? [];
-	}, [currentWorkflowGroup]);
+		const sessionIds = workflowSessionsIndex[selectedId] ?? [];
+		console.log("sessionIds", sessionIds);
+		return sessionIds.map((id) =>
+			workflowSessions.find((session) => session.id === id),
+		);
+	}, [selectedId, workflowSessionsIndex, workflowSessions]);
 
 	// const currentSessions: any = [];
 

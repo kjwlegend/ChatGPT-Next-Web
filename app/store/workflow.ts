@@ -8,6 +8,7 @@ import {
 } from "../api/backend/chat";
 import { useUserStore } from "./user";
 import { nanoid } from "nanoid";
+import { Chat } from "../(chat-pages)/chats/chat/main";
 
 export interface WorkflowGroup {
 	id: string;
@@ -16,17 +17,20 @@ export interface WorkflowGroup {
 	summary: string;
 	agent_numbers: number;
 	chat_session_ids: string[];
-	sessions: ChatSession[];
 	updated_at: string;
 	created_at: string;
 	lastUpdateTime: number | string | Date;
 
 	[key: string]: any;
 }
-
+export type workflowChatSession = ChatSession & {
+	workflow_group_id: string;
+};
 type State = {
 	workflowGroups: WorkflowGroup[];
 	workflowGroupIndex: { [groupId: string]: number }; // 索引对象
+	workflowSessions: workflowChatSession[];
+	workflowSessionsIndex: { [groupId: string]: any[] };
 	selectedId: string;
 	setSelectedId: (index: string) => void;
 	addWorkflowGroup: (groupId: string, groupName: string) => void;
@@ -35,19 +39,19 @@ type State = {
 		updates: {
 			groupName?: string;
 			lastUpdateTime?: string;
-			sessions?: ChatSession[];
 		},
-	) => void;
-	updateWorkflowSession: (
-		groupId: string,
-		sessionId: string,
-		updates: Partial<ChatSession>,
 	) => void;
 
 	deleteWorkflowGroup: (groupId: string | number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	sortWorkflowGroups: () => void;
 	addSessionToGroup: (groupId: string, session: ChatSession) => void;
+	updateWorkflowSession: (
+		groupId: string,
+		sessionId: string,
+		updates: Partial<ChatSession>,
+	) => void;
+
 	moveSession: (
 		groupId: string,
 		sourceIndex: number,
@@ -65,6 +69,8 @@ export const useWorkflowStore = create<State>()(
 			workflowGroupIndex: {},
 			selectedId: "",
 			setSelectedId: (index) => set({ selectedId: index }),
+			workflowSessions: [],
+			workflowSessionsIndex: {},
 			addWorkflowGroup: (groupId, topic) => {
 				const newGroup: WorkflowGroup = {
 					id: groupId,
@@ -76,8 +82,8 @@ export const useWorkflowStore = create<State>()(
 					lastUpdateTime: new Date().getTime(),
 					created_at: new Date().toISOString(),
 					updated_at: new Date().toISOString(),
-					sessions: [],
 				};
+
 				set((state) => {
 					const newIndex = state.workflowGroups.length;
 					return {
@@ -105,36 +111,6 @@ export const useWorkflowStore = create<State>()(
 					return { workflowGroups: updatedGroups };
 				});
 				get().sortWorkflowGroups();
-			},
-			updateWorkflowSession: (groupId, sessionId, updates) => {
-				set((state) => {
-					const groupIndex = state.workflowGroupIndex[groupId];
-					if (groupIndex === undefined) return state;
-
-					const group = state.workflowGroups[groupIndex];
-					const sessionIndex = group.sessions.findIndex(
-						(session) => session.id === sessionId,
-					);
-					if (sessionIndex === -1) return state;
-
-					const updatedSession = {
-						...group.sessions[sessionIndex],
-						...updates,
-					};
-
-					const updatedSessions = [...group.sessions];
-					updatedSessions[sessionIndex] = updatedSession;
-
-					const updatedGroup = {
-						...group,
-						sessions: updatedSessions,
-					};
-
-					const updatedGroups = [...state.workflowGroups];
-					updatedGroups[groupIndex] = updatedGroup;
-
-					return { workflowGroups: updatedGroups };
-				});
 			},
 
 			deleteWorkflowGroup: (groupId) => {
@@ -262,79 +238,163 @@ export const useWorkflowStore = create<State>()(
 					};
 				});
 			},
-			addSessionToGroup: (groupId, session) => {
+			addSessionToGroup: (groupId: string, session: ChatSession) => {
 				set((state) => {
 					const index = state.workflowGroupIndex[groupId];
 					if (index === undefined) return state;
 
-					// 确保 sessions 是一个数组，即使它是 undefined
-					const currentSessions = state.workflowGroups[index].sessions;
-
-					const updatedGroup = {
-						...state.workflowGroups[index],
-						sessions: [...currentSessions, session],
+					// 将 workflow_group_id 添加到 session
+					const newSession: workflowChatSession = {
+						...session,
+						workflow_group_id: groupId,
 					};
 
-					//  debug current session length and new sessions length
-					console.log(
-						"store debug: current session length",
-						currentSessions.length,
-						"new sessions length",
-						updatedGroup.sessions.length,
-					);
+					// 确保 newSession.id 存在
+					if (newSession.id === undefined) {
+						console.error("newSession.id is undefined");
+						return state;
+					}
 
-					const updatedGroups = [...state.workflowGroups];
-					updatedGroups[index] = updatedGroup;
+					// 更新 workflowSessions
+					const updatedSessions = [...state.workflowSessions, newSession];
 
-					console.log("store debug: currentGroup after update", updatedGroups);
+					// 获取新添加的 session 的 ID
+					const newSessionId = newSession.id;
 
-					return { workflowGroups: updatedGroups };
+					// 更新 workflowSessionsIndex
+					const updatedSessionsIndex = {
+						...state.workflowSessionsIndex,
+						[groupId]: [
+							...(state.workflowSessionsIndex[groupId] || []),
+							newSessionId,
+						],
+					};
+
+					return {
+						workflowSessions: updatedSessions,
+						workflowSessionsIndex: updatedSessionsIndex,
+					};
 				});
-				console.log(
-					"store debug: workflowgroup after update",
-					get().workflowGroups,
-				);
 			},
-			moveSession: async (groupId, sourceIndex, destinationIndex) => {
+			updateWorkflowSession: (
+				groupId: string,
+				sessionId: string,
+				updates: Partial<ChatSession>,
+			) => {
+				set((state) => {
+					const groupIndex = state.workflowGroupIndex[groupId];
+					if (groupIndex === undefined) return state;
+
+					// 在 workflowSessions 中找到对应的 session
+					const sessionIndex = state.workflowSessions.findIndex(
+						(session) =>
+							session.id === sessionId && session.workflow_group_id === groupId,
+					);
+					if (sessionIndex === -1) return state;
+
+					// 更新 session 信息
+					const updatedSession = {
+						...state.workflowSessions[sessionIndex],
+						...updates,
+					};
+
+					// 更新 workflowSessions
+					const updatedSessions = [...state.workflowSessions];
+					updatedSessions[sessionIndex] = updatedSession;
+
+					// 更新 workflowSessionsIndex
+					const updatedSessionsIndex = {
+						...state.workflowSessionsIndex,
+						[groupId]: updatedSessions
+							.filter((session) => session.workflow_group_id === groupId)
+							.map((session) => session.id),
+					};
+
+					return {
+						workflowSessions: updatedSessions,
+						workflowSessionsIndex: updatedSessionsIndex,
+					};
+				});
+			},
+
+			moveSession: async (
+				groupId: string,
+				sourceIndex: number,
+				destinationIndex: number,
+			) => {
 				set((state) => {
 					const index = state.workflowGroupIndex[groupId];
 					if (index === undefined) return state;
 
-					const group = state.workflowGroups[index];
-					const newSessions = [...group.sessions];
+					// 获取该 groupId 下的所有 sessions
+					const sessions = state.workflowSessions.filter(
+						(session) => session.workflow_group_id === groupId,
+					);
+
+					if (
+						sourceIndex < 0 ||
+						sourceIndex >= sessions.length ||
+						destinationIndex < 0 ||
+						destinationIndex >= sessions.length
+					) {
+						return state;
+					}
+
+					// 移动 session
+					const newSessions = [...sessions];
 					const [removed] = newSessions.splice(sourceIndex, 1);
 					newSessions.splice(destinationIndex, 0, removed);
 
-					const updatedGroup = { ...group, sessions: newSessions };
-					const updatedGroups = [...state.workflowGroups];
-					updatedGroups[index] = updatedGroup;
+					// 更新 workflowSessions
+					const updatedSessions = state.workflowSessions.map((session) => {
+						const sessionIndex = newSessions.findIndex(
+							(s) => s.id === session.id,
+						);
+						return session.workflow_group_id === groupId
+							? newSessions[sessionIndex]
+							: session;
+					});
 
-					return { workflowGroups: updatedGroups };
+					// 更新 workflowSessionsIndex
+					const updatedSessionsIndex = {
+						...state.workflowSessionsIndex,
+						[groupId]: newSessions.map((session) => session.id),
+					};
+
+					return {
+						workflowSessions: updatedSessions,
+						workflowSessionsIndex: updatedSessionsIndex,
+					};
 				});
 			},
-			deleteSessionFromGroup: (groupId, sessionId) => {
+
+			deleteSessionFromGroup: (groupId: string, sessionId: string | number) => {
 				set((state) => {
 					const index = state.workflowGroupIndex[groupId];
 					if (index === undefined) return state;
 
-					const group = state.workflowGroups[index];
-					const newSessions = group.sessions.filter(
-						(session) => session.id !== sessionId,
+					// 在 workflowSessions 中删除对应的 session
+					const updatedSessions = state.workflowSessions.filter(
+						(session) =>
+							session.id !== sessionId || session.workflow_group_id !== groupId,
 					);
 
-					const updatedGroup = { ...group, sessions: newSessions };
-					const updatedGroups = [...state.workflowGroups];
-					updatedGroups[index] = updatedGroup;
+					// 更新 workflowSessionsIndex
+					const updatedSessionsIndex = {
+						...state.workflowSessionsIndex,
+						[groupId]: updatedSessions
+							.filter((session) => session.workflow_group_id === groupId)
+							.map((session) => session.id),
+					};
 
-					return { workflowGroups: updatedGroups };
+					return {
+						workflowSessions: updatedSessions,
+						workflowSessionsIndex: updatedSessionsIndex,
+					};
 				});
 			},
 			getWorkflowSessionId: (groupId: string) => {
-				const index = get().workflowGroupIndex[groupId];
-				const group = index !== undefined ? get().workflowGroups[index] : null;
-				const sessions = group
-					? group.sessions.map((session) => session.id)
-					: [];
+				const sessions = get().workflowSessionsIndex[groupId] || [];
 				return sessions;
 			},
 			getCurrentWorkflowGroup: (selectedId: string) => {

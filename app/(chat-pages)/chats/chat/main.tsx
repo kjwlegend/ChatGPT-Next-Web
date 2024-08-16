@@ -6,6 +6,7 @@ import React, {
 	useMemo,
 	useCallback,
 	Fragment,
+	memo,
 } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import dynamic from "next/dynamic";
@@ -90,15 +91,16 @@ export const ChatContext = React.createContext<ChatContextType>({
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
-export function _Chat(props: {
+interface ChatProps {
 	key?: number | string;
 	_session?: ChatSession;
-	index?: number | 0;
+	index?: number;
 	isworkflow: boolean;
-}) {
-	const chatStore = useChatStore();
+}
 
-	const { _session, index } = props;
+export const _Chat: React.FC<ChatProps> = memo((props) => {
+	const { _session, index, isworkflow } = props;
+	const chatStore = useChatStore();
 
 	// if props._session is not provided, use current session
 
@@ -121,9 +123,7 @@ export function _Chat(props: {
 
 	return (
 		<div
-			className={`${styles.chat} ${
-				props.isworkflow ? styles["workflow-chat"] : ""
-			}`}
+			className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""}`}
 			key={sessionId}
 			data-index={sessionId}
 		>
@@ -148,18 +148,18 @@ export function _Chat(props: {
 				<WindowHeader
 					_session={session}
 					index={index}
-					isworkflow={props.isworkflow}
+					isworkflow={isworkflow}
 				/>
 				<ChatbodyDynamic
 					_session={session}
 					index={index}
-					isworkflow={props.isworkflow}
+					isworkflow={isworkflow}
 				/>
 				<InputpanelDynamic _session={_session} index={index} />
 			</ChatContext.Provider>
 		</div>
 	);
-}
+});
 
 export function useLoadData() {
 	const config = useAppConfig();

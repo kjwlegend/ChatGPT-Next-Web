@@ -1,6 +1,10 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { useWorkflowStore, WorkflowGroup } from "@/app/store/workflow";
+import {
+	useWorkflowStore,
+	workflowChatSession,
+	WorkflowGroup,
+} from "@/app/store/workflow";
 import { createEmptySession, useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
@@ -31,6 +35,8 @@ interface WorkflowContextType {
 		sourceIndex: number,
 		destinationIndex: number,
 	) => void;
+	workflowSessions: workflowChatSession[];
+	workflowSessionsIndex: { [key: string]: any[] };
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
 	updateWorkflowChatGroup: (groupId: string, newGroup: any) => void;
@@ -50,9 +56,12 @@ export const WorkflowProvider = ({
 		addWorkflowGroup,
 		updateWorkflowGroup,
 		deleteWorkflowGroup,
+
+		fetchNewWorkflowGroup,
+		workflowSessions,
+		workflowSessionsIndex,
 		addSessionToGroup,
 		moveSession,
-		fetchNewWorkflowGroup,
 		deleteSessionFromGroup,
 		getWorkflowSessionId,
 	} = useWorkflowStore();
@@ -295,6 +304,8 @@ export const WorkflowProvider = ({
 				addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
+				workflowSessions,
+				workflowSessionsIndex,
 				getworkFlowSessions,
 				updateWorkflowChatGroup,
 			}}
