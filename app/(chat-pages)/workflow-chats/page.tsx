@@ -78,6 +78,7 @@ const SimpleWorkflow: React.FC = () => {
 		addWorkflowGroup,
 		workflowSessions,
 		workflowSessionsIndex,
+		moveSession,
 	} = useWorkflowContext();
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
@@ -90,23 +91,21 @@ const SimpleWorkflow: React.FC = () => {
 		setIsAuth(isAuthenticated);
 	}, [isAuthenticated]);
 
-	// 根据 selectedID 获取对应的 workflowGroup
-	const currentWorkflowGroup = useMemo(() => {
-		return workflowGroups.find((group) => group.id === selectedId);
-	}, [selectedId, workflowGroups]);
+	// // 根据 selectedID 获取对应的 workflowGroup
+	// const currentWorkflowGroup = useMemo(() => {
+	// 	return workflowGroups.find((group) => group.id === selectedId);
+	// }, [selectedId, workflowGroups]);
 
-	console.log("currentWorkflowGroup", currentWorkflowGroup);
+	// console.log("currentWorkflowGroup", currentWorkflowGroup);
 
 	// 根据 selectedID 获取对应的 sessions
 	const currentSessions = useMemo(() => {
 		const sessionIds = workflowSessionsIndex[selectedId] ?? [];
-		console.log("sessionIds", sessionIds);
-		return sessionIds.map((id) =>
-			workflowSessions.find((session) => session.id === id),
+		return sessionIds.map(
+			(id) =>
+				workflowSessions.find((session) => session.id === id) ?? undefined,
 		);
 	}, [selectedId, workflowSessionsIndex, workflowSessions]);
-
-	// const currentSessions: any = [];
 
 	const handleModalClick = () => {
 		setShowAgentList(!showAgentList);
@@ -121,6 +120,7 @@ const SimpleWorkflow: React.FC = () => {
 		);
 	}
 
+	if (currentSessions == undefined) return null;
 	const MainScreen = () => {
 		if (!isAuth) {
 			return (
@@ -153,7 +153,6 @@ const SimpleWorkflow: React.FC = () => {
 
 		if (currentSessions.length !== 0) {
 			return currentSessions.map((session, index) => {
-				console.log("session", session, "index", index);
 				return (
 					<>
 						{/* {index} {session.id} {session.topic} , */}

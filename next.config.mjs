@@ -39,7 +39,7 @@ const nextConfig = {
       },
     ],
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
   experimental: {
     forceSwcTransforms: true
     // esmExternals: false

@@ -113,4 +113,9 @@ export const deleteWorkflowSessionChatGroup = api(
 	"/user/workflowsessions/:id/delete-chatgroup/",
 );
 
+export const updateWorkflowSessionChatGroupOrder = api(
+	appnamespace,
+	"/user/workflowsessions/:id/update-chatgroup-order/",
+);
+
 export const getPromptHotness = apiGet(appnamespace, "/prompthotness/");

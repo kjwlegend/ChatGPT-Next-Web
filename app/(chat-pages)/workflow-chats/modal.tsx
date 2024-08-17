@@ -61,7 +61,8 @@ import { useMaskStore } from "../../store/mask";
 import { useWorkflowContext } from "./workflowContext";
 
 import { List, Input, Form, Row, Col } from "antd";
-import { Avatar } from "../../chats/components/avatar";
+import { Avatar } from "@/app//components/avatar";
+
 import { CopyOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
@@ -74,11 +75,19 @@ export function WorkflowModalConfig(props: {
 	const { topic, description } = workflow;
 
 	const {
-		workflowGroup,
+		workflowGroups,
 		selectedId,
-		setselectedId,
+		setSelectedId,
+		fetchNewWorkflowGroup,
+		addWorkflowGroup,
 		deleteWorkflowGroup,
-		updateSingleWorkflowGroup,
+		addChatGrouptoWorkflow,
+		moveSession,
+		deleteSessionFromGroup,
+		workflowSessions,
+		workflowSessionsIndex,
+		getworkFlowSessions,
+		updateWorkflowChatGroup,
 	} = useWorkflowContext();
 
 	const [workflowName, setWorkflowName] = useState(topic);

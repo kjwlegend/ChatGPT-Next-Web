@@ -409,7 +409,11 @@ export function WindowHeader(props: {
 	const { _session, index, isworkflow, doubleAgent } = props;
 	// isworkflow = true then, session use props.session. else use currentSession
 
-	const session = _session;
+	const [session, setsession] = useState(_session);
+
+	useEffect(() => {
+		setsession(_session);
+	}, [_session]);
 
 	const {
 		hitBottom,

@@ -105,15 +105,10 @@ export function LLMModelSwitch(
 					},
 				},
 			});
-			const workflowGroup = getCurrentWorkflowGroup(selectedId);
-			console.log(
-				"debug",
-				workflowGroup?.sessions.map((session) => ({
-					id: session.id,
-					mask: session.mask.modelConfig.model,
-				})) ?? [],
-			);
+
+			console.log("no session updated");
 		} else {
+			// 更新非工作流会话
 			chatStore.updateSession(sessionId, (session) => {
 				session.mask.modelConfig.model = newModel as ModelType;
 				return session;

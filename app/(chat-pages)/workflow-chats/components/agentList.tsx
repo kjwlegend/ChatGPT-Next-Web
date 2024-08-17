@@ -85,6 +85,7 @@ export function ChatItemShort(props: {
 				>
 					<>
 						<div className={styles2["chat-item-title"]}>{props.title}</div>
+						<div className={styles2["chat-item-subtitle"]}>id:{props.id}</div>
 					</>
 
 					<div

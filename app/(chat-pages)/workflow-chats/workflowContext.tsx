@@ -16,6 +16,8 @@ import {
 	updateWorkflowSession,
 	deleteWorkflowSession,
 	createWorkflowSessionChatGroup,
+	deleteWorkflowSessionChatGroup,
+	updateWorkflowSessionChatGroupOrder,
 } from "@/app/services/chats";
 import { updateChatSessions } from "@/app/services/chatService";
 import { useMaskStore } from "@/app/store/mask";
@@ -56,7 +58,6 @@ export const WorkflowProvider = ({
 		addWorkflowGroup,
 		updateWorkflowGroup,
 		deleteWorkflowGroup,
-
 		fetchNewWorkflowGroup,
 		workflowSessions,
 		workflowSessionsIndex,
@@ -173,10 +174,20 @@ export const WorkflowProvider = ({
 			});
 			try {
 				moveSession(groupId, sourceIndex, destinationIndex);
-				const newSessions = getWorkflowSessionId(groupId);
-				const res = await updateWorkflowSession(
+				const newSessions = useWorkflowStore.getState().workflowSessions;
+				console.log(workflowSessions, "workflowSessions");
+				const updatedSessions = newSessions
+					.filter((session) => session.workflow_group_id === groupId)
+					.map((session) => ({
+						id: session.id,
+						order: session.order,
+					}));
+
+				console.log(updatedSessions, "updatedSessions");
+
+				const res = await updateWorkflowSessionChatGroupOrder(
 					{
-						chat_sessions: newSessions,
+						chat_group_orders: updatedSessions,
 						user: userid,
 					},
 					groupId,
@@ -202,11 +213,9 @@ export const WorkflowProvider = ({
 			});
 			try {
 				deleteSessionFromGroup(groupId, sessionId);
-				const newSessions = getWorkflowSessionId(groupId);
-				const res = await updateWorkflowSession(
+				const res = await deleteWorkflowSessionChatGroup(
 					{
-						chat_sessions: newSessions,
-						user: userid,
+						chat_group_id: sessionId,
 					},
 					groupId,
 				);
