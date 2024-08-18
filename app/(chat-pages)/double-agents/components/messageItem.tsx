@@ -62,16 +62,19 @@ import { LAST_INPUT_KEY } from "@/app/constant";
 
 // 样式
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
-import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
-import { useDoubleAgentChatContext } from "../doubleAgentContext";
+import {
+	MultiAgentChatMessage,
+	MultiAgentChatSession,
+} from "@/app/store/multiagents";
+import { useMultiAgentChatContext } from "../multiAgentContext";
 interface MessageItemProps {
-	message: ChatMessage;
+	message: MultiAgentChatMessage;
 	session: ChatSession;
 	i: number;
 	context: RenderMessage[];
 	isMobileScreen: boolean;
 	clearContextIndex: number;
-	agentNum?: number | undefined;
+	agentId?: number | undefined;
 	onUserStop?: (messageId: string) => void;
 	onResend?: (message: ChatMessage) => void;
 	onDelete?: (messageId: string) => void;
@@ -94,7 +97,7 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 	context,
 	isMobileScreen,
 	clearContextIndex,
-	agentNum = 0,
+	agentId = 0,
 
 	// 其他属性和方法
 }) => {
@@ -115,7 +118,7 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 		setUserImage,
 	} = useContext(ChatContext);
 
-	const { conversation } = useDoubleAgentChatContext();
+	const { conversation } = useMultiAgentChatContext();
 
 	const authHook = useAuth();
 	const { updateUserInfo } = authHook;

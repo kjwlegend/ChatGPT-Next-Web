@@ -3,33 +3,32 @@
 import React, { useEffect } from "react";
 import { Card, Input, Button } from "antd";
 import dynamic from "next/dynamic";
-import useDoubleAgentStore from "@/app/store/doubleAgents";
+import usemultiAgentStore from "@/app/store/multiagents";
 import { useChatStore, useUserStore } from "@/app/store";
-import { startConversation } from "@/app/services/doubleAgentService";
-import { DoubleAgentWindowHeader } from "@/app/(chat-pages)/chats/chat/WindowHeader";
+import { startConversation } from "@/app/services/MultiAgentService";
+import { MultiAgentWindowHeader } from "@/app/(chat-pages)/chats/chat/WindowHeader";
 import styles from "@/app/(chat-pages)/chats/home.module.scss";
 import Image from "next/image";
 import { PlusCircleFilled, PlusCircleOutlined } from "@ant-design/icons";
-import { useDoubleAgentChatContext } from "../doubleAgentContext";
+import { useMultiAgentChatContext } from "../multiAgentContext";
 const { TextArea } = Input;
 
 const Chatbody = dynamic(
-	async () => (await import("../components/Chatbody")).DoubleAgentChatbody,
+	async () => (await import("../components/Chatbody")).MultiAgentChatbody,
 	{
 		ssr: false,
 	},
 );
 const Inputpanel = dynamic(
-	async () => (await import("../components/input")).DoubleAgentInput,
+	async () => (await import("../components/input")).MultiAgentInput,
 	{
 		ssr: false,
 	},
 );
 
 const ConversationWindow: React.FC = () => {
-	const { conversation, startNewConversation } = useDoubleAgentChatContext();
+	const { conversation, startNewConversation } = useMultiAgentChatContext();
 
-	const userid = useUserStore.getState().user.id;
 	const [shouldRender, setShouldRender] = React.useState(false);
 	useEffect(() => {
 		// 这里可以做一些初始化的工作
@@ -49,10 +48,9 @@ const ConversationWindow: React.FC = () => {
 						},
 					}}
 				>
-					<DoubleAgentWindowHeader session={conversation} />
+					<MultiAgentWindowHeader session={conversation} />
 					<div style={{ marginBottom: 16 }}>
 						<Chatbody _session={conversation} />
-						{/* 初始输入 */}
 						<div style={{ marginTop: 16 }}>
 							<Inputpanel />
 						</div>

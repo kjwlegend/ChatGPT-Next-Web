@@ -37,10 +37,7 @@ type State = {
 	addWorkflowGroup: (groupId: string, groupName: string) => void;
 	updateWorkflowGroup: (
 		groupId: string,
-		updates: {
-			groupName?: string;
-			lastUpdateTime?: string;
-		},
+		updates: Partial<WorkflowGroup>,
 	) => void;
 
 	deleteWorkflowGroup: (groupId: string | number) => void;

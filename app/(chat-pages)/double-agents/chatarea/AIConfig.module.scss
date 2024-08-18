@@ -1,0 +1,52 @@
+.scrollableContainer {
+	height: 100vh; /* 你可以根据需要调整高度 */
+	overflow-y: auto;
+	padding: 16px;
+}
+
+.agentList {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.aiConfigCard {
+	width: 100%;
+}
+
+.sliderContainer {
+	margin-top: 16px;
+}
+
+.agentCard {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 16px;
+	border-radius: 8px;
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
+	margin: 10px;
+}
+
+.cardContent {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.avatarSection {
+	flex: 0 0 32px;
+}
+
+.infoSection {
+	flex: 1;
+	margin-left: 16px;
+	font-size: small;
+	color: var(--light-gray);
+}
+
+.actionSection {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}

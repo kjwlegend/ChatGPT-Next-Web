@@ -79,8 +79,8 @@ export function MaskAvatar(props: { mask: Mask }) {
 }
 
 interface MaskPageProps {
-	onItemClick: (mask: Mask) => void;
-	onDelete: (mask: Mask) => void;
+	onItemClick: (mask: Mask, ...args: any[]) => void;
+	onDelete: (mask: Mask, ...args: any[]) => void;
 }
 
 export const MaskPage: React.FC<MaskPageProps> = ({

@@ -66,36 +66,27 @@ import { FloatButton } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { MJFloatButton } from "@/app/(chat-pages)/chats/chat/midjourney";
 
-import { DoubleAgentMessageList } from "./messageList";
+import { MultiAgentMessageList } from "./messageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
-import useDoubleAgentStore from "@/app/store/doubleAgents";
-import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import usemultiAgentStore from "@/app/store/multiagents";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
-export function DoubleAgentChatbody(props: {
-	_session?: DoubleAgentChatSession;
+export function MultiAgentChatbody(props: {
+	_session?: MultiAgentChatSession;
 	index?: number;
 	isworkflow?: boolean;
 }) {
-	const chatStore = useDoubleAgentStore();
-	const userStore = useUserStore();
-	const authHook = useAuth();
-	const router = useRouter();
-	const { updateUserInfo } = authHook;
+	const chatStore = usemultiAgentStore();
+
 	const config = useAppConfig();
-	const accessStore = useAccessStore();
 	const { _session, index, isworkflow } = props;
 
 	// if props._session is not provided, use current session
 	const session = _session ?? chatStore.currentSession();
 
-	// useEffect(() => {
-	// 	if (!session) {
-	// 		return;
-	// 	}
-	// }, [session]);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const isMobileScreen = useMobileScreen();
 
@@ -249,7 +240,7 @@ export function DoubleAgentChatbody(props: {
 				overflowY: "auto",
 			}}
 		>
-			<DoubleAgentMessageList
+			<MultiAgentMessageList
 				messages={messagesfinal}
 				isLoading={isLoading}
 				hasNextPage={hasNextPage}

@@ -46,18 +46,21 @@ import { getChatSession } from "../../api/backend/chat";
 import { ChatSessionData } from "../../api/backend/chat";
 import { updateChatSessions } from "../../services/chatService";
 import { useUserStore } from "../../store/user";
-import useDoubleAgentStore from "@/app/store/doubleAgents";
+import usemultiAgentStore from "@/app/store/multiagents";
 
 import { useWorkflowStore } from "../../store/workflow";
 
 import { message } from "antd";
+import { WorkflowGroup } from "../../store/workflow";
 
 import { WorkflowContext, useWorkflowContext } from "./workflowContext";
 import { useSimpleWorkflowService } from "@/app/hooks/useSimpleWorkflowHook";
 import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
 import { ChatList } from "@/app/(chat-pages)/chats/sidebar/chatList";
+import { WorkflowModalConfig } from "./modal";
 export function WorkflowSidebar(props: { className?: string }) {
 	const {
+		selectedId,
 		WorkflowGroupData,
 		loadMoreSessions,
 		handleAddClick,
@@ -65,17 +68,47 @@ export function WorkflowSidebar(props: { className?: string }) {
 		handleChatItemDelete,
 	} = useSimpleWorkflowService();
 
+	const { workflowSessions, workflowSessionsIndex } = useWorkflowContext();
+
 	//  change chatsessions from object type to array type
+	const [editWrokflow, setEditWorkflow] = useState<WorkflowGroup | null>(null);
+	const [showWorkflowModal, setShowWorkflowModal] = useState(false);
+	const [agentList, setagentList] = useState<any[]>([]);
+	const handleItemEditClick = (workflowgroupId: string) => {
+		console.log("workflow group id", workflowgroupId);
+		const currentWorkflowGroup = WorkflowGroupData.find(
+			(item) => item.id === workflowgroupId,
+		);
+		// 过滤出当前工作流组的所有会话
+		const currentWorkflowGroupSessions = workflowSessions.filter(
+			(session) => session.workflow_group_id === workflowgroupId,
+		);
+
+		setEditWorkflow(currentWorkflowGroup);
+		setagentList(currentWorkflowGroupSessions);
+		console.log("currentworkflowGroupSessions", currentWorkflowGroupSessions);
+		setShowWorkflowModal(true);
+	};
 
 	return (
-		<SideBar
-			className={styles["sidebar-show"]}
-			chatSessions={WorkflowGroupData}
-			loadMoreSessions={loadMoreSessions}
-			onAddClick={handleAddClick}
-			onChatItemClick={handleChatItemClick}
-			onChatItemDelete={handleChatItemDelete}
-			ChatListComponent={ChatList}
-		/>
+		<>
+			<SideBar
+				className={styles["sidebar-show"]}
+				chatSessions={WorkflowGroupData}
+				loadMoreSessions={loadMoreSessions}
+				onAddClick={handleAddClick}
+				onChatItemClick={handleChatItemClick}
+				onChatItemDelete={handleChatItemDelete}
+				onChatItemEdit={handleItemEditClick}
+				ChatListComponent={ChatList}
+			/>
+			{showWorkflowModal && (
+				<WorkflowModalConfig
+					workflow={editWrokflow!}
+					workflowSessions={agentList}
+					onClose={() => setShowWorkflowModal(false)}
+				/>
+			)}
+		</>
 	);
 }

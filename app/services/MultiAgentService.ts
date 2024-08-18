@@ -23,26 +23,24 @@ import { prettyObject } from "../utils/format";
 import { ModelConfig } from "../store";
 import {
 	CreateChatData,
-	DoubleAgentData,
+	MultiAgentData,
 	createAgentChat,
 	createChat,
-	uploadDoubleAgentSession,
+	uploadMultiAgentSession,
 } from "../api/backend/chat";
-import doubleAgent, {
-	createDoubleAgentChatMessage,
-} from "../store/doubleAgents";
+import MultiAgent, { createMultiAgentChatMessage } from "../store/multiagents";
 
 import {
-	DoubleAgentChatSession,
-	DoubleAgentChatMessage,
-} from "../store/doubleAgents";
+	MultiAgentChatSession,
+	MultiAgentChatMessage,
+} from "../store/multiagents";
 import { create } from "domain";
 import { send } from "process";
 
 import {
 	InitialConversationChatTemplate,
 	ConversationChatTemplate,
-} from "../chains/doubleagents";
+} from "../chains/multiagents";
 import useAuth from "../hooks/useAuth";
 import { useAuthStore } from "../store/auth";
 import { first } from "cheerio/lib/api/traversing";
@@ -56,9 +54,9 @@ export function startConversation(
 ) {
 	// 创建新会话
 
-	const doubleAgentStore = doubleAgent.getState();
+	const MultiAgentStore = MultiAgent.getState();
 	const userid = useUserStore.getState().user.id;
-	const conversation = doubleAgentStore.conversations.find(
+	const conversation = MultiAgentStore.conversations.find(
 		(m) => m.id === conversationId,
 	);
 	const first_agent_setting = conversation?.firstAIConfig;
@@ -66,13 +64,13 @@ export function startConversation(
 	const topic = conversation?.topic ?? DEFAULT_TOPIC;
 	const totalRounds = conversation?.totalRounds ?? 1;
 	const round = conversation?.round ?? 1;
-	const userMessage: DoubleAgentChatMessage = createDoubleAgentChatMessage({
+	const userMessage: MultiAgentChatMessage = createMultiAgentChatMessage({
 		role: "user",
 		content: initialInput,
 	});
-	doubleAgentStore.updateMessages(conversationId, userMessage);
+	MultiAgentStore.updateMessages(conversationId, userMessage);
 
-	const chatSession: DoubleAgentData = {
+	const chatSession: MultiAgentData = {
 		session_id: conversationId,
 		user: userid,
 		initial_input: initialInput,
@@ -82,7 +80,7 @@ export function startConversation(
 		second_agent_setting: second_agent_setting,
 	};
 
-	uploadDoubleAgentSession(conversationId, chatSession);
+	uploadMultiAgentSession(conversationId, chatSession);
 
 	sendFirstAIMessage(round, conversationId, initialInput);
 	// return conversationId;
@@ -94,8 +92,8 @@ async function sendFirstAIMessage(
 	conversationId: string,
 	messageContent: string,
 ) {
-	const doubleAgentStore = doubleAgent.getState();
-	const session = doubleAgentStore.conversations.find(
+	const MultiAgentStore = MultiAgent.getState();
+	const session = MultiAgentStore.conversations.find(
 		(m) => m.id === conversationId,
 	);
 	const userid = useUserStore.getState().user.id;
@@ -106,13 +104,13 @@ async function sendFirstAIMessage(
 	}
 	// 获取firstAI的配置
 
-	const botMessage: DoubleAgentChatMessage = createDoubleAgentChatMessage({
+	const botMessage: MultiAgentChatMessage = createMultiAgentChatMessage({
 		role: "assistant",
 		content: "思考中...",
 		agentNum: 1,
 	});
 
-	doubleAgentStore.updateMessages(conversationId, botMessage);
+	MultiAgentStore.updateMessages(conversationId, botMessage);
 
 	const firstAIConfig = session.firstAIConfig;
 	const secondAIConfig = session.secondAIConfig;
@@ -121,7 +119,7 @@ async function sendFirstAIMessage(
 	const agentSetting = firstAIConfig.context.map((m) => m.content).join("\n");
 
 	// 获取historymessage
-	const historyMessages = doubleAgentStore.getHistory(conversationId);
+	const historyMessages = MultiAgentStore.getHistory(conversationId);
 	const reversedHistoryMessages = [...historyMessages].reverse();
 	let historyMessagesContent = "";
 	reversedHistoryMessages.forEach((m) => {
@@ -133,7 +131,7 @@ async function sendFirstAIMessage(
 
 	if (round > 1) {
 		//
-		historysummary = await doubleAgentStore.summarizeSession(conversationId);
+		historysummary = await MultiAgentStore.summarizeSession(conversationId);
 		const template = ConversationChatTemplate(
 			firstAIConfig,
 			secondAIConfig,
@@ -148,7 +146,7 @@ async function sendFirstAIMessage(
 			secondAIConfig,
 			session.topic,
 		);
-		const userMessage = createDoubleAgentChatMessage({
+		const userMessage = createMultiAgentChatMessage({
 			role: "user",
 			content: messageContent,
 		});
@@ -172,8 +170,8 @@ async function sendSecondAIMessage(
 	conversationId: string,
 	messageContent: string,
 ) {
-	const doubleAgentStore = doubleAgent.getState();
-	const session = doubleAgentStore.conversations.find(
+	const MultiAgentStore = MultiAgent.getState();
+	const session = MultiAgentStore.conversations.find(
 		(m) => m.id === conversationId,
 	);
 	const userid = useUserStore.getState().user.id;
@@ -182,13 +180,13 @@ async function sendSecondAIMessage(
 		return null;
 	}
 	// 获取secondAI的配置
-	const userMessage: DoubleAgentChatMessage = createDoubleAgentChatMessage({
+	const userMessage: MultiAgentChatMessage = createMultiAgentChatMessage({
 		role: "user",
 		content: "思考中...",
 		agentNum: 2,
 	});
 
-	doubleAgentStore.updateMessages(conversationId, userMessage);
+	MultiAgentStore.updateMessages(conversationId, userMessage);
 
 	const secondAIConfig = session.secondAIConfig;
 	const firstAIConfig = session.firstAIConfig;
@@ -197,7 +195,7 @@ async function sendSecondAIMessage(
 	const agentSetting = secondAIConfig.context.map((m) => m.content).join("\n");
 
 	// 获取historymessage
-	const historyMessages = doubleAgentStore.getHistory(conversationId);
+	const historyMessages = MultiAgentStore.getHistory(conversationId);
 	const reversedHistoryMessages = [...historyMessages].reverse();
 	let historyMessagesContent = "";
 	reversedHistoryMessages.forEach((m) => {
@@ -208,7 +206,7 @@ async function sendSecondAIMessage(
 
 	if (round > 1) {
 		//
-		historysummary = await doubleAgentStore.summarizeSession(conversationId);
+		historysummary = await MultiAgentStore.summarizeSession(conversationId);
 		const template = ConversationChatTemplate(
 			secondAIConfig,
 			firstAIConfig,
@@ -223,7 +221,7 @@ async function sendSecondAIMessage(
 			firstAIConfig,
 			session.topic,
 		);
-		const userMessage = createDoubleAgentChatMessage({
+		const userMessage = createMultiAgentChatMessage({
 			role: "user",
 			content: messageContent,
 		});
@@ -243,8 +241,8 @@ async function sendSecondAIMessage(
 // continue conversation function
 
 export function continueConversation(conversationId: string, round: number) {
-	const doubleAgentStore = doubleAgent.getState();
-	const session = doubleAgentStore.conversations.find(
+	const MultiAgentStore = MultiAgent.getState();
+	const session = MultiAgentStore.conversations.find(
 		(m) => m.id === conversationId,
 	);
 	if (!session || round >= session.totalRounds) {
@@ -282,16 +280,16 @@ export function continueConversation(conversationId: string, round: number) {
 // 先定义一个处理回调的函数，以便重用
 export function handleChatCallbacks(
 	role: "system" | "assistant" | "user",
-	_session: DoubleAgentChatSession,
+	_session: MultiAgentChatSession,
 	conversationId: string,
 	agentNum: number,
 ) {
 	const config = useAppConfig.getState();
 	const pluginConfig = config.pluginConfig;
 	const allPlugins = usePluginStore.getState().getAll();
-	const doubleAgentStore = doubleAgent.getState();
+	const MultiAgentStore = MultiAgent.getState();
 	const session =
-		doubleAgentStore.conversations.find((m) => m.id === conversationId) ??
+		MultiAgentStore.conversations.find((m) => m.id === conversationId) ??
 		_session;
 	const messageIndex = session?.messages.length
 		? session?.messages.length - 1
@@ -300,7 +298,7 @@ export function handleChatCallbacks(
 		session?.messages[messageIndex].toolMessages || [];
 
 	const user = useUserStore.getState().user;
-	const messageTemplate = createDoubleAgentChatMessage({
+	const messageTemplate = createMultiAgentChatMessage({
 		role: role,
 		content: "",
 		streaming: true,
@@ -312,7 +310,7 @@ export function handleChatCallbacks(
 			if (message) {
 				// console.log(message);
 				messageTemplate.content = message;
-				doubleAgentStore.updateSingleMessage(
+				MultiAgentStore.updateSingleMessage(
 					conversationId,
 					messageIndex,
 					message,
@@ -331,7 +329,7 @@ export function handleChatCallbacks(
 					toolInput,
 				});
 
-				doubleAgentStore.updateSingleMessage(
+				MultiAgentStore.updateSingleMessage(
 					conversationId,
 					messageIndex,
 					getMessageTextContent(messageTemplate),
@@ -345,11 +343,11 @@ export function handleChatCallbacks(
 				messageTemplate.content = message;
 				// console.log("message111 finish: ", message);
 
-				// doubleAgentStore.updateMessages(conversationId, messageTemplate);
+				// MultiAgentStore.updateMessages(conversationId, messageTemplate);
 				// update round
-				const round = doubleAgentStore.updateRound(conversationId).round;
+				const round = MultiAgentStore.updateRound(conversationId).round;
 				// console.log("round", round);
-				doubleAgentStore.updateSingleMessage(
+				MultiAgentStore.updateSingleMessage(
 					conversationId,
 					messageIndex,
 					message,
@@ -376,7 +374,7 @@ export function handleChatCallbacks(
 				});
 			messageTemplate.streaming = false;
 
-			doubleAgentStore.updateMessages(conversationId, messageTemplate);
+			MultiAgentStore.updateMessages(conversationId, messageTemplate);
 			ChatControllerPool.remove(session.id, messageTemplate.id ?? messageIndex);
 			console.error("[Chat] failed ", error);
 		},
@@ -394,7 +392,7 @@ export function handleChatCallbacks(
 function sendChatMessage(
 	aiConfig: Mask,
 	modelConfig: ModelConfig,
-	sendMessages: DoubleAgentChatMessage[],
+	sendMessages: MultiAgentChatMessage[],
 	callbacks: {
 		onUpdate?: (message: string) => void;
 		onFinish: (message: string) => void;
@@ -444,10 +442,8 @@ export async function createAgentChats(
 	agentNum: number,
 ) {
 	const userStore = useUserStore.getState();
-	const doubleAgentStore = doubleAgent.getState();
-	const session = doubleAgentStore.conversations.find(
-		(m) => m.id === sessionId,
-	);
+	const MultiAgentStore = MultiAgent.getState();
+	const session = MultiAgentStore.conversations.find((m) => m.id === sessionId);
 	const AuthStore = useAuthStore.getState();
 
 	if (!session) {
@@ -473,7 +469,7 @@ export async function createAgentChats(
 		model = session.firstAIConfig.modelConfig.model;
 	}
 
-	const historyMessages = doubleAgentStore.getHistory(sessionId);
+	const historyMessages = MultiAgentStore.getHistory(sessionId);
 
 	const createChatData: CreateChatData = {
 		user: userStore.user.id, // 替换为实际的用户 ID
@@ -498,12 +494,12 @@ export async function createAgentChats(
 			message: chatResponse.msg,
 		};
 
-		const error = createDoubleAgentChatMessage({
+		const error = createMultiAgentChatMessage({
 			role: "assistant",
 			content: "登录已过期，请重新登录",
 		});
 
-		doubleAgentStore.updateMessages(sessionId, error);
+		MultiAgentStore.updateMessages(sessionId, error);
 		AuthStore.logout();
 		userStore.clearUser();
 

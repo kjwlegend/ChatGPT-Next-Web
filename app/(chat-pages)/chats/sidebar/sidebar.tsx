@@ -153,12 +153,14 @@ interface SideBarProps {
 	onAddClick: () => void;
 	onChatItemClick: (id: string) => void;
 	onChatItemDelete: (id: number) => void;
+	onChatItemEdit?: (id: string) => void | undefined;
 	chatSessions: any[];
 	ChatListComponent: React.ComponentType<{
 		narrow?: boolean;
 		chatSessions: any[];
 		onChatItemClick: (id: string) => void;
 		onChatItemDelete: (id: number) => void;
+		onChatItemEdit?: (id: string) => void;
 	}>; // 传递 ChatList 组件
 }
 
@@ -168,6 +170,7 @@ export function SideBar({
 	onAddClick,
 	onChatItemClick,
 	onChatItemDelete,
+	onChatItemEdit,
 	chatSessions,
 	ChatListComponent,
 }: SideBarProps) {
@@ -235,24 +238,7 @@ export function SideBar({
 						<DrawerMenu />
 					</div>
 				)}
-				{/* <IconButton
-					icon={<PluginIcon />}
-					text={shouldNarrow ? undefined : "画廊"}
-					className={styles["sidebar-bar-button"]}
-					onClick={() =>
-						navigate(Path.Paintings, { state: { fromHome: true } })
-					}
-					shadow
-				/>
-				<IconButton
-					icon={<PluginIcon />}
-					text={shouldNarrow ? undefined : "文档管理"}
-					className={styles["sidebar-bar-button"]}
-					onClick={() =>
-						navigate(Path.Knowledge, { state: { fromHome: true } })
-					}
-					shadow
-				/> */}
+
 				<div>
 					<IconButton
 						icon={<AddIcon />}
@@ -276,6 +262,7 @@ export function SideBar({
 					chatSessions={chatSessions}
 					onChatItemClick={onChatItemClick}
 					onChatItemDelete={onChatItemDelete}
+					onChatItemEdit={onChatItemEdit}
 				/>
 				<div ref={loadRef}> ...</div>
 			</div>

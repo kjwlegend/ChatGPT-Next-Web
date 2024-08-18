@@ -18,25 +18,8 @@ import PromptIcon from "@/app/icons/prompt.svg";
 import ResetIcon from "@/app/icons/reload.svg";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	DEFAULT_TOPIC,
-	ModelType,
-	useUserStore,
-} from "../../store";
+import { SubmitKey, useChatStore } from "../../store";
 
-import { api } from "../../client/api";
-
-import dynamic from "next/dynamic";
-
-import { ChatControllerPool } from "../../client/controller";
-import { Prompt, usePromptStore } from "../../store/prompt";
 import Locale from "../../locales";
 
 import { IconButton } from "../../components/button";
@@ -64,15 +47,17 @@ import { List, Input, Form, Row, Col } from "antd";
 import { Avatar } from "@/app//components/avatar";
 
 import { CopyOutlined } from "@ant-design/icons";
+import { workflowChatSession, WorkflowGroup } from "@/app/store/workflow";
 
 const { TextArea } = Input;
 
 export function WorkflowModalConfig(props: {
 	onClose: () => void;
-	workflow: any;
+	workflow: WorkflowGroup;
+	workflowSessions: workflowChatSession[];
 }) {
-	const { workflow, onClose } = props;
-	const { topic, description } = workflow;
+	const { workflow, workflowSessions, onClose } = props;
+	const { topic, description, summary, id, created_at } = workflow;
 
 	const {
 		workflowGroups,
@@ -84,7 +69,6 @@ export function WorkflowModalConfig(props: {
 		addChatGrouptoWorkflow,
 		moveSession,
 		deleteSessionFromGroup,
-		workflowSessions,
 		workflowSessionsIndex,
 		getworkFlowSessions,
 		updateWorkflowChatGroup,
@@ -93,26 +77,15 @@ export function WorkflowModalConfig(props: {
 	const [workflowName, setWorkflowName] = useState(topic);
 	const [workflowDescription, setWorkflowDescription] = useState(description);
 
-	const chatStore = useChatStore();
-
-	// use workflow.sessions to get the agent list from chatStore.sessions
-
-	const agentlist =
-		workflow.sessions?.map((item: any) => {
-			const agent = chatStore.sessions.find(
-				(session: ChatSession) => session.id === item,
-			);
-			return agent;
-		}) ?? [];
-
+	const agentlist = workflowSessions || [];
 	console.log("agentlist", agentlist);
-	console.log("workflow", workflow);
 
 	const handleSave = async () => {
-		await updateSingleWorkflowGroup(workflow.id, {
+		await updateWorkflowChatGroup(workflow.id, {
 			topic: workflowName,
-			lastUpdateTime: new Date().toISOString(),
 			description: workflowDescription,
+			lastUpdateTime: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
 		});
 		onClose();
 	};

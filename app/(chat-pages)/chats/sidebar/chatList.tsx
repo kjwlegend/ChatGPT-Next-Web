@@ -2,13 +2,14 @@ import styles from "../home.module.scss";
 
 import { useRef, useEffect, useState, useCallback } from "react";
 
-import { ChatItem, ChatItemShort } from "./chatItem";
+import { ChatItem } from "./chatItem";
 
 interface ChatListProps {
 	narrow?: boolean;
 	chatSessions: any[];
 	onChatItemClick: (id: string) => void;
 	onChatItemDelete: (id: number) => void;
+	onChatItemEdit?: (id: string) => void;
 }
 
 export function ChatList({
@@ -16,6 +17,7 @@ export function ChatList({
 	chatSessions,
 	onChatItemClick,
 	onChatItemDelete,
+	onChatItemEdit,
 }: ChatListProps) {
 	const [chatlist, setChatlist] = useState(chatSessions);
 
@@ -56,6 +58,7 @@ export function ChatList({
 						selected={item.id === selectedChatId}
 						onClick={() => handleChatItemClick(item.id)} // 处理点击事件
 						onDelete={() => onChatItemDelete(item.id)}
+						onEdit={onChatItemEdit ? () => onChatItemEdit(item.id) : undefined} // 传递可选的 onEdit
 						narrow={narrow}
 						mask={item.mask}
 					/>

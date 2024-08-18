@@ -19,7 +19,7 @@ import { Plugin, usePluginStore } from "../store/plugin";
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "../types/";
 import { sendChatMessage } from "../services/chatService";
 import { useChatStore, createMessage, DEFAULT_TOPIC } from "../store";
-import { DoubleAgentChatMessage } from "../store/doubleAgents";
+import { DoubleAgentChatMessage } from "../store/multiagents";
 import { strictLLMResult } from "./basic";
 import { getMessageTextContent } from "../utils";
 

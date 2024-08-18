@@ -60,7 +60,7 @@ import { LAST_INPUT_KEY } from "@/app/constant";
 
 // 样式
 import styles from "../chats.module.scss";
-import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { useWorkflowStore } from "@/app/store/workflow";
 interface MessageItemProps {
 	message: ChatMessage;

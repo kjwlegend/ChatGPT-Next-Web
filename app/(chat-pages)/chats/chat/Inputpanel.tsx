@@ -59,7 +59,7 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import { DOUBLE_AGENT_DEFAULT_TOPIC } from "@/app/store/doubleAgents";
+import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
 import {
 	copyToClipboard,
 	selectOrCopy,

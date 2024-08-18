@@ -13,22 +13,6 @@ import { getISOLang, getLang } from "@/app/locales";
 import { useRouter } from "next/navigation";
 
 import SendWhiteIcon from "@/app/icons/send-white.svg";
-import CopyIcon from "@/app/icons/copy.svg";
-import PromptIcon from "@/app/icons/prompt.svg";
-import ResetIcon from "@/app/icons/reload.svg";
-import BreakIcon from "@/app/icons/break.svg";
-import SettingsIcon from "@/app/icons/chat-settings.svg";
-import LightIcon from "@/app/icons/light.svg";
-import DarkIcon from "@/app/icons/dark.svg";
-import AutoIcon from "@/app/icons/auto.svg";
-import BottomIcon from "@/app/icons/bottom.svg";
-import StopIcon from "@/app/icons/pause.svg";
-import RobotIcon from "@/app/icons/robot.svg";
-import Record from "@/app/icons/record.svg";
-import UploadIcon from "@/app/icons/upload.svg";
-import CloseIcon from "@/app/icons/close.svg";
-import { oss } from "@/app/constant";
-import CheckmarkIcon from "@/app/icons/checkmark.svg";
 
 import {
 	PauseOutlined,
@@ -51,7 +35,7 @@ import {
 
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
-import { DOUBLE_AGENT_DEFAULT_TOPIC } from "@/app/store/doubleAgents";
+import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
 import {
 	copyToClipboard,
 	selectOrCopy,
@@ -73,21 +57,21 @@ import {
 	ClearContextDivider,
 } from "@/app/(chat-pages)/chats/chat/chat-controller";
 
-import useDoubleAgentStore, {
-	DoubleAgentChatSession,
-} from "@/app/store/doubleAgents";
+import usemultiAgentStore, {
+	MultiAgentChatSession,
+} from "@/app/store/multiagents";
 import { Button, Input, InputNumber, Flex } from "antd";
 import {
 	continueConversation,
 	startConversation,
-} from "@/app/services/doubleAgentService";
+} from "@/app/services/MultiAgentService";
 import Icon from "@ant-design/icons/lib/components/Icon";
 
-export function DoubleAgentInput() {
-	const doubleAgentStore = useDoubleAgentStore();
-	const { conversations, currentConversationId } = doubleAgentStore;
+export function MultiAgentInput() {
+	const multiAgentStore = usemultiAgentStore();
+	const { conversations, currentConversationId } = multiAgentStore;
 	const [conversation, setConversation] = useState<
-		DoubleAgentChatSession | undefined
+		MultiAgentChatSession | undefined
 	>(conversations.find((conv) => conv.id === currentConversationId));
 
 	const authHook = useAuth();
@@ -103,7 +87,8 @@ export function DoubleAgentInput() {
 	const [totalRounds, setTotalRounds] = useState(
 		conversation?.totalRounds ?? 0,
 	);
-	const { chat_balance } = useUserStore.getState().user.user_balance;
+	const { basic_chat_balance: chat_balance } =
+		useUserStore.getState().user.user_balance;
 
 	const config = useAppConfig();
 	useEffect(() => {
@@ -123,10 +108,10 @@ export function DoubleAgentInput() {
 	}, [conversations, currentConversationId]); // 添加依赖数组
 
 	//  当rounds 变化时 updateUserBalance
-	useEffect(() => {
-		// 更新用户余额
-		updateUserInfo(userid);
-	}, [round]);
+	// useEffect(() => {
+	// 	// 更新用户余额
+	// 	updateUserInfo(userid);
+	// }, [round]);
 
 	const textareaMinHeight = 68;
 	const onInput = (text: string) => {
@@ -155,16 +140,16 @@ export function DoubleAgentInput() {
 		// change input value to number
 		const value = e;
 		// 创建新的conversation, 并更新
-		const newConversation: DoubleAgentChatSession = {
+		const newConversation: MultiAgentChatSession = {
 			...conversation,
 			totalRounds: value ?? 0,
 		};
-		doubleAgentStore.updateConversation(currentConversationId, newConversation);
+		multiAgentStore.updateConversation(currentConversationId, newConversation);
 	};
 
 	const clearConversationHandler = () => {
 		console.log(currentConversationId);
-		doubleAgentStore.clearConversation(currentConversationId);
+		multiAgentStore.clearConversation(currentConversationId);
 		setUserInput("");
 		setRound(0);
 	};
@@ -173,11 +158,11 @@ export function DoubleAgentInput() {
 		// 如果 round >= totalRounds, 则自动暂停
 		if (round >= totalRounds) {
 			const newPausedState = true;
-			const updatedConversation: DoubleAgentChatSession = {
+			const updatedConversation: MultiAgentChatSession = {
 				...conversation,
 				paused: newPausedState,
 			};
-			doubleAgentStore.updateConversation(
+			multiAgentStore.updateConversation(
 				currentConversationId,
 				updatedConversation,
 			);
@@ -186,11 +171,11 @@ export function DoubleAgentInput() {
 
 		// 根据当前的 paused 状态来暂停或继续对话
 		const newPausedState = !conversation.paused;
-		const updatedConversation: DoubleAgentChatSession = {
+		const updatedConversation: MultiAgentChatSession = {
 			...conversation,
 			paused: newPausedState,
 		};
-		doubleAgentStore.updateConversation(
+		multiAgentStore.updateConversation(
 			currentConversationId,
 			updatedConversation,
 		);
@@ -243,10 +228,10 @@ export function DoubleAgentInput() {
 
 		const userId = 1;
 		const initialinput = userInput;
-		const updateConversation: DoubleAgentChatSession = {
+		const updateConversation: MultiAgentChatSession = {
 			...conversation,
 			topic:
-				conversation.topic == DOUBLE_AGENT_DEFAULT_TOPIC
+				conversation.topic == MULTI_AGENT_DEFAULT_TOPIC
 					? userInput
 					: conversation.topic,
 			initialInput: userInput,
@@ -255,7 +240,7 @@ export function DoubleAgentInput() {
 		};
 		console.log("conversation", updateConversation);
 		console.log("开始对话");
-		doubleAgentStore.updateConversation(
+		multiAgentStore.updateConversation(
 			currentConversationId,
 			updateConversation,
 		);

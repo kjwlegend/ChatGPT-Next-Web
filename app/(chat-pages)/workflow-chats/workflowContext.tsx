@@ -41,7 +41,10 @@ interface WorkflowContextType {
 	workflowSessionsIndex: { [key: string]: any[] };
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
-	updateWorkflowChatGroup: (groupId: string, newGroup: any) => void;
+	updateWorkflowChatGroup: (
+		groupId: string,
+		newGroup: Partial<WorkflowGroup>,
+	) => void;
 }
 
 export const WorkflowContext = createContext<WorkflowContextType | null>(null);
@@ -85,7 +88,7 @@ export const WorkflowProvider = ({
 		}
 
 		if (res.data) {
-			updateWorkflowGroupHandler(res.data);
+			updateLocalWorkflowStoreHandler(res.data);
 		}
 
 		return res;
@@ -232,18 +235,21 @@ export const WorkflowProvider = ({
 		[deleteSessionFromGroup],
 	);
 
-	const updateWorkflowChatGroup = async (groupId: string, newGroup: any) => {
+	const updateWorkflowChatGroup = async (
+		groupId: string,
+		newGroup: Partial<WorkflowGroup>,
+	) => {
 		messageApi.open({
 			content: "内容更新中",
 			type: "loading",
 		});
 
-		const { chat_sessions, topic, ...rest } = newGroup;
+		const { description, topic, summary, updated_at, ...rest } = newGroup;
 
 		const workflowGroupData = {
 			user: userid,
-			chat_sessions: chat_sessions,
-			topic: topic,
+			session_topic: topic,
+			session_description: description,
 			...rest,
 		};
 
@@ -254,7 +260,7 @@ export const WorkflowProvider = ({
 				throw new Error("登录状态已过期, 请重新登录");
 			}
 			messageApi.destroy();
-			updateWorkflowGroup(groupId, workflowGroupData);
+			updateWorkflowGroup(groupId, newGroup); // 更新本地store
 
 			messageApi.success("内容更新成功");
 		} catch (error: any) {
@@ -262,7 +268,8 @@ export const WorkflowProvider = ({
 		}
 	};
 
-	const updateWorkflowGroupHandler = (newData: any) => {
+	const updateLocalWorkflowStoreHandler = (newData: any) => {
+		// TODO: 本地store 方法还没做完
 		newData.forEach(async (item: any) => {
 			const groupId = item.id;
 			const topic = item.topic;

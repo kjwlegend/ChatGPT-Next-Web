@@ -11,18 +11,16 @@ import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
 import { getMessageTextContent } from "../utils";
 import { createMultipleAgentSession } from "../services/chats";
-
-export type DoubleAgentChatMessage = ChatMessage & {
-	agentNum?: number;
+export type MultiAgentChatMessage = ChatMessage & {
+	agentId?: number;
 };
 
-export type DoubleAgentChatSession = {
+export type MultiAgentChatSession = {
 	id: string;
-	firstAIConfig: Mask;
-	secondAIConfig: Mask;
+	aiConfigs: Mask[]; // 存储多个 agent 的配置
 	topic: string;
 	initialInput: string;
-	messages: DoubleAgentChatMessage[];
+	messages: MultiAgentChatMessage[];
 	lastUpdateTime: number;
 	updated_at: string;
 	created_at: string;
@@ -30,32 +28,26 @@ export type DoubleAgentChatSession = {
 	totalRounds: number; // 迭代次数
 	round: number; // 轮次
 	paused?: boolean; // 是否暂停
+	next_agent_type: "round-robin" | "random" | "intelligent"; // 选择下一个 agent 的策略
 };
 
-export const DOUBLE_AGENT_DEFAULT_TOPIC = "未定义话题";
+export const MULTI_AGENT_DEFAULT_TOPIC = "未定义话题";
 
 type StoreState = {
-	user: any; // 定义用户类型
 	currentConversationId: string; // 当前会话ID
-	firstAIConfig: Mask; // firstAI的配置
-	secondAIConfig: Mask; // secondAI的配置
-
-	conversations: DoubleAgentChatSession[]; // 会话列表
-	startNewConversation: (topic: string, userid: number) => Promise<string>;
+	conversations: MultiAgentChatSession[]; // 会话列表
+	startNewConversation: (topic: string, conversationId: string) => void;
 	setCurrentConversationId: (id: string) => void;
 	fetchNewConversations: (data: any) => void;
-	currentSession: () => DoubleAgentChatSession;
-	setAIConfig: (
-		conversationId: string,
-		side: "left" | "right",
-		config: Mask,
-	) => void;
-	clearAIConfig: (conversationId: string, side: "left" | "right") => void;
-	sortedConversations: () => DoubleAgentChatSession[];
+	currentSession: () => MultiAgentChatSession;
+	addAgent: (conversationId: string, config: Mask) => void;
+	setAIConfig: (conversationId: string, agentId: number, config: Mask) => void;
+	clearAIConfig: (conversationId: string, agentId: number) => void;
+	sortedConversations: () => MultiAgentChatSession[];
 	clearConversation: (conversationId: string) => void;
 	updateMessages: (
 		conversationId: string,
-		message: DoubleAgentChatMessage,
+		message: MultiAgentChatMessage,
 	) => void;
 	updateSingleMessage: (
 		conversationId: string,
@@ -65,18 +57,22 @@ type StoreState = {
 	) => void;
 	updateConversation: (
 		conversationId: string,
-		conversation: DoubleAgentChatSession,
+		conversation: MultiAgentChatSession,
 	) => void;
 	deleteConversation: (conversationId: string | number) => void;
 	// return round
 	updateRound: (conversationId: string) => { round: number };
-	getHistory: (conversationId: string) => DoubleAgentChatMessage[];
+	getHistory: (conversationId: string) => MultiAgentChatMessage[];
 	summarizeSession: (conversationId: string) => Promise<any>;
-};
 
-export function createDoubleAgentChatMessage(
-	override: Partial<DoubleAgentChatMessage>,
-): DoubleAgentChatMessage {
+	decideNextAgent: (
+		conversationId: string,
+		strategy: "round-robin" | "random" | "intelligent",
+	) => number;
+};
+export function createMultiAgentChatMessage(
+	override: Partial<MultiAgentChatMessage>,
+): MultiAgentChatMessage {
 	return {
 		id: nanoid(),
 		date: new Date().toISOString(),
@@ -89,37 +85,21 @@ export function createDoubleAgentChatMessage(
 		...override,
 	};
 }
+
 const storeCreator: StateCreator<StoreState> = (set, get) => ({
-	user: null,
 	currentConversationId: "",
-	firstAIConfig: {} as Mask,
-	secondAIConfig: {} as Mask,
+	aiConfigs: [], // 存储多个 agent 的配置
 
 	conversations: [],
-	startNewConversation: async (topic: string, userid: number) => {
-		const data: DoubleAgentData = {
-			user: userid,
-			session_topic: topic,
-			initialInput: "",
-			first_agent_setting: get().firstAIConfig,
-			second_agent_setting: get().secondAIConfig,
-			totalRounds: 0,
-			round: 0,
-			pause: false,
-		};
-
-		const res = await createMultipleAgentSession(data);
-
-		const conversationId = res.id; // 这里应该是生成唯一ID的函数
+	startNewConversation: (topic: string, conversationId: string) => {
 		set((state) => {
-			const newConversation: DoubleAgentChatSession = {
+			const newConversation: MultiAgentChatSession = {
 				id: conversationId,
-				firstAIConfig: get().firstAIConfig,
-				secondAIConfig: get().secondAIConfig,
+				aiConfigs: [],
 				topic: topic,
 				initialInput: "",
 				messages: [
-					// createDoubleAgentChatMessage({
+					// createMultiAgentChatMessage({
 					// 	content: initialInput,
 					// 	role: "user",
 					// }),
@@ -132,6 +112,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				totalRounds: 0,
 				round: 0,
 				paused: true,
+				next_agent_type: "round-robin",
 			};
 			get().sortedConversations();
 
@@ -140,25 +121,23 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: [...state.conversations, newConversation],
 			};
 		});
-		return conversationId;
 	},
 	setCurrentConversationId: (id) => set({ currentConversationId: id }),
 	currentSession: () => {
 		const { currentConversationId, conversations } = get();
 		return (
 			conversations.find((session) => session.id === currentConversationId) ||
-			({} as DoubleAgentChatSession)
+			({} as MultiAgentChatSession)
 		);
 	},
-	fetchNewConversations(data) {
+	fetchNewConversations(data: any[]) {
 		const existingConversations = get().conversations;
 
-		const newConversations: DoubleAgentChatSession[] = data.map(
+		const newConversations: MultiAgentChatSession[] = data.map(
 			(session: any) => ({
 				id: session.id,
-				firstAIConfig: session.custom_agents_data[0] || {}, // 使用第一个 agent 配置
-				secondAIConfig: session.custom_agents_data[1] || {}, // 使用第二个 agent 配置
-				topic: session.session_topic || DOUBLE_AGENT_DEFAULT_TOPIC,
+				aiConfigs: session.custom_agents_data || [], // 使用多个 agent 配置
+				topic: session.session_topic || MULTI_AGENT_DEFAULT_TOPIC,
 				initialInput: session.session_description || "",
 				messages: [], // 这里假设没有初始消息，需要后续加载
 				lastUpdateTime: Date.parse(session.updated_at),
@@ -167,40 +146,78 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				totalRounds: 0, // 假设初始为 0，需要后续更新
 				round: 0, // 假设初始为 0，需要后续更新
 				paused: false, // 默认不暂停
+				next_agent_type: "round-robin", // 默认使用轮询策略
+				memory: "",
 			}),
 		);
 
 		const updatedConversations = existingConversations.slice(); // 创建现有会话的副本
 
-		newConversations.forEach((newConv: DoubleAgentChatSession) => {
+		newConversations.forEach((newConv: MultiAgentChatSession) => {
 			const index = updatedConversations.findIndex(
 				(conv) => conv.id === newConv.id,
 			);
-			console.log("index", index);
 
 			if (index !== -1) {
-				updatedConversations[index] = newConv;
-				console.log("find session, update", index);
+				// 比较 lastUpdateTime
+				if (
+					newConv.lastUpdateTime > updatedConversations[index].lastUpdateTime
+				) {
+					// 如果现有的 aiConfigs 配置 存在则保留, 不存在则替换
+					if (updatedConversations[index].aiConfigs) {
+						newConv.aiConfigs = updatedConversations[index].aiConfigs;
+					} else {
+						newConv.aiConfigs = newConv.aiConfigs;
+					}
+					updatedConversations[index] = newConv;
+				}
 			} else {
 				updatedConversations.push(newConv);
-				console.log("No session add,", index);
 			}
 		});
-		get().sortedConversations();
 
 		set({
 			conversations: updatedConversations,
 		});
+		get().sortedConversations();
 	},
-	setAIConfig: (conversationId: string, side: "left" | "right", config: Mask) =>
+	addAgent(conversationId, config) {
+		//  Add a new agent to the conversation
+
+		set((state) => {
+			const updatedConversations = state.conversations.map((session) => {
+				if (session.id === conversationId) {
+					const updatedAIConfigs = [...session.aiConfigs];
+
+					updatedAIConfigs.push(config);
+					return {
+						...session,
+						aiConfigs: updatedAIConfigs,
+					};
+				}
+
+				return session;
+			});
+			return {
+				conversations: updatedConversations,
+			};
+		});
+	},
+	setAIConfig: (conversationId: string, agentId: number, config: Mask) =>
 		set((state) => {
 			const updatedConversations = state.conversations.map((conversation) => {
 				if (conversation.id === conversationId) {
+					const updatedAIConfigs = conversation.aiConfigs.map(
+						(aiConfig, index) => {
+							if (index === agentId) {
+								return { ...aiConfig, ...config };
+							}
+							return aiConfig;
+						},
+					);
 					return {
 						...conversation,
-						...(side === "left"
-							? { firstAIConfig: config }
-							: { secondAIConfig: config }),
+						aiConfigs: updatedAIConfigs,
 					};
 				}
 				return conversation;
@@ -243,15 +260,16 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			};
 		}),
 
-	clearAIConfig: (conversationId: string, side: "left" | "right") =>
+	clearAIConfig: (conversationId: string, agentId: number) =>
 		set((state) => {
 			const updatedConversations = state.conversations.map((conversation) => {
 				if (conversation.id === conversationId) {
+					const updatedAIConfigs = conversation.aiConfigs.filter(
+						(_, index) => index !== agentId,
+					);
 					return {
 						...conversation,
-						...(side === "left"
-							? { firstAIConfig: {} as Mask }
-							: { secondAIConfig: {} as Mask }),
+						aiConfigs: updatedAIConfigs,
 					};
 				}
 				return conversation;
@@ -260,8 +278,8 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: updatedConversations,
 			};
 		}),
-	// new messages
-	updateMessages: (conversationId: string, message: DoubleAgentChatMessage) =>
+	// 更新消息
+	updateMessages: (conversationId: string, message: MultiAgentChatMessage) =>
 		set((state) => {
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
@@ -278,7 +296,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: updatedConversations,
 			};
 		}),
-	// update single message with index
+	// 更新单条消息
 	updateSingleMessage: (
 		conversationId: string,
 		messageIndex: number,
@@ -335,7 +353,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	// update conversation
 	updateConversation: (
 		conversationId: string,
-		conversation: DoubleAgentChatSession,
+		conversation: MultiAgentChatSession,
 	) =>
 		set((state) => {
 			const updatedConversations = state.conversations.map((session) => {
@@ -472,13 +490,48 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		});
 		return summary || "";
 	},
+
+	decideNextAgent: (conversationId, strategy) => {
+		const conversation = get().conversations.find(
+			(conv) => conv.id === conversationId,
+		);
+		if (!conversation) throw new Error("Conversation not found");
+
+		const totalAgents = conversation.aiConfigs.length;
+		switch (strategy) {
+			case "round-robin":
+				return conversation.round % totalAgents;
+			case "random":
+				return Math.floor(Math.random() * totalAgents);
+			case "intelligent":
+				// 智能选择逻辑，暂时返回第一个 agent
+				return 0;
+			default:
+				throw new Error("Unknown strategy");
+		}
+	},
 });
 
-const doubleAgent = create<StoreState>()(
+const multipleAgents = create<StoreState>()(
 	persist(storeCreator, {
 		name: "double-agent-storage",
 		version: 1.0,
+		migrate: (persistedState, version) => {
+			if (version < 1.0) {
+				console.log("Clearing storage due to version mismatch");
+				return {}; // 清空存储
+			}
+			return persistedState;
+		},
 	}),
 );
 
-export default doubleAgent;
+// 增加错误处理机制
+multipleAgents.subscribe((state) => {
+	try {
+		localStorage.setItem("double-agent-storage", JSON.stringify(state));
+	} catch (error) {
+		console.error("Failed to persist state:", error);
+	}
+});
+export default multipleAgents;

@@ -10,10 +10,7 @@ import {
 import { Path } from "../constant";
 import { useNavigate } from "react-router-dom";
 import { getMultiAgentSession } from "../services/chats";
-import usedoubleAgent, {
-	DoubleAgentChatSession,
-} from "@/app/store/doubleAgents";
-import { useDoubleAgentChatContext } from "../(chat-pages)/double-agents/doubleAgentContext";
+
 import { useUserStore } from "../store";
 import { useWorkflowStore } from "../store/workflow";
 import { useWorkflowContext } from "../(chat-pages)/workflow-chats/workflowContext";
@@ -95,6 +92,7 @@ export const useSimpleWorkflowService = () => {
 	};
 
 	return {
+		selectedId,
 		WorkflowGroupData,
 		loadMoreSessions,
 		handleAddClick,

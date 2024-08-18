@@ -18,10 +18,7 @@ import styles from "../chats.module.scss";
 import { ChatContext } from "@/app/(chat-pages)/chats/chat/main";
 import { useMessageActions } from "@/app/(chat-pages)/chats/chat/chatbody/useMessageActions";
 import { useChatPagination } from "@/app/(chat-pages)/chats/chat/chatbody/useChatPagination";
-import {
-	DoubleAgentChatMessage,
-	DoubleAgentChatSession,
-} from "@/app/store/doubleAgents";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 
 export type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -33,14 +30,14 @@ interface ChatMessageListProps {
 	getMessages: (sessionId: string, page: number) => void;
 }
 
-interface DoubleAgentChatMessageListProps {
-	messages: DoubleAgentChatMessage[];
+interface MultiAgentChatSessionListProps {
+	messages: MultiAgentChatSession[];
 	isLoading: boolean;
 	hasNextPage: boolean;
 }
 
-export const DoubleAgentMessageList: React.FC<
-	DoubleAgentChatMessageListProps
+export const MultiAgentMessageList: React.FC<
+	MultiAgentChatSessionListProps
 > = ({ messages, isLoading, hasNextPage }) => {
 	let session: any = null;
 	const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -66,7 +63,7 @@ export const DoubleAgentMessageList: React.FC<
 							context={context}
 							clearContextIndex={clearContextIndex}
 							message={message}
-							agentNum={message.agentNum}
+							agentId={message.agentId}
 						/>
 					</Fragment>
 				);

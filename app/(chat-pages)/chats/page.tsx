@@ -262,7 +262,7 @@ function Screen() {
 						<Route path={Path.Paintings} element={<Paitings />} />
 						<Route
 							path={Path.Masks}
-							element={<MaskPage onChat={onChat} onDelete={onDelete} />}
+							element={<MaskPage onItemClick={onChat} onDelete={onDelete} />}
 						/>
 						<Route path={Path.Plugins} element={<Plugins />} />
 						<Route path={Path.Chat} element={<Chat />} />

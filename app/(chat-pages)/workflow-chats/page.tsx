@@ -92,11 +92,9 @@ const SimpleWorkflow: React.FC = () => {
 	}, [isAuthenticated]);
 
 	// // 根据 selectedID 获取对应的 workflowGroup
-	// const currentWorkflowGroup = useMemo(() => {
-	// 	return workflowGroups.find((group) => group.id === selectedId);
-	// }, [selectedId, workflowGroups]);
-
-	// console.log("currentWorkflowGroup", currentWorkflowGroup);
+	const currentWorkflowGroup = useMemo(() => {
+		return workflowGroups.find((group) => group.id === selectedId);
+	}, [selectedId, workflowGroups]);
 
 	// 根据 selectedID 获取对应的 sessions
 	const currentSessions = useMemo(() => {
@@ -235,7 +233,11 @@ const SimpleWorkflow: React.FC = () => {
 				className={`${styles2["window-content"]} ${styles["background"]}`}
 			>
 				{selectedId !== "" && (
-					<AgentList sessions={currentSessions} showModal={handleModalClick} />
+					<AgentList
+						sessions={currentSessions}
+						workflowGroup={currentWorkflowGroup}
+						showModal={handleModalClick}
+					/>
 				)}
 				<div className={styles["chats-container"]}>
 					<MainScreen />

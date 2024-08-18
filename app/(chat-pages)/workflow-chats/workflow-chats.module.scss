@@ -42,8 +42,25 @@
 	justify-content: flex-start;
 	border-bottom: var(--border-in-default);
 
+	.session-description {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+
+		.session-title {
+			font-size: 16px;
+			font-weight: 600;
+		}
+		.session-subtitle {
+			margin-left: 10px;
+			font-size: 12px;
+			color: rgba(0, 0, 0, 0.45);
+		}
+	}
 	.plus {
-		height: 43px;
+		height: 38px;
+		margin-left: 5px;
 	}
 }
 .session-list {

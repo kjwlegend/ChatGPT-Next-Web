@@ -50,7 +50,7 @@ import { message, Switch } from "antd";
 import { SessionConfigModel } from "./common";
 
 import { ChatContext } from "./main";
-import doubleAgent, { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import MultiAgent, { MultiAgentChatSession } from "@/app/store/multiagents";
 import { LLMModelSwitch } from "./chatActions";
 
 export function EditMessageModal(props: {
@@ -58,7 +58,7 @@ export function EditMessageModal(props: {
 	index?: number;
 	session?: ChatSession;
 	isworkflow: boolean;
-	doubleAgent?: boolean;
+	MultiAgent?: boolean;
 }) {
 	const chatStore = useChatStore();
 
@@ -130,7 +130,7 @@ const MaskModal = (props: {
 	isworkflow: boolean;
 	showModal?: boolean;
 	setShowModal: (_: boolean) => void;
-	doubleAgent?: boolean;
+	MultiAgent?: boolean;
 }) => {
 	const chatStore = useChatStore();
 	let session: ChatSession;
@@ -199,7 +199,7 @@ type WindowHeaderTitleProps = {
 	session?: ChatSession;
 	index?: number;
 	isworkflow: boolean;
-	doubleAgent?: boolean;
+	MultiAgent?: boolean;
 };
 
 function WindowHeaderTitle({
@@ -404,9 +404,9 @@ export function WindowHeader(props: {
 	_session: ChatSession;
 	index?: number;
 	isworkflow: boolean;
-	doubleAgent?: boolean;
+	MultiAgent?: boolean;
 }) {
-	const { _session, index, isworkflow, doubleAgent } = props;
+	const { _session, index, isworkflow, MultiAgent } = props;
 	// isworkflow = true then, session use props.session. else use currentSession
 
 	const [session, setsession] = useState(_session);
@@ -474,7 +474,7 @@ function DoulbeAgentWindowHeaderTitle({
 	index,
 	isworkflow,
 }: WindowHeaderTitleProps) {
-	const chatStore = doubleAgent();
+	const chatStore = MultiAgent();
 	const currentSession = session ?? chatStore.currentSession();
 	const sessionId = currentSession.id;
 	const config = useAppConfig();
@@ -511,10 +511,10 @@ function DoulbeAgentWindowHeaderTitle({
 	);
 }
 
-export function DoubleAgentWindowHeader(props: {
-	session?: DoubleAgentChatSession;
+export function MultiAgentWindowHeader(props: {
+	session?: MultiAgentChatSession;
 }) {
-	const chatStore = doubleAgent();
+	const chatStore = MultiAgent();
 	let session = props.session ?? chatStore.currentSession();
 	const sessionId = session.id;
 	const [showExport, setShowExport] = useState(false);

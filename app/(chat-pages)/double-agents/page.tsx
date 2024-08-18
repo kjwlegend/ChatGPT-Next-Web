@@ -3,9 +3,9 @@ import React, { use, useState, useCallback } from "react";
 import { useEffect } from "react";
 import { Button, Layout, message } from "antd";
 // import Sidebar from "./components/Sidebar";
-import ChatArea from "./chatarea/ChatArea";
+import ChatArea from "./chatarea/layout";
 import { Path, SlotID } from "@/app/constant";
-import styles from "./double-agents.module.scss";
+import styles from "./multi-agents.module.scss";
 import styles2 from "@/app/(chat-pages)/chats/home.module.scss";
 import {
 	HashRouter as Router,
@@ -16,13 +16,13 @@ import {
 } from "react-router-dom";
 
 import {
-	DoubleAgentChatContext,
-	DoubleAgentChatProvider,
-	useDoubleAgentChatContext,
-} from "./doubleAgentContext";
+	MultiAgentChatContext,
+	MultiAgentChatProvider,
+	useMultiAgentChatContext,
+} from "./multiAgentContext";
 
-import usedoubleAgentStore from "@/app/store/doubleAgents";
-import { DoubleAgentChatSession } from "@/app/store/doubleAgents";
+import usemultiAgentStore from "@/app/store/multiagents";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { useAccessStore, useAppConfig, useUserStore } from "@/app/store";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -37,8 +37,8 @@ import { getClientConfig } from "@/app/config/client";
 import { getCSSVar } from "@/app/utils";
 import { getISOLang } from "@/app/locales";
 
-const DoubleAgentSideBar = dynamic(
-	async () => (await import("./components/sidebar")).DoubleAgentSideBar,
+const MultiAgentSideBar = dynamic(
+	async () => (await import("./components/sidebar")).MultiAgentSideBar,
 	{
 		loading: () => null,
 		ssr: false,
@@ -48,7 +48,7 @@ const DoubleAgentSideBar = dynamic(
 const { Header, Content, Sider, Footer } = Layout;
 
 const EmptyIntro = () => {
-	const { startNewConversation } = useDoubleAgentChatContext();
+	const { startNewConversation } = useMultiAgentChatContext();
 
 	return (
 		<div className={styles["welcome-container"]}>
@@ -99,16 +99,16 @@ const EmptyIntro = () => {
 };
 
 const DoulbeAgentLayout: React.FC = () => {
-	const doubleagents = usedoubleAgentStore();
+	const MultiAgents = usemultiAgentStore();
 	const userid = useUserStore.getState().user.id;
 	const isAuth = useAuthStore.getState().isAuthenticated;
 
 	const { conversations, currentConversationId, setCurrentConversationId } =
-		doubleagents;
+		MultiAgents;
 
 	// 避免服务器端渲染, 采用客户端渲染
 	const [localconversations, setLocalConversations] = useState<
-		DoubleAgentChatSession[]
+		MultiAgentChatSession[]
 	>([]);
 
 	useEffect(() => {
@@ -149,9 +149,9 @@ const DoulbeAgentLayout: React.FC = () => {
 	};
 
 	return (
-		<DoubleAgentChatProvider>
-			<Layout style={{ flexDirection: "row" }}>
-				<DoubleAgentSideBar />
+		<MultiAgentChatProvider>
+			<Layout style={{ flexDirection: "row" }} className="tight-container">
+				<MultiAgentSideBar />
 
 				<Layout
 					className={`${styles2["window-content"]} ${styles["background"]}`}
@@ -164,7 +164,7 @@ const DoulbeAgentLayout: React.FC = () => {
 					</Content>
 				</Layout>
 			</Layout>
-		</DoubleAgentChatProvider>
+		</MultiAgentChatProvider>
 	);
 };
 

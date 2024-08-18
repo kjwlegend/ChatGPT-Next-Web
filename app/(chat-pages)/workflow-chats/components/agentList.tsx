@@ -84,8 +84,12 @@ export function ChatItemShort(props: {
 					)}`}
 				>
 					<>
-						<div className={styles2["chat-item-title"]}>{props.title}</div>
-						<div className={styles2["chat-item-subtitle"]}>id:{props.id}</div>
+						<div className={styles2["chat-item-title"]}>
+							{props.title}
+							<span className={styles2["chat-item-subtitle"]}>
+								id:{props.id}
+							</span>
+						</div>
 					</>
 
 					<div
@@ -105,6 +109,7 @@ export function ChatItemShort(props: {
 }
 
 export default function AgentList(props: {
+	workflowGroup: any;
 	sessions: any[];
 	showModal: () => void;
 }) {
@@ -114,9 +119,14 @@ export default function AgentList(props: {
 
 	const [orderedSessions, setOrderedSessions] = useState<any[]>(props.sessions);
 
+	const [currentGroup, setCurrentGroup] = useState<any>(props.workflowGroup);
+
+	const { id: groupId, topic, description } = currentGroup;
+
 	useEffect(() => {
 		setOrderedSessions(props.sessions);
-	}, [props.sessions]);
+		setCurrentGroup(props.workflowGroup);
+	}, [props.sessions, props.workflowGroup]);
 
 	console.log("agentList", orderedSessions);
 
@@ -133,7 +143,7 @@ export default function AgentList(props: {
 		) {
 			return;
 		}
-		moveSession(selectedId, source.index, destination.index);
+		moveSession(groupId, source.index, destination.index);
 		setSelectIndex(destination.index);
 	};
 
@@ -144,12 +154,30 @@ export default function AgentList(props: {
 
 	const itemDeleteHandler = async (item: any) => {
 		// console.log("item", item);
-		deleteSessionFromGroup(selectedId, item.id);
+		deleteSessionFromGroup(groupId, item.id);
 	};
 
 	return (
 		<WorkflowProvider>
 			<div className={styles["session-container"]}>
+				{/* <div className={styles["session-description"]}>
+					<div className={styles["session-title"]}>{currentGroup?.topic}</div>
+					<div className={styles["session-subtitle"]}>
+						id: {groupId}
+						{currentGroup?.description}
+					</div>
+
+
+				</div> */}
+				<Button
+					type="dashed"
+					className={styles["plus"]}
+					icon={<PlusCircleOutlined />}
+					onClick={() => props.showModal()}
+					size="small"
+				>
+					新增助手
+				</Button>
 				{orderedSessions && (
 					<DragDropContext onDragEnd={onDragEnd}>
 						<Droppable droppableId="chat-list" direction="horizontal">
@@ -187,15 +215,6 @@ export default function AgentList(props: {
 				{/* button 样式 新增session */}
 
 				{/* 下拉菜单 */}
-
-				<Button
-					type="dashed"
-					className={styles["plus"]}
-					icon={<PlusCircleOutlined />}
-					onClick={() => props.showModal()}
-				>
-					新增助手
-				</Button>
 			</div>
 		</WorkflowProvider>
 	);

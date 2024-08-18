@@ -8,7 +8,7 @@ import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
 import { ChatList } from "@/app/(chat-pages)/chats/sidebar/chatList";
 import { useMultipleAgentsChatService } from "@/app/hooks/useMultipleAgentsHook";
 
-export function DoubleAgentSideBar(props: { className?: string }) {
+export function MultiAgentSideBar(props: { className?: string }) {
 	const {
 		chatSessions,
 		loadMoreSessions,

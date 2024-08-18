@@ -58,6 +58,7 @@ import { Tabs, Radio, Input as AntdInput } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useAllModels } from "@/app/utils/hooks";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 
 const { TextArea } = AntdInput;
 
@@ -309,47 +310,35 @@ export function ContextPrompts(props: {
 		</>
 	);
 }
-
 export function MaskConfig(props: {
 	mask: Mask;
 	updateMask: Updater<Mask>;
-	session: ChatSession;
-	onSave: (sessionData: ChatSession) => void; // 新增的回调函数
+	session: ChatSession | MultiAgentChatSession;
+	onSave: (sessionData: ChatSession | MultiAgentChatSession) => void; // 新增的回调函数
 	extraListItems?: JSX.Element;
 	readonly?: boolean;
 	shouldSyncFromGlobal?: boolean;
 }) {
 	const isMobileScreen = useMobileScreen();
-	const [showPicker, setShowPicker] = useState(false);
 	const [tabPosition, setTabPosition] = useState<TabPosition>("left");
 
 	const allModels = useAllModels();
-	const session = props.session;
-
-	const [sessionData, setSessionData] = useState<ChatSession>(session);
+	const [sessionData, setSessionData] = useState<
+		ChatSession | MultiAgentChatSession
+	>(props.session);
 
 	useEffect(() => {
-		if (session) {
-			setSessionData(session);
-		}
-	}, [session]);
+		setSessionData(props.session);
+	}, [props.session]);
 
-	const handleSetSessionData = (key: string, value: any) => {
-		setSessionData((prev) => ({ ...prev, [key]: value }));
-	};
-	// 当父组件调用 onSave 时，将本地的 sessionData 传递回去
 	useEffect(() => {
 		props.onSave(sessionData);
 	}, [props.onSave, sessionData]);
 
-	// set tab position to top on mobile screen
 	useEffect(() => {
-		if (isMobileScreen) {
-			setTabPosition("top");
-		} else {
-			setTabPosition("left");
-		}
+		setTabPosition(isMobileScreen ? "top" : "left");
 	}, [isMobileScreen]);
+
 	const updateConfig = (updater: (config: ModelConfig) => void) => {
 		if (props.readonly) return;
 
@@ -357,7 +346,6 @@ export function MaskConfig(props: {
 		updater(config);
 		props.updateMask((mask) => {
 			mask.modelConfig = config;
-			// if user changed current session mask, it will disable auto sync
 			mask.syncGlobalConfig = false;
 		});
 	};
@@ -369,7 +357,10 @@ export function MaskConfig(props: {
 
 	const globalConfig = useAppConfig();
 
-	// 会话管理模块
+	const handleSetSessionData = (key: string, value: any) => {
+		setSessionData((prev) => ({ ...prev, [key]: value }));
+	};
+
 	const ChatSessionManage = (
 		<List>
 			<ListItem
@@ -394,18 +385,15 @@ export function MaskConfig(props: {
 			>
 				<p>{sessionData.messages.length} 条对话</p>
 			</ListItem>
-			{session.mask.modelConfig.sendMemory ? (
+			{"mask" in sessionData && sessionData.mask.modelConfig.sendMemory ? (
 				<ListItem
-					title={`${Locale.Memory.Title} (${session.lastSummarizeIndex} of ${session.messages.length})`}
-					subTitle={session.memoryPrompt || Locale.Memory.EmptyContent}
+					title={`${Locale.Memory.Title} (${sessionData.lastSummarizeIndex} of ${sessionData.messages.length})`}
+					subTitle={sessionData.memoryPrompt || Locale.Memory.EmptyContent}
 				></ListItem>
-			) : (
-				<></>
-			)}
+			) : null}
 		</List>
 	);
 
-	// 提示词管理模块
 	const PromptsManage = (
 		<ContextPrompts
 			context={props.mask.context}
@@ -417,7 +405,6 @@ export function MaskConfig(props: {
 		/>
 	);
 
-	//  角色管理模块
 	const RolesManage = (
 		<List>
 			<ListItem title={Locale.Mask.Config.Name}>
@@ -464,7 +451,6 @@ export function MaskConfig(props: {
 					))}
 				</select>
 			</ListItem>
-			{/* show mask.ModelConfig */}
 			<ListItem title={Locale.Settings.Model}>
 				<Select
 					value={props.mask.modelConfig.model}
@@ -497,7 +483,6 @@ export function MaskConfig(props: {
 					}}
 				></input>
 			</ListItem>
-
 			{!props.shouldSyncFromGlobal ? (
 				<ListItem
 					title={Locale.Mask.Config.Share.Title}
@@ -510,7 +495,6 @@ export function MaskConfig(props: {
 					/>
 				</ListItem>
 			) : null}
-
 			{props.shouldSyncFromGlobal ? (
 				<ListItem
 					title={Locale.Mask.Config.Sync.Title}
@@ -543,7 +527,6 @@ export function MaskConfig(props: {
 		</List>
 	);
 
-	// advance setting
 	const AdvanceSetting = (
 		<List>
 			<ModelConfigList
@@ -555,36 +538,100 @@ export function MaskConfig(props: {
 	);
 
 	return (
-		<>
-			{/* 1 row 2 col layout */}
+		<Tabs
+			defaultActiveKey="1"
+			tabPosition={tabPosition}
+			items={[
+				{
+					key: "0",
+					label: "对话设置",
+					children: ChatSessionManage,
+				},
+				{
+					key: "1",
+					label: "角色基础",
+					children: RolesManage,
+				},
+				{
+					key: "2",
+					label: "提示词配置",
+					children: PromptsManage,
+				},
+				{
+					key: "3",
+					label: "高级设置",
+					children: AdvanceSetting,
+				},
+			]}
+		/>
+	);
+}
 
-			<Tabs
-				defaultActiveKey="1"
-				tabPosition={tabPosition}
-				items={[
-					{
-						key: "0",
-						label: "对话设置",
-						children: ChatSessionManage,
-					},
-					{
-						key: "1",
-						label: "角色基础",
-						children: RolesManage,
-					},
-					{
-						key: "2",
-						label: "提示词配置",
-						children: PromptsManage,
-					},
+// 一个单独的 agent 配置卡片 , 只包含角色基础 和提示词配置
+export function AgentConfigCard(props: {
+	mask: Mask;
+	updateMask: Updater<Mask>;
+}) {
+	const [localMask, setLocalMask] = useState(props.mask);
 
-					{
-						key: "3",
-						label: "高级设置",
-						children: AdvanceSetting,
-					},
-				]}
+	useEffect(() => {
+		setLocalMask(props.mask);
+	}, [props.mask]);
+
+	const handleInputChange = (e: any) => {
+		const updatedMask = { ...localMask, name: e.currentTarget.value };
+		setLocalMask(updatedMask);
+		props.updateMask((mask) => {
+			Object.assign(mask, updatedMask);
+		});
+	};
+
+	const handleTextareaChange = (e: any) => {
+		const updatedMask = { ...localMask, intro: e.currentTarget.value };
+		setLocalMask(updatedMask);
+		props.updateMask((mask) => {
+			Object.assign(mask, updatedMask);
+		});
+	};
+
+	const handleContextUpdate = (updater) => {
+		const context = localMask.context.slice();
+		updater(context);
+		setLocalMask((prevMask) => ({ ...prevMask, context }));
+		props.updateMask((mask) => {
+			Object.assign(mask, { ...localMask, context });
+		});
+	};
+	return (
+		<div>
+			<h2>角色基础</h2>
+			<List>
+				<ListItem title={Locale.Mask.Config.Name}>
+					<input
+						type="text"
+						value={localMask.name}
+						onInput={handleInputChange}
+					></input>
+				</ListItem>
+				<ListItem title={"欢迎语"}>
+					<textarea
+						value={localMask.intro}
+						rows={3}
+						style={{
+							width: "50%",
+							border: "1px solid #d9d9d9",
+							padding: "5px",
+							borderRadius: "5px",
+						}}
+						onInput={handleTextareaChange}
+					></textarea>
+				</ListItem>
+			</List>
+			<h2>提示词配置</h2>
+			<ContextPrompts
+				context={localMask.context}
+				updateContext={handleContextUpdate}
 			/>
-		</>
+		</div>
 	);
 }

@@ -25,7 +25,7 @@ export type Mask = {
 	featureMask?: boolean;
 	zodiac?: string;
 	img?: string;
-	description?: string;
+	description: string;
 	intro?: string;
 	hideContext?: boolean;
 	version?: string;

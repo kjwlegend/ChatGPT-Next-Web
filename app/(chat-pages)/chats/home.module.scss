@@ -84,7 +84,6 @@
 
 	&.multi-chat {
 		margin-bottom: 0;
-		width: 180px;
 		margin: 0 10px 0 10px;
 		border: var(--border-in-default);
 
@@ -111,7 +110,7 @@
 	font-size: 14px;
 	// font-weight: bolder;
 	display: block;
-	width: calc(100% - 50px);
+	width: auto;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -121,6 +120,7 @@
 	font-size: 12px;
 	color: rgb(166, 166, 166);
 	animation: slide-in ease 0.3s;
+	margin: 5px;
 }
 
 .chat-item-delete,

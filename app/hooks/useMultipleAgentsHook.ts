@@ -5,11 +5,10 @@ import { updateMultiAgentSession } from "@/app/services/chats";
 import { Path } from "../constant";
 import { useNavigate } from "react-router-dom";
 import { getMultiAgentSession } from "../services/chats";
-import usedoubleAgent, {
-	DoubleAgentChatSession,
-} from "@/app/store/doubleAgents";
-import { useDoubleAgentChatContext } from "../(chat-pages)/double-agents/doubleAgentContext";
+import usedoubleAgent from "@/app/store/multiagents";
+import { useMultiAgentChatContext } from "../(chat-pages)/double-agents/multiAgentContext";
 import { useUserStore } from "../store";
+import { Mask } from "@/app/types/mask";
 
 export const useMultipleAgentsChatService = () => {
 	const navigate = useNavigate();
@@ -25,7 +24,7 @@ export const useMultipleAgentsChatService = () => {
 	} = usedoubleAgent();
 
 	const [chatSessions, setChatSessions] = useState<any[]>(conversations);
-	const { startNewConversation } = useDoubleAgentChatContext();
+	const { startNewConversation, addAgent } = useMultiAgentChatContext();
 
 	const loadMoreSessions = async (page: number) => {
 		const param = { limit: 20, page };
@@ -46,7 +45,7 @@ export const useMultipleAgentsChatService = () => {
 		};
 
 		updateChatSessions(); // 初始化时更新一次
-	}, [conversations, loadMoreSessions]);
+	}, [conversations, loadMoreSessions, startNewConversation]);
 
 	const handleAddClick = () => {
 		console.log("click");
@@ -55,14 +54,13 @@ export const useMultipleAgentsChatService = () => {
 
 	const handleChatItemClick = async (id: string) => {
 		const param = { limit: 60 };
+
+		setCurrentConversationId(id);
 		try {
-			// const chatSessionList = await getChatSessionChats(param, id);
-			// const chats = chatSessionList.results;
-			// UpdateChatMessages(id, chats);
+			console.log("multipleagents debug:, id", id);
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}
-		setCurrentConversationId(id);
 		// getMessages(item.id);
 		navigate(Path.Chat);
 	};
@@ -80,11 +78,17 @@ export const useMultipleAgentsChatService = () => {
 		}
 	};
 
+	const handleAgentClick = (agent: Mask) => {
+		console.log("multipleagents debug: agent click", agent);
+		addAgent(agent);
+	};
+
 	return {
 		chatSessions,
 		loadMoreSessions,
 		handleAddClick,
 		handleChatItemClick,
 		handleChatItemDelete,
+		handleAgentClick,
 	};
 };

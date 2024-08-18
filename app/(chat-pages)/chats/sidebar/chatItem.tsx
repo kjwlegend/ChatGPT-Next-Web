@@ -3,25 +3,19 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { DeleteIcon } from "@/app/icons";
 
 import styles from "../home.module.scss";
-import {
-	DragDropContext,
-	Droppable,
-	Draggable,
-	OnDragEndResponder,
-} from "@hello-pangea/dnd";
 
+import { EditIcon } from "@/app/icons";
 import { useChatStore } from "@/app/store";
 
 import Locale from "@/app/locales";
-import { Link, useNavigate } from "react-router-dom";
-import { Path } from "@/app/constant";
-import { MaskAvatar } from "../masklist/mask";
+
 import { Avatar } from "@/app/components/avatar";
 import { Mask } from "@/app/types/";
 
 export function ChatItem(props: {
 	onClick?: () => void;
 	onDelete?: () => void;
+	onEdit?: () => void;
 	title: string;
 	count: number;
 	time: string;
@@ -53,7 +47,9 @@ export function ChatItem(props: {
        {Locale.ChatItem.ChatItemCount(props.count)}
       </span> */}
 					</div>
-					<div className={styles["chat-item-date"]}>{props.time}</div>
+					<div className={styles["chat-item-date"]}>
+						{`id: ${props.id} | ${props.time}`}
+					</div>
 				</>
 			)}
 
@@ -69,6 +65,20 @@ export function ChatItem(props: {
 			>
 				<DeleteIcon />
 			</div>
+
+			{/* Edit icon */}
+			{props.onEdit && typeof props.onDelete === "function" && (
+				<div
+					className={styles["chat-item-edit"]}
+					onClickCapture={(e) => {
+						props.onEdit?.();
+						e.preventDefault();
+						e.stopPropagation();
+					}}
+				>
+					<EditIcon />
+				</div>
+			)}
 		</div>
 	);
 }

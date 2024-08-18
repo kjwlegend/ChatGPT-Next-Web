@@ -1,4 +1,4 @@
-import { createDoubleAgentChatMessage } from "../store/doubleAgents";
+import { createMultiAgentChatMessage } from "../store/multiagents";
 import { getLang } from "../locales";
 import { Mask } from "../types/mask";
 export function InitialConversationChatTemplate(
@@ -6,7 +6,7 @@ export function InitialConversationChatTemplate(
 	agent2: Mask,
 	topic: any,
 ) {
-	return createDoubleAgentChatMessage({
+	return createMultiAgentChatMessage({
 		role: "user",
 		content: `
 
@@ -47,7 +47,7 @@ export function ConversationChatTemplate(
 	historysummary: any,
 	historyMessagesContent: any,
 ) {
-	return createDoubleAgentChatMessage({
+	return createMultiAgentChatMessage({
 		role: "user",
 		content: `
 

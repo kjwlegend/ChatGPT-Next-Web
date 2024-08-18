@@ -7,7 +7,7 @@ import { useInviteCodeStore } from "./store/auth";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import Head from "next/head";
-import Home from "./chats/page";
+import Home from "./(chat-pages)/chats/page";
 import AuthPage from "./(pages)/auth/page";
 const serverConfig = getServerSideConfig();
 
@@ -27,8 +27,8 @@ export default function App() {
 	return (
 		<>
 			{/* <About /> */}
-			{/* <Home /> */}
-			<AuthPage />
+			<Home />
+			{/* <AuthPage /> */}
 		</>
 	);
 }

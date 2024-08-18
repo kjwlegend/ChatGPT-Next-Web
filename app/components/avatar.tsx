@@ -9,13 +9,21 @@ interface AvatarProps {
 	model?: Mask;
 	avatar?: string | null;
 	nickname?: string;
+	size?: any;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ model, avatar, nickname }) => {
+export const Avatar: React.FC<AvatarProps> = ({
+	model,
+	avatar,
+	nickname,
+	size,
+}) => {
 	const RenderedAvatar = useMemo(() => {
 		if (model) {
 			return model.avatar?.startsWith("a-") ? (
-				<AntdAvatar src={`/avatars/${avatar}.png`}>{model.name}</AntdAvatar>
+				<AntdAvatar src={`/avatars/${avatar}.png`} size={size}>
+					{model.name}
+				</AntdAvatar>
 			) : (
 				<BotIcon className="user-avatar" />
 			);
@@ -26,15 +34,15 @@ export const Avatar: React.FC<AvatarProps> = ({ model, avatar, nickname }) => {
 		}
 
 		if (avatar) {
-			return <AntdAvatar size="large" src={avatar} />;
+			return <AntdAvatar size={size} src={avatar} />;
 		}
 
 		return (
-			<AntdAvatar style={{ backgroundColor: "rgb(91,105,230)" }} size="large">
+			<AntdAvatar style={{ backgroundColor: "rgb(91,105,230)" }} size={size}>
 				{nickname}
 			</AntdAvatar>
 		);
 	}, [model, avatar, nickname]);
 
-	return <div className="user-avatar no-dark">{RenderedAvatar}</div>;
+	return <div className=" no-dark">{RenderedAvatar}</div>;
 };
