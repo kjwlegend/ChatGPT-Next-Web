@@ -41,7 +41,7 @@ import styles from "./chats.module.scss";
 
 import { WindowHeader } from "./WindowHeader";
 
-import { useScrollToBottom } from "./chat-controller";
+import { useScrollToBottom } from "./useChathooks";
 import { useNavigate } from "react-router-dom";
 
 const ChatbodyDynamic = dynamic(
@@ -51,7 +51,7 @@ const ChatbodyDynamic = dynamic(
 	},
 );
 const InputpanelDynamic = dynamic(
-	async () => (await import("./Inputpanel")).Inputpanel,
+	async () => (await import("./inputpanel/Inputpanel")).Inputpanel,
 	{
 		ssr: false,
 	},

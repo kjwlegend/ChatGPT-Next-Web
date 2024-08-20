@@ -10,7 +10,7 @@ import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
 import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
 import { getMessageTextContent } from "../utils";
-import { createMultipleAgentSession } from "../services/chats";
+import { createMultipleAgentSession } from "../services/api/chats";
 export type MultiAgentChatMessage = ChatMessage & {
 	agentId?: number;
 };

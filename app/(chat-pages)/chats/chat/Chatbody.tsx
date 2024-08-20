@@ -42,12 +42,12 @@ import dynamic from "next/dynamic";
 
 import { ChatContext } from "./main";
 
-import { ChatActions, ChatAction } from "./Inputpanel";
+import { ChatActions, ChatAction } from "./inputpanel/Inputpanel";
 import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
-} from "./chat-controller";
+} from "./useChathooks";
 
 import { useMobileScreen } from "@/app/utils";
 
@@ -56,8 +56,8 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { message } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
-import { getChat, CreateChatData, createChat } from "@/app/services/chats";
-import { UpdateChatMessages } from "@/app/services/chatService";
+import { getChat, CreateChatData, createChat } from "@/app/services/api/chats";
+import { UpdateChatMessages } from "@/app/services/chatservice";
 import { useRouter } from "next/navigation";
 import { FloatButton } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";

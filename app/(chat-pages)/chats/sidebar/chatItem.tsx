@@ -25,6 +25,7 @@ export function ChatItem(props: {
 	narrow?: boolean;
 	mask: Mask;
 }) {
+	if (props.narrow) return;
 	return (
 		<div
 			className={`${styles["chat-item"]} ${
@@ -33,25 +34,17 @@ export function ChatItem(props: {
 			onClick={props.onClick}
 			title={`${props.title}\n${Locale.ChatItem.ChatItemCount(props.count)}`}
 		>
-			{props.narrow ? (
-				<div className={styles["chat-item-narrow"]}>
-					<div className={styles["chat-item-avatar"] + " no-dark"}>
-						<Avatar model={props.mask} />
-					</div>
-				</div>
-			) : (
-				<>
-					<div className={styles["chat-item-title"]}>
-						{props.title}
-						{/* <span className={styles["chat-item-info"]}>
+			<>
+				<div className={styles["chat-item-title"]}>
+					{props.title}
+					{/* <span className={styles["chat-item-info"]}>
        {Locale.ChatItem.ChatItemCount(props.count)}
       </span> */}
-					</div>
-					<div className={styles["chat-item-date"]}>
-						{`id: ${props.id} | ${props.time}`}
-					</div>
-				</>
-			)}
+				</div>
+				<div className={styles["chat-item-date"]}>
+					{`id: ${props.id} | ${props.time}`}
+				</div>
+			</>
 
 			<div
 				className={styles["chat-item-delete"]}

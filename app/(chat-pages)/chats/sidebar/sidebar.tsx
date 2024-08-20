@@ -42,13 +42,10 @@ import DrawerMenu from "@/app/components/drawer-menu";
 import UserInfo from "@/app/components/userinfo";
 import { Divider } from "antd";
 
-import { updateChatSessions } from "@/app/services/chatService";
+import { updateChatSessions } from "@/app/services/chatservice";
 import { useUserStore } from "@/app/store/user";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
-
-const ChatList = dynamic(async () => (await import("./chatList")).ChatList, {
-	loading: () => null,
-});
+import { NodeCollapseOutlined } from "@ant-design/icons";
 
 function useHotKey() {
 	const chatStore = useChatStore();
@@ -69,13 +66,8 @@ function useHotKey() {
 	});
 }
 
-function useDragSideBar() {
-	const limit = (x: number) => Math.min(MAX_SIDEBAR_WIDTH, x);
-
+function useToggleSideBar() {
 	const config = useAppConfig();
-	const startX = useRef(0);
-	const startDragWidth = useRef(config.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH);
-	const lastUpdateTime = useRef(Date.now());
 
 	const toggleSideBar = () => {
 		config.update((config) => {
@@ -87,44 +79,6 @@ function useDragSideBar() {
 		});
 	};
 
-	const onDragStart = (e: MouseEvent) => {
-		// Remembers the initial width each time the mouse is pressed
-		startX.current = e.clientX;
-		startDragWidth.current = config.sidebarWidth;
-		const dragStartTime = Date.now();
-
-		const handleDragMove = (e: MouseEvent) => {
-			if (Date.now() < lastUpdateTime.current + 20) {
-				return;
-			}
-			lastUpdateTime.current = Date.now();
-			const d = e.clientX - startX.current;
-			const nextWidth = limit(startDragWidth.current + d);
-			config.update((config) => {
-				if (nextWidth < MIN_SIDEBAR_WIDTH) {
-					config.sidebarWidth = NARROW_SIDEBAR_WIDTH;
-				} else {
-					config.sidebarWidth = nextWidth;
-				}
-			});
-		};
-
-		const handleDragEnd = () => {
-			// In useRef the data is non-responsive, so `config.sidebarWidth` can't get the dynamic sidebarWidth
-			window.removeEventListener("pointermove", handleDragMove);
-			window.removeEventListener("pointerup", handleDragEnd);
-
-			// if user click the drag icon, should toggle the sidebar
-			const shouldFireClick = Date.now() - dragStartTime < 300;
-			if (shouldFireClick) {
-				toggleSideBar();
-			}
-		};
-
-		window.addEventListener("pointermove", handleDragMove);
-		window.addEventListener("pointerup", handleDragEnd);
-	};
-
 	const isMobileScreen = useMobileScreen();
 	const shouldNarrow =
 		!isMobileScreen && config.sidebarWidth < MIN_SIDEBAR_WIDTH;
@@ -132,13 +86,16 @@ function useDragSideBar() {
 	useEffect(() => {
 		const barWidth = shouldNarrow
 			? NARROW_SIDEBAR_WIDTH
-			: limit(config.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH);
+			: Math.min(
+					MAX_SIDEBAR_WIDTH,
+					config.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH,
+				);
 		const sideBarWidth = isMobileScreen ? "100vw" : `${barWidth}px`;
 		document.documentElement.style.setProperty("--sidebar-width", sideBarWidth);
 	}, [config.sidebarWidth, isMobileScreen, shouldNarrow]);
 
 	return {
-		onDragStart,
+		toggleSideBar,
 		shouldNarrow,
 	};
 }
@@ -162,88 +119,169 @@ interface SideBarProps {
 		onChatItemDelete: (id: number) => void;
 		onChatItemEdit?: (id: string) => void;
 	}>; // 传递 ChatList 组件
+	shouldNarrow?: boolean;
+	toggleSideBar: () => void;
 }
 
-export function SideBar({
+// export function SideBar({
+// 	className,
+// 	loadMoreSessions,
+// 	onAddClick,
+// 	onChatItemClick,
+// 	onChatItemDelete,
+// 	onChatItemEdit,
+// 	chatSessions,
+// 	ChatListComponent,
+// }: SideBarProps) {
+// 	const authStore = useAuthStore();
+// 	const { toggleSideBar, shouldNarrow } = useToggleSideBar();
+// 	// const navigate = useNavigate();
+// 	const config = useAppConfig();
+// 	const isMobileScreen = useMobileScreen();
+
+// 	useHotKey();
+
+// 	// 加载更多会话
+// 	const handleLoadMore = async () => {
+// 		if (hasMore) {
+// 			try {
+// 				const chatSessionList = await loadMoreSessions(page);
+// 				// setChatSessions((prevSessions) => {
+// 				// 	const updatedSessions = [...chatSessionList.data];
+// 				// 	// 在这里可以执行依赖于更新后的状态的逻辑
+
+// 				// 	return updatedSessions;
+// 				// });
+// 				setPage((prevPage) => prevPage + 1);
+// 				setHasMore(chatSessionList.is_next);
+// 			} catch (error) {
+// 				console.log("get chatSession list error", error);
+// 			}
+// 		}
+// 	};
+
+// 	useEffect(() => {}, [chatSessions]);
+
+// 	const { page, loadRef, hasMore, setHasMore, setPage } =
+// 		useInfiniteScroll(handleLoadMore);
+
+// 	if (isMobileScreen && !authStore.isAuthenticated) {
+// 		return (
+// 			<div
+// 				className={`${styles.sidebar} ${className} ${styles["narrow-sidebar"]} ${styles["login"]}`}
+// 			>
+// 				<AuthPage />
+// 			</div>
+// 		);
+// 	}
+
+// 	return (
+// 		<div
+// 			className={`${styles.sidebar}
+//        ${className} ${shouldNarrow && styles["narrow-sidebar"]}`}
+// 		>
+// 			{/* */}
+
+// 			<div className={styles["sidebar-header-bar"]}>
+// 				{isMobileScreen && (
+// 					<div className="flex-container row m-b-20">
+// 						<DrawerMenu />
+// 					</div>
+// 				)}
+
+// 				<div className="flex-container">
+// 					<IconButton
+// 						icon={<AddIcon />}
+// 						text={shouldNarrow ? undefined : Locale.Home.NewChat}
+// 						onClick={onAddClick}
+// 						shadow
+// 					/>
+// 					<IconButton
+// 						icon={<NodeCollapseOutlined />}
+// 						text={shouldNarrow ? undefined : "隐藏"}
+// 						onClick={toggleSideBar}
+// 						shadow
+// 					/>
+// 				</div>
+// 			</div>
+
+// 			<div
+// 				className={styles["sidebar-body"]}
+// 				onClick={(e) => {
+// 					if (e.target === e.currentTarget) {
+// 						// navigate(Path.Home);
+// 					}
+// 				}}
+// 			>
+// 				<ChatListComponent
+// 					narrow={shouldNarrow}
+// 					chatSessions={chatSessions}
+// 					onChatItemClick={onChatItemClick}
+// 					onChatItemDelete={onChatItemDelete}
+// 					onChatItemEdit={onChatItemEdit}
+// 				/>
+// 				<div ref={loadRef}> ...</div>
+// 			</div>
+
+// 			<div className={styles["sidebar-tail"]}>
+// 				<UserInfo />
+// 			</div>
+
+// 			<div
+// 				className={styles["sidebar-drag"]}
+// 				onPointerDown={(e) => toggleSideBar()}
+// 			>
+// 				<DragIcon />
+// 			</div>
+// 		</div>
+// 	);
+// }
+
+function DesktopSideBar({
 	className,
-	loadMoreSessions,
+	chatSessions,
 	onAddClick,
 	onChatItemClick,
 	onChatItemDelete,
 	onChatItemEdit,
-	chatSessions,
 	ChatListComponent,
+	loadMoreSessions,
+	shouldNarrow,
+	toggleSideBar,
 }: SideBarProps) {
-	const chatStore = useChatStore();
-	const authStore = useAuthStore();
-	const userStore = useUserStore();
-	const { onDragStart, shouldNarrow } = useDragSideBar();
-	// const navigate = useNavigate();
-	const config = useAppConfig();
-	const isMobileScreen = useMobileScreen();
-	const isIOSMobile = useMemo(
-		() => isIOS() && isMobileScreen,
-		[isMobileScreen],
-	);
-	// const [chatSessions, setChatSessions] = useState<any[]>([]); // 根据你的数据结构调整类型
-	useHotKey();
-
-	// 加载更多会话
-	const handleLoadMore = async () => {
-		if (hasMore) {
-			console.log("load chat session");
-			try {
-				const chatSessionList = await loadMoreSessions(page);
-				// setChatSessions((prevSessions) => {
-				// 	const updatedSessions = [...chatSessionList.data];
-				// 	// 在这里可以执行依赖于更新后的状态的逻辑
-
-				// 	return updatedSessions;
-				// });
-				setPage((prevPage) => prevPage + 1);
-				setHasMore(chatSessionList.is_next);
-			} catch (error) {
-				console.log("get chatSession list error", error);
+	const { page, loadRef, hasMore, setHasMore, setPage } = useInfiniteScroll(
+		async () => {
+			if (hasMore) {
+				try {
+					const chatSessionList = await loadMoreSessions(page);
+					setPage((prevPage) => prevPage + 1);
+					setHasMore(chatSessionList.is_next);
+				} catch (error) {
+					console.log("get chatSession list error", error);
+				}
 			}
-		}
-	};
-
-	useEffect(() => {
-		console.log("Updated chat sessions:", chatSessions);
-	}, [chatSessions]);
-
-	const { page, loadRef, hasMore, setHasMore, setPage } =
-		useInfiniteScroll(handleLoadMore);
-
-	if (isMobileScreen && !authStore.isAuthenticated) {
-		return (
-			<div
-				className={`${styles.sidebar} ${className} ${styles["narrow-sidebar"]} ${styles["login"]}`}
-			>
-				<AuthPage />
-			</div>
-		);
-	}
+		},
+	);
 
 	return (
 		<div
-			className={`${styles.sidebar}
-       ${className} ${shouldNarrow && styles["narrow-sidebar"]}`}
+			className={`${styles.sidebar} ${className} ${
+				shouldNarrow && styles["narrow-sidebar"]
+			}`}
 		>
-			{/* */}
-
 			<div className={styles["sidebar-header-bar"]}>
-				{isMobileScreen && (
-					<div className="flex-container row m-b-20">
-						<DrawerMenu />
-					</div>
-				)}
-
-				<div>
+				<div className="flex-container">
 					<IconButton
-						icon={<AddIcon />}
+						icon={<AddIcon styles={{ fill: "white" }} />}
 						text={shouldNarrow ? undefined : Locale.Home.NewChat}
 						onClick={onAddClick}
+						shadow
+						// type="primary"
+					/>
+					<IconButton
+						icon={<NodeCollapseOutlined />}
+						text={shouldNarrow ? undefined : "隐藏"}
+						onClick={toggleSideBar}
 						shadow
 					/>
 				</div>
@@ -268,15 +306,100 @@ export function SideBar({
 			</div>
 
 			<div className={styles["sidebar-tail"]}>
-				<UserInfo />
+				{!shouldNarrow && <UserInfo />}
 			</div>
 
 			<div
 				className={styles["sidebar-drag"]}
-				onPointerDown={(e) => onDragStart(e as any)}
+				onPointerDown={(e) => toggleSideBar()}
 			>
 				<DragIcon />
 			</div>
 		</div>
+	);
+}
+
+function MobileSideBar({
+	className,
+	chatSessions,
+	onAddClick,
+	onChatItemClick,
+	onChatItemDelete,
+	onChatItemEdit,
+	ChatListComponent,
+	loadMoreSessions,
+}: SideBarProps) {
+	const authStore = useAuthStore();
+	const { page, loadRef, hasMore, setHasMore, setPage } = useInfiniteScroll(
+		async () => {
+			if (hasMore) {
+				try {
+					const chatSessionList = await loadMoreSessions(page);
+					setPage((prevPage) => prevPage + 1);
+					setHasMore(chatSessionList.is_next);
+				} catch (error) {
+					console.log("get chatSession list error", error);
+				}
+			}
+		},
+	);
+
+	if (!authStore.isAuthenticated) {
+		return (
+			<div
+				className={`${styles.sidebar} ${className} ${styles["narrow-sidebar"]} ${styles["login"]}`}
+			>
+				<AuthPage />
+			</div>
+		);
+	}
+
+	return (
+		<div className={`${styles.sidebar} ${className}`}>
+			<div className={styles["sidebar-header-bar"]}>
+				<div className="flex-container row m-b-20">
+					<DrawerMenu />
+				</div>
+			</div>
+
+			<div
+				className={styles["sidebar-body"]}
+				onClick={(e) => {
+					if (e.target === e.currentTarget) {
+						// navigate(Path.Home);
+					}
+				}}
+			>
+				<ChatListComponent
+					narrow={false}
+					chatSessions={chatSessions}
+					onChatItemClick={onChatItemClick}
+					onChatItemDelete={onChatItemDelete}
+					onChatItemEdit={onChatItemEdit}
+				/>
+				<div ref={loadRef}> ...</div>
+			</div>
+
+			<div className={styles["sidebar-tail"]}>
+				<UserInfo />
+			</div>
+		</div>
+	);
+}
+
+export function SideBar(props: SideBarProps) {
+	const { toggleSideBar, shouldNarrow } = useToggleSideBar();
+	const isMobileScreen = useMobileScreen();
+
+	useHotKey();
+
+	return isMobileScreen ? (
+		<MobileSideBar {...props} />
+	) : (
+		<DesktopSideBar
+			{...props}
+			shouldNarrow={shouldNarrow}
+			toggleSideBar={toggleSideBar}
+		/>
 	);
 }

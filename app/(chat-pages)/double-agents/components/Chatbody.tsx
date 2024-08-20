@@ -60,7 +60,7 @@ import { message, Button } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
 import { getChat } from "@/app/api/backend/chat";
-import { UpdateChatMessages } from "@/app/services/chatService";
+import { UpdateChatMessages } from "@/app/services/chatservice";
 import { useRouter } from "next/navigation";
 import { FloatButton } from "antd";
 import { UnorderedListOutlined } from "@ant-design/icons";

@@ -13,7 +13,7 @@ import { useUserStore } from "@/app/store";
 import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
 import { message } from "antd";
 import { Mask } from "@/app/types/mask";
-import { createMultipleAgentSession } from "@/app/services/chats";
+import { createMultipleAgentSession } from "@/app/services/api/chats";
 
 // 扩展ChatContext接口以包含startNewConversation方法
 interface ChatContext {

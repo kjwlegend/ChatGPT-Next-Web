@@ -6,14 +6,13 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { AgentMessageItem, MessageItem } from "./MessageItem";
 
 import { useContext, useRef, useState, useMemo, Fragment } from "react";
-import { useScrollToBottom } from "../chat-controller";
+import { useScrollToBottom } from "../useChathooks";
 import { copyToClipboard, useMobileScreen } from "@/app/utils";
 
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import Locale from "@/app/locales";
 import { ChatContext } from "../main";
 import { useMessageActions } from "./useMessageActions";
-
 
 export type RenderMessage = ChatMessage & { preview?: boolean };
 

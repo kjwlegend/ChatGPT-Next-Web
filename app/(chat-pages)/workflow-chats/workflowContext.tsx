@@ -18,8 +18,8 @@ import {
 	createWorkflowSessionChatGroup,
 	deleteWorkflowSessionChatGroup,
 	updateWorkflowSessionChatGroupOrder,
-} from "@/app/services/chats";
-import { updateChatSessions } from "@/app/services/chatService";
+} from "@/app/services/api/chats";
+import { updateChatSessions } from "@/app/services/chatservice";
 import { useMaskStore } from "@/app/store/mask";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";

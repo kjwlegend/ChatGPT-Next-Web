@@ -9,7 +9,7 @@ import {
 	message as antdMessage,
 } from "antd";
 import Image from "next/image";
-import { register, RegisterParams } from "@/app/services/auth";
+import { register, RegisterParams } from "@/app/services/api/auth";
 import { useInviteCodeStore } from "@/app/store/auth";
 import style from "@/app/components/welcome.module.scss";
 import Disclaimer from "./disclaimer";

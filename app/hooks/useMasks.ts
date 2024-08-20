@@ -7,7 +7,7 @@ import {
 } from "../masks/service";
 import { BuiltinMask, Mask, Tags } from "../types/mask";
 import { useMaskStore } from "../store/mask";
-import { getAgents, getTags } from "../services/agents";
+import { getAgents, getTags } from "../services/api/agents";
 
 // 定义 setMasksCallback 类型
 type SetMasksCallback = (masks: BuiltinMask[]) => void;

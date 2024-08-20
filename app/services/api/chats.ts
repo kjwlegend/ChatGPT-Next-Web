@@ -30,12 +30,14 @@ export interface CreateChatSessionData {
 export interface CreateChatData {
 	user: string | number;
 	object_id: string; // session_id
-	chat_role: "user" | "assistant";
+	chat_role: string;
 	content: string | ChatMessage[];
 	token_counts_total?: number;
 	chat_model?: string;
 	chat_images?: string[];
 	function_calls?: string[];
+	content_type: string;
+	sender_id?: string;
 	sender_name?: string;
 	[property: string]: any;
 }

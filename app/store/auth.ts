@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useRouter } from "next/navigation";
-import { login, logout } from "../services/auth";
+import { login, logout } from "../services/api/auth";
 import { getUserInfo } from "../api/backend/user";
 
 import { User } from "./user";
-import { getUser } from "../services/user";
+import { getUser } from "../services/api/user";
 
 interface LoginParams {
 	username: string;

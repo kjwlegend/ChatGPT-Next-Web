@@ -13,7 +13,11 @@ import { UserStore, useUserStore } from "./user";
 import { BUILTIN_MASKS, DEFAULT_MASK } from "../masks";
 import type { BuiltinMask } from "../types/index";
 import { Plugin, usePluginStore } from "../store/plugin";
-import { sendChatMessage, handleChatCallbacks } from "../services/chatService";
+import {
+	sendChatMessage,
+	handleChatCallbacks,
+	createChatDataAndFetchId,
+} from "../services/chatService";
 import { midjourneyOnUserInput } from "../services/midjourneyService";
 // import { DEFAULT_TOPIC, BOT_HELLO } from "./constant";
 
@@ -26,7 +30,7 @@ import {
 	createChat,
 	createChatSession,
 	updateChatSession,
-} from "@/app/services/chats";
+} from "@/app/services/api/chats";
 
 import { getMessageTextContent, getMessageImages } from "../utils";
 
@@ -104,7 +108,6 @@ interface ChatStore {
 	nextSession: (delta: number) => void;
 	onNewMessage: (message: ChatMessage) => void;
 	onUserInput: (content: string, sessionId?: string) => Promise<void>;
-	summarizeSession: () => void;
 	updateStat: (message: ChatMessage) => void;
 	updateCurrentSession: (updater: (session: ChatSession) => void) => void;
 	updateSession(
@@ -119,7 +122,6 @@ interface ChatStore {
 	resetSession: () => void;
 	getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
 	getMemoryPrompt: () => ChatMessage;
-
 	clearAllData: () => void;
 }
 
@@ -442,35 +444,26 @@ export const useChatStore = createPersistStore(
 				const contentTokenCount = estimateTokenLength(content);
 				const total_token_count = recentMessagesTokenCount + contentTokenCount;
 
-				const content_type = "chatsession";
-				const createChatData: CreateChatData = {
-					user: userStore.user.id,
-					object_id: sessionId, // 替换为实际的聊天会话 ID
-					content: content, // 使用用户输入作为 message 参数
-					chat_images: attachImages,
-					memory: recentMessages,
-					chat_role: "user",
-					chat_model: session.mask.modelConfig.model,
-					content_type: content_type,
-					sender_name: userStore.user.nickname,
-					token_counts_total: total_token_count,
-				};
-
 				let userMessage: ChatMessage;
 				let botMessage: ChatMessage;
 				let sendMessages: ChatMessage[];
 
 				try {
-					const chatResponse = await createChat(createChatData); // 替换为实际的API调用
+					const createChatData = {
+						user: userStore.user.id,
+						sessionId: sessionId, // 替换为实际的聊天会话 ID
+						content: content, // 使用用户输入作为 message 参数
+						attachImages: attachImages,
+						recentMessages: recentMessages,
+						chat_role: "user",
+						model: session.mask.modelConfig.model,
+						content_type: "chatsession",
+						sender_name: userStore.user.nickname,
+						totalTokenCount: total_token_count,
+					};
 
-					if (!chatResponse || !chatResponse.id) {
-						throw new Error(
-							`API 请求失败，原因: ${chatResponse.error || chatResponse.status}`,
-						);
-					}
-
-					const chat_id = chatResponse.chat_id;
-					const id = chatResponse.id;
+					const { chat_id, id } =
+						await createChatDataAndFetchId(createChatData);
 
 					const userContent = content;
 					console.log("[User Input] after template: ", userContent);

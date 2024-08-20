@@ -1,11 +1,10 @@
 import { useState, useMemo, useCallback, useEffect, useContext } from "react";
 import { ChatContext } from "../main";
-import {useUserStore } from "@/app/store"; // 确保路径正确
+import { useUserStore } from "@/app/store"; // 确保路径正确
 import { RenderMessage } from "./MessageList"; // 确保路径正确，RenderMessage 应从 MessageList 导入
-import { UpdateChatMessages } from "@/app/services/chatService";
+import { UpdateChatMessages } from "@/app/services/chatservice";
 import { getChat } from "@/app/api/backend/chat";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
-
 
 export const useChatPagination = (
 	sessionId: string,

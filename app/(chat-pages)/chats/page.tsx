@@ -38,13 +38,13 @@ import { useAuthStore } from "@/app/store/auth";
 import { message } from "antd";
 import { SEOHeader } from "@/app/components/seo-header";
 // import { NewChat } from "./new-chat";
-import { getChatSession, getChatSessionChats } from "@/app/services/chats";
-import { PaginationData } from "@/app/services/chats";
+import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
+import { PaginationData } from "@/app/services/api/chats";
 import { ChatList } from "./sidebar/chatList";
 import {
 	UpdateChatMessages,
 	updateChatSessions,
-} from "@/app/services/chatService";
+} from "@/app/services/chatservice";
 import { useChatService } from "@/app/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 

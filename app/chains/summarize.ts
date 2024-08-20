@@ -12,7 +12,7 @@ import { prettyObject } from "../utils/format";
 import { estimateTokenLength } from "../utils/token";
 import { nanoid } from "nanoid";
 import { createChatSession, UpdateChatSessionData } from "../api/backend/chat";
-import { updateChatSession } from "../services/chats";
+import { updateChatSession } from "../services/api/chats";
 import { UserStore, useUserStore } from "@/app/store/user";
 import { BUILTIN_MASKS } from "../masks";
 import { Plugin, usePluginStore } from "../store/plugin";

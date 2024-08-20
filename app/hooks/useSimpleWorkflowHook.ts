@@ -5,11 +5,11 @@ import {
 	getWorkflowSession,
 	updateMultiAgentSession,
 	updateWorkflowSession,
-} from "@/app/services/chats";
+} from "@/app/services/api/chats";
 
 import { Path } from "../constant";
 import { useNavigate } from "react-router-dom";
-import { getMultiAgentSession } from "../services/chats";
+import { getMultiAgentSession } from "../services/api/chats";
 
 import { useUserStore } from "../store";
 import { useWorkflowStore } from "../store/workflow";

@@ -227,7 +227,7 @@ const SimpleWorkflow: React.FC = () => {
 	};
 
 	return (
-		<Layout style={{ flexDirection: "row" }}>
+		<Layout style={{ flexDirection: "row" }} className="tight-container">
 			<WorkflowSidebar />
 			<Layout
 				className={`${styles2["window-content"]} ${styles["background"]}`}

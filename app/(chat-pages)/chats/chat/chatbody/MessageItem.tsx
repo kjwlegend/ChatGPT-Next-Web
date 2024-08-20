@@ -46,11 +46,11 @@ import {
 } from "@/app/icons";
 
 // 自定义组件和工具函数
-import { ClearContextDivider } from "../chat-controller";
+import { ClearContextDivider } from "../useChathooks";
 import MjActions from "../midjourney";
 import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy, useMobileScreen } from "@/app/utils";
-import { ChatAction } from "../Inputpanel";
+import { ChatAction } from "../inputpanel/components/chatactions";
 import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";
 import { Avatar } from "@/app/components/avatar";
 
