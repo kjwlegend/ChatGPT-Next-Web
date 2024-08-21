@@ -71,9 +71,7 @@ type State = {
 		attachFiles: FileInfo[],
 		session: workflowChatSession,
 	) => Promise<void>;
-	updateSession: (
-		updater: (session: workflowChatSession) => void,
-	) => void;
+	updateSession: (updater: (session: workflowChatSession) => void) => void;
 };
 
 export const useWorkflowStore = create<State>()(
@@ -344,14 +342,14 @@ export const useWorkflowStore = create<State>()(
 					}
 
 					// // 直接更新特定的 session
-					// state.workflowSessions[sessionIndex] = updatedSession;
+					state.workflowSessions[sessionIndex] = updatedSession;
 					// 返回新的状态对象而不是直接修改原有对象
-					const newWorkflowSessions = [...state.workflowSessions];
-					newWorkflowSessions[sessionIndex] = updatedSession;
+					// const newWorkflowSessions = [...state.workflowSessions];
+					// newWorkflowSessions[sessionIndex] = updatedSession;
 
 					return {
 						...state,
-						workflowSessions: newWorkflowSessions,
+						// workflowSessions: newWorkflowSessions,
 					};
 				});
 			},
@@ -544,10 +542,14 @@ export const useWorkflowStore = create<State>()(
 						// 其他需要在 onUpdate 时执行的逻辑
 						console.log(`Message updated: ${message}`);
 						botMessage.content = message;
-
-						get().updateSession((session) => {
-							session.messages = session.messages.concat();
-						});
+						const updates = {
+							messages: fullMessageList,
+						};
+						get().updateWorkflowSession(
+							session.workflow_group_id,
+							sessionId,
+							updates,
+						);
 					};
 
 					const onToolUpdateCallback = (
@@ -605,9 +607,7 @@ export const useWorkflowStore = create<State>()(
 					throw error;
 				}
 			},
-			updateSession(updater: (session: workflowChatSession) => void) {
-				 
-			},
+			updateSession(updater: (session: workflowChatSession) => void) {},
 		}),
 		{
 			name: "workflow-store",

@@ -160,7 +160,10 @@ export function Chatbody(props: {
 		return session.mask.hideContext ? [] : session.mask.context.slice();
 	}, [session.mask.context, session.mask.hideContext]);
 
-	if (context.length === 0 && messages.at(0)?.content !== BOT_HELLO.content) {
+	if (
+		context.length === 0 &&
+		session.messages.at(0)?.content !== BOT_HELLO.content
+	) {
 		const copiedHello = Object.assign({}, BOT_HELLO);
 		if (!accessStore.isAuthorized()) {
 			copiedHello.content = Locale.Error.Unauthorized;
@@ -175,7 +178,7 @@ export function Chatbody(props: {
 
 	const renderMessages = useMemo(() => {
 		// 将 date 字段从字符串转换为 Date 对象
-		const sortedMessages = [...messages].sort((a, b) => {
+		const sortedMessages = [...session.messages].sort((a, b) => {
 			const dateA = new Date(a.date);
 			const dateB = new Date(b.date);
 			return dateA.getTime() - dateB.getTime();
@@ -213,7 +216,7 @@ export function Chatbody(props: {
 		config.sendPreviewBubble,
 		context,
 		isLoading,
-		messages,
+		session.messages,
 		session.lastUpdateTime,
 		// userInput,
 		userImage?.fileUrl,

@@ -35,7 +35,7 @@ export function useDoSubmit(
 ) {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
-	const workflowStore = useWorkflowStore()
+	const workflowStore = useWorkflowStore();
 	const authHook = useAuth();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [isLoading, setIsLoading] = useState(false);
