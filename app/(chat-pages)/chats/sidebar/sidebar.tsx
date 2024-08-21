@@ -42,7 +42,6 @@ import DrawerMenu from "@/app/components/drawer-menu";
 import UserInfo from "@/app/components/userinfo";
 import { Divider } from "antd";
 
-import { updateChatSessions } from "@/app/services/chatservice";
 import { useUserStore } from "@/app/store/user";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 import { NodeCollapseOutlined } from "@ant-design/icons";
@@ -119,7 +118,11 @@ interface SideBarProps {
 		onChatItemDelete: (id: number) => void;
 		onChatItemEdit?: (id: string) => void;
 	}>; // 传递 ChatList 组件
-	shouldNarrow?: boolean;
+}
+
+// extendSidebarProps
+interface SideBarToggleProps extends SideBarProps {
+	shouldNarrow: boolean;
 	toggleSideBar: () => void;
 }
 
@@ -248,7 +251,7 @@ function DesktopSideBar({
 	loadMoreSessions,
 	shouldNarrow,
 	toggleSideBar,
-}: SideBarProps) {
+}: SideBarToggleProps) {
 	const { page, loadRef, hasMore, setHasMore, setPage } = useInfiniteScroll(
 		async () => {
 			if (hasMore) {
@@ -328,7 +331,7 @@ function MobileSideBar({
 	onChatItemEdit,
 	ChatListComponent,
 	loadMoreSessions,
-}: SideBarProps) {
+}: SideBarToggleProps) {
 	const authStore = useAuthStore();
 	const { page, loadRef, hasMore, setHasMore, setPage } = useInfiniteScroll(
 		async () => {
@@ -394,7 +397,11 @@ export function SideBar(props: SideBarProps) {
 	useHotKey();
 
 	return isMobileScreen ? (
-		<MobileSideBar {...props} />
+		<MobileSideBar
+			{...props}
+			shouldNarrow={shouldNarrow}
+			toggleSideBar={toggleSideBar}
+		/>
 	) : (
 		<DesktopSideBar
 			{...props}

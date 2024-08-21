@@ -97,12 +97,13 @@ export const submitChatMessage = async (
 	}
 };
 
-// 先定义一个处理回调的函数，以便重用
 export function handleChatCallbacks(
 	botMessage: ChatMessage,
 	userMessage: ChatMessage,
-	messageIndex: number,
 	session: ChatSession,
+	onUpdateCallback?: (message: string) => void,
+	onToolUpdateCallback?: (toolName: string, toolInput: string) => void,
+	onFinishCallback?: (message: string) => void,
 ) {
 	const config = useAppConfig.getState();
 	const pluginConfig = config.pluginConfig;
@@ -116,70 +117,36 @@ export function handleChatCallbacks(
 			if (message) {
 				botMessage.content = message;
 			}
-			chatStoreState.updateCurrentSession((session) => {
-				session.messages = session.messages.concat();
-			});
+			// chatStoreState.updateCurrentSession((session) => {
+			// 	session.messages = session.messages.concat();
+			// });
+			if (onUpdateCallback) {
+				onUpdateCallback(message);
+			}
 		},
-		onToolUpdate(toolName: string, toolInput: string) {
+		onToolUpdate: (toolName: string, toolInput: string) => {
 			botMessage.streaming = true;
-			//  根据toolName获取对应的 toolName, 并输出对应的 name
 			const tool = allPlugins.find((m) => m.toolName === toolName);
 			const name = tool?.name;
-			// console.log("toolName: ", toolName, "tool: ", tool?.name);
 			if (name && toolInput) {
 				botMessage.toolMessages!.push({
 					toolName: name,
 					toolInput,
 				});
 			}
-			chatStoreState.updateCurrentSession((session) => {
-				session.messages = session.messages.concat();
-			});
+			if (onToolUpdateCallback) {
+				onToolUpdateCallback(toolName, toolInput);
+			}
 		},
 		onFinish: (message: string) => {
 			if (message) {
 				botMessage.content = message;
-				// console.log("message111 finish: ", message);
-				chatStoreState.updateSession(
-					session.id,
-					() => {
-						session.responseStatus = true;
-					},
-					false,
-				);
 				botMessage.streaming = false;
-				const tokenCount = estimateTokenLength(message);
-				// console.log("botMessage streaming: ", botMessage.streaming);
-				const content_type = "chatsession";
-				const createChatData: CreateChatData = {
-					user: user.id,
-					content: message,
-					chat_role: "assistant",
-					chat_model: session.mask.modelConfig.model,
-					content_type: content_type,
-					object_id: session.id,
-					sender_name: session.mask.name,
-					token_counts_total: tokenCount,
-				};
-
-				const botResponse = createChat(createChatData); // 替换为实际的API调用
-				//  botResponse 为 Promise 对象 , 获取其中的 chat_id 作为 botMessage 的 id
-				botResponse.then((res) => {
-					const data = res;
-					if (data) {
-						botMessage.id = data.id;
-						botMessage.chat_id = data.chat_id.toString();
-						botMessage.isFinished = true;
-						botMessage.isTransfered = false;
-						botMessage.token_counts_total = tokenCount;
-						// console.log("botMessage id: ", botMessage.id);
-						// 需要替换原本的message id 为新的id
-						chatStoreState.onNewMessage(botMessage);
-					}
-				});
 			}
 			ChatControllerPool.remove(session.id, botMessage.id);
-			// console.log("controller finish botMessage id: ", botMessage.id);
+			if (onFinishCallback) {
+				onFinishCallback(message);
+			}
 		},
 		onError: (error: Error) => {
 			const isAborted = error.message.includes("aborted");
@@ -192,22 +159,17 @@ export function handleChatCallbacks(
 			botMessage.streaming = false;
 			userMessage.isError = !isAborted;
 			botMessage.isError = !isAborted;
-			chatStoreState.updateCurrentSession((session) => {
-				session.messages = session.messages.concat();
-			});
-			ChatControllerPool.remove(session.id, botMessage.id ?? messageIndex);
+			// chatStoreState.updateCurrentSession((session) => {
+			// 	session.messages = session.messages.concat();
+			// });
+			ChatControllerPool.remove(session.id, botMessage.id);
 			console.error("[Chat] failed ", error);
 		},
 		onController: (controller: AbortController) => {
-			ChatControllerPool.addController(
-				session.id,
-				botMessage.id ?? messageIndex,
-				controller,
-			);
+			ChatControllerPool.addController(session.id, botMessage.id, controller);
 		},
 	};
 }
-
 // 然后创建一个统一的发送消息函数
 export function sendChatMessage(
 	session: ChatSession,
@@ -259,4 +221,4 @@ export function sendChatMessage(
 	}
 }
 
-import { estimateTokenLength } from "../utils/token";
+import { estimateTokenLength } from "../utils/chat/token";

@@ -26,6 +26,7 @@ import {
 	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 import { FileInfo } from "@/app/client/platforms/utils";
+import { useWorkflowStore } from "@/app/store/workflow";
 
 export function useDoSubmit(
 	session: any,
@@ -34,6 +35,7 @@ export function useDoSubmit(
 ) {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
+	const workflowStore = useWorkflowStore()
 	const authHook = useAuth();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [isLoading, setIsLoading] = useState(false);
@@ -45,14 +47,14 @@ export function useDoSubmit(
 
 		setIsLoading(true);
 		try {
-			await chatStore.onUserInput(
+			await workflowStore.onUserInput(
 				userInput,
 				attachImages,
 				attachFiles,
 				session,
 			);
 			updateUserInfo(userStore.user.id);
-		} catch (error) {
+		} catch (error: any) {
 			messageApi.error(error.message);
 			if (error.message.includes("登录")) {
 				setTimeout(() => {

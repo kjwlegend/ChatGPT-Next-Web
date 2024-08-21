@@ -38,16 +38,7 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import dynamic from "next/dynamic";
-
 import { ChatContext } from "./main";
-
-import { ChatActions, ChatAction } from "./inputpanel/Inputpanel";
-import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "./useChathooks";
 
 import { useMobileScreen } from "@/app/utils";
 
@@ -56,17 +47,13 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { message } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
-import { getChat, CreateChatData, createChat } from "@/app/services/api/chats";
-import { UpdateChatMessages } from "@/app/services/chatservice";
 import { useRouter } from "next/navigation";
-import { FloatButton } from "antd";
-import { UnorderedListOutlined } from "@ant-design/icons";
 import { MJFloatButton } from "./midjourney";
 
 import { MessageList } from "./chatbody/MessageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import styles from "./chats.module.scss";
-import { useAuthStore } from "@/app/store/auth";
+import { handleChatCallbacks } from "@/app/services/chatService";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -112,10 +99,14 @@ export function Chatbody(props: {
 		setAutoScroll,
 	} = useContext(ChatContext);
 
-	const [messages, setMessages] = useState<RenderMessage[]>([]);
+	const [messages, setMessages] = useState<RenderMessage[]>(session.messages);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
+
+	useEffect(() => {
+		setMessages(session.messages);
+	}, [session]);
 
 	useEffect(() => {
 		// 当 ChatBody 组件加载时获取第一页的消息
@@ -169,10 +160,7 @@ export function Chatbody(props: {
 		return session.mask.hideContext ? [] : session.mask.context.slice();
 	}, [session.mask.context, session.mask.hideContext]);
 
-	if (
-		context.length === 0 &&
-		session.messages.at(0)?.content !== BOT_HELLO.content
-	) {
+	if (context.length === 0 && messages.at(0)?.content !== BOT_HELLO.content) {
 		const copiedHello = Object.assign({}, BOT_HELLO);
 		if (!accessStore.isAuthorized()) {
 			copiedHello.content = Locale.Error.Unauthorized;
@@ -187,7 +175,7 @@ export function Chatbody(props: {
 
 	const renderMessages = useMemo(() => {
 		// 将 date 字段从字符串转换为 Date 对象
-		const sortedMessages = [...session.messages].sort((a, b) => {
+		const sortedMessages = [...messages].sort((a, b) => {
 			const dateA = new Date(a.date);
 			const dateB = new Date(b.date);
 			return dateA.getTime() - dateB.getTime();
@@ -225,7 +213,7 @@ export function Chatbody(props: {
 		config.sendPreviewBubble,
 		context,
 		isLoading,
-		session.messages,
+		messages,
 		session.lastUpdateTime,
 		// userInput,
 		userImage?.fileUrl,
@@ -291,7 +279,6 @@ export function Chatbody(props: {
 	};
 
 	//  get all messages from chatstore
-	const messageslist = session.messages;
 	return (
 		<div
 			className={styles["chat-body"]}

@@ -9,7 +9,7 @@ import { KnowledgeCutOffDate, StoreKey, SUMMARIZE_MODEL } from "../constant";
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
-import { estimateTokenLength } from "../utils/token";
+import { estimateTokenLength } from "../utils/chat/token";
 import { nanoid } from "nanoid";
 import { createChatSession, UpdateChatSessionData } from "../api/backend/chat";
 import { updateChatSession } from "../services/api/chats";
@@ -94,7 +94,15 @@ export async function summarizeSession(_session?: ChatSession) {
 		toBeSummarizedMsgs = toBeSummarizedMsgs.slice(-historyMessageCount);
 	}
 
-	const memoryPrompt = chatStoreState.getMemoryPrompt();
+	const memoryPrompt = {
+		role: "system",
+		content:
+			session.memoryPrompt?.length > 0
+				? Locale.Store.Prompt.History(session.memoryPrompt)
+				: "",
+		date: "",
+	} as ChatMessage;
+
 	toBeSummarizedMsgs.unshift({
 		role: memoryPrompt.role,
 		content: memoryPrompt.content,

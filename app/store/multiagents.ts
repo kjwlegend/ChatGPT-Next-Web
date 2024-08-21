@@ -5,7 +5,7 @@ import { StateCreator } from "zustand";
 import { DoubleAgentData, createDoubleAgentSession } from "../api/backend/chat";
 import { RequestMessage } from "../client/api";
 import { nanoid } from "nanoid";
-import { estimateTokenLength } from "../utils/token";
+import { estimateTokenLength } from "../utils/chat/token";
 import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
 import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";

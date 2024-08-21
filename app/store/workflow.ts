@@ -1,14 +1,21 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ChatSession } from "../types/chat";
-import {
-	createWorkflowSession,
-	deleteWorkflowSession,
-	updateWorkflowSession,
-} from "../api/backend/chat";
+import { ChatMessage, ChatSession } from "../types/chat";
+
 import { useUserStore } from "./user";
 import { nanoid } from "nanoid";
 import { Chat } from "../(chat-pages)/chats/chat/main";
+import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
+import { estimateTokenLength } from "../utils/chat/token";
+import {
+	createChatDataAndFetchId,
+	handleChatCallbacks,
+	sendChatMessage,
+} from "../services/chatService";
+import { MultimodalContent } from "../client/api";
+import { createMessage } from "./chat";
+import { FileInfo } from "../client/platforms/utils";
+import { message } from "antd";
 
 export interface WorkflowGroup {
 	id: string;
@@ -58,6 +65,15 @@ type State = {
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getWorkflowSessionId: (groupId: string) => string[];
 	getCurrentWorkflowGroup: (selectedId: string) => WorkflowGroup | null;
+	onUserInput: (
+		content: string,
+		attachImages: string[],
+		attachFiles: FileInfo[],
+		session: workflowChatSession,
+	) => Promise<void>;
+	updateSession: (
+		updater: (session: workflowChatSession) => void,
+	) => void;
 };
 
 export const useWorkflowStore = create<State>()(
@@ -318,6 +334,7 @@ export const useWorkflowStore = create<State>()(
 						...currentSession,
 						...updates,
 					};
+					console.log("debug update workflow session", updates, updatedSession);
 
 					// 深度比较更新前后的状态
 					if (
@@ -326,10 +343,16 @@ export const useWorkflowStore = create<State>()(
 						return state; // 如果没有实际更新，不改变状态
 					}
 
-					// 直接更新特定的 session
-					state.workflowSessions[sessionIndex] = updatedSession;
+					// // 直接更新特定的 session
+					// state.workflowSessions[sessionIndex] = updatedSession;
+					// 返回新的状态对象而不是直接修改原有对象
+					const newWorkflowSessions = [...state.workflowSessions];
+					newWorkflowSessions[sessionIndex] = updatedSession;
 
-					return state;
+					return {
+						...state,
+						workflowSessions: newWorkflowSessions,
+					};
 				});
 			},
 
@@ -419,6 +442,171 @@ export const useWorkflowStore = create<State>()(
 				const index = get().workflowGroupIndex[selectedId];
 				const group = index !== undefined ? get().workflowGroups[index] : null;
 				return group;
+			},
+			onUserInput: async (
+				content: string,
+				attachImages: string[],
+				attachFiles: FileInfo[],
+				session: workflowChatSession,
+			) => {
+				const sessionId = session.id;
+				const sessionModel = session.mask.modelConfig.model;
+				const modelConfig = session.mask.modelConfig;
+				const { id: userid, nickname } = useUserStore.getState().user;
+				// 获取最近的消息
+				const { recentMessages, recentMessagesTokenCount } =
+					getMessagesWithMemory(session);
+
+				const contentTokenCount = estimateTokenLength(content);
+				const total_token_count = recentMessagesTokenCount + contentTokenCount;
+
+				let userMessage: ChatMessage;
+				let botMessage: ChatMessage;
+				let sendMessages: ChatMessage[];
+
+				const commonChatData = {
+					user: userid,
+					sessionId: sessionId, // 替换为实际的聊天会话 ID
+					model: sessionModel,
+					content_type: "workflowchatgroup",
+				};
+
+				try {
+					const createChatData = {
+						...commonChatData,
+						content: content, // 使用用户输入作为 message 参数
+						attachImages: attachImages,
+						recentMessages: recentMessages,
+						chat_role: "user",
+						sender_name: nickname,
+						totalTokenCount: total_token_count,
+					};
+
+					const { chat_id, id } =
+						await createChatDataAndFetchId(createChatData);
+
+					const userContent = content;
+					console.log("[User Input] after template: ", userContent);
+
+					let mContent: string | MultimodalContent[] = userContent;
+
+					if (attachImages && attachImages.length > 0) {
+						mContent = [
+							{
+								type: "text",
+								text: userContent,
+							},
+						];
+						mContent = mContent.concat(
+							attachImages.map((url) => ({
+								type: "image_url",
+								image_url: { url },
+							})),
+						);
+					}
+
+					userMessage = createMessage({
+						id,
+						chat_id,
+						role: "user",
+						content: mContent,
+						image_url: attachImages,
+						// fileInfos: attachFiles,
+						token_counts_total: total_token_count,
+					});
+
+					console.log("[userMessage] ", userMessage);
+
+					botMessage = createMessage({
+						role: "assistant",
+						streaming: true,
+						model: modelConfig.model,
+						toolMessages: [],
+						isFinished: false,
+					});
+
+					const newMessages = [userMessage, botMessage];
+					const fullMessageList = session.messages.concat(newMessages);
+					const updates: Partial<ChatSession> = {
+						messages: fullMessageList,
+					};
+
+					//  找到对应的session, 将 userMessage 和botMessage 进行更新
+					get().updateWorkflowSession(
+						session.workflow_group_id,
+						sessionId,
+						updates,
+					);
+
+					sendMessages = recentMessages.concat(userMessage);
+					// 发送函数回调
+					const onUpdateCallback = (message: string) => {
+						// 其他需要在 onUpdate 时执行的逻辑
+						console.log(`Message updated: ${message}`);
+						botMessage.content = message;
+
+						get().updateSession((session) => {
+							session.messages = session.messages.concat();
+						});
+					};
+
+					const onToolUpdateCallback = (
+						toolName: string,
+						toolInput: string,
+					) => {
+						// 这里可以进行 tool 更新的逻辑
+						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
+					};
+
+					const onFinishCallback = async (message: string) => {
+						// updateSession(message);
+						console.log(`Message finished: ${message}`);
+
+						// 其他需要在 onFinish 时执行的逻辑
+						const tokenCount = estimateTokenLength(message);
+
+						const createBotChatData = {
+							...commonChatData,
+							content: message,
+							attachImages: attachImages,
+							recentMessages: recentMessages,
+							chat_role: "assistant",
+							sender_name: session.mask.name,
+							sender_id: session.mask.id,
+							totalTokenCount: tokenCount,
+						};
+
+						const { chat_id, id } =
+							await createChatDataAndFetchId(createBotChatData);
+
+						if (id) {
+							botMessage.id = id;
+							botMessage.chat_id = chat_id.toString();
+							botMessage.isFinished = true;
+							botMessage.isTransfered = false;
+							botMessage.token_counts_total = tokenCount;
+						}
+					};
+					// 调用发送消息函数
+					sendChatMessage(
+						session,
+						sendMessages,
+						handleChatCallbacks(
+							botMessage,
+							userMessage,
+							session,
+							onUpdateCallback,
+							onToolUpdateCallback,
+							onFinishCallback,
+						),
+					);
+				} catch (error) {
+					console.error(error);
+					throw error;
+				}
+			},
+			updateSession(updater: (session: workflowChatSession) => void) {
+				 
 			},
 		}),
 		{

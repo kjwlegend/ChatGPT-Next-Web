@@ -6,7 +6,7 @@ import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { createEmptyMask } from "./mask";
 import { StoreKey, SUMMARIZE_MODEL } from "../constant";
 
-import { estimateTokenLength } from "../utils/token";
+import { estimateTokenLength } from "../utils/chat/token";
 import { nanoid } from "nanoid";
 
 import { UserStore, useUserStore } from "./user";
@@ -46,6 +46,7 @@ import { FileInfo } from "../client/platforms/utils";
 import { fillTemplateWith } from "@/app/chains/base";
 import { MultimodalContent } from "../client/api";
 import { Tracing } from "trace_events";
+import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
@@ -121,7 +122,6 @@ interface ChatStore {
 	) => void;
 	resetSession: () => void;
 	getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
-	getMemoryPrompt: () => ChatMessage;
 	clearAllData: () => void;
 }
 
@@ -430,17 +430,12 @@ export const useChatStore = createPersistStore(
 				const sessionId = session.id;
 				const sessionModel = session.mask.modelConfig.model;
 				const modelConfig = session.mask.modelConfig;
+				const userStore = useUserStore.getState();
 
 				// 获取最近的消息
-				const recentMessages = get().getMessagesWithMemory(session);
-				const recentMessagesText = recentMessages
-					.map((m) => m.content)
-					.join("\n");
+				const { recentMessages, recentMessagesTokenCount } =
+					getMessagesWithMemory(session);
 
-				const messageIndex = get().currentSession().messages.length + 1;
-				const userStore = useUserStore.getState();
-				const recentMessagesTokenCount =
-					estimateTokenLength(recentMessagesText);
 				const contentTokenCount = estimateTokenLength(content);
 				const total_token_count = recentMessagesTokenCount + contentTokenCount;
 
@@ -448,16 +443,20 @@ export const useChatStore = createPersistStore(
 				let botMessage: ChatMessage;
 				let sendMessages: ChatMessage[];
 
+				const commonChatData = {
+					user: userStore.user.id,
+					sessionId: sessionId, // 替换为实际的聊天会话 ID
+					model: session.mask.modelConfig.model,
+					content_type: "chatsession",
+				};
+
 				try {
 					const createChatData = {
-						user: userStore.user.id,
-						sessionId: sessionId, // 替换为实际的聊天会话 ID
+						...commonChatData,
 						content: content, // 使用用户输入作为 message 参数
 						attachImages: attachImages,
 						recentMessages: recentMessages,
 						chat_role: "user",
-						model: session.mask.modelConfig.model,
-						content_type: "chatsession",
 						sender_name: userStore.user.nickname,
 						totalTokenCount: total_token_count,
 					};
@@ -523,14 +522,68 @@ export const useChatStore = createPersistStore(
 						false,
 					);
 
-					console.log("click send: ", session.topic, session.responseStatus);
 					get().sortSession();
 
+					// 发送函数回调
+					const onUpdateCallback = (message: string) => {
+						get().updateCurrentSession((session) => {
+							session.messages = [...session.messages];
+						});
+						// 其他需要在 onUpdate 时执行的逻辑
+					};
+
+					const onToolUpdateCallback = (
+						toolName: string,
+						toolInput: string,
+					) => {
+						// 这里可以进行 tool 更新的逻辑
+						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
+						get().updateCurrentSession((session) => {
+							session.messages = [...session.messages];
+						});
+					};
+
+					const onFinishCallback = async (message: string) => {
+						// updateSession(message);
+
+						// 其他需要在 onFinish 时执行的逻辑
+						const tokenCount = estimateTokenLength(message);
+
+						const createBotChatData = {
+							...commonChatData,
+							content: message,
+							attachImages: attachImages,
+							recentMessages: recentMessages,
+							chat_role: "assistant",
+							sender_name: session.mask.name,
+							sender_id: session.mask.id,
+							totalTokenCount: tokenCount,
+						};
+
+						const { chat_id, id } =
+							await createChatDataAndFetchId(createBotChatData);
+
+						if (id) {
+							botMessage.id = id;
+							botMessage.chat_id = chat_id.toString();
+							botMessage.isFinished = true;
+							botMessage.isTransfered = false;
+							botMessage.token_counts_total = tokenCount;
+							get().onNewMessage(botMessage);
+						}
+					};
 					// 调用发送消息函数
 					sendChatMessage(
 						session,
 						sendMessages,
-						handleChatCallbacks(botMessage, userMessage, messageIndex, session),
+						handleChatCallbacks(
+							botMessage,
+							userMessage,
+							session,
+							onUpdateCallback,
+							onToolUpdateCallback,
+							onFinishCallback,
+						),
 					);
 					console.log("click send: ", session.topic, session.responseStatus);
 				} catch (error: any) {
@@ -610,108 +663,6 @@ export const useChatStore = createPersistStore(
 					},
 					sync,
 				);
-			},
-
-			getMemoryPrompt() {
-				const session = get().currentSession();
-
-				return {
-					role: "system",
-					content:
-						session.memoryPrompt?.length > 0
-							? Locale.Store.Prompt.History(session.memoryPrompt)
-							: "",
-					date: "",
-				} as ChatMessage;
-			},
-
-			getMessagesWithMemory(_session?: ChatSession) {
-				// 定义一个session
-				const session = get().getSession(_session);
-
-				const modelConfig = session.mask.modelConfig;
-				const clearContextIndex = session.clearContextIndex ?? 0;
-				const messages = session.messages.slice();
-				const totalMessageCount = session.messages.length;
-
-				// in-context prompts
-				const contextPrompts = session.mask.context.slice();
-
-				// system prompts, to get close to OpenAI Web ChatGPT
-				const shouldInjectSystemPrompts = modelConfig.enableInjectSystemPrompts;
-				const injectSetting = {
-					injectUserInfo: modelConfig.enableUserInfos,
-					injectRelatedQuestions: modelConfig.enableRelatedQuestions,
-				};
-				const systemPrompts = shouldInjectSystemPrompts
-					? [
-							createMessage({
-								role: "system",
-								content: fillTemplateWith("", injectSetting),
-							}),
-						]
-					: [];
-				if (shouldInjectSystemPrompts) {
-					// console.log(
-					// 	"[Global System Prompt] ",
-					// 	systemPrompts.at(0)?.content ?? "empty",
-					// );
-					// console.log("[Global System Prompt] : true");
-				}
-
-				// long term memory
-				const shouldSendLongTermMemory =
-					modelConfig.sendMemory &&
-					session.memoryPrompt &&
-					session.memoryPrompt.length > 0 &&
-					session.lastSummarizeIndex > clearContextIndex;
-				const longTermMemoryPrompts = shouldSendLongTermMemory
-					? [get().getMemoryPrompt()]
-					: [];
-				const longTermMemoryStartIndex = session.lastSummarizeIndex;
-
-				// short term memory
-				const shortTermMemoryStartIndex = Math.max(
-					0,
-					totalMessageCount - modelConfig.historyMessageCount,
-				);
-
-				// lets concat send messages, including 4 parts:
-				// 0. system prompt: to get close to OpenAI Web ChatGPT
-				// 1. long term memory: summarized memory messages
-				// 2. pre-defined in-context prompts
-				// 3. short term memory: latest n messages
-				// 4. newest input message
-				const memoryStartIndex = shouldSendLongTermMemory
-					? Math.min(longTermMemoryStartIndex, shortTermMemoryStartIndex)
-					: shortTermMemoryStartIndex;
-				// and if user has cleared history messages, we should exclude the memory too.
-				const contextStartIndex = Math.max(clearContextIndex, memoryStartIndex);
-				const maxTokenThreshold = modelConfig.max_tokens;
-
-				// get recent messages as much as possible
-				const reversedRecentMessages = [];
-				for (
-					let i = totalMessageCount - 1, tokenCount = 0;
-					i >= contextStartIndex && tokenCount < maxTokenThreshold;
-					i -= 1
-				) {
-					const msg = messages[i];
-					if (!msg || msg.isError) continue;
-					tokenCount += estimateTokenLength(getMessageTextContent(msg));
-					reversedRecentMessages.push(msg);
-				}
-
-				// concat all messages
-				const recentMessages = [
-					...systemPrompts,
-					...longTermMemoryPrompts,
-					...contextPrompts,
-					...reversedRecentMessages.reverse(),
-				];
-				//  update session tokenCount
-
-				return recentMessages;
 			},
 
 			updateMessage(
@@ -800,7 +751,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.5,
+		version: 3.6,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(

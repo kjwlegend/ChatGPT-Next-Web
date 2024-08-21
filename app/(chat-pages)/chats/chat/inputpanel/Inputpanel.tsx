@@ -132,9 +132,8 @@ import {
 import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
 import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
-import { submitChatMessage } from "@/app/services/chatservice";
 
-import { compressImage } from "@/app/utils/chat";
+import { compressImage } from "@/app/utils/chat/chat";
 import { ClientApi } from "@/app/client/api";
 
 import { createFromIconfontCN } from "@ant-design/icons";

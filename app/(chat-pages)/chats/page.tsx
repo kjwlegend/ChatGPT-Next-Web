@@ -44,7 +44,7 @@ import { ChatList } from "./sidebar/chatList";
 import {
 	UpdateChatMessages,
 	updateChatSessions,
-} from "@/app/services/chatservice";
+} from '@/app/hooks/useChatHook'
 import { useChatService } from "@/app/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 
