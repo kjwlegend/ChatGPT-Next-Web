@@ -51,7 +51,7 @@ export const useSimpleWorkflowService = () => {
 	useEffect(() => {
 		const updateWorkflowGroup = () => {
 			setWorkflowGroupData(workflowGroups);
-			console.debug("workflowGroups context debug", workflowGroups);
+			// console.debug("workflowGroups context debug", workflowGroups);
 		};
 
 		updateWorkflowGroup(); // 初始化时更新一次

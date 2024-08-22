@@ -71,7 +71,11 @@ type State = {
 		attachFiles: FileInfo[],
 		session: workflowChatSession,
 	) => Promise<void>;
-	updateSession: (updater: (session: workflowChatSession) => void) => void;
+	onNewMessage: (
+		message: ChatMessage[],
+		workflowChatSession: workflowChatSession,
+	) => void;
+	updatedChatMessage: (sessionId: string, message: string) => void;
 };
 
 export const useWorkflowStore = create<State>()(
@@ -317,39 +321,25 @@ export const useWorkflowStore = create<State>()(
 					const groupIndex = state.workflowGroupIndex[groupId];
 					if (groupIndex === undefined) return state;
 
-					// 在 workflowSessions 中找到对应的 session
 					const sessionIndex = state.workflowSessions.findIndex(
 						(session) =>
 							session.id === sessionId && session.workflow_group_id === groupId,
 					);
 					if (sessionIndex === -1) return state;
 
-					// 获取当前 session
 					const currentSession = state.workflowSessions[sessionIndex];
+					const updatedSession = { ...currentSession, ...updates };
 
-					// 检查是否有实际的更新
-					const updatedSession = {
-						...currentSession,
-						...updates,
-					};
 					console.log("debug update workflow session", updates, updatedSession);
 
-					// 深度比较更新前后的状态
-					if (
-						JSON.stringify(currentSession) === JSON.stringify(updatedSession)
-					) {
-						return state; // 如果没有实际更新，不改变状态
-					}
-
-					// // 直接更新特定的 session
 					state.workflowSessions[sessionIndex] = updatedSession;
-					// 返回新的状态对象而不是直接修改原有对象
-					// const newWorkflowSessions = [...state.workflowSessions];
-					// newWorkflowSessions[sessionIndex] = updatedSession;
 
 					return {
-						...state,
-						// workflowSessions: newWorkflowSessions,
+						workflowSessions: state.workflowSessions.map((session) =>
+							session.id === sessionId && session.workflow_group_id === groupId
+								? updatedSession
+								: session,
+						),
 					};
 				});
 			},
@@ -530,11 +520,8 @@ export const useWorkflowStore = create<State>()(
 					};
 
 					//  找到对应的session, 将 userMessage 和botMessage 进行更新
-					get().updateWorkflowSession(
-						session.workflow_group_id,
-						sessionId,
-						updates,
-					);
+
+					get().onNewMessage(newMessages, session);
 
 					sendMessages = recentMessages.concat(userMessage);
 					// 发送函数回调
@@ -584,10 +571,10 @@ export const useWorkflowStore = create<State>()(
 						if (id) {
 							botMessage.id = id;
 							botMessage.chat_id = chat_id.toString();
-							botMessage.isFinished = true;
-							botMessage.isTransfered = false;
-							botMessage.token_counts_total = tokenCount;
 						}
+						botMessage.isFinished = true;
+						botMessage.isTransfered = false;
+						botMessage.token_counts_total = tokenCount;
 					};
 					// 调用发送消息函数
 					sendChatMessage(
@@ -607,8 +594,38 @@ export const useWorkflowStore = create<State>()(
 					throw error;
 				}
 			},
-			updateSession(updater: (session: workflowChatSession) => void) {},
+			onNewMessage: (
+				message: ChatMessage[],
+				workflowChatSession: workflowChatSession,
+			) => {
+				//  找到对应的session , 进行 messages concat
+				const existingSession = get().workflowSessions.find(
+					(item) =>
+						item.id === workflowChatSession.id &&
+						item.workflow_group_id == workflowChatSession.workflow_group_id,
+				);
+				if (!existingSession) return;
+
+				const updateSession = existingSession.messages.concat(message);
+				console.log(
+					"debug onNewmessage",
+					existingSession,
+					updateSession,
+					message,
+				);
+
+				set(() => ({
+					workflowSessions: get().workflowSessions.map((session) =>
+						session.id === existingSession.id &&
+						session.workflow_group_id === existingSession.workflow_group_id
+							? { ...session, messages: updateSession }
+							: session,
+					),
+				}));
+			},
+			updatedChatMessage: (sessionId, message) => {},
 		}),
+
 		{
 			name: "workflow-store",
 		},

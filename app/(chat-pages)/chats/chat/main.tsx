@@ -70,6 +70,7 @@ interface ChatContextType {
 	setEnableAutoFlow: React.Dispatch<React.SetStateAction<boolean>>;
 	userImage: any;
 	setUserImage: React.Dispatch<React.SetStateAction<any>>;
+	session: any;
 }
 
 // 创建 ChatContext 上下文对象
@@ -87,13 +88,14 @@ export const ChatContext = React.createContext<ChatContextType>({
 	setEnableAutoFlow: () => void 0,
 	userImage: "",
 	setUserImage: () => void 0,
+	session: {},
 });
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 interface ChatProps {
+	_session: ChatSession;
 	key?: number | string;
-	_session?: ChatSession;
 	index?: number;
 	isworkflow: boolean;
 }
@@ -104,10 +106,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 
 	// if props._session is not provided, use current session
 
-	const session = useMemo(
-		() => _session ?? chatStore.currentSession(),
-		[_session],
-	);
+	const session = _session;
 
 	const sessionId = session.id;
 
@@ -142,6 +141,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 					setEnableAutoFlow,
 					userImage,
 					setUserImage,
+					session,
 				}}
 			>
 				{/* TODO  windowheader 有bug */}
@@ -155,7 +155,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 					index={index}
 					isworkflow={isworkflow}
 				/>
-				<InputpanelDynamic _session={_session} index={index} />
+				<InputpanelDynamic _session={session} index={index} />
 			</ChatContext.Provider>
 		</div>
 	);
@@ -177,6 +177,7 @@ export function Chat() {
 	const chatStore = useChatStore();
 	const sessionIndex = chatStore.currentSessionIndex;
 	const sessions = chatStore.sessions;
+	const session = chatStore.currentSession();
 	const navigate = useNavigate();
 
 	if (sessions.length === 0) {
@@ -185,6 +186,11 @@ export function Chat() {
 	}
 	// if (!sessionIndex) return null;
 	return (
-		<_Chat key={sessionIndex} index={sessionIndex} isworkflow={false}></_Chat>
+		<_Chat
+			_session={session}
+			key={sessionIndex}
+			index={sessionIndex}
+			isworkflow={false}
+		></_Chat>
 	);
 }

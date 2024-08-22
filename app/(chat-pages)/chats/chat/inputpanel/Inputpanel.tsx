@@ -154,11 +154,9 @@ import { AttachFiles } from "./components/AttachFiles";
 import { useDoSubmit } from "./hooks/useDoSubmit";
 let voicetext: string[] = [];
 
-export function Inputpanel(props: { _session?: ChatSession; index?: number }) {
+export function Inputpanel(props: { _session: ChatSession; index?: number }) {
 	const config = useAppConfig();
-	const chatStore = useChatStore();
-	const session = props._session ?? chatStore.currentSession();
-	const userStore = useUserStore();
+	const session = props._session;
 	const authHook = useAuth();
 	const promptStore = usePromptStore();
 	const isMobileScreen = useMobileScreen();
