@@ -259,11 +259,11 @@ const SimpleWorkflow: React.FC = () => {
 
 const App = () => {
 	return (
-		<WorkflowProvider>
-			<HashRouter>
-				<SimpleWorkflow />
-			</HashRouter>
-		</WorkflowProvider>
+		// <WorkflowProvider>
+		<HashRouter>
+			<SimpleWorkflow />
+		</HashRouter>
+		// </WorkflowProvider>
 	);
 };
 
