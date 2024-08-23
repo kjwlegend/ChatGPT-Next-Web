@@ -154,7 +154,11 @@ import { AttachFiles } from "./components/AttachFiles";
 import { useDoSubmit } from "./hooks/useDoSubmit";
 let voicetext: string[] = [];
 
-export function Inputpanel(props: { _session: ChatSession; index?: number }) {
+export function Inputpanel(props: {
+	_session: ChatSession;
+	index?: number;
+	submitType?: "chat" | "workflow";
+}) {
 	const config = useAppConfig();
 	const session = props._session;
 	const authHook = useAuth();
@@ -193,6 +197,7 @@ export function Inputpanel(props: { _session: ChatSession; index?: number }) {
 		session,
 		attachImages,
 		attachFiles,
+		props.submitType,
 	);
 
 	const handleSubmit = async () => {

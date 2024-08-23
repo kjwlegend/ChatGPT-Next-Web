@@ -60,7 +60,6 @@ export function WorkflowModalConfig(props: {
 	const { topic, description, summary, id, created_at } = workflow;
 
 	const {
-		workflowGroups,
 		selectedId,
 		setSelectedId,
 		fetchNewWorkflowGroup,

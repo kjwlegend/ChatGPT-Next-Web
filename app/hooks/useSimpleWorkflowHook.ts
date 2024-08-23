@@ -20,7 +20,6 @@ export const useSimpleWorkflowService = () => {
 	const navigate = useNavigate();
 	const userid = useUserStore((state) => state.user?.id);
 	const {
-		workflowGroups,
 		selectedId,
 		setSelectedId,
 		deleteWorkflowGroup,
@@ -28,6 +27,8 @@ export const useSimpleWorkflowService = () => {
 		fetchNewWorkflowGroup,
 		addChatGrouptoWorkflow,
 	} = useWorkflowContext();
+
+	const workflowGroups = useWorkflowStore().workflowGroups;
 
 	const [WorkflowGroupData, setWorkflowGroupData] =
 		useState<any[]>(workflowGroups);

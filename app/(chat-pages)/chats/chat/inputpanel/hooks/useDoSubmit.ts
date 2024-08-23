@@ -32,6 +32,7 @@ export function useDoSubmit(
 	session: any,
 	attachImages: string[],
 	attachFiles: FileInfo[],
+	submitType: "chat" | "workflow" | "other" = "chat", // 根据需要定义类型
 ) {
 	const chatStore = useChatStore();
 	const userStore = useUserStore();
@@ -47,12 +48,28 @@ export function useDoSubmit(
 
 		setIsLoading(true);
 		try {
-			await workflowStore.onUserInput(
-				userInput,
-				attachImages,
-				attachFiles,
-				session,
-			);
+			let result;
+			if (submitType === "chat") {
+				console.log("chat sbumit");
+				result = await chatStore.onUserInput(
+					userInput,
+					attachImages,
+					attachFiles,
+					session,
+				);
+			} else if (submitType === "workflow") {
+				console.log("workflow submit");
+				result = await workflowStore.onUserInput(
+					userInput,
+					attachImages,
+					attachFiles,
+					session,
+				);
+			} else if (submitType === "other") {
+				// 其他逻辑
+			} else {
+				throw new Error("Invalid submit type");
+			}
 			updateUserInfo(userStore.user.id);
 		} catch (error: any) {
 			messageApi.error(error.message);

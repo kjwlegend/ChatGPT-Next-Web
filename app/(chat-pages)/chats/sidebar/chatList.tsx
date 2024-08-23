@@ -19,8 +19,9 @@ export function ChatList({
 	onChatItemDelete,
 	onChatItemEdit,
 }: ChatListProps) {
-	const [chatlist, setChatlist] = useState(chatSessions);
+	const [chatlist, setChatlist] = useState(chatSessions ? chatSessions : []);
 
+	console.log("debug: chatsessions", chatlist);
 	useEffect(() => {
 		setChatlist(chatSessions);
 	}, [chatSessions]); // 依赖于

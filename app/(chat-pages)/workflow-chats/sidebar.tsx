@@ -5,49 +5,6 @@ import React from "react";
 
 import styles from "@/app/(chat-pages)/chats/home.module.scss";
 
-import { IconButton } from "../../components/button";
-
-import MainNav from "../../components/header";
-import Locale from "../../locales";
-
-import {
-	SettingsIcon,
-	GithubIcon,
-	ChatGptIcon,
-	AddIcon,
-	CloseIcon,
-	DeleteIcon,
-	MaskIcon,
-	PluginIcon,
-	DragIcon,
-} from "@/app/icons";
-import Image from "next/image";
-import { useAppConfig, useChatStore } from "../../store";
-
-import {
-	DEFAULT_SIDEBAR_WIDTH,
-	MAX_SIDEBAR_WIDTH,
-	MIN_SIDEBAR_WIDTH,
-	NARROW_SIDEBAR_WIDTH,
-	Path,
-	REPO_URL,
-} from "../../constant";
-
-import { Link, useNavigate } from "react-router-dom";
-import { isIOS, useMobileScreen } from "../../utils";
-import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "../../components/ui-lib";
-import { useAuthStore } from "../../store/auth";
-
-import AuthPage from "../../(pages)/auth/page";
-import DrawerMenu from "../../components/drawer-menu";
-
-import { getChatSession } from "../../api/backend/chat";
-import { ChatSessionData } from "../../api/backend/chat";
-import { updateChatSessions } from "../../services/chatService";
-import { useUserStore } from "../../store/user";
-import usemultiAgentStore from "@/app/store/multiagents";
-
 import { useWorkflowStore } from "../../store/workflow";
 
 import { message } from "antd";
@@ -68,7 +25,9 @@ export function WorkflowSidebar(props: { className?: string }) {
 		handleChatItemDelete,
 	} = useSimpleWorkflowService();
 
-	const { workflowSessions, workflowSessionsIndex } = useWorkflowContext();
+	const { workflowSessionsIndex } = useWorkflowContext();
+
+	const { workflowSessions } = useWorkflowStore();
 
 	//  change chatsessions from object type to array type
 	const [editWrokflow, setEditWorkflow] = useState<WorkflowGroup | null>(null);
@@ -80,9 +39,10 @@ export function WorkflowSidebar(props: { className?: string }) {
 			(item) => item.id === workflowgroupId,
 		);
 		// 过滤出当前工作流组的所有会话
-		const currentWorkflowGroupSessions = workflowSessions.filter(
-			(session) => session.workflow_group_id === workflowgroupId,
-		);
+		const currentWorkflowGroupSessions =
+			workflowSessions.filter(
+				(session) => session.workflow_group_id === workflowgroupId,
+			) ?? [];
 
 		setEditWorkflow(currentWorkflowGroup);
 		setagentList(currentWorkflowGroupSessions);

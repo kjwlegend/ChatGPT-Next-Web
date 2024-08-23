@@ -25,7 +25,9 @@ import { useMaskStore } from "@/app/store/mask";
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
 interface WorkflowContextType {
-	workflowGroups: WorkflowGroup[];
+	// workflowGroups: WorkflowGroup[];
+	// workflowSessions: workflowChatSession[];
+	workflowSessionsIndex: { [key: string]: any[] };
 	selectedId: string;
 	setSelectedId: (index: string) => void;
 	addWorkflowGroup: () => void;
@@ -37,8 +39,6 @@ interface WorkflowContextType {
 		sourceIndex: number,
 		destinationIndex: number,
 	) => void;
-	workflowSessions: workflowChatSession[];
-	workflowSessionsIndex: { [key: string]: any[] };
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
 	updateWorkflowChatGroup: (
@@ -311,8 +311,10 @@ export const WorkflowProvider = ({
 	return (
 		<WorkflowContext.Provider
 			value={{
-				workflowGroups,
+				// workflowGroups,
 				selectedId,
+				// workflowSessions,
+				workflowSessionsIndex,
 				setSelectedId,
 				fetchNewWorkflowGroup,
 				addWorkflowGroup: addWorkflowGroupHandler,
@@ -320,8 +322,7 @@ export const WorkflowProvider = ({
 				addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
-				workflowSessions,
-				workflowSessionsIndex,
+
 				getworkFlowSessions,
 				updateWorkflowChatGroup,
 			}}

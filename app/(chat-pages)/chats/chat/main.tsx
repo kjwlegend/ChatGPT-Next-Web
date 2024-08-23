@@ -43,6 +43,7 @@ import { WindowHeader } from "./WindowHeader";
 
 import { useScrollToBottom } from "./useChathooks";
 import { useNavigate } from "react-router-dom";
+import { workflowChatSession } from "@/app/store/workflow";
 
 const ChatbodyDynamic = dynamic(
 	async () => (await import("./Chatbody")).Chatbody,
@@ -71,6 +72,7 @@ interface ChatContextType {
 	userImage: any;
 	setUserImage: React.Dispatch<React.SetStateAction<any>>;
 	session: any;
+	submitType: "chat" | "workflow" | undefined;
 }
 
 // 创建 ChatContext 上下文对象
@@ -89,24 +91,28 @@ export const ChatContext = React.createContext<ChatContextType>({
 	userImage: "",
 	setUserImage: () => void 0,
 	session: {},
+	submitType: "chat",
 });
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 interface ChatProps {
-	_session: ChatSession;
+	_session: ChatSession | workflowChatSession | undefined;
 	key?: number | string;
 	index?: number;
 	isworkflow: boolean;
+	submitType: "chat" | "workflow" | undefined;
 }
 
 export const _Chat: React.FC<ChatProps> = memo((props) => {
-	const { _session, index, isworkflow } = props;
+	const { _session, index, isworkflow, submitType } = props;
 	const chatStore = useChatStore();
 
 	// if props._session is not provided, use current session
 
 	const session = _session;
+
+	if (!session) return;
 
 	const sessionId = session.id;
 
@@ -142,6 +148,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 					userImage,
 					setUserImage,
 					session,
+					submitType,
 				}}
 			>
 				{/* TODO  windowheader 有bug */}
@@ -155,7 +162,11 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 					index={index}
 					isworkflow={isworkflow}
 				/>
-				<InputpanelDynamic _session={session} index={index} />
+				<InputpanelDynamic
+					_session={session}
+					index={index}
+					submitType={submitType}
+				/>
 			</ChatContext.Provider>
 		</div>
 	);
@@ -191,6 +202,7 @@ export function Chat() {
 			key={sessionIndex}
 			index={sessionIndex}
 			isworkflow={false}
+			submitType="chat"
 		></_Chat>
 	);
 }

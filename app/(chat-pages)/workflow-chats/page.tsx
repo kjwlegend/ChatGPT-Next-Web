@@ -72,14 +72,11 @@ const useHasHydrated = (): boolean => {
 
 const SimpleWorkflow: React.FC = () => {
 	const isAuthenticated = useAuthStore().isAuthenticated;
-	const {
-		selectedId,
-		workflowGroups,
-		addWorkflowGroup,
-		workflowSessions,
-		workflowSessionsIndex,
-		moveSession,
-	} = useWorkflowContext();
+	const { selectedId, addWorkflowGroup, workflowSessionsIndex, moveSession } =
+		useWorkflowContext();
+
+	const workflowStore = useWorkflowStore();
+	const { workflowGroups, workflowSessions } = workflowStore;
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
@@ -118,7 +115,7 @@ const SimpleWorkflow: React.FC = () => {
 		);
 	}
 
-	if (currentSessions == undefined) return null;
+	if (currentSessions == undefined) return;
 	const MainScreen = () => {
 		if (!isAuth) {
 			return (
@@ -159,6 +156,7 @@ const SimpleWorkflow: React.FC = () => {
 							_session={session}
 							index={index}
 							isworkflow={true}
+							submitType="workflow"
 						/>
 					</>
 				);

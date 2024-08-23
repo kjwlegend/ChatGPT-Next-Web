@@ -114,7 +114,7 @@ export default function AgentList(props: {
 	showModal: () => void;
 }) {
 	const [selectIndex, setSelectIndex] = useState(0);
-	const { selectedId, workflowGroups, deleteSessionFromGroup, moveSession } =
+	const { selectedId, deleteSessionFromGroup, moveSession } =
 		useWorkflowContext();
 
 	const [orderedSessions, setOrderedSessions] = useState<any[]>(props.sessions);
