@@ -7,6 +7,7 @@ import React, {
 	useCallback,
 	Fragment,
 	memo,
+	useContext,
 } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import dynamic from "next/dynamic";
@@ -41,9 +42,11 @@ import styles from "./chats.module.scss";
 
 import { WindowHeader } from "./WindowHeader";
 
-import { useScrollToBottom } from "./useChathooks";
+import { useScrollToBottom } from "./hooks/useChathooks";
 import { useNavigate } from "react-router-dom";
 import { workflowChatSession } from "@/app/store/workflow";
+import { createContext } from "vm";
+import { ChatProvider, useChatActions } from "./hooks/useChatContext";
 
 const ChatbodyDynamic = dynamic(
 	async () => (await import("./Chatbody")).Chatbody,
@@ -57,43 +60,6 @@ const InputpanelDynamic = dynamic(
 		ssr: false,
 	},
 );
-interface ChatContextType {
-	hitBottom: boolean;
-	setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
-	showPromptModal: boolean;
-	setShowPromptModal: React.Dispatch<React.SetStateAction<boolean>>;
-	autoScroll: boolean;
-	setAutoScroll: React.Dispatch<React.SetStateAction<boolean>>;
-	userInput: string;
-	setUserInput: React.Dispatch<React.SetStateAction<string>>;
-	scrollRef: React.RefObject<HTMLDivElement>;
-	enableAutoFlow: boolean;
-	setEnableAutoFlow: React.Dispatch<React.SetStateAction<boolean>>;
-	userImage: any;
-	setUserImage: React.Dispatch<React.SetStateAction<any>>;
-	session: any;
-	submitType: "chat" | "workflow" | undefined;
-}
-
-// 创建 ChatContext 上下文对象
-export const ChatContext = React.createContext<ChatContextType>({
-	hitBottom: true,
-	setHitBottom: () => void 0,
-	showPromptModal: false,
-	setShowPromptModal: () => void 0,
-	autoScroll: true,
-	setAutoScroll: () => void 0,
-	userInput: "",
-	setUserInput: () => void 0,
-	scrollRef: React.createRef<HTMLDivElement>(),
-	enableAutoFlow: false,
-	setEnableAutoFlow: () => void 0,
-	userImage: "",
-	setUserImage: () => void 0,
-	session: {},
-	submitType: "chat",
-});
-
 export type RenderPompt = Pick<Prompt, "title" | "content">;
 
 interface ChatProps {
@@ -106,69 +72,47 @@ interface ChatProps {
 
 export const _Chat: React.FC<ChatProps> = memo((props) => {
 	const { _session, index, isworkflow, submitType } = props;
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
+	if (!_session) return;
 
-	// if props._session is not provided, use current session
+	const { setSession } = useChatActions();
+	useEffect(() => {
+		setSession(_session);
+	}, []);
 
 	const session = _session;
-
-	if (!session) return;
-
 	const sessionId = session.id;
 
-	const [hitBottom, setHitBottom] = useState(true);
-	const [showPromptModal, setShowPromptModal] = useState(false);
-	const [userInput, setUserInput] = useState("");
-	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
-	const [userImage, setUserImage] = useState<any>();
 	const { autoScroll, setAutoScroll, scrollDomToBottom, scrollRef } =
 		useScrollToBottom();
 
-	if (!session) return null;
-
 	return (
-		<div
-			className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""}`}
-			key={sessionId}
-			data-index={sessionId}
-		>
-			<ChatContext.Provider
-				value={{
-					hitBottom,
-					setHitBottom,
-					autoScroll,
-					setAutoScroll,
-					showPromptModal,
-					setShowPromptModal,
-					userInput,
-					setUserInput,
-					scrollRef,
-					enableAutoFlow,
-					setEnableAutoFlow,
-					userImage,
-					setUserImage,
-					session,
-					submitType,
-				}}
+		<ChatProvider _session={_session}>
+			<div
+				className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""}`}
+				key={sessionId}
+				data-index={sessionId}
 			>
-				{/* TODO  windowheader 有bug */}
 				<WindowHeader
 					_session={session}
 					index={index}
 					isworkflow={isworkflow}
+					key={`header-${session.id}`}
 				/>
 				<ChatbodyDynamic
 					_session={session}
 					index={index}
 					isworkflow={isworkflow}
+					key={`body-${session.id}`}
 				/>
 				<InputpanelDynamic
 					_session={session}
 					index={index}
+					key={`input-${session.id}`}
 					submitType={submitType}
 				/>
-			</ChatContext.Provider>
-		</div>
+			</div>
+		</ChatProvider>
 	);
 });
 
@@ -185,17 +129,17 @@ export function useLoadData() {
 }
 
 export function Chat() {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	const sessionIndex = chatStore.currentSessionIndex;
-	const sessions = chatStore.sessions;
 	const session = chatStore.currentSession();
 	const navigate = useNavigate();
 
-	if (sessions.length === 0) {
-		navigate(Path.NewChat);
-		return null;
-	}
-	// if (!sessionIndex) return null;
+	useEffect(() => {
+		if (!session) {
+			navigate(Path.NewChat);
+		}
+	}, [session]);
+
 	return (
 		<_Chat
 			_session={session}

@@ -38,9 +38,7 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import { ChatContext } from "./main";
-
-import { useMobileScreen } from "@/app/utils";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
@@ -54,69 +52,47 @@ import { MessageList } from "./chatbody/MessageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import styles from "./chats.module.scss";
 import { handleChatCallbacks } from "@/app/services/chatService";
+import { AppGeneralContext } from "@/app/contexts/AppContext";
+import { useMessages, useSessions } from "./hooks/useChatContext";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
 export function Chatbody(props: {
-	_session?: ChatSession;
+	_session: ChatSession;
 	index?: number;
 	isworkflow?: boolean;
 }) {
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
-
-	const authHook = useAuth();
+	const chatStore = useChatStore.getState();
 
 	const { _session, index, isworkflow } = props;
 
-	// if props._session is not provided, use current session
-	const session = _session ?? chatStore.currentSession();
+	const messages = useMessages();
+	const session = useSessions();
 
+	// if props._session is not provided, use current session
 	const sessionId = session.id;
 
 	const config = useAppConfig();
-	const accessStore = useAccessStore();
-
-	const fontSize = config.fontSize;
+	const accessStore = useAccessStore.getState();
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
-	const isMobileScreen = useMobileScreen();
+	const scrollRef = useRef<HTMLDivElement>(null);
+
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		scrollRef,
-		userImage,
-		setUserImage,
-		setAutoScroll,
-	} = useContext(ChatContext);
-
-	const [messages, setMessages] = useState<RenderMessage[]>(session.messages);
+	// const [messages, setMessages] = useState<RenderMessage[]>(messages);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 
 	useEffect(() => {
-		setMessages(session.messages);
-	}, [session]);
-
-	useEffect(() => {
 		// 当 ChatBody 组件加载时获取第一页的消息
 		getMessages(sessionId, currentPage);
 	}, [sessionId]);
-	// useEffect(() => {
-	// 	console.log("Updated messages:", messages);
-	// }, [messages]);
 
-	const getMessages = async (sessionid: string, page: number) => {
+	const getMessages = useCallback(async (sessionid: string, page: number) => {
 		// setIsLoading(true);
 		// if (!isAuthenticated) return;
 		// try {
@@ -148,81 +124,46 @@ export function Chatbody(props: {
 		// } finally {
 		// 	setIsLoading(false);
 		// }
-	};
-
-	function setMsgRenderIndex(newIndex: number) {
-		newIndex = Math.min(renderMessages.length - CHAT_PAGE_SIZE, newIndex);
-		newIndex = Math.max(0, newIndex);
-		_setMsgRenderIndex(newIndex);
-	}
+	}, []);
 
 	const context: RenderMessage[] = useMemo(() => {
-		return session.mask.hideContext ? [] : session.mask.context.slice();
-	}, [session.mask.context, session.mask.hideContext]);
-
-	if (
-		context.length === 0 &&
-		session.messages.at(0)?.content !== BOT_HELLO.content
-	) {
-		const copiedHello = Object.assign({}, BOT_HELLO);
-		if (!accessStore.isAuthorized()) {
-			copiedHello.content = Locale.Error.Unauthorized;
+		if (session.mask.hideContext) {
+			return session.mask.intro
+				? [{ ...BOT_HELLO, content: session.mask.intro }]
+				: [];
+		} else {
+			return session.mask.context.slice();
 		}
+	}, [session.mask.context, session.mask.hideContext, session.mask.intro]);
 
-		if (session.mask.intro) {
-			copiedHello.content = session.mask.intro;
-		}
-
-		context.push(copiedHello);
-	}
+	console.log("context", context);
 
 	const renderMessages = useMemo(() => {
-		// 将 date 字段从字符串转换为 Date 对象
-		const sortedMessages = [...session.messages].sort((a, b) => {
-			const dateA = new Date(a.date);
-			const dateB = new Date(b.date);
-			return dateA.getTime() - dateB.getTime();
-		});
-
-		return context.concat(sortedMessages as RenderMessage[]).concat(
-			isLoading
-				? [
-						{
-							...createMessage({
-								role: "assistant",
-								content: "……",
-								image_url: [],
-							}),
-							preview: true,
-						},
-					]
-				: [],
+		const sortedMessages = [...messages].sort(
+			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
 		);
-		// .concat(
-		// 	userInput.length > 0 && config.sendPreviewBubble
-		// 		? [
-		// 				{
-		// 					...createMessage({
-		// 						role: "user",
-		// 						content: userInput,
-		// 						image_url: userImage?.fileUrl,
-		// 					}),
-		// 					preview: true,
-		// 				},
-		// 			]
-		// 		: [],
-		// );
-	}, [
-		config.sendPreviewBubble,
-		context,
-		isLoading,
-		session.messages,
-		session.lastUpdateTime,
-		// userInput,
-		userImage?.fileUrl,
-	]);
+		const contextMessage = context
+			.concat(sortedMessages as RenderMessage[])
+			.concat(
+				isLoading
+					? [
+							{
+								...createMessage({
+									role: "assistant",
+									content: "……",
+									image_url: [],
+								}),
+								preview: true,
+							},
+						]
+					: [],
+			);
 
-	const [msgRenderIndex, _setMsgRenderIndex] = useState(
+		console.log("contextMessage", contextMessage);
+		return contextMessage;
+	}, [context, isLoading, messages, session.lastUpdateTime]);
+
+	const [msgRenderIndex, _setMsgRenderIndex] = useState(() =>
 		Math.max(0, renderMessages.length - CHAT_PAGE_SIZE),
 	);
 
@@ -231,10 +172,24 @@ export function Chatbody(props: {
 			msgRenderIndex + 3 * CHAT_PAGE_SIZE,
 			renderMessages.length,
 		);
+		console.log(
+			"endRenderIndex",
+			endRenderIndex,
+			msgRenderIndex,
+			renderMessages,
+		);
 		return renderMessages.slice(msgRenderIndex, endRenderIndex);
 	}, [msgRenderIndex, renderMessages]);
 
-	const onChatBodyScroll = (e: HTMLElement) => {
+	function setMsgRenderIndex(newIndex: number) {
+		const validIndex = Math.min(
+			Math.max(0, newIndex),
+			renderMessages.length - CHAT_PAGE_SIZE,
+		);
+		_setMsgRenderIndex(validIndex);
+	}
+
+	const onChatBodyScroll = useCallback((e: HTMLElement) => {
 		const { isTouchTopEdge, isTouchBottomEdge, isHitBottom } =
 			checkScrollAndFetchMessages(e);
 
@@ -267,8 +222,9 @@ export function Chatbody(props: {
 		// // 更新是否触碰到底部的状态
 		// setHitBottom(isHitBottom);
 		// // 更新是否自动滚动到底部的状态
-		setAutoScroll(isHitBottom);
-	};
+		// setAutoScroll(isHitBottom);
+	}, []);
+
 	const checkScrollAndFetchMessages = (e: HTMLElement) => {
 		const bottomHeight = e.scrollTop + e.clientHeight;
 		const edgeThreshold = e.clientHeight;
@@ -290,7 +246,7 @@ export function Chatbody(props: {
 			onMouseDown={() => inputRef.current?.blur()}
 			onTouchStart={() => {
 				inputRef.current?.blur();
-				setAutoScroll(false);
+				// setAutoScroll(false);
 			}}
 		>
 			<MessageList

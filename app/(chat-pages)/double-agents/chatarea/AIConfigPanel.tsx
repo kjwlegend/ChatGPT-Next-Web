@@ -14,7 +14,7 @@ import {
 	AgentConfigCard,
 	MaskConfig,
 } from "@/app/(chat-pages)/chats/components/mask-modal";
-import { useMobileScreen } from "@/app/utils";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import Locale from "@/app/locales";
 import { usePluginStore } from "@/app/store/plugin";

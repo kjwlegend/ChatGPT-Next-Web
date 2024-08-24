@@ -54,7 +54,7 @@ import {
 } from "@/app/(chat-pages)/chats/chat/chat-controller";
 
 import { CreateChatData, createChat } from "@/app/api/backend/chat";
-import { useMobileScreen } from "@/app/utils";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import { message, Button } from "antd";
 import useAuth from "@/app/hooks/useAuth";

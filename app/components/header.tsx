@@ -4,7 +4,7 @@ import styles from "./header.module.scss";
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppConfig } from "../store/config";
-import { useMobileScreen } from "../utils";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -35,11 +35,7 @@ enum Theme {
 const items: any = TopMenuItems;
 
 const { Header } = Layout;
-import Locale from "@/app/locales";
-import { ChatAction } from "../chats/chat/Inputpanel";
-import LightIcon from "@/app/icons/light.svg";
-import DarkIcon from "@/app/icons/dark.svg";
-import AutoIcon from "@/app/icons/auto.svg";
+
 import { ThemeSwitcher } from "./themeSwitcher";
 interface Props {
 	displayMobileVersion: boolean;

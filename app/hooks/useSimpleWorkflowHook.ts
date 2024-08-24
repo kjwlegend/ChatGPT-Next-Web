@@ -57,12 +57,11 @@ export const useSimpleWorkflowService = () => {
 
 		updateWorkflowGroup(); // 初始化时更新一次
 	}, [workflowGroups]);
-	const handleAddClick = () => {
+	const handleAddClick = useCallback(() => {
 		console.log("click");
 		addWorkflowGroup();
-	};
-
-	const handleChatItemClick = async (id: string) => {
+	}, []);
+	const handleChatItemClick = useCallback(async (id: string) => {
 		const param = { limit: 60 };
 		try {
 			// const chatSessionList = await getChatSessionChats(param, id);
@@ -74,23 +73,26 @@ export const useSimpleWorkflowService = () => {
 		setSelectedId(id);
 		// getMessages(item.id);
 		navigate(Path.Chat);
-	};
+	}, []);
 
-	const handleChatItemDelete = async (id: number) => {
+	const handleChatItemDelete = useCallback(async (id: number) => {
 		try {
 			deleteWorkflowGroup(id);
 		} catch (error) {
 			console.log("Delete chat session error", error);
 		}
-	};
+	}, []);
 
-	const handleAgentClick = async (agent: Mask) => {
-		try {
-			addChatGrouptoWorkflow(selectedId, agent);
-		} catch (error) {
-			console.log("Add agent to group error", error);
-		}
-	};
+	const handleAgentClick = useCallback(
+		async (agent: Mask) => {
+			try {
+				addChatGrouptoWorkflow(selectedId, agent);
+			} catch (error) {
+				console.log("Add agent to group error", error);
+			}
+		},
+		[selectedId],
+	);
 
 	return {
 		selectedId,

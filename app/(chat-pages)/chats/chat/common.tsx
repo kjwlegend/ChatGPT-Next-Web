@@ -39,13 +39,6 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "@/app/utils";
-
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
@@ -80,7 +73,7 @@ export function SessionConfigModel(props: {
 	session?: ChatSession;
 	isworkflow: boolean;
 }) {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	let session: ChatSession;
 	// isworkflow = true then, session use props.session. else use currentSession
 	if (props.isworkflow && props.session) {

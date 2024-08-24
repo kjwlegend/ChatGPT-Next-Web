@@ -5,7 +5,7 @@ import React from "react";
 import styles from "@/app/(chat-pages)/chats/home.module.scss";
 
 import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
-import { ChatList } from "@/app/(chat-pages)/chats/sidebar/chatList";
+import ChatList from "@/app/(chat-pages)/chats/sidebar/chatList";
 import { useMultipleAgentsChatService } from "@/app/hooks/useMultipleAgentsHook";
 
 export function MultiAgentSideBar(props: { className?: string }) {

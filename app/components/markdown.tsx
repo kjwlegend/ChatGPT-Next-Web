@@ -143,7 +143,7 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 					a: (aProps) => {
 						const href = aProps.href || "";
 						const isInternal = /^\/#/i.test(href);
-						const target = isInternal ? "_self" : aProps.target ?? "_blank";
+						const target = isInternal ? "_self" : (aProps.target ?? "_blank");
 						return <a {...aProps} target={target} />;
 					},
 				}}
@@ -161,7 +161,6 @@ export function Markdown(
 		content: string;
 		loading?: boolean;
 		fontSize?: number;
-		parentRef?: RefObject<HTMLDivElement>;
 		defaultShow?: boolean;
 		imageBase64?: string;
 	} & React.DOMAttributes<HTMLDivElement>,

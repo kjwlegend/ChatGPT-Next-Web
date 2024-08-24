@@ -64,13 +64,14 @@ import {
 	copyToClipboard,
 	selectOrCopy,
 	autoGrowTextArea,
-	useMobileScreen,
 	getMessageTextContent,
 	getMessageImages,
 	isVisionModel,
 	isFirefox,
 	isSupportRAGModel,
 } from "@/app/utils";
+
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import { api } from "@/app/client/api";
 
@@ -113,28 +114,12 @@ import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
-} from "../useChathooks";
-import { ChatContext } from "../main";
-// import { ChatContext } from "@/app/workflow-chats/context";
+} from "../hooks/useChathooks";
 import {
 	startSpeechToText,
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
 import { useAllModels } from "@/app/utils/hooks";
-
-import {
-	ApiTwoTone,
-	ThunderboltTwoTone,
-	SettingTwoTone,
-	MessageTwoTone,
-} from "@ant-design/icons";
-
-import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
-import { type } from "os";
-import { usePluginStore } from "@/app/store/plugin";
-
-import { compressImage } from "@/app/utils/chat/chat";
-import { ClientApi } from "@/app/client/api";
 
 import { createFromIconfontCN } from "@ant-design/icons";
 export const IconFont = createFromIconfontCN({
@@ -152,6 +137,12 @@ import {
 } from "./utils/fileUploader";
 import { AttachFiles } from "./components/AttachFiles";
 import { useDoSubmit } from "./hooks/useDoSubmit";
+import { AppGeneralContext } from "@/app/contexts/AppContext";
+import {
+	useChatActions,
+	useChatSetting,
+	useSessions,
+} from "../hooks/useChatContext";
 let voicetext: string[] = [];
 
 export function Inputpanel(props: {
@@ -160,39 +151,30 @@ export function Inputpanel(props: {
 	submitType?: "chat" | "workflow";
 }) {
 	const config = useAppConfig();
-	const session = props._session;
-	const authHook = useAuth();
-	const promptStore = usePromptStore();
-	const isMobileScreen = useMobileScreen();
-	const router = useRouter();
+	const session = useSessions();
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
-	const { updateUserInfo } = authHook;
+	const promptStore = usePromptStore();
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const autoFocus = !isMobileScreen;
 
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		scrollRef,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
-
-	const { submitKey, shouldSubmit } = useSubmitHandler();
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
-
+	const [userInput, setUserInput] = useState("");
+	const [inputRows, setInputRows] = useState(2);
+	const [userImage, setUserImage] = useState<any>();
 	const [attachImages, setAttachImages] = useState<string[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const [attachFiles, setAttachFiles] = useState<FileInfo[]>([]);
 
+	const { setHitBottom, setShowPromptModal, setEnableAutoFlow } =
+		useChatActions();
+	const { hitBottom, showPromptModal, enableAutoFlow } = useChatSetting();
+
+	const { submitKey, shouldSubmit } = useSubmitHandler();
+	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
+
 	const textareaMinHeight = userImage ? 121 : 68;
+
 	const { doSubmit, isLoading, contextHolder } = useDoSubmit(
 		session,
 		attachImages,
@@ -229,11 +211,11 @@ export function Inputpanel(props: {
 		}
 	};
 
-	const onInput = (text: string) => {
+	const onInput = useCallback((text: string) => {
+		// 简单的错误处理，防止输入过长
 		setUserInput(text);
-	};
+	}, []);
 
-	const [inputRows, setInputRows] = useState(2);
 	const measure = useDebouncedCallback(
 		() => {
 			const rows = inputRef.current ? autoGrowTextArea(inputRef.current) : 1;
@@ -269,18 +251,41 @@ export function Inputpanel(props: {
 		[attachImages],
 	);
 
-	const handleUploadImage = async () => {
-		uploadImage(setAttachImages);
-	};
+	const handleUploadImage = useCallback(async () => {
+		try {
+			await uploadImage(setAttachImages);
+		} catch (error) {
+			console.error("上传图片失败:", error);
+			// showToast(Locale.Chat.UploadImageFailed); // 假设showToast是一个显示提示信息的函数
+		}
+	}, [setAttachImages]);
 
-	const handleUploadFile = async () => {
-		uploadFile(setAttachFiles);
-	};
+	const handleUploadFile = useCallback(async () => {
+		try {
+			await uploadFile(setAttachFiles);
+		} catch (error) {
+			console.error("上传文件失败:", error);
+			// showToast(Locale.Chat.UploadFileFailed); // 假设showToast是一个显示提示信息的函数
+		}
+	}, [setAttachFiles]);
 
-	const handleSpeechRecognition = async (): Promise<void> => {
-		const text = await startSpeechToText();
-		setUserInput((prev) => `${prev} ${text}`);
-	};
+	const handleSpeechRecognition = useCallback(async (): Promise<void> => {
+		try {
+			const text = await startSpeechToText();
+			setUserInput((prev) => `${prev} ${text}`);
+		} catch (error) {
+			console.error("语音识别失败:", error);
+			// showToast(Locale.Chat.SpeechRecognitionFailed); // 假设showToast是一个显示提示信息的函数
+		}
+	}, []);
+
+	const handleShowPromptModal = useCallback(() => {
+		setShowPromptModal(true);
+	}, []);
+
+	const handleimageSelected = useCallback(() => {
+		setShowPromptModal(true);
+	}, []);
 
 	return (
 		<div className={styles["chat-input-panel"]}>
@@ -288,19 +293,16 @@ export function Inputpanel(props: {
 
 			<ChatActions
 				uploadImage={handleUploadImage}
-				setAttachImages={setAttachImages}
 				uploadFile={handleUploadFile}
+				setAttachImages={setAttachImages}
 				setAttachFiles={setAttachFiles}
 				setUploading={setUploading}
-				showPromptModal={() => setShowPromptModal(true)}
+				showPromptModal={handleShowPromptModal}
 				hitBottom={hitBottom}
 				uploading={uploading}
-				imageSelected={(img: any) => {
-					setUserImage(img);
-				}}
 				session={session}
 				index={props.index}
-				workflows={props.session?.isworkflow}
+				workflows={props._session.isworkflow}
 			/>
 			<label
 				className={`${styles["chat-input-panel-inner"]} ${

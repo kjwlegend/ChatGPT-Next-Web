@@ -52,7 +52,7 @@ import {
 	Draggable,
 	OnDragEndResponder,
 } from "@hello-pangea/dnd";
-import { useMobileScreen } from "@/app/utils";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import { Tabs, Radio, Input as AntdInput } from "antd";
 import type { RadioChangeEvent } from "antd";

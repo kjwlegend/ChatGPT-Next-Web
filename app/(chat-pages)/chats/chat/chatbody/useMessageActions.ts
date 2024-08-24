@@ -19,6 +19,7 @@ import { message } from "antd";
 import { convertTextToSpeech } from "@/app/utils/voicetotext";
 import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
+import { useChatActions } from "../hooks/useChatContext";
 
 interface UseMessageActions {
 	handleUserStop: (messageId: string) => void;
@@ -32,7 +33,7 @@ export const useMessageActions = (
 	session: ChatSession,
 	setShowPromptModal: (show: boolean) => void,
 ): UseMessageActions => {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	const sessionid = session.id;
 
 	const handleUserStop = useCallback((messageId: string) => {
@@ -100,12 +101,13 @@ export const useMessageActions = (
 
 	const handleDelete = useCallback(
 		(messageId: string) => {
+			console.log("message click delete", messageId);
 			chatStore.updateSession(sessionid, (session) => {
 				// 注意这里使用了 session 来确保最新的会话状态被使用
 				session.messages = session.messages.filter((m) => m.id !== messageId);
 			});
 		},
-		[chatStore, sessionid],
+		[sessionid],
 	);
 
 	const handlePinMessage = useCallback(
@@ -123,7 +125,7 @@ export const useMessageActions = (
 				},
 			});
 		},
-		[chatStore, sessionid, setShowPromptModal],
+		[sessionid, setShowPromptModal],
 	);
 
 	const handlePlayAudio = useCallback(async (message: ChatMessage) => {

@@ -56,7 +56,15 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
 			hoverable
 			onClick={() => startChat(mask)}
 			actions={[
-				<Button key={mask.id} type="primary" onClick={() => startChat(mask)}>
+				<Button
+					key={mask.id}
+					type="primary"
+					onClick={(e) => {
+						// prevent default
+						e.stopPropagation();
+						startChat(mask);
+					}}
+				>
 					开始聊天
 				</Button>,
 			]}
@@ -142,7 +150,7 @@ export function NewChat() {
 					<IconButton
 						key="skip"
 						text={Locale.NewChat.Skip}
-						onClick={() => startChat()}
+						onClick={startChat}
 						icon={<LightningIcon />}
 						type="primary"
 						shadow

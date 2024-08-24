@@ -8,7 +8,7 @@ import styles from "./home.module.scss";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import BotIcon from "@/app/icons/bot.svg";
 
-import { getCSSVar, useMobileScreen } from "@/app/utils";
+import { getCSSVar } from "@/app/utils";
 
 import dynamic from "next/dynamic";
 
@@ -40,11 +40,8 @@ import { SEOHeader } from "@/app/components/seo-header";
 // import { NewChat } from "./new-chat";
 import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
 import { PaginationData } from "@/app/services/api/chats";
-import { ChatList } from "./sidebar/chatList";
-import {
-	UpdateChatMessages,
-	updateChatSessions,
-} from '@/app/hooks/useChatHook'
+import ChatList from "./sidebar/chatList";
+
 import { useChatService } from "@/app/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 
@@ -165,18 +162,15 @@ const loadAsyncGoogleFont = () => {
 		"&display=swap";
 	document.head.appendChild(linkEl);
 };
-
 function Screen() {
 	const config = useAppConfig();
 	const location = useLocation();
 	const isAuth = location.pathname === Path.Auth;
 	const isHome = location.pathname === Path.Home;
-	// const isMobileScreen = useMobileScreen();
 	const { logoutHook } = useAuth();
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
 	const router = useRouter();
-
 	const chatStore = useChatStore();
 	const {
 		currentSessionId,
@@ -185,47 +179,7 @@ function Screen() {
 		moveSession,
 		sortSession,
 	} = chatStore;
-
 	const navigate = useNavigate();
-
-	// getClientConfig()?.isApp || (config.tightBorder && !isMobileScreen);
-
-	useEffect(() => {
-		loadAsyncGoogleFont();
-	}, []);
-
-	// 检查当前的 cookie 中的 expires=xxx 是否已经过期
-	useEffect(() => {
-		let timeoutId: number | NodeJS.Timeout | undefined; // 定义 timeoutId 的类型
-
-		if (!isAuthenticated) {
-			return;
-		}
-
-		const cookie = document.cookie;
-		// console.log("cookie", cookie);
-		const cookieArr = cookie.split(";");
-		const cookieObj: any = {};
-		cookieArr.forEach((item) => {
-			const itemArr = item.split("=");
-			cookieObj[itemArr[0].trim()] = itemArr[1];
-		});
-
-		const expires = cookieObj.expires;
-		const expiresTimeStamp = Date.parse(expires);
-		const currentTimeStamp = Date.now();
-
-		const currentDateTime = new Date(currentTimeStamp).toLocaleString();
-		const expiresDateTime = new Date(expiresTimeStamp).toLocaleString();
-
-		console.log(
-			"当前过期",
-			currentDateTime,
-			"expiresTimeStamp",
-			expiresDateTime,
-		);
-	}, [isAuthenticated, logoutHook]);
-
 	const {
 		chatSessions,
 		loadMoreSessions,
@@ -233,8 +187,31 @@ function Screen() {
 		handleChatItemClick,
 		handleChatItemDelete,
 	} = useChatService();
-
 	const { onDelete, onChat } = useAgentActions();
+
+	useEffect(() => {
+		loadAsyncGoogleFont();
+	}, []);
+
+	useEffect(() => {
+		if (!isAuthenticated) return;
+
+		const cookie = document.cookie;
+		const expires = cookie
+			.split(";")
+			.find((c) => c.trim().startsWith("expires="))
+			?.split("=")[1];
+		if (!expires) return;
+
+		const expiresTimeStamp = Date.parse(expires);
+		const currentTimeStamp = Date.now();
+
+		if (expiresTimeStamp < currentTimeStamp) {
+			logoutHook();
+			message.error("会话已过期，请重新登录");
+		}
+	}, [isAuthenticated, logoutHook]);
+
 	return (
 		<div
 			className={

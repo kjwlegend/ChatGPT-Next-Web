@@ -164,7 +164,10 @@ export const useChatStore = createPersistStore(
 				});
 			},
 			selectSessionById(id: string) {
-				const index = get().sessions.findIndex((session) => session.id === id);
+				const index = get().sessions.findIndex((session) => {
+					console.log("select session by id", id, "sessionid", session.id);
+					return session.id === id;
+				});
 
 				if (index !== -1) {
 					get().selectSession(index);
@@ -266,11 +269,16 @@ export const useChatStore = createPersistStore(
 							...selectedMask.modelConfig,
 						},
 					};
+					//  updated sessions
+					const updatedSessions = [...get().sessions, session];
 					set((state) => ({
 						currentSessionIndex: 0,
 						currentSessionId: session.id,
 						sessions: [session].concat(state.sessions),
 					}));
+
+					get().selectSession(get().currentSessionIndex);
+
 					return session;
 				} else {
 					return null;

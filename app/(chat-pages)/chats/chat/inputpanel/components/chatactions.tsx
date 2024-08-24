@@ -9,6 +9,8 @@ import React, {
 	useContext,
 	use,
 	useCallback,
+	useLayoutEffect,
+	memo,
 } from "react";
 import { getISOLang, getLang } from "@/app/locales";
 import { useRouter } from "next/navigation";
@@ -64,13 +66,14 @@ import {
 	copyToClipboard,
 	selectOrCopy,
 	autoGrowTextArea,
-	useMobileScreen,
 	getMessageTextContent,
 	getMessageImages,
 	isVisionModel,
 	isFirefox,
 	isSupportRAGModel,
 } from "@/app/utils";
+
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import { api } from "@/app/client/api";
 
@@ -113,7 +116,7 @@ import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
-} from "../../useChathooks";
+} from "../../hooks/useChathooks";
 import { ChatContext } from "../../main";
 // import { ChatContext } from "@/app/workflow-chats/context";
 import {
@@ -137,10 +140,10 @@ import { compressImage } from "@/app/utils/chat/chat";
 import { ClientApi } from "@/app/client/api";
 
 import { createFromIconfontCN } from "@ant-design/icons";
+import { AppGeneralContext } from "@/app/contexts/AppContext";
 export const IconFont = createFromIconfontCN({
 	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
-
 export function ChatAction(props: {
 	text: string;
 	icon: JSX.Element;
@@ -158,9 +161,10 @@ export function ChatAction(props: {
 		icon: 16,
 	});
 
-	const isMobileScreen = useMobileScreen();
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
+	console.log(isMobileScreen, "mobile screen from chataction");
 
-	function updateWidth() {
+	const updateWidth = useCallback(() => {
 		if (!iconRef.current || !textRef.current) return;
 		const getWidth = (dom: HTMLDivElement) => dom.getBoundingClientRect().width;
 		const textWidth = getWidth(textRef.current);
@@ -169,13 +173,13 @@ export function ChatAction(props: {
 			full: textWidth + iconWidth,
 			icon: iconWidth,
 		});
-	}
+	}, [iconRef, textRef]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (!isMobileScreen) {
 			updateWidth(); // Update width on mount for non-mobile screens
 		}
-	}, [isMobileScreen]);
+	}, [isMobileScreen, updateWidth]);
 
 	const actionContent = (
 		<>
@@ -189,6 +193,16 @@ export function ChatAction(props: {
 		</>
 	);
 
+	const commonStyle =
+		isMobileScreen || props.hidetext
+			? ({
+					"--icon-width": `${width.icon}px`,
+					"--full-width": `${width.full}px`,
+				} as React.CSSProperties)
+			: ({
+					width: "auto",
+				} as React.CSSProperties);
+
 	if (props.type === "dropdown" && props.dropdownItems) {
 		return (
 			<Dropdown
@@ -200,16 +214,7 @@ export function ChatAction(props: {
 				<div
 					className={`${styles["chat-input-action"]} clickable`}
 					onClick={props.onClick}
-					style={
-						isMobileScreen || props.hidetext
-							? ({
-									"--icon-width": `${width.icon}px`,
-									"--full-width": `${width.full}px`,
-								} as React.CSSProperties)
-							: ({
-									width: "auto",
-								} as React.CSSProperties)
-					}
+					style={commonStyle}
 				>
 					{actionContent}
 				</div>
@@ -231,16 +236,7 @@ export function ChatAction(props: {
 				onTouchStart={
 					props.hidetext && isMobileScreen ? updateWidth : undefined
 				}
-				style={
-					isMobileScreen || props.hidetext
-						? ({
-								"--icon-width": `${width.icon}px`,
-								"--full-width": `${width.full}px`,
-							} as React.CSSProperties)
-						: ({
-								width: "auto",
-							} as React.CSSProperties)
-				}
+				style={commonStyle}
 			>
 				{actionContent}
 			</div>
@@ -248,217 +244,217 @@ export function ChatAction(props: {
 	}
 }
 
-export function ChatActions(props: {
-	uploadImage: () => void;
-	setAttachImages: (images: string[]) => void;
-	uploadFile: () => void;
-	setAttachFiles: (files: FileInfo[]) => void;
-	setUploading: (uploading: boolean) => void;
-	showPromptModal: () => void;
-	imageSelected: (img: any) => void;
-	hitBottom: boolean;
-	uploading: boolean;
-	session?: ChatSession;
-	index?: number;
-	workflows?: boolean;
-}) {
-	const config = useAppConfig();
-	const chatStore = useChatStore();
-	const session = props.session ? props.session : chatStore.currentSession();
-	const sessionId = session.id;
-	const { basic_chat_balance } = useUserStore().user.user_balance;
+export const ChatActions = memo(
+	(props: {
+		uploadImage: () => void;
+		setAttachImages: (images: string[]) => void;
+		uploadFile: () => void;
+		setAttachFiles: (files: FileInfo[]) => void;
+		setUploading: (uploading: boolean) => void;
+		showPromptModal: () => void;
+		hitBottom: boolean;
+		uploading: boolean;
+		session?: ChatSession;
+		index?: number;
+		workflows?: boolean;
+	}) => {
+		const config = useAppConfig();
+		const chatStore = useChatStore.getState();
+		const session = props.session ? props.session : chatStore.currentSession();
+		const sessionId = session.id;
+		const { basic_chat_balance } = useUserStore.getState().user.user_balance;
 
-	const accessStore = useAccessStore();
-	const isEnableRAG = useMemo(
-		() => accessStore.enableRAG(),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[],
-	);
+		const accessStore = useAccessStore();
+		const isEnableRAG = useMemo(
+			() => accessStore.enableRAG(),
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			[],
+		);
 
-	const fileInputRef = React.useRef<HTMLInputElement>(null);
+		const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-	const usePlugins = session.mask.usePlugins;
+		const usePlugins = session.mask.usePlugins;
 
-	const [showModelSelector, setShowModelSelector] = useState(false);
-	const [showUploadImage, setShowUploadImage] = useState(false);
-	const [showUploadFile, setShowUploadFile] = useState(false);
+		const [showModelSelector, setShowModelSelector] = useState(false);
+		const [showUploadImage, setShowUploadImage] = useState(false);
+		const [showUploadFile, setShowUploadFile] = useState(false);
 
-	const onImageSelected = async (e: any) => {
-		const file = e.target.files[0];
-		const fileName = await api.file.upload(file, "upload");
-		props.imageSelected({
-			fileName,
-			fileUrl: `${oss}${fileName}!uploadthumbnail`,
-		});
-		e.target.value = null;
-	};
-
-	function switchUsePlugins() {
-		// based on session.mask.plugins to decide if use plugins
-
-		if (session.mask.plugins && session.mask.plugins?.length > 0) {
-			chatStore.updateSession(
-				session.id,
-				() => {
-					session.mask.usePlugins = true;
-				},
-				false,
-			);
-		} else {
-			chatStore.updateSession(
-				session.id,
-				() => {
-					session.mask.usePlugins = false;
-				},
-				false,
-			);
-		}
-	}
-
-	const availablePlugins = usePluginStore()
-		.getAll()
-		.filter((p) => getLang() === p.lang);
-
-	if (!session.mask.plugins) {
-		session.mask.plugins = [];
-	}
-
-	const items: MenuProps["items"] = availablePlugins.map((p) => {
-		return {
-			key: p.name,
-			label: (
-				<Checkbox
-					checked={
-						session.mask.plugins &&
-						session.mask.plugins.includes(p.toolName ?? p.name)
-					}
-					onChange={(e) => {
-						chatStore.updateSession(
-							session.id,
-							() => {
-								if (e.target.checked) {
-									session.mask.plugins?.push(p.toolName ?? p.name);
-								} else {
-									session.mask.plugins = session.mask.plugins?.filter(
-										(name) => name !== p.toolName,
-									);
-								}
-							},
-							false,
-						);
-
-						switchUsePlugins();
-					}}
-					onClick={(e) => {
-						e.stopPropagation();
-					}}
-				>
-					{p.name}
-				</Checkbox>
-			),
+		const onImageSelected = async (e: any) => {
+			const file = e.target.files[0];
+			const fileName = await api.file.upload(file, "upload");
+			props.imageSelected({
+				fileName,
+				fileUrl: `${oss}${fileName}!uploadthumbnail`,
+			});
+			e.target.value = null;
 		};
-	});
 
-	// switch themes
-	const theme = config.theme;
-	function nextTheme() {
-		const themes = [Theme.Auto, Theme.Light, Theme.Dark];
-		const themeIndex = themes.indexOf(theme);
-		const nextIndex = (themeIndex + 1) % themes.length;
-		const nextTheme = themes[nextIndex];
-		config.update((config) => (config.theme = nextTheme));
-	}
+		function switchUsePlugins() {
+			// based on session.mask.plugins to decide if use plugins
 
-	// stop all responses
-	const couldStop = ChatControllerPool.hasPending();
-	const stopAll = () => ChatControllerPool.stopAll();
-
-	// switch model
-	const currentModel = session.mask.modelConfig.model;
-	const models = useAllModels()
-		.filter((m) => m.available)
-		.map((m) => ({
-			title: m.displayName,
-			value: m.name,
-		}));
-
-	useEffect(() => {
-		const show = isVisionModel(currentModel);
-
-		if (show !== showUploadImage) {
-			setShowUploadImage(show);
+			if (session.mask.plugins && session.mask.plugins?.length > 0) {
+				chatStore.updateSession(
+					session.id,
+					() => {
+						session.mask.usePlugins = true;
+					},
+					false,
+				);
+			} else {
+				chatStore.updateSession(
+					session.id,
+					() => {
+						session.mask.usePlugins = false;
+					},
+					false,
+				);
+			}
 		}
 
-		const showFile = isEnableRAG && isSupportRAGModel(currentModel);
-		if (showFile !== showUploadFile) {
-			setShowUploadFile(showFile);
+		const availablePlugins = usePluginStore()
+			.getAll()
+			.filter((p) => getLang() === p.lang);
+
+		if (!session.mask.plugins) {
+			session.mask.plugins = [];
 		}
 
-		// 只有在 currentModel 发生变化且 show 为 false 时才更新父组件状态
-		if (!show) {
-			// 使用 setTimeout 来避免在当前渲染周期中更新父组件状态
-			setTimeout(() => {
-				props.setAttachImages([]);
-				props.setUploading(false);
-			}, 0);
-		}
-		// 这里确保 useEffect 仅在 currentModel 发生变化时触发
-	}, [currentModel]);
+		const items: MenuProps["items"] = availablePlugins.map((p) => {
+			return {
+				key: p.name,
+				label: (
+					<Checkbox
+						checked={
+							session.mask.plugins &&
+							session.mask.plugins.includes(p.toolName ?? p.name)
+						}
+						onChange={(e) => {
+							chatStore.updateSession(
+								session.id,
+								() => {
+									if (e.target.checked) {
+										session.mask.plugins?.push(p.toolName ?? p.name);
+									} else {
+										session.mask.plugins = session.mask.plugins?.filter(
+											(name) => name !== p.toolName,
+										);
+									}
+								},
+								false,
+							);
 
-	const chatInjection = session.mask.modelConfig;
-	const [enableUserInfo, setEnableUserInfo] = useState(
-		chatInjection.enableUserInfos,
-	);
-	const [enableRelatedQuestions, setEnableRelatedQuestions] = useState(
-		chatInjection.enableRelatedQuestions,
-	);
-
-	const handleInjectUserInfo = () => {
-		chatStore.updateSession(sessionId, () => {
-			session.mask.modelConfig.enableUserInfos =
-				!session.mask.modelConfig.enableUserInfos;
-			setEnableUserInfo(session.mask.modelConfig.enableUserInfos);
+							switchUsePlugins();
+						}}
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
+					>
+						{p.name}
+					</Checkbox>
+				),
+			};
 		});
-	};
 
-	const handleInjectRelatedQuestions = () => {
-		chatStore.updateSession(sessionId, () => {
-			session.mask.modelConfig.enableRelatedQuestions =
-				!session.mask.modelConfig.enableRelatedQuestions;
-			setEnableRelatedQuestions(
-				session.mask.modelConfig.enableRelatedQuestions,
-			);
-		});
-	};
+		// switch themes
+		const theme = config.theme;
+		function nextTheme() {
+			const themes = [Theme.Auto, Theme.Light, Theme.Dark];
+			const themeIndex = themes.indexOf(theme);
+			const nextIndex = (themeIndex + 1) % themes.length;
+			const nextTheme = themes[nextIndex];
+			config.update((config) => (config.theme = nextTheme));
+		}
 
-	return (
-		<div className={styles["chat-input-actions"]}>
-			<div>
-				{couldStop && (
-					<ChatAction
-						onClick={stopAll}
-						text={Locale.Chat.InputActions.Stop}
-						icon={<StopIcon />}
-						hidetext={props.workflows ? true : false}
-					/>
-				)}
-				{!props.hitBottom && (
-					<ChatAction
-						onClick={() => {}}
-						text={Locale.Chat.InputActions.ToBottom}
-						icon={<BottomIcon />}
-						hidetext={props.workflows ? true : false}
-					/>
-				)}
-				{props.hitBottom && (
-					<ChatAction
-						onClick={props.showPromptModal}
-						text={Locale.Chat.InputActions.Settings}
-						icon={<SettingTwoTone style={{ fontSize: "15px" }} />}
-						hidetext={props.workflows ? true : false}
-					/>
-				)}
-				{/* <ChatAction
+		// stop all responses
+		const couldStop = ChatControllerPool.hasPending();
+		const stopAll = () => ChatControllerPool.stopAll();
+
+		// switch model
+		const currentModel = session.mask.modelConfig.model;
+		const models = useAllModels()
+			.filter((m) => m.available)
+			.map((m) => ({
+				title: m.displayName,
+				value: m.name,
+			}));
+
+		useEffect(() => {
+			const show = isVisionModel(currentModel);
+
+			if (show !== showUploadImage) {
+				setShowUploadImage(show);
+			}
+
+			const showFile = isEnableRAG && isSupportRAGModel(currentModel);
+			if (showFile !== showUploadFile) {
+				setShowUploadFile(showFile);
+			}
+
+			// 只有在 currentModel 发生变化且 show 为 false 时才更新父组件状态
+			if (!show) {
+				// 使用 setTimeout 来避免在当前渲染周期中更新父组件状态
+				setTimeout(() => {
+					props.setAttachImages([]);
+					props.setUploading(false);
+				}, 0);
+			}
+			// 这里确保 useEffect 仅在 currentModel 发生变化时触发
+		}, [currentModel]);
+
+		const chatInjection = session.mask.modelConfig;
+		const [enableUserInfo, setEnableUserInfo] = useState(
+			chatInjection.enableUserInfos,
+		);
+		const [enableRelatedQuestions, setEnableRelatedQuestions] = useState(
+			chatInjection.enableRelatedQuestions,
+		);
+
+		const handleInjectUserInfo = () => {
+			chatStore.updateSession(sessionId, () => {
+				session.mask.modelConfig.enableUserInfos =
+					!session.mask.modelConfig.enableUserInfos;
+				setEnableUserInfo(session.mask.modelConfig.enableUserInfos);
+			});
+		};
+
+		const handleInjectRelatedQuestions = () => {
+			chatStore.updateSession(sessionId, () => {
+				session.mask.modelConfig.enableRelatedQuestions =
+					!session.mask.modelConfig.enableRelatedQuestions;
+				setEnableRelatedQuestions(
+					session.mask.modelConfig.enableRelatedQuestions,
+				);
+			});
+		};
+
+		return (
+			<div className={styles["chat-input-actions"]}>
+				<div>
+					{couldStop && (
+						<ChatAction
+							onClick={stopAll}
+							text={Locale.Chat.InputActions.Stop}
+							icon={<StopIcon />}
+							hidetext={props.workflows ? true : false}
+						/>
+					)}
+					{!props.hitBottom && (
+						<ChatAction
+							onClick={() => {}}
+							text={Locale.Chat.InputActions.ToBottom}
+							icon={<BottomIcon />}
+							hidetext={props.workflows ? true : false}
+						/>
+					)}
+					{props.hitBottom && (
+						<ChatAction
+							onClick={props.showPromptModal}
+							text={Locale.Chat.InputActions.Settings}
+							icon={<SettingTwoTone style={{ fontSize: "15px" }} />}
+							hidetext={props.workflows ? true : false}
+						/>
+					)}
+					{/* <ChatAction
 					onClick={nextTheme}
 					text={Locale.Chat.InputActions.Theme[theme]}
 					icon={
@@ -473,120 +469,107 @@ export function ChatActions(props: {
 						</>
 					}
 				/> */}
-				{/* <ChatAction
+					{/* <ChatAction
 					onClick={props.showPromptHints}
 					text={Locale.Chat.InputActions.Prompt}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 				/> */}
-				{/* <ChatAction
+					{/* <ChatAction
 					onClick={() => setShowModelSelector(true)}
 					text={currentModel}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
 					hidetext={props.workflows ? true : false}
 				/> */}
 
-				{showUploadImage && (
-					<ChatAction
-						onClick={props.uploadImage}
-						text={Locale.Chat.InputActions.UploadImage}
-						icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
-					/>
-				)}
+					{showUploadImage && (
+						<ChatAction
+							onClick={props.uploadImage}
+							text={Locale.Chat.InputActions.UploadImage}
+							icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
+						/>
+					)}
 
-				{showUploadFile && (
-					<ChatAction
-						onClick={props.uploadFile}
-						text={Locale.Chat.InputActions.UploadFle}
-						icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
-					/>
-				)}
+					{showUploadFile && (
+						<ChatAction
+							onClick={props.uploadFile}
+							text={Locale.Chat.InputActions.UploadFle}
+							icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
+						/>
+					)}
 
-				{config.pluginConfig.enable && (
+					{config.pluginConfig.enable && (
+						<ChatAction
+							onClick={switchUsePlugins}
+							text={
+								session.mask.plugins.length > 0
+									? Locale.Chat.InputActions.DisablePlugins
+									: Locale.Chat.InputActions.EnablePlugins
+							}
+							icon={
+								session.mask.plugins.length > 0 ? (
+									<ThunderboltTwoTone
+										style={{
+											fontSize: "15px",
+										}}
+									/>
+								) : (
+									<ApiTwoTone
+										twoToneColor="#52c41a"
+										style={{ fontSize: "15px" }}
+									/>
+								)
+							}
+							type="dropdown"
+							dropdownItems={{ items }}
+							hidetext={props.workflows ? true : false}
+						/>
+					)}
+
 					<ChatAction
-						onClick={switchUsePlugins}
-						text={
-							session.mask.plugins.length > 0
-								? Locale.Chat.InputActions.DisablePlugins
-								: Locale.Chat.InputActions.EnablePlugins
-						}
 						icon={
-							session.mask.plugins.length > 0 ? (
-								<ThunderboltTwoTone
-									style={{
-										fontSize: "15px",
-									}}
+							enableRelatedQuestions ? (
+								<IconFont
+									type="iconfont-Thinking"
+									style={{ fontSize: "15px" }}
 								/>
 							) : (
-								<ApiTwoTone
-									twoToneColor="#52c41a"
+								<IconFont
+									type="iconfont-think-fill"
 									style={{ fontSize: "15px" }}
 								/>
 							)
 						}
-						type="dropdown"
-						dropdownItems={{ items }}
-						hidetext={props.workflows ? true : false}
+						onClick={handleInjectRelatedQuestions}
+						text={enableRelatedQuestions ? "关闭联想" : "开启联想"}
 					/>
-				)}
-				{/* {currentModel == "gpt-4-vision-preview" && (
-					<ChatAction
-						onClick={selectImage}
-						text="选择图片"
-						icon={<UploadIcon />}
-						innerNode={
-							<input
-								type="file"
-								accept=".png,.jpg,.webp,.jpeg"
-								id="chat-image-file-select-upload"
-								style={{ display: "none" }}
-								onChange={onImageSelected}
-								ref={fileInputRef}
-							/>
-						}
-						hidetext={props.workflows ? true : false}
-					/>
-				)} */}
-				<ChatAction
-					icon={
-						enableRelatedQuestions ? (
-							<IconFont type="iconfont-Thinking" style={{ fontSize: "15px" }} />
-						) : (
-							<IconFont
-								type="iconfont-think-fill"
-								style={{ fontSize: "15px" }}
-							/>
-						)
-					}
-					onClick={handleInjectRelatedQuestions}
-					text={enableRelatedQuestions ? "关闭联想" : "开启联想"}
-				/>
 
-				<ChatAction
-					icon={
-						enableUserInfo ? (
-							<IconFont
-								type="iconfont-user-active"
-								style={{ fontSize: "15px" }}
-							/>
-						) : (
-							<IconFont type="iconfont-user" style={{ fontSize: "15px" }} />
-						)
-					}
-					onClick={handleInjectUserInfo}
-					text={enableUserInfo ? "个性化" : "通用"}
-				/>
-			</div>
-			<div>
+					<ChatAction
+						icon={
+							enableUserInfo ? (
+								<IconFont
+									type="iconfont-user-active"
+									style={{ fontSize: "15px" }}
+								/>
+							) : (
+								<IconFont type="iconfont-user" style={{ fontSize: "15px" }} />
+							)
+						}
+						onClick={handleInjectUserInfo}
+						text={enableUserInfo ? "个性化" : "通用"}
+					/>
+				</div>
 				<div>
-					{/* 展示用户余额 */}
-					<span className={styles["chat-balance"]}>
-						对话余额: {basic_chat_balance}
-					</span>
+					<div>
+						{/* 展示用户余额 */}
+						<span className={styles["chat-balance"]}>
+							对话余额: {basic_chat_balance}
+						</span>
+					</div>
 				</div>
 			</div>
-		</div>
-	);
-}
+		);
+	},
+);
 
 export function DeleteImageButton(props: { deleteImage: () => void }) {
 	return (

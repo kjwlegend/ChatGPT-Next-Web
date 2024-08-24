@@ -75,7 +75,7 @@ const SimpleWorkflow: React.FC = () => {
 	const { selectedId, addWorkflowGroup, workflowSessionsIndex, moveSession } =
 		useWorkflowContext();
 
-	const workflowStore = useWorkflowStore();
+	const workflowStore = useWorkflowStore.getState();
 	const { workflowGroups, workflowSessions } = workflowStore;
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
@@ -100,7 +100,7 @@ const SimpleWorkflow: React.FC = () => {
 			(id) =>
 				workflowSessions.find((session) => session.id === id) ?? undefined,
 		);
-	}, [selectedId, workflowSessionsIndex, workflowSessions]);
+	}, [selectedId, workflowSessionsIndex]);
 
 	const handleModalClick = () => {
 		setShowAgentList(!showAgentList);
@@ -152,7 +152,7 @@ const SimpleWorkflow: React.FC = () => {
 					<>
 						{/* {index} {session.id} {session.topic} , */}
 						<_Chat
-							key={index}
+							key={session?.session_id}
 							_session={session}
 							index={index}
 							isworkflow={true}
@@ -259,11 +259,11 @@ const SimpleWorkflow: React.FC = () => {
 
 const App = () => {
 	return (
-		// <WorkflowProvider>
-		<HashRouter>
-			<SimpleWorkflow />
-		</HashRouter>
-		// </WorkflowProvider>
+		<WorkflowProvider>
+			<HashRouter>
+				<SimpleWorkflow />
+			</HashRouter>
+		</WorkflowProvider>
 	);
 };
 

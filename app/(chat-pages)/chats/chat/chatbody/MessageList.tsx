@@ -1,18 +1,27 @@
 // MessageList.tsx
-import React from "react";
+import React, {
+	memo,
+	Fragment,
+	useContext,
+	useRef,
+	useState,
+	useMemo,
+	useCallback,
+	useEffect,
+} from "react";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 import { useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { AgentMessageItem, MessageItem } from "./MessageItem";
+import MessageItem from "./MessageItem";
 
-import { useContext, useRef, useState, useMemo, Fragment } from "react";
-import { useScrollToBottom } from "../useChathooks";
-import { copyToClipboard, useMobileScreen } from "@/app/utils";
+import { useScrollToBottom } from "../hooks/useChathooks";
+import { copyToClipboard } from "@/app/utils";
 
 import { CHAT_PAGE_SIZE } from "@/app/constant";
 import Locale from "@/app/locales";
-import { ChatContext } from "../main";
 import { useMessageActions } from "./useMessageActions";
+import { useChatActions } from "../hooks/useChatContext";
 
 export type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -23,77 +32,47 @@ interface ChatMessageListProps {
 	hasNextPage: boolean;
 }
 
-export const MessageList: React.FC<ChatMessageListProps> = ({
-	session,
-	messages,
-	isLoading,
-	hasNextPage,
-}) => {
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		scrollRef,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
+export const MessageList: React.FC<ChatMessageListProps> = memo(
+	({ session, messages, isLoading, hasNextPage }) => {
+		const { setShowPromptModal } = useChatActions();
 
-	const inputRef = useRef<HTMLTextAreaElement>(null);
-	const isMobileScreen = useMobileScreen();
+		const {
+			handleUserStop,
+			handleDelete,
+			handlePinMessage,
+			handleResend,
+			handlePlayAudio,
+		} = useMessageActions(session, setShowPromptModal);
 
-	// const [isLoading, setIsLoading] = useState(false);
-	// const [hasNextPage, setHasNextPage] = useState(true);
+		const context = useMemo(() => {
+			return session.mask.hideContext ? [] : session.mask.context.slice();
+		}, [session.mask.context, session.mask.hideContext]);
 
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
-	const {
-		handleUserStop,
-		handleDelete,
-		handlePinMessage,
-		handleResend,
-		handlePlayAudio,
-	} = useMessageActions(session, setShowPromptModal);
+		const clearContextIndex = useMemo(() => {
+			const clearIndex = session.clearContextIndex ?? -1;
+			if (clearIndex < 0) return -1;
 
-	const context: RenderMessage[] = useMemo(() => {
-		return session.mask.hideContext ? [] : session.mask.context.slice();
-	}, [session.mask.context, session.mask.hideContext]);
-	const [msgRenderIndex, _setMsgRenderIndex] = useState(
-		Math.max(0, messages.length - CHAT_PAGE_SIZE),
-	);
+			const adjustedIndex =
+				clearIndex +
+				context.length -
+				Math.max(0, messages.length - CHAT_PAGE_SIZE);
+			return adjustedIndex >= 0 ? adjustedIndex : -1;
+		}, [session.clearContextIndex, context.length, messages.length]);
+		const previousMessagesRef = useRef(messages);
 
-	const clearContextIndex =
-		(session.clearContextIndex ?? -1) >= 0
-			? session.clearContextIndex! + context.length - msgRenderIndex
-			: -1;
+		useEffect(() => {
+			previousMessagesRef.current = messages;
+		}, [messages]);
 
-	return (
-		<>
-			{/* {session.mask.modelConfig.model == "midjourney" && <MJFloatButton />} */}
-			{messages.map((message, i) => {
-				const isUser = message.role === "user";
-				const mjstatus = message.mjstatus;
-				const actions = mjstatus?.action;
+		const previousMessages = previousMessagesRef.current;
 
-				const isContext = i < context.length;
-				const showActions =
-					i > 0 &&
-					!(message.preview || message.content.length === 0) &&
-					!isContext;
-				const showTyping = message.preview || message.streaming;
-
-				const shouldShowClearContextDivider = i === clearContextIndex - 1;
-
-				return (
+		return (
+			<>
+				{previousMessages.map((message, i) => (
 					<Fragment key={message.id}>
 						<MessageItem
-							key={message.id}
 							i={i}
 							session={session}
-							isMobileScreen={isMobileScreen}
 							context={context}
 							clearContextIndex={clearContextIndex}
 							message={message}
@@ -104,8 +83,24 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 							onPlayAudio={handlePlayAudio}
 						/>
 					</Fragment>
-				);
-			})}
-		</>
-	);
-};
+				))}
+				{messages.length > previousMessages.length && (
+					<Fragment key={messages[messages.length - 1].id}>
+						<MessageItem
+							i={messages.length - 1}
+							session={session}
+							context={context}
+							clearContextIndex={clearContextIndex}
+							message={messages[messages.length - 1]}
+							onUserStop={handleUserStop}
+							onResend={handleResend}
+							onDelete={handleDelete}
+							onPinMessage={handlePinMessage}
+							onPlayAudio={handlePlayAudio}
+						/>
+					</Fragment>
+				)}
+			</>
+		);
+	},
+);

@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback, useEffect, useContext } from "react";
 import { ChatContext } from "../main";
 import { useUserStore } from "@/app/store"; // 确保路径正确
 import { RenderMessage } from "./MessageList"; // 确保路径正确，RenderMessage 应从 MessageList 导入
-import { UpdateChatMessages } from "@/app/services/chatservice";
 import { getChat } from "@/app/api/backend/chat";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
@@ -14,7 +13,7 @@ export const useChatPagination = (
 	const [currentPage, setCurrentPage] = useState(1);
 	const [hasNextPage, setHasNextPage] = useState(true);
 	const [messages2, setMessages] = useState<ChatMessage[]>([]);
-	const userStore = useUserStore();
+	const userStore = useUserStore.getState();
 	const fetchMessages = useCallback(
 		async (page: number) => {
 			// 这里应该是获取消息的 API 调用

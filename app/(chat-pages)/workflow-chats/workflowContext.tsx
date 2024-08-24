@@ -29,6 +29,8 @@ interface WorkflowContextType {
 	// workflowSessions: workflowChatSession[];
 	workflowSessionsIndex: { [key: string]: any[] };
 	selectedId: string;
+}
+interface WorkflowActionsContextType {
 	setSelectedId: (index: string) => void;
 	addWorkflowGroup: () => void;
 	deleteWorkflowGroup: (groupId: number) => void;
@@ -48,6 +50,8 @@ interface WorkflowContextType {
 }
 
 export const WorkflowContext = createContext<WorkflowContextType | null>(null);
+export const WorkflowActionsContext =
+	createContext<WorkflowActionsContextType | null>(null);
 
 export const WorkflowProvider = ({
 	children,
@@ -309,12 +313,8 @@ export const WorkflowProvider = ({
 	};
 
 	return (
-		<WorkflowContext.Provider
+		<WorkflowActionsContext.Provider
 			value={{
-				// workflowGroups,
-				selectedId,
-				// workflowSessions,
-				workflowSessionsIndex,
 				setSelectedId,
 				fetchNewWorkflowGroup,
 				addWorkflowGroup: addWorkflowGroupHandler,
@@ -322,24 +322,37 @@ export const WorkflowProvider = ({
 				addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
-
 				getworkFlowSessions,
 				updateWorkflowChatGroup,
 			}}
 		>
-			{contextHolder}
-			{children}
-		</WorkflowContext.Provider>
+			<WorkflowContext.Provider
+				value={{
+					// workflowGroups,
+					selectedId,
+					// workflowSessions,
+					workflowSessionsIndex,
+				}}
+			>
+				{contextHolder}
+				{children}
+			</WorkflowContext.Provider>
+		</WorkflowActionsContext.Provider>
 	);
 };
 
 // 自定义钩子
 export const useWorkflowContext = () => {
 	const context = useContext(WorkflowContext);
+	const actions = useContext(WorkflowActionsContext);
+
 	if (context === null) {
 		throw new Error(
 			"useWorkflowContext must be used within a WorkflowProvider",
 		);
 	}
-	return context;
+	return {
+		...context,
+		...actions,
+	};
 };

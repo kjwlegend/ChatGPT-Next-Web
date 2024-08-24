@@ -1,6 +1,6 @@
 import { useChatStore } from "@/app/store";
 
-import { ChatMessage, ChatSession} from "@/app/types/chat";
+import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import { useState, useEffect, HtmlHTMLAttributes } from "react";
 import styles from "./chats.module.scss";
@@ -23,7 +23,6 @@ import { Tooltip } from "antd";
 export const MjActions = (props: { session: ChatSession; taskid: string }) => {
 	// 确保MjAction函数可以接收session作为参数
 	const { session, taskid } = props;
-	const chatStore = useChatStore();
 
 	const [loadings, setLoadings] = useState<Record<string, boolean>>({});
 
@@ -133,7 +132,7 @@ export const MJPanel = ({ open }: { open: boolean }) => {
 	const [stylizeValue, setStylizeValue] = useState(500);
 	const [model, setModel] = useState("v6");
 	const [seed, setSeed] = useState("");
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	const session = chatStore.currentSession();
 
 	useEffect(() => {

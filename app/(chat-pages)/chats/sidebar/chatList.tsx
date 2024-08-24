@@ -1,6 +1,6 @@
 import styles from "../home.module.scss";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, memo } from "react";
 
 import { ChatItem } from "./chatItem";
 
@@ -12,13 +12,13 @@ interface ChatListProps {
 	onChatItemEdit?: (id: string) => void;
 }
 
-export function ChatList({
+const ChatList = ({
 	narrow,
 	chatSessions,
 	onChatItemClick,
 	onChatItemDelete,
 	onChatItemEdit,
-}: ChatListProps) {
+}: ChatListProps) => {
 	const [chatlist, setChatlist] = useState(chatSessions ? chatSessions : []);
 
 	console.log("debug: chatsessions", chatlist);
@@ -67,4 +67,11 @@ export function ChatList({
 			)}
 		</div>
 	);
-}
+};
+
+const updateCompare = (prevProps: ChatListProps, nextProps: ChatListProps) => {
+	// 比较props中chatsessions.length , 如不变化则不重新渲染
+	return prevProps.chatSessions.length === nextProps.chatSessions.length;
+};
+
+export default memo(ChatList, updateCompare);

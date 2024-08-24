@@ -9,8 +9,8 @@ import { TarotPosition } from "../libs/TarotPosition";
 import { Collapse, Switch } from "antd";
 import { CollapseProps } from "antd/lib/collapse";
 import { LoadingIcon2 } from "@/app/icons";
-import { useMobileScreen } from "@/app/utils";
 import GetMoreDrawsModal from "./GetDraws";
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 const Spread: React.FC = () => {
 	const TarotStore = useTarotStore();

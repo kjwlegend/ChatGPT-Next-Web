@@ -153,6 +153,8 @@ const darkTheme: ThemeConfig = {
 	},
 };
 import Head from "next/head";
+import { useMobileScreen } from "./hooks/useMobileScreen";
+import { AppGeneralContext } from "./contexts/AppContext";
 export default function RootLayout({
 	children,
 }: {
@@ -163,6 +165,9 @@ export default function RootLayout({
 	const config = useAppConfig();
 	const updateConfig = config.update;
 	const theme = config.theme === "dark" ? darkTheme : lightTheme;
+
+	const isMobile = useMobileScreen();
+	console.log("ismobile", isMobile);
 
 	return (
 		<html lang="en">
@@ -202,11 +207,17 @@ export default function RootLayout({
 			</head>
 			<body>
 				<section className="appcontainer">
-					<ConfigProvider theme={theme}>
-						<Header />
-						{children}
-						<Footer />
-					</ConfigProvider>
+					<AppGeneralContext.Provider
+						value={{
+							isMobile,
+						}}
+					>
+						<ConfigProvider theme={theme}>
+							<Header />
+							{children}
+							<Footer />
+						</ConfigProvider>
+					</AppGeneralContext.Provider>
 				</section>
 			</body>
 

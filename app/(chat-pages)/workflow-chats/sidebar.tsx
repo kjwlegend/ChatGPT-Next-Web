@@ -13,7 +13,7 @@ import { WorkflowGroup } from "../../store/workflow";
 import { WorkflowContext, useWorkflowContext } from "./workflowContext";
 import { useSimpleWorkflowService } from "@/app/hooks/useSimpleWorkflowHook";
 import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
-import { ChatList } from "@/app/(chat-pages)/chats/sidebar/chatList";
+import ChatList from "@/app/(chat-pages)/chats/sidebar/chatList";
 import { WorkflowModalConfig } from "./modal";
 export function WorkflowSidebar(props: { className?: string }) {
 	const {
@@ -33,7 +33,8 @@ export function WorkflowSidebar(props: { className?: string }) {
 	const [editWrokflow, setEditWorkflow] = useState<WorkflowGroup | null>(null);
 	const [showWorkflowModal, setShowWorkflowModal] = useState(false);
 	const [agentList, setagentList] = useState<any[]>([]);
-	const handleItemEditClick = (workflowgroupId: string) => {
+
+	const handleItemEditClick = useCallback((workflowgroupId: string) => {
 		console.log("workflow group id", workflowgroupId);
 		const currentWorkflowGroup = WorkflowGroupData.find(
 			(item) => item.id === workflowgroupId,
@@ -48,7 +49,7 @@ export function WorkflowSidebar(props: { className?: string }) {
 		setagentList(currentWorkflowGroupSessions);
 		console.log("currentworkflowGroupSessions", currentWorkflowGroupSessions);
 		setShowWorkflowModal(true);
-	};
+	}, []);
 
 	return (
 		<>

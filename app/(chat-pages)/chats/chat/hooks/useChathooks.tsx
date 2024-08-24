@@ -27,7 +27,7 @@ import { ChatMessage } from "@/app/types/chat";
 
 import Locale from "@/app/locales";
 
-import styles from "./chats.module.scss";
+import styles from "../chats.module.scss";
 
 export function useSubmitHandler() {
 	const config = useAppConfig();
@@ -75,7 +75,7 @@ export function useSubmitHandler() {
 }
 
 export function ClearContextDivider(props: { sessionId?: string }) {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	const sessionId = props.sessionId;
 
 	return (

@@ -113,7 +113,7 @@ import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
-} from "../../useChathooks";
+} from "../../hooks/useChathooks";
 import { ChatContext } from "../../main";
 // import { ChatContext } from "@/app/workflow-chats/context";
 import {

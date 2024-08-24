@@ -3,7 +3,7 @@ import { useAccessStore, useAppConfig, useChatStore } from "../store";
 
 import { Path } from "../constant";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import { createEmptyMask } from "../store/mask";
@@ -14,7 +14,7 @@ export const useChatService = () => {
 	const navigate = useNavigate();
 	const config = useAppConfig();
 
-	const [chatSessions, setChatSessions] = useState<any[]>([]);
+	const [chatSessions, setChatSessions] = useState<any[]>(sessionlist);
 
 	const loadMoreSessions = async (page: number) => {
 		const param = { limit: 20, page };
@@ -45,37 +45,40 @@ export const useChatService = () => {
 		};
 	}, [sessionlist, loadMoreSessions]);
 
-	const handleAddClick = () => {
+	const handleAddClick = useCallback(() => {
 		if (config.dontShowMaskSplashScreen) {
 			chatStore.newSession();
 			navigate(Path.Chat);
 		} else {
 			navigate(Path.NewChat);
 		}
-	};
+	}, []);
 
-	const handleChatItemClick = async (id: string) => {
+	const handleChatItemClick = useCallback(async (id: string) => {
 		const param = { limit: 60 };
 		try {
 			const chatSessionList = await getChatSessionChats(param, id);
 			const chats = chatSessionList.data;
-			UpdateChatMessages(id, chats);
+			// UpdateChatMessages(id, chats);
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}
 		chatStore.selectSessionById(id);
 		navigate(Path.Chat);
-	};
+	}, []);
 
-	const handleChatItemDelete = async (id: number) => {
-		console.log("click delete", id);
-		try {
-			console.log("delete session", id);
-			await chatStore.deleteSession(id.toString());
-		} catch (error) {
-			console.log("Delete chat session error", error);
-		}
-	};
+	const handleChatItemDelete = useCallback(
+		async (id: number) => {
+			console.log("click delete", id);
+			try {
+				console.log("delete session", id);
+				await chatStore.deleteSession(id.toString());
+			} catch (error) {
+				console.log("Delete chat session error", error);
+			}
+		},
+		[chatStore],
+	);
 
 	return {
 		chatSessions,

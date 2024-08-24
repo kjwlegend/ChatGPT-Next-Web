@@ -6,6 +6,7 @@ import React, {
 	useEffect,
 	useState,
 	useRef,
+	memo,
 } from "react";
 import { useRouter } from "next/navigation";
 
@@ -46,10 +47,10 @@ import {
 } from "@/app/icons";
 
 // 自定义组件和工具函数
-import { ClearContextDivider } from "../useChathooks";
+import { ClearContextDivider } from "../hooks/useChathooks";
 import MjActions from "../midjourney";
 import { RenderMessage } from "./MessageList";
-import { copyToClipboard, selectOrCopy, useMobileScreen } from "@/app/utils";
+import { copyToClipboard, selectOrCopy } from "@/app/utils";
 import { ChatAction } from "../inputpanel/components/chatactions";
 import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";
 import { Avatar } from "@/app/components/avatar";
@@ -67,7 +68,6 @@ interface MessageItemProps {
 	session: ChatSession;
 	i: number;
 	context: RenderMessage[];
-	isMobileScreen: boolean;
 	clearContextIndex: number;
 	onUserStop?: (messageId: string) => void;
 	onResend?: (message: ChatMessage) => void;
@@ -86,35 +86,23 @@ const Markdown = dynamic(
 	},
 );
 
-export const MessageItem: React.FC<MessageItemProps> = ({
+const MessageItem: React.FC<MessageItemProps> = ({
 	message,
 	session,
 	i,
 	context,
 	clearContextIndex,
-	isMobileScreen,
 	onUserStop,
 	onResend,
 	onDelete,
 	onPinMessage,
 	onPlayAudio,
 }) => {
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		scrollRef,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
+	const [userInput, setUserInput] = useState("");
+	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
+	const chatStore = useChatStore.getState();
+	const userStore = useUserStore.getState();
 	const workflowStore = useWorkflowStore();
 	const config = useAppConfig();
 	const fontSize = config.fontSize;
@@ -123,8 +111,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	const sessionId = session.id;
 	const isworkflow = session.isworkflow;
 	const messages = session.messages;
-	const authHook = useAuth();
-	const { updateUserInfo } = authHook;
 
 	const messageText = getMessageTextContent(message);
 	const messageImages = getMessageImages(message);
@@ -241,7 +227,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 				<IconTooltipButton
 					text={Locale.Chat.Actions.Delete}
 					icon={<DeleteIcon />}
-					onClick={() => (onDelete ? onDelete(message.id ?? i) : null)}
+					onClick={() => (onDelete ? onDelete(message.id) : null)}
 					tooltipProps={{}}
 					shape="circle"
 				/>
@@ -347,11 +333,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 							}
 							onContextMenu={(e) => onRightClick(e, message)}
 							onDoubleClickCapture={() => {
-								if (!isMobileScreen) return;
 								setUserInput(messageText);
 							}}
 							fontSize={fontSize}
-							parentRef={scrollRef}
 							defaultShow={i >= messages.length - 6}
 						/>
 
@@ -457,176 +441,4 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 	);
 };
 
-export const AgentMessageItem: React.FC<MessageItemProps> = ({
-	message,
-	session,
-	i,
-	context,
-	isMobileScreen,
-	clearContextIndex,
-
-	// 其他属性和方法
-}) => {
-	// 你的其他逻辑和方法
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
-	const config = useAppConfig();
-	const fontSize = config.fontSize;
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		scrollRef,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
-
-	const authHook = useAuth();
-	const { updateUserInfo } = authHook;
-
-	const messageText = getMessageTextContent(message);
-	const isUser = message.role === "user";
-	const showTyping = message.preview || message.streaming;
-
-	const onRightClick = (e: any, message: ChatMessage) => {
-		if (selectOrCopy(e.currentTarget, messageText)) {
-			if (userInput.length === 0) {
-				setUserInput(messageText);
-			}
-
-			e.preventDefault();
-		}
-	};
-
-	const RenderedUserAvatar = useMemo(() => {
-		return (
-			<Avatar
-				avatar={userStore.user.avatar}
-				nickname={userStore.user.nickname}
-			/>
-		);
-	}, [userStore.user.avatar, userStore.user.nickname]);
-
-	return (
-		<Fragment key={message.id}>
-			{/* 消息容器 */}
-			<div
-				className={
-					isUser ? styles["chat-message-user"] : styles["chat-message"]
-				}
-			>
-				<div className={styles["chat-message-container"]}>
-					<div className={styles["chat-message-header"]}>
-						<div className={styles["chat-message-avatar"]}>
-							{/* {isUser ? RenderedUserAvatar : <MaskAvatar mask={session.mask} />} */}
-						</div>
-					</div>
-
-					<div className={styles["chat-message-item"]}>
-						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
-						{showTyping && (
-							<div className={styles["chat-message-status"]}>
-								{Locale.Chat.Typing}
-							</div>
-						)}
-						<div className={styles["chat-tool-message-container"]}>
-							{message.toolMessages &&
-								message.toolMessages.map((tool, index) => (
-									<div
-										className={styles["chat-message-tools-status"]}
-										key={index}
-									>
-										<div className={styles["chat-message-tools-name"]}>
-											<CheckmarkIcon
-												className={styles["chat-message-checkmark"]}
-											/>
-											{tool.toolName}:
-											<code className={styles["chat-message-tools-details"]}>
-												{tool.toolInput}
-											</code>
-										</div>
-									</div>
-								))}
-						</div>
-						<Markdown
-							content={messageText}
-							loading={
-								(message.preview || message.streaming) &&
-								messageText.length === 0 &&
-								!isUser
-							}
-							onContextMenu={(e) => onRightClick(e, message)}
-							onDoubleClickCapture={() => {
-								if (!isMobileScreen) return;
-								setUserInput(messageText);
-							}}
-							fontSize={fontSize}
-							parentRef={scrollRef}
-							defaultShow={true}
-						/>
-						{message.fileInfos && message.fileInfos.length > 0 && (
-							<nav
-								className={styles["chat-message-item-files"]}
-								style={
-									{
-										"--file-count": message.fileInfos.length,
-									} as React.CSSProperties
-								}
-							>
-								{message.fileInfos.map((fileInfo, index) => {
-									return (
-										<a
-											key={index}
-											href={fileInfo.filePath}
-											className={styles["chat-message-item-file"]}
-											target="_blank"
-										>
-											{fileInfo.originalFilename}
-										</a>
-									);
-								})}
-							</nav>
-						)}
-						{getMessageImages(message).length == 1 && (
-							<img
-								className={styles["chat-message-item-image"]}
-								src={getMessageImages(message)[0]}
-								alt=""
-							/>
-						)}
-						{getMessageImages(message).length > 1 && (
-							<div
-								className={styles["chat-message-item-images"]}
-								style={
-									{
-										"--image-count": getMessageImages(message).length,
-									} as React.CSSProperties
-								}
-							>
-								{getMessageImages(message).map((image, index) => {
-									return (
-										<img
-											className={styles["chat-message-item-image-multi"]}
-											key={index}
-											src={image}
-											alt=""
-										/>
-									);
-								})}
-							</div>
-						)}
-					</div>
-
-					<div className={styles["chat-message-notes"]}>
-						{Locale.Chat.IsContext ?? message.date.toLocaleString()}
-					</div>
-				</div>
-			</div>
-		</Fragment>
-	);
-};
+export default memo(MessageItem);

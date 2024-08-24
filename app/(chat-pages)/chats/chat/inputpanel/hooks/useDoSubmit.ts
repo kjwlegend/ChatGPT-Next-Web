@@ -34,8 +34,8 @@ export function useDoSubmit(
 	attachFiles: FileInfo[],
 	submitType: "chat" | "workflow" | "other" = "chat", // 根据需要定义类型
 ) {
-	const chatStore = useChatStore();
-	const userStore = useUserStore();
+	const chatStore = useChatStore.getState();
+	const userStore = useUserStore.getState();
 	const workflowStore = useWorkflowStore();
 	const authHook = useAuth();
 	const [messageApi, contextHolder] = message.useMessage();

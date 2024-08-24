@@ -17,13 +17,7 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { useChatStore, useAppConfig, DEFAULT_TOPIC } from "@/app/store";
 
 import { useNavigate } from "react-router-dom";
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "@/app/utils";
-
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 import { Path } from "@/app/constant";
 
 import Locale from "@/app/locales";
@@ -49,29 +43,27 @@ import { message, Switch } from "antd";
 
 import { SessionConfigModel } from "./common";
 
-import { ChatContext } from "./main";
 import MultiAgent, { MultiAgentChatSession } from "@/app/store/multiagents";
-import { LLMModelSwitch } from "./chatActions";
+import { LLMModelSwitch } from "./LLModelSwitch";
+import { AppGeneralContext } from "@/app/contexts/AppContext";
+import {
+	useChatActions,
+	useChatSetting,
+	useSessions,
+} from "./hooks/useChatContext";
 
 export function EditMessageModal(props: {
 	onClose: () => void;
 	index?: number;
-	session?: ChatSession;
+	session: ChatSession;
 	isworkflow: boolean;
 	MultiAgent?: boolean;
 }) {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 
-	let session: ChatSession;
-	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
+	const session = props.session;
 	const sessionId = session.id;
 
-	const [messages, setMessages] = useState(session.messages.slice());
 	const [topic, setTopic] = useState(session.topic);
 
 	return (
@@ -95,7 +87,6 @@ export function EditMessageModal(props: {
 						key="ok"
 						onClick={() => {
 							chatStore.updateSession(sessionId, () => {
-								// session.messages = messages;
 								session.topic = topic;
 							});
 							props.onClose();
@@ -132,7 +123,7 @@ const MaskModal = (props: {
 	setShowModal: (_: boolean) => void;
 	MultiAgent?: boolean;
 }) => {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	let session: ChatSession;
 	// isworkflow = true then, session use props.session. else use currentSession
 	if (props.isworkflow && props.session) {
@@ -162,7 +153,7 @@ export function PromptToast(props: {
 	index?: number;
 	session?: ChatSession;
 }) {
-	const chatStore = useChatStore();
+	const chatStore = useChatStore.getState();
 	let session: ChatSession;
 
 	// isworkflow = true then, session use props.session. else use currentSession
@@ -196,7 +187,7 @@ export function PromptToast(props: {
 // window header title
 
 type WindowHeaderTitleProps = {
-	session?: ChatSession;
+	session: ChatSession;
 	index?: number;
 	isworkflow: boolean;
 	MultiAgent?: boolean;
@@ -206,16 +197,10 @@ function WindowHeaderTitle({
 	session,
 	index,
 	isworkflow,
+	MultiAgent,
 }: WindowHeaderTitleProps) {
-	const chatStore = useChatStore();
-	const currentSession =
-		isworkflow && session ? session : chatStore.currentSession();
-	const sessionId = currentSession.id;
-	const config = useAppConfig();
-
-	const isMobileScreen = useMobileScreen();
-	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+	const chatStore = useChatStore.getState();
+	const currentSession = session;
 
 	const [isEditingMessage, setIsEditingMessage] = useState(false);
 
@@ -292,37 +277,18 @@ function AutoFlowSwitch({
 }
 
 function WindowActions(props: {
-	session?: ChatSession;
+	session: ChatSession;
 	index?: number;
 	isworkflow: boolean;
 }) {
-	const chatStore = useChatStore();
-	let session: ChatSession;
-	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
-	const sessionId = session.id;
+	const session = props.session;
 	const index = props.index ?? 0;
 
 	const config = useAppConfig();
 	const [showExport, setShowExport] = useState(false);
+	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 
-	const {
-		hitBottom,
-		setHitBottom,
-
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-	} = useContext(ChatContext);
-
-	const isMobileScreen = useMobileScreen();
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 	const clientConfig = useMemo(() => getClientConfig(), []);
 	const showMaxIcon =
 		!isMobileScreen && !clientConfig?.isApp && !props.isworkflow;
@@ -409,28 +375,15 @@ export function WindowHeader(props: {
 	const { _session, index, isworkflow, MultiAgent } = props;
 	// isworkflow = true then, session use props.session. else use currentSession
 
-	const [session, setsession] = useState(_session);
+	const session = useSessions();
 
-	useEffect(() => {
-		setsession(_session);
-	}, [_session]);
+	const hitBottom = false;
 
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-	} = useContext(ChatContext);
-
-	const isMobileScreen = useMobileScreen();
-	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
-
+	const { showPromptModal } = useChatSetting();
+	const { setShowPromptModal } = useChatActions();
 	const [isEditingMessage, setIsEditingMessage] = useState(false);
+
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
 	return (
 		<div className="window-header" data-tauri-drag-region>
@@ -466,48 +419,6 @@ export function WindowHeader(props: {
 				isworkflow={props.isworkflow}
 			/>
 		</div>
-	);
-}
-
-function DoulbeAgentWindowHeaderTitle({
-	session,
-	index,
-	isworkflow,
-}: WindowHeaderTitleProps) {
-	const chatStore = MultiAgent();
-	const currentSession = session ?? chatStore.currentSession();
-	const sessionId = currentSession.id;
-	const config = useAppConfig();
-
-	const isMobileScreen = useMobileScreen();
-	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
-
-	const [isEditingMessage, setIsEditingMessage] = useState(false);
-
-	return (
-		<>
-			<div className={`window-header-title ${styles["chat-body-title"]}`}>
-				<div
-					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
-					onClickCapture={() => setIsEditingMessage(true)}
-				>
-					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
-				</div>
-				<div className="window-header-sub-title">
-					{Locale.Chat.SubTitle(currentSession.messages.length)}
-				</div>
-			</div>
-			{isEditingMessage && (
-				<EditMessageModal
-					onClose={() => {
-						setIsEditingMessage(false);
-					}}
-					isworkflow={isworkflow}
-					// session={currentSession}
-				/>
-			)}
-		</>
 	);
 }
 
