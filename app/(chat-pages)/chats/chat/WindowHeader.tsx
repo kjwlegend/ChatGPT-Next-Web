@@ -41,7 +41,7 @@ import { getClientConfig } from "@/app/config/client";
 
 import { message, Switch } from "antd";
 
-import { SessionConfigModel } from "./common";
+import { SessionConfigModal } from "./SessionConfigModal";
 
 import MultiAgent, { MultiAgentChatSession } from "@/app/store/multiagents";
 import { LLMModelSwitch } from "./LLModelSwitch";
@@ -124,18 +124,12 @@ const MaskModal = (props: {
 	MultiAgent?: boolean;
 }) => {
 	const chatStore = useChatStore.getState();
-	let session: ChatSession;
-	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
+	const session = props.session;
 
 	return (
 		<div className={styles["prompt-toast"]} key="prompt-toast">
 			{props.showModal && (
-				<SessionConfigModel
+				<SessionConfigModal
 					onClose={() => props.setShowModal(false)}
 					session={session}
 					index={props.index}
@@ -151,17 +145,11 @@ export function PromptToast(props: {
 	setShowModal: (_: boolean) => void;
 	isworkflow: boolean;
 	index?: number;
-	session?: ChatSession;
+	session: ChatSession;
 }) {
 	const chatStore = useChatStore.getState();
-	let session: ChatSession;
 
-	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
+	const session = props.session;
 	const sessionId = session.id;
 
 	const context = session.mask?.context;

@@ -171,7 +171,6 @@ export function Inputpanel(props: {
 	const { hitBottom, showPromptModal, enableAutoFlow } = useChatSetting();
 
 	const { submitKey, shouldSubmit } = useSubmitHandler();
-	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();
 
 	const textareaMinHeight = userImage ? 121 : 68;
 
@@ -189,7 +188,6 @@ export function Inputpanel(props: {
 		setAttachImages([]);
 		setAttachFiles([]);
 		if (!isMobileScreen) inputRef.current?.focus();
-		setAutoScroll(false);
 	};
 
 	const onInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -319,8 +317,6 @@ export function Inputpanel(props: {
 					onInput={(e) => onInput(e.currentTarget.value)}
 					value={userInput}
 					onKeyDown={onInputKeyDown}
-					onFocus={scrollDomToBottom}
-					onClick={scrollDomToBottom}
 					onPaste={handlePaste}
 					rows={inputRows}
 					autoFocus={autoFocus}

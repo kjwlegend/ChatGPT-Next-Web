@@ -10,12 +10,10 @@ import React, {
 	useEffect,
 } from "react";
 import { useMobileScreen } from "@/app/hooks/useMobileScreen";
-import { useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import MessageItem from "./MessageItem";
 
-import { useScrollToBottom } from "../hooks/useChathooks";
 import { copyToClipboard } from "@/app/utils";
 
 import { CHAT_PAGE_SIZE } from "@/app/constant";
@@ -68,7 +66,7 @@ export const MessageList: React.FC<ChatMessageListProps> = memo(
 
 		return (
 			<>
-				{previousMessages.map((message, i) => (
+				{messages.map((message, i) => (
 					<Fragment key={message.id}>
 						<MessageItem
 							i={i}
@@ -84,22 +82,6 @@ export const MessageList: React.FC<ChatMessageListProps> = memo(
 						/>
 					</Fragment>
 				))}
-				{messages.length > previousMessages.length && (
-					<Fragment key={messages[messages.length - 1].id}>
-						<MessageItem
-							i={messages.length - 1}
-							session={session}
-							context={context}
-							clearContextIndex={clearContextIndex}
-							message={messages[messages.length - 1]}
-							onUserStop={handleUserStop}
-							onResend={handleResend}
-							onDelete={handleDelete}
-							onPinMessage={handlePinMessage}
-							onPlayAudio={handlePlayAudio}
-						/>
-					</Fragment>
-				)}
 			</>
 		);
 	},

@@ -54,6 +54,7 @@ import styles from "./chats.module.scss";
 import { handleChatCallbacks } from "@/app/services/chatService";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import { useMessages, useSessions } from "./hooks/useChatContext";
+import { last } from "cheerio/lib/api/traversing";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -66,8 +67,8 @@ export function Chatbody(props: {
 
 	const { _session, index, isworkflow } = props;
 
-	const messages = useMessages();
 	const session = useSessions();
+	const messages = useMessages();
 
 	// if props._session is not provided, use current session
 	const sessionId = session.id;
@@ -77,6 +78,34 @@ export function Chatbody(props: {
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const scrollRef = useRef<HTMLDivElement>(null);
+
+	const [autoScroll, setAutoScroll] = useState(true);
+
+	const scrollToBottom = () => {
+		const scrollElement = scrollRef.current;
+		if (scrollElement) {
+			const scrollHeight = scrollElement.scrollHeight;
+			if (scrollHeight > scrollElement.scrollTop + scrollElement.clientHeight) {
+				const scroll = () => {
+					try {
+						scrollElement.scrollTo({
+							top: scrollHeight,
+							behavior: "smooth",
+						});
+					} catch (error) {
+						console.error("Failed to scroll to bottom:", error);
+					}
+				};
+				requestAnimationFrame(scroll);
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (autoScroll) {
+			scrollToBottom();
+		}
+	}, [autoScroll, messages]);
 
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
@@ -136,8 +165,6 @@ export function Chatbody(props: {
 		}
 	}, [session.mask.context, session.mask.hideContext, session.mask.intro]);
 
-	console.log("context", context);
-
 	const renderMessages = useMemo(() => {
 		const sortedMessages = [...messages].sort(
 			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
@@ -159,7 +186,6 @@ export function Chatbody(props: {
 					: [],
 			);
 
-		console.log("contextMessage", contextMessage);
 		return contextMessage;
 	}, [context, isLoading, messages, session.lastUpdateTime]);
 
@@ -173,11 +199,12 @@ export function Chatbody(props: {
 			renderMessages.length,
 		);
 		console.log(
+			"msgRenderIndex",
+			msgRenderIndex,
 			"endRenderIndex",
 			endRenderIndex,
-			msgRenderIndex,
-			renderMessages,
 		);
+
 		return renderMessages.slice(msgRenderIndex, endRenderIndex);
 	}, [msgRenderIndex, renderMessages]);
 
@@ -222,7 +249,7 @@ export function Chatbody(props: {
 		// // 更新是否触碰到底部的状态
 		// setHitBottom(isHitBottom);
 		// // 更新是否自动滚动到底部的状态
-		// setAutoScroll(isHitBottom);
+		setAutoScroll(isHitBottom);
 	}, []);
 
 	const checkScrollAndFetchMessages = (e: HTMLElement) => {

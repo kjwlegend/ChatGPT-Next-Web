@@ -42,7 +42,6 @@ import styles from "./chats.module.scss";
 
 import { WindowHeader } from "./WindowHeader";
 
-import { useScrollToBottom } from "./hooks/useChathooks";
 import { useNavigate } from "react-router-dom";
 import { workflowChatSession } from "@/app/store/workflow";
 import { createContext } from "vm";
@@ -82,9 +81,6 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 
 	const session = _session;
 	const sessionId = session.id;
-
-	const { autoScroll, setAutoScroll, scrollDomToBottom, scrollRef } =
-		useScrollToBottom();
 
 	return (
 		<ChatProvider _session={_session}>

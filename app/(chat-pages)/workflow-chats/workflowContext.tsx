@@ -19,7 +19,6 @@ import {
 	deleteWorkflowSessionChatGroup,
 	updateWorkflowSessionChatGroupOrder,
 } from "@/app/services/api/chats";
-import { updateChatSessions } from "@/app/services/chatservice";
 import { useMaskStore } from "@/app/store/mask";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
@@ -292,14 +291,13 @@ export const WorkflowProvider = ({
 			if (sessionIds) {
 				for (const session of sessionIds) {
 					try {
-						const res = await getSingleChatSession(session);
-						sessions.push(res);
+						// const res = await getSingleChatSession(session);
+						// sessions.push(res);
 					} catch (error) {
 						console.error("Error fetching chat session details:", error);
 					}
 				}
 			}
-			updateChatSessions(sessions);
 
 			const newGroup = {
 				id: groupId,

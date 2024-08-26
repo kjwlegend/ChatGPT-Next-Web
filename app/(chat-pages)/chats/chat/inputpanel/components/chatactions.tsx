@@ -108,17 +108,6 @@ import { useMaskStore } from "@/app/store/mask";
 import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
 import Image from "next/image";
 
-import { createChat, CreateChatData } from "@/app/api/backend/chat";
-import useAuth from "@/app/hooks/useAuth";
-import { message } from "antd";
-
-import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "../../hooks/useChathooks";
-import { ChatContext } from "../../main";
-// import { ChatContext } from "@/app/workflow-chats/context";
 import {
 	startSpeechToText,
 	convertTextToSpeech,
@@ -162,7 +151,6 @@ export function ChatAction(props: {
 	});
 
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
-	console.log(isMobileScreen, "mobile screen from chataction");
 
 	const updateWidth = useCallback(() => {
 		if (!iconRef.current || !textRef.current) return;

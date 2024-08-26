@@ -59,6 +59,7 @@ import type { RadioChangeEvent } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useAllModels } from "@/app/utils/hooks";
 import { MultiAgentChatSession } from "@/app/store/multiagents";
+import { Chat } from "../chat/main";
 
 const { TextArea } = AntdInput;
 
@@ -245,9 +246,9 @@ export function ContextPrompts(props: {
 							<div ref={provided.innerRef} {...provided.droppableProps}>
 								{context.map((c, i) => (
 									<Draggable
-										draggableId={c.id || i.toString()}
+										draggableId={`${c.id}-${i.toString()}`}
 										index={i}
-										key={c.id}
+										key={`${c.id}-${i.toString()}`}
 									>
 										{(provided) => (
 											<div
@@ -258,6 +259,7 @@ export function ContextPrompts(props: {
 												<ContextPromptItem
 													index={i}
 													prompt={c}
+													key={c.id || i.toString()}
 													update={(prompt) => updateContextPrompt(i, prompt)}
 													remove={() => removeContextPrompt(i)}
 												/>
@@ -331,6 +333,10 @@ export function MaskConfig(props: {
 		setSessionData(props.session);
 	}, [props.session]);
 
+	// useEffect(() => {
+	// 	console.log("sessionData updated:", sessionData);
+	// }, [sessionData]);
+
 	useEffect(() => {
 		props.onSave(sessionData);
 	}, [props.onSave, sessionData]);
@@ -358,6 +364,7 @@ export function MaskConfig(props: {
 	const globalConfig = useAppConfig();
 
 	const handleSetSessionData = (key: string, value: any) => {
+		console.log("handleSetSessionData", key, value);
 		setSessionData((prev) => ({ ...prev, [key]: value }));
 	};
 
@@ -391,36 +398,22 @@ export function MaskConfig(props: {
 					subTitle={sessionData.memoryPrompt || Locale.Memory.EmptyContent}
 				></ListItem>
 			) : null}
-		</List>
-	);
 
-	const PromptsManage = (
-		<ContextPrompts
-			context={props.mask.context}
-			updateContext={(updater) => {
-				const context = props.mask.context.slice();
-				updater(context);
-				props.updateMask((mask) => (mask.context = context));
-			}}
-		/>
-	);
-
-	const RolesManage = (
-		<List>
 			<ListItem title={Locale.Mask.Config.Name}>
 				<input
 					type="text"
-					value={props.mask.name}
+					value={sessionData.mask.name}
 					onInput={(e) =>
-						props.updateMask((mask) => {
-							mask.name = e.currentTarget.value;
+						handleSetSessionData("mask", {
+							...sessionData.mask,
+							name: e.currentTarget.value,
 						})
 					}
 				></input>
 			</ListItem>
 			<ListItem title={"欢迎语"}>
 				<textarea
-					value={props.mask.intro}
+					value={sessionData.mask.intro}
 					rows={3}
 					style={{
 						width: "50%",
@@ -429,34 +422,24 @@ export function MaskConfig(props: {
 						borderRadius: "5px",
 					}}
 					onInput={(e) =>
-						props.updateMask((mask) => {
-							mask.intro = e.currentTarget.value;
+						handleSetSessionData("mask", {
+							...sessionData.mask,
+							intro: e.currentTarget.value,
 						})
 					}
 				></textarea>
 			</ListItem>
-			<ListItem title={Locale.Mask.Config.category}>
-				<select
-					value={props.mask.category}
-					onChange={(e) =>
-						props.updateMask((mask) => {
-							mask.category = e.currentTarget.value;
-						})
-					}
-				>
-					{Object.values(MaskCategory).map((category) => (
-						<option key={category.key} value={category.value}>
-							{category.value}
-						</option>
-					))}
-				</select>
-			</ListItem>
+
 			<ListItem title={Locale.Settings.Model}>
 				<Select
-					value={props.mask.modelConfig.model}
+					value={sessionData.mask.modelConfig.model}
 					onChange={(e) => {
-						props.updateMask((mask) => {
-							mask.modelConfig.model = e.currentTarget.value as any;
+						handleSetSessionData("mask", {
+							...sessionData.mask,
+							modelConfig: {
+								...sessionData.mask.modelConfig,
+								model: e.currentTarget.value as any,
+							},
 						});
 					}}
 				>
@@ -469,16 +452,17 @@ export function MaskConfig(props: {
 						))}
 				</Select>
 			</ListItem>
-			<ListItem
+			{/* <ListItem
 				title={Locale.Mask.Config.HideContext.Title}
 				subTitle={Locale.Mask.Config.HideContext.SubTitle}
 			>
 				<input
 					type="checkbox"
-					checked={props.mask.hideContext}
+					checked={sessionData.mask.hideContext}
 					onChange={(e) => {
-						props.updateMask((mask) => {
-							mask.hideContext = e.currentTarget.checked;
+						handleSetSessionData("mask", {
+							...sessionData.mask,
+							hideContext: e.currentTarget.checked,
 						});
 					}}
 				></input>
@@ -523,8 +507,26 @@ export function MaskConfig(props: {
 						}}
 					></input>
 				</ListItem>
-			) : null}
+			) : null} */}
 		</List>
+	);
+
+	const PromptsManage = (
+		<ContextPrompts
+			context={sessionData.mask.context}
+			updateContext={(updater) => {
+				const context = sessionData.mask.context.slice();
+				updater(context);
+				setSessionData((prevSessionData) => ({
+					...prevSessionData,
+					mask: {
+						//TODO: multiple agents 有bug 待修复
+						...prevSessionData.mask,
+						context: context,
+					},
+				}));
+			}}
+		/>
 	);
 
 	const AdvanceSetting = (
@@ -547,11 +549,7 @@ export function MaskConfig(props: {
 					label: "对话设置",
 					children: ChatSessionManage,
 				},
-				{
-					key: "1",
-					label: "角色基础",
-					children: RolesManage,
-				},
+
 				{
 					key: "2",
 					label: "提示词配置",

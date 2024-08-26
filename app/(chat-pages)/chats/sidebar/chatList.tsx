@@ -29,6 +29,7 @@ const ChatList = ({
 	const [selectedChatId, setSelectedChatId] = useState<string | null>(null); // 管理选中的聊天项
 
 	const handleChatItemClick = (id: string) => {
+		console.log("debug: handleChatItemClick", id);
 		setSelectedChatId(id); // 更新选中的聊天项
 		onChatItemClick(id); // 调用外部的点击处理函数
 	};

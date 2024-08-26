@@ -17,12 +17,9 @@ import { Loading3QuartersOutlined, ToolOutlined } from "@ant-design/icons";
 import { useAppConfig } from "@/app/store";
 import { useChatStore, useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
-import { ChatContext } from "../main";
-import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";
 
 // UI组件和图标
-import { IconButton } from "@/app/components/button";
 import {
 	List,
 	ListItem,
@@ -124,6 +121,10 @@ const MessageItem: React.FC<MessageItemProps> = ({
 	const shouldShowClearContextDivider = i === clearContextIndex - 1;
 
 	const [messageApi, contextHolder] = messagepop.useMessage();
+
+	useEffect(() => {
+		console.log("MessageItem rendered", message.content);
+	}, [message]);
 
 	useEffect(() => {
 		if (
@@ -441,4 +442,21 @@ const MessageItem: React.FC<MessageItemProps> = ({
 	);
 };
 
-export default memo(MessageItem);
+const compareRerender = (
+	prevProps: MessageItemProps,
+	nextProps: MessageItemProps,
+) => {
+	const previousMessagesConntent = prevProps.message.content;
+	const nextMessagesConntent = nextProps.message.content;
+	const compareMessage =
+		prevProps.message.content === nextProps.message.content &&
+		prevProps.message.date === nextProps.message.date &&
+		prevProps.message.id === nextProps.message.id &&
+		prevProps.message.role === nextProps.message.role &&
+		prevProps.message.lastUpdateTime === nextProps.message.lastUpdateTime;
+
+	return compareMessage;
+};
+// export default memo(MessageItem, compareRerender);
+
+export default MessageItem;

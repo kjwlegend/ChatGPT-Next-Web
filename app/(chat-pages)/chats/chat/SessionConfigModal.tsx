@@ -67,26 +67,25 @@ import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 // import { cloneDeep } from "lodash";
 
-export function SessionConfigModel(props: {
+export function SessionConfigModal(props: {
 	onClose: () => void;
 	index?: number;
 	session?: ChatSession;
 	isworkflow: boolean;
 }) {
 	const chatStore = useChatStore.getState();
-	let session: ChatSession;
-	// isworkflow = true then, session use props.session. else use currentSession
-	if (props.isworkflow && props.session) {
-		session = props.session;
-	} else {
-		session = chatStore.currentSession();
-	}
+	const session = props.session || chatStore.currentSession();
+	const index = props.index || chatStore.sessions.indexOf(session);
 	const sessionId = session.id;
 
 	const maskStore = useMaskStore();
 	// 用于保存子组件的 session 数据
 	const [childSessionData, setChildSessionData] =
 		React.useState<ChatSession>(session);
+
+	const handleOnSave = (e: any) => {
+		setChildSessionData(e);
+	};
 
 	const handleSave = () => {
 		chatStore.updateSession(
@@ -133,14 +132,14 @@ export function SessionConfigModel(props: {
 					updateMask={(updater) => {
 						const mask = { ...session.mask };
 						updater(mask);
-						chatStore.updateSession(
-							sessionId,
-							(session) => (session.mask = mask),
-							false,
-						);
+						// chatStore.updateSession(
+						// 	sessionId,
+						// 	(session) => (session.mask = mask),
+						// 	false,
+						// );
 					}}
 					session={session}
-					onSave={setChildSessionData}
+					onSave={handleOnSave}
 					shouldSyncFromGlobal
 				></MaskConfig>
 			</Modal>

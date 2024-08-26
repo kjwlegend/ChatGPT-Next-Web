@@ -15,12 +15,9 @@ import {
 } from "@/app/components/ui-lib";
 import { IconButton } from "@/app/components/button";
 
-import {
-	copyToClipboard,
-	downloadAs,
-	getMessageImages,
-	useMobileScreen,
-} from "@/app/utils";
+import { copyToClipboard, downloadAs, getMessageImages } from "@/app/utils";
+
+import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import CopyIcon from "@/app/icons/copy.svg";
 import LoadingIcon from "@/app/icons/three-dots.svg";
@@ -286,7 +283,7 @@ export function RenderExport(props: {
 			return {
 				id: i.toString(),
 				role: role as any,
-				content: role === "user" ? (v.textContent ?? "") : v.innerHTML,
+				content: role === "user" ? v.textContent ?? "" : v.innerHTML,
 				date: "",
 			};
 		});

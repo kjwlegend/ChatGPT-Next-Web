@@ -64,7 +64,6 @@ import {
 	copyToClipboard,
 	selectOrCopy,
 	autoGrowTextArea,
-	useMobileScreen,
 	getMessageTextContent,
 	getMessageImages,
 	isVisionModel,
@@ -110,13 +109,6 @@ import useAuth from "@/app/hooks/useAuth";
 import { message } from "antd";
 
 import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "../../hooks/useChathooks";
-import { ChatContext } from "../../main";
-// import { ChatContext } from "@/app/workflow-chats/context";
-import {
 	startSpeechToText,
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
@@ -132,7 +124,6 @@ import {
 import { Dropdown, MenuProps, Checkbox, Divider } from "antd";
 import { type } from "os";
 import { usePluginStore } from "@/app/store/plugin";
-import { submitChatMessage } from "@/app/services/chatservice";
 
 import { compressImage } from "@/app/utils/chat/chat";
 import { ClientApi } from "@/app/client/api";

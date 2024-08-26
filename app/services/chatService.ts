@@ -117,9 +117,6 @@ export function handleChatCallbacks(
 			if (message) {
 				botMessage.content = message;
 			}
-			// chatStoreState.updateCurrentSession((session) => {
-			// 	session.messages = session.messages.concat();
-			// });
 			if (onUpdateCallback) {
 				onUpdateCallback(message);
 			}
@@ -198,8 +195,6 @@ export function sendChatMessage(
 		...callbacks,
 	};
 
-	// console.log("chatoptions", chatOptions);
-
 	// 根据是否启用插件使用不同的API
 	const useToolAgent =
 		pluginConfig.enable && session.mask.usePlugins && allPlugins.length > 0;
@@ -220,5 +215,3 @@ export function sendChatMessage(
 		api.llm.chat(chatOptions);
 	}
 }
-
-import { estimateTokenLength } from "../utils/chat/token";

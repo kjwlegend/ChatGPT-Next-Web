@@ -168,6 +168,7 @@ export const useChatStore = createPersistStore(
 					console.log("select session by id", id, "sessionid", session.id);
 					return session.id === id;
 				});
+				console.log("index", index);
 
 				if (index !== -1) {
 					get().selectSession(index);
@@ -517,7 +518,6 @@ export const useChatStore = createPersistStore(
 					get().updateSession(
 						sessionId,
 						(session: ChatSession) => {
-							console.log("session: ", session);
 							const savedUserMessage = { ...userMessage, content: mContent };
 							session.messages = session.messages.concat([
 								savedUserMessage,
@@ -525,7 +525,7 @@ export const useChatStore = createPersistStore(
 							]);
 							session.responseStatus = false;
 							session.lastUpdateTime = Date.now();
-							set((state) => ({ currentSessionIndex: 0 }));
+							set((state) => ({ sessions: state.sessions }));
 						},
 						false,
 					);
@@ -534,10 +534,14 @@ export const useChatStore = createPersistStore(
 
 					// 发送函数回调
 					const onUpdateCallback = (message: string) => {
+						botMessage.content = message;
+						botMessage.lastUpdateTime = Math.random();
+
 						get().updateCurrentSession((session) => {
-							session.messages = [...session.messages];
+							session.messages = session.messages.concat();
+							console.log("onUpdateCallback", session.messages);
+							session.lastUpdateTime = Date.now();
 						});
-						// 其他需要在 onUpdate 时执行的逻辑
 					};
 
 					const onToolUpdateCallback = (
@@ -548,11 +552,13 @@ export const useChatStore = createPersistStore(
 						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
 						get().updateCurrentSession((session) => {
 							session.messages = [...session.messages];
+							session.lastUpdateTime = Date.now();
 						});
 					};
 
 					const onFinishCallback = async (message: string) => {
 						// updateSession(message);
+						console.log("message on finish", message);
 
 						// 其他需要在 onFinish 时执行的逻辑
 						const tokenCount = estimateTokenLength(message);
@@ -577,7 +583,7 @@ export const useChatStore = createPersistStore(
 							botMessage.isFinished = true;
 							botMessage.isTransfered = false;
 							botMessage.token_counts_total = tokenCount;
-							get().onNewMessage(botMessage);
+							// get().onNewMessage(botMessage);
 						}
 					};
 					// 调用发送消息函数
@@ -593,7 +599,7 @@ export const useChatStore = createPersistStore(
 							onFinishCallback,
 						),
 					);
-					console.log("click send: ", session.topic, session.responseStatus);
+					console.log("click send: ", sendMessages, session.responseStatus);
 				} catch (error: any) {
 					// const botError = "API 请求失败, 请重新登录后重试";
 					const botError = error.message as string;
@@ -673,15 +679,18 @@ export const useChatStore = createPersistStore(
 				);
 			},
 
-			updateMessage(
-				sessionIndex: number,
-				messageIndex: number,
-				updater: (message?: ChatMessage) => void,
-			) {
+			updateMessage(sessionId: string, messageId: string, message: string) {
 				const sessions = get().sessions;
-				const session = sessions.at(sessionIndex);
-				const messages = session?.messages;
-				updater(messages?.at(messageIndex));
+				const index = get().currentSessionIndex;
+
+				sessions[index].messages = sessions[index].messages.map((m) => {
+					if (m.id === messageId) {
+						m.content = message;
+					}
+
+					return m;
+				});
+				sessions[index].lastUpdateTime = Date.now();
 				set(() => ({ sessions }));
 			},
 
@@ -710,8 +719,9 @@ export const useChatStore = createPersistStore(
 						sessions: state.sessions.map((session) => {
 							if (session.id === sessionId) {
 								// 直接应用 updater 回调函数
-								// console.log("store session check", session);
 								updater(session);
+								console.log("sesison update", session);
+
 								if (sync) {
 									const data: CreateChatSessionData = {
 										...session,

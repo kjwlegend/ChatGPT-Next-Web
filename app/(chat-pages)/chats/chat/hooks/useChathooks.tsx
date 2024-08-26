@@ -103,22 +103,22 @@ export function useScrollToBottom() {
 
 	function scrollDomToBottom() {
 		const dom = scrollRef.current;
+		console.log("dom", dom);
 		if (dom) {
 			requestAnimationFrame(() => {
-				setAutoScroll(true);
-				dom.scrollTo(0, dom.scrollHeight);
+				dom.scrollTo(0, 0);
+				console.log("domscroll", dom.scrollHeight);
 			});
-			setAutoScroll(autoScroll);
-			dom.scrollTo(0, dom.scrollHeight);
 		}
 	}
 
 	// auto scroll
 	useEffect(() => {
+		console.log("autoScroll", autoScroll);
 		if (autoScroll) {
 			scrollDomToBottom();
 		}
-	});
+	}, [autoScroll]);
 
 	return {
 		scrollRef,

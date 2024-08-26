@@ -31,6 +31,7 @@ interface ChatContextValue {
 	showPromptModal: boolean;
 	enableAutoFlow: boolean;
 	submitType: "chat" | "workflow" | "multiagent";
+	currentSessionId: string;
 }
 
 const ChatActionContext = React.createContext<ActionContextType>({
@@ -51,6 +52,7 @@ const defaultChatContextValue: ChatContextValue = {
 	showPromptModal: false,
 	enableAutoFlow: false,
 	submitType: "chat",
+	currentSessionId: "0",
 };
 
 export const ChatSettingContext = React.createContext(defaultChatContextValue);
@@ -67,7 +69,7 @@ export const ChatProvider = ({
 	const [showPromptModal, setShowPromptModal] = useState(false);
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 	const [session, setSession] = useState<ChatSession>(_session);
-	console.log("provider debug", session);
+
 	const [submitType, setSubmitType] = useState<
 		"chat" | "workflow" | "multiagent"
 	>("chat");
@@ -76,6 +78,9 @@ export const ChatProvider = ({
 		(state) =>
 			state.sessions.find((item) => item.id == session.id)?.messages ?? [],
 	);
+	console.log("context refresh", session);
+
+	const currentSessionId = useChatStore((state) => state.currentSessionId);
 
 	return (
 		<ChatActionContext.Provider
@@ -95,6 +100,7 @@ export const ChatProvider = ({
 					showPromptModal,
 					enableAutoFlow,
 					submitType,
+					currentSessionId,
 				}}
 			>
 				<ChatSessionContext.Provider value={session}>
@@ -113,13 +119,18 @@ export const useSessions = () => {
 };
 export const useMessages = () => {
 	const messages = useContext(ChatMessagesContext) as ChatMessage[];
-	console.log("hook message", messages);
 	return messages;
 };
 
 export const useChatSetting = () => {
-	const { hitBottom, autoScroll, showPromptModal, enableAutoFlow, submitType } =
-		useContext(ChatSettingContext);
+	const {
+		hitBottom,
+		autoScroll,
+		showPromptModal,
+		enableAutoFlow,
+		submitType,
+		currentSessionId,
+	} = useContext(ChatSettingContext);
 
 	return {
 		hitBottom,
@@ -127,6 +138,7 @@ export const useChatSetting = () => {
 		showPromptModal,
 		enableAutoFlow,
 		submitType,
+		currentSessionId,
 	};
 };
 
