@@ -190,7 +190,13 @@ export function Chatbody(props: {
 	}, [context, isLoading, messages, session.lastUpdateTime]);
 
 	const [msgRenderIndex, _setMsgRenderIndex] = useState(() =>
-		Math.max(0, renderMessages.length - CHAT_PAGE_SIZE),
+		Math.max(
+			0,
+			Math.min(
+				renderMessages.length - 1,
+				renderMessages.length - CHAT_PAGE_SIZE,
+			),
+		),
 	);
 
 	const messagesfinal = useMemo(() => {
@@ -211,7 +217,7 @@ export function Chatbody(props: {
 	function setMsgRenderIndex(newIndex: number) {
 		const validIndex = Math.min(
 			Math.max(0, newIndex),
-			renderMessages.length - CHAT_PAGE_SIZE,
+			Math.max(0, renderMessages.length - CHAT_PAGE_SIZE),
 		);
 		_setMsgRenderIndex(validIndex);
 	}

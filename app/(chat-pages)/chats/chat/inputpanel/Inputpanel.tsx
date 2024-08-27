@@ -182,6 +182,7 @@ export function Inputpanel(props: {
 	);
 
 	const handleSubmit = async () => {
+		
 		await doSubmit(userInput);
 		setUserInput("");
 		console.log(userInput, "after submit");

@@ -58,10 +58,14 @@ export const createChatDataAndFetchId = async (options: {
 
 	try {
 		const chatResponse = await createChat(createChatData);
+		if (chatResponse.code == 4000) {
+			throw new Error("登录已过期或账号无效, 请重新登录再试");
+		}
 		return { chat_id: chatResponse.chat_id, id: chatResponse.id };
 	} catch (error) {
 		console.error("Error creating chat data:", error);
-		throw new Error("Failed to create chat data. Please try again later.");
+
+		throw new Error("登录已过期或账号无效, 请重新登录再试");
 	}
 };
 export const submitChatMessage = async (

@@ -157,6 +157,10 @@ export const useChatStore = createPersistStore(
 			},
 
 			selectSession(index: number) {
+				if (index < 0 || index >= get().sessions.length) {
+					console.error("Invalid session index:", index);
+					return;
+				}
 				console.log("selectSession: ", index);
 				set({
 					currentSessionIndex: index,
@@ -164,20 +168,14 @@ export const useChatStore = createPersistStore(
 				});
 			},
 			selectSessionById(id: string) {
-				const index = get().sessions.findIndex((session) => {
-					console.log("select session by id", id, "sessionid", session.id);
-					return session.id === id;
-				});
-				console.log("index", index);
-
+				const index = get().sessions.findIndex((session) => session.id === id);
 				if (index !== -1) {
 					get().selectSession(index);
 				} else {
 					console.log("No session found with the given id:", id);
 				}
-
-				set(() => ({ currentSessionId: id }));
 			},
+
 			moveSession(from: number, to: number, _sessions?: any) {
 				set((state) => {
 					const { sessions, currentSessionIndex: oldIndex } = state;
@@ -249,18 +247,17 @@ export const useChatStore = createPersistStore(
 				};
 
 				// 使用 async/await 优化异步请求处理
-				const res = await createChatSession(data);
-				if (res.id) {
+				try {
+					const res = await createChatSession(data);
+					if (!res.id) throw new Error("Failed to create chat session");
+
 					session = createEmptySession({
 						id: res.id,
 						topic: DEFAULT_TOPIC,
 						mask: mask,
 					});
 
-					// session.topic = selectedMask.name;
-					if (isworkflow) {
-						session.isworkflow = true;
-					}
+					if (isworkflow) session.isworkflow = true;
 
 					session.mask = {
 						...selectedMask,
@@ -270,19 +267,16 @@ export const useChatStore = createPersistStore(
 							...selectedMask.modelConfig,
 						},
 					};
-					//  updated sessions
-					const updatedSessions = [...get().sessions, session];
+
 					set((state) => ({
 						currentSessionIndex: 0,
 						currentSessionId: session.id,
-						sessions: [session].concat(state.sessions),
+						sessions: [session, ...state.sessions],
 					}));
 
-					get().selectSession(get().currentSessionIndex);
-
-					return session;
-				} else {
-					return null;
+					get().selectSession(res.id);
+				} catch (error) {
+					console.error("Error creating chat session:", error);
 				}
 			},
 
@@ -535,7 +529,7 @@ export const useChatStore = createPersistStore(
 					// 发送函数回调
 					const onUpdateCallback = (message: string) => {
 						botMessage.content = message;
-						botMessage.lastUpdateTime = Math.random();
+						botMessage.lastUpdateTime = Date.now();
 
 						get().updateCurrentSession((session) => {
 							session.messages = session.messages.concat();
@@ -558,7 +552,6 @@ export const useChatStore = createPersistStore(
 
 					const onFinishCallback = async (message: string) => {
 						// updateSession(message);
-						console.log("message on finish", message);
 
 						// 其他需要在 onFinish 时执行的逻辑
 						const tokenCount = estimateTokenLength(message);
@@ -583,7 +576,7 @@ export const useChatStore = createPersistStore(
 							botMessage.isFinished = true;
 							botMessage.isTransfered = false;
 							botMessage.token_counts_total = tokenCount;
-							// get().onNewMessage(botMessage);
+							get().onNewMessage(botMessage);
 						}
 					};
 					// 调用发送消息函数

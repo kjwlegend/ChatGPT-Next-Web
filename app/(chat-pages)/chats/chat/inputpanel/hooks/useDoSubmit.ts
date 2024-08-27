@@ -70,6 +70,7 @@ export function useDoSubmit(
 			} else {
 				throw new Error("Invalid submit type");
 			}
+
 			updateUserInfo(userStore.user.id);
 		} catch (error: any) {
 			messageApi.error(error.message);
