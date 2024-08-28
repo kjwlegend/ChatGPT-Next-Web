@@ -28,7 +28,7 @@ interface WorkflowGroupActionsContextType {
 	addWorkflowGroup: () => void;
 	deleteWorkflowGroup: (groupId: number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
-	addChatGrouptoWorkflow: (groupId: string, Mask: Mask) => void;
+	addChatGrouptoWorkflow: (Mask: Mask, groupId?: string) => void;
 	updateWorkflowChatGroup: (
 		groupId: string,
 		newGroup: Partial<WorkflowGroup>,
@@ -155,7 +155,7 @@ export const WorkflowProvider = ({
 
 	const addChatGrouptoWorkflowHandler = useCallback(
 		//
-		async (groupId: string, agent: Mask) => {
+		async (agent: Mask, groupId?: string) => {
 			messageApi.open({
 				content: "会话添加中",
 				type: "loading",
@@ -170,7 +170,7 @@ export const WorkflowProvider = ({
 				console.log(mask, "mask");
 				const res = await createWorkflowSessionChatGroup(apidata, groupId);
 				const newsession = createEmptySession({ id: res.id, mask });
-				addSessionToGroup(groupId, newsession);
+				addSessionToGroup(groupId ?? selectedId, newsession);
 				messageApi.destroy();
 				messageApi.success("会话添加成功");
 			} catch (error: any) {

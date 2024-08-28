@@ -7,26 +7,26 @@ import {
 	updateWorkflowSession,
 } from "@/app/services/api/chats";
 
-import { Path } from "../constant";
+import { Path } from "../../../constant";
 import { useNavigate } from "react-router-dom";
-import { getMultiAgentSession } from "../services/api/chats";
+import { getMultiAgentSession } from "../../../services/api/chats";
 
-import { useUserStore } from "../store";
-import { useWorkflowStore } from "../store/workflow";
-import { useWorkflowContext } from "../(chat-pages)/workflow-chats/workflowContext";
+import { useUserStore } from "../../../store";
+import { useWorkflowStore } from "../../../store/workflow";
+import { useWorkflowGroupActions } from "../workflowContext";
 import { Mask } from "@/app/types/mask";
 
 export const useSimpleWorkflowService = () => {
 	const navigate = useNavigate();
 	const userid = useUserStore((state) => state.user?.id);
+
 	const {
-		selectedId,
 		setSelectedId,
 		deleteWorkflowGroup,
 		addWorkflowGroup,
 		fetchNewWorkflowGroup,
 		addChatGrouptoWorkflow,
-	} = useWorkflowContext();
+	} = useWorkflowGroupActions();
 
 	const workflowGroups = useWorkflowStore().workflowGroups;
 
@@ -83,19 +83,15 @@ export const useSimpleWorkflowService = () => {
 		}
 	}, []);
 
-	const handleAgentClick = useCallback(
-		async (agent: Mask) => {
-			try {
-				addChatGrouptoWorkflow(selectedId, agent);
-			} catch (error) {
-				console.log("Add agent to group error", error);
-			}
-		},
-		[selectedId],
-	);
+	const handleAgentClick = useCallback(async (agent: Mask) => {
+		try {
+			addChatGrouptoWorkflow(agent);
+		} catch (error) {
+			console.log("Add agent to group error", error);
+		}
+	}, []);
 
 	return {
-		selectedId,
 		WorkflowGroupData,
 		loadMoreSessions,
 		handleAddClick,

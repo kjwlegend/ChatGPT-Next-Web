@@ -1,13 +1,13 @@
 import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
-import { useAccessStore, useAppConfig, useChatStore } from "../store";
+import { useAccessStore, useAppConfig, useChatStore } from "../../../../store";
 
-import { Path } from "../constant";
+import { Path } from "../../../../constant";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { createEmptyMask } from "../store/mask";
-import { DEFAULT_TOPIC } from "../store";
+import { createEmptyMask } from "../../../../store/mask";
+import { DEFAULT_TOPIC } from "../../../../store";
 export const useChatService = () => {
 	const chatStore = useChatStore();
 	const sessionlist = chatStore.sessions;

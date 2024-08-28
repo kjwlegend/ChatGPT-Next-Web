@@ -42,7 +42,7 @@ import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
 import { PaginationData } from "@/app/services/api/chats";
 import ChatList from "./sidebar/chatList";
 
-import { useChatService } from "@/app/hooks/useChatHook";
+import { useChatService } from "@/app/(chat-pages)/chats/chat/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 
 function Loading(props: { noLogo?: boolean }) {

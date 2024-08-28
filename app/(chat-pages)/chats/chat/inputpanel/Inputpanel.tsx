@@ -80,7 +80,7 @@ import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "../chats.module.scss";
+import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 
 import {
 	List,
@@ -114,7 +114,7 @@ import {
 	useSubmitHandler,
 	useScrollToBottom,
 	ClearContextDivider,
-} from "../hooks/useChathooks";
+} from "../../../../hooks/useGeneralChatHook";
 import {
 	startSpeechToText,
 	convertTextToSpeech,
@@ -182,7 +182,6 @@ export function Inputpanel(props: {
 	);
 
 	const handleSubmit = async () => {
-		
 		await doSubmit(userInput);
 		setUserInput("");
 		console.log(userInput, "after submit");

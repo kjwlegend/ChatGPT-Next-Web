@@ -14,7 +14,7 @@ import { CHAT_PAGE_SIZE } from "@/app/constant";
 import { useAccessStore } from "@/app/store";
 import { BOT_HELLO } from "@/app/store";
 import Locale from "@/app/locales";
-import styles from "../chats.module.scss";
+import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import { useMessageActions } from "@/app/(chat-pages)/chats/chat/chatbody/useMessageActions";
 import { useChatPagination } from "@/app/(chat-pages)/chats/chat/chatbody/useChatPagination";
 import { MultiAgentChatSession } from "@/app/store/multiagents";

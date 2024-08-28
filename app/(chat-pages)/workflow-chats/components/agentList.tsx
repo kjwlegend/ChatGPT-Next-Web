@@ -14,9 +14,8 @@ import { useChatStore, useUserStore } from "@/app/store";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import {
-	WorkflowContext,
+	useWorkflowSessionActions,
 	WorkflowProvider,
-	useWorkflowContext,
 } from "../workflowContext";
 
 import { useMaskStore } from "@/app/store/mask";
@@ -114,8 +113,7 @@ export default function AgentList(props: {
 	showModal: () => void;
 }) {
 	const [selectIndex, setSelectIndex] = useState(0);
-	const { selectedId, deleteSessionFromGroup, moveSession } =
-		useWorkflowContext();
+	const { deleteSessionFromGroup, moveSession } = useWorkflowSessionActions();
 
 	const [orderedSessions, setOrderedSessions] = useState<any[]>(props.sessions);
 
@@ -158,9 +156,8 @@ export default function AgentList(props: {
 	};
 
 	return (
-		<WorkflowProvider>
-			<div className={styles["session-container"]}>
-				{/* <div className={styles["session-description"]}>
+		<div className={styles["session-container"]}>
+			{/* <div className={styles["session-description"]}>
 					<div className={styles["session-title"]}>{currentGroup?.topic}</div>
 					<div className={styles["session-subtitle"]}>
 						id: {groupId}
@@ -169,53 +166,52 @@ export default function AgentList(props: {
 
 
 				</div> */}
-				<Button
-					type="dashed"
-					className={styles["plus"]}
-					icon={<PlusCircleOutlined />}
-					onClick={() => props.showModal()}
-					size="small"
-				>
-					新增助手
-				</Button>
-				{orderedSessions && (
-					<DragDropContext onDragEnd={onDragEnd}>
-						<Droppable droppableId="chat-list" direction="horizontal">
-							{(provided) => (
-								<div
-									className={styles["session-list"]}
-									ref={provided.innerRef}
-									{...provided.droppableProps}
-								>
-									{orderedSessions.map((item, i) => (
-										<ChatItemShort
-											title={item.mask.name}
-											time={new Date(item.lastUpdateTime).toLocaleString()}
-											count={item.messages.length}
-											key={item.id}
-											id={item.id}
-											index={i}
-											selected={i === selectIndex}
-											onClick={() => {
-												itemClickHandler(item, i);
-											}}
-											onDelete={async () => {
-												itemDeleteHandler(item);
-											}}
-											mask={item.mask}
-										/>
-									))}
-									{provided.placeholder}
-								</div>
-							)}
-						</Droppable>
-					</DragDropContext>
-				)}
+			<Button
+				type="dashed"
+				className={styles["plus"]}
+				icon={<PlusCircleOutlined />}
+				onClick={() => props.showModal()}
+				size="small"
+			>
+				新增助手
+			</Button>
+			{orderedSessions && (
+				<DragDropContext onDragEnd={onDragEnd}>
+					<Droppable droppableId="chat-list" direction="horizontal">
+						{(provided) => (
+							<div
+								className={styles["session-list"]}
+								ref={provided.innerRef}
+								{...provided.droppableProps}
+							>
+								{orderedSessions.map((item, i) => (
+									<ChatItemShort
+										title={item.mask.name}
+										time={new Date(item.lastUpdateTime).toLocaleString()}
+										count={item.messages.length}
+										key={item.id}
+										id={item.id}
+										index={i}
+										selected={i === selectIndex}
+										onClick={() => {
+											itemClickHandler(item, i);
+										}}
+										onDelete={async () => {
+											itemDeleteHandler(item);
+										}}
+										mask={item.mask}
+									/>
+								))}
+								{provided.placeholder}
+							</div>
+						)}
+					</Droppable>
+				</DragDropContext>
+			)}
 
-				{/* button 样式 新增session */}
+			{/* button 样式 新增session */}
 
-				{/* 下拉菜单 */}
-			</div>
-		</WorkflowProvider>
+			{/* 下拉菜单 */}
+		</div>
 	);
 }

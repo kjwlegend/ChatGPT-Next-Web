@@ -56,7 +56,7 @@ import { useMasks } from "@/app/hooks/useMasks";
 import { Modal } from "antd";
 import { MaskPage } from "../chats/masklist/mask";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
-import { useSimpleWorkflowService } from "@/app/hooks/useSimpleWorkflowHook";
+import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -78,7 +78,7 @@ const SimpleWorkflow: React.FC = () => {
 	const workflowGroups = useWorkflowGroups();
 	const workflowSessions = useWorkflowSessions();
 
-	const workflowStore = useWorkflowStore.getState();
+	const { selectedId, workflowSessionsIndex } = useWorkflowStore.getState();
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
@@ -103,6 +103,10 @@ const SimpleWorkflow: React.FC = () => {
 				workflowSessions.find((session) => session.id === id) ?? undefined,
 		);
 	}, [selectedId, workflowSessionsIndex]);
+
+	if (!currentSessions) {
+		return null;
+	}
 
 	const handleModalClick = () => {
 		setShowAgentList(!showAgentList);
@@ -154,7 +158,7 @@ const SimpleWorkflow: React.FC = () => {
 					<>
 						{/* {index} {session.id} {session.topic} , */}
 						<_Chat
-							key={session?.session_id}
+							key={session.session_id}
 							_session={session}
 							index={index}
 							isworkflow={true}

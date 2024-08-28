@@ -27,7 +27,7 @@ import { ChatMessage } from "@/app/types/chat";
 
 import Locale from "@/app/locales";
 
-import styles from "../chats.module.scss";
+import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 
 export function useSubmitHandler() {
 	const config = useAppConfig();

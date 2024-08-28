@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 
 import { updateMultiAgentSession } from "@/app/services/api/chats";
 
-import { Path } from "../constant";
+import { Path } from "../../constant";
 import { useNavigate } from "react-router-dom";
-import { getMultiAgentSession } from "../services/api/chats";
+import { getMultiAgentSession } from "../../services/api/chats";
 import usedoubleAgent from "@/app/store/multiagents";
-import { useMultiAgentChatContext } from "../(chat-pages)/double-agents/multiAgentContext";
-import { useUserStore } from "../store";
+import { useMultiAgentChatContext } from "./multiAgentContext";
+import { useUserStore } from "../../store";
 import { Mask } from "@/app/types/mask";
 
 export const useMultipleAgentsChatService = () => {

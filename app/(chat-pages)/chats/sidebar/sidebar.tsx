@@ -1,4 +1,11 @@
-import { useEffect, useRef, useMemo, useState, useCallback } from "react";
+import {
+	useEffect,
+	useRef,
+	useMemo,
+	useState,
+	useCallback,
+	useReducer,
+} from "react";
 import React from "react";
 
 import styles from "./sidebar.module.scss";
@@ -126,7 +133,7 @@ interface SideBarToggleProps extends SideBarProps {
 
 import { memo } from "react";
 
-const DesktopSideBar = memo(({
+const DesktopSideBar = ({
 	className,
 	chatSessions,
 	onAddClick,
@@ -206,9 +213,7 @@ const DesktopSideBar = memo(({
 			</div>
 		</div>
 	);
-});
-
-
+};
 
 function MobileSideBar({
 	className,
@@ -278,10 +283,13 @@ function MobileSideBar({
 	);
 }
 
-
- 
-
 export function SideBar(props: SideBarProps) {
+	const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+	useEffect(() => {
+		forceUpdate();
+	}, [props.chatSessions]);
+
 	const { toggleSideBar, shouldNarrow } = useToggleSideBar();
 	const isMobileScreen = useMobileScreen();
 

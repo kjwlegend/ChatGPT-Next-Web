@@ -41,7 +41,7 @@ import {
 } from "../../constant";
 
 import { useMaskStore } from "../../store/mask";
-import { useWorkflowContext } from "./workflowContext";
+import { useWorkflowGroupActions } from "./workflowContext";
 
 import { List, Input, Form, Row, Col } from "antd";
 import { Avatar } from "@/app//components/avatar";
@@ -59,19 +59,7 @@ export function WorkflowModalConfig(props: {
 	const { workflow, workflowSessions, onClose } = props;
 	const { topic, description, summary, id, created_at } = workflow;
 
-	const {
-		selectedId,
-		setSelectedId,
-		fetchNewWorkflowGroup,
-		addWorkflowGroup,
-		deleteWorkflowGroup,
-		addChatGrouptoWorkflow,
-		moveSession,
-		deleteSessionFromGroup,
-		workflowSessionsIndex,
-		getworkFlowSessions,
-		updateWorkflowChatGroup,
-	} = useWorkflowContext();
+	const { updateWorkflowChatGroup } = useWorkflowGroupActions();
 
 	const [workflowName, setWorkflowName] = useState(topic);
 	const [workflowDescription, setWorkflowDescription] = useState(description);

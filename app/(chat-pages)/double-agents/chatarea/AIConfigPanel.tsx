@@ -23,7 +23,7 @@ import { getLang, getISOLang } from "@/app/locales";
 import { IconButton } from "@/app/components/button";
 import { useMultiAgentChatContext } from "../multiAgentContext";
 import { MaskPage } from "../../chats/masklist/mask";
-import { useMultipleAgentsChatService } from "@/app/hooks/useMultipleAgentsHook";
+import { useMultipleAgentsChatService } from "@/app/(chat-pages)/double-agents/useMultipleAgentsHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import React, { useState, useMemo, useEffect } from "react";
 import {

@@ -44,7 +44,7 @@ import {
 } from "@/app/icons";
 
 // 自定义组件和工具函数
-import { ClearContextDivider } from "../hooks/useChathooks";
+import { ClearContextDivider } from "../../../../hooks/useGeneralChatHook";
 import MjActions from "../midjourney";
 import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy } from "@/app/utils";
@@ -57,7 +57,7 @@ import Locale from "@/app/locales";
 import { LAST_INPUT_KEY } from "@/app/constant";
 
 // 样式
-import styles from "../chats.module.scss";
+import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { useWorkflowStore } from "@/app/store/workflow";
 interface MessageItemProps {
