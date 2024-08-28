@@ -23,18 +23,18 @@ import { useMaskStore } from "@/app/store/mask";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
-interface WorkflowContextType {
-	// workflowGroups: WorkflowGroup[];
-	// workflowSessions: workflowChatSession[];
-	workflowSessionsIndex: { [key: string]: any[] };
-	selectedId: string;
-}
-interface WorkflowActionsContextType {
+interface WorkflowGroupActionsContextType {
 	setSelectedId: (index: string) => void;
 	addWorkflowGroup: () => void;
 	deleteWorkflowGroup: (groupId: number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	addChatGrouptoWorkflow: (groupId: string, Mask: Mask) => void;
+	updateWorkflowChatGroup: (
+		groupId: string,
+		newGroup: Partial<WorkflowGroup>,
+	) => void;
+}
+interface workflowSessionActionsContextType {
 	moveSession: (
 		groupId: string,
 		sourceIndex: number,
@@ -42,16 +42,25 @@ interface WorkflowActionsContextType {
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
-	updateWorkflowChatGroup: (
-		groupId: string,
-		newGroup: Partial<WorkflowGroup>,
-	) => void;
 }
 
-export const WorkflowContext = createContext<WorkflowContextType | null>(null);
-export const WorkflowActionsContext =
-	createContext<WorkflowActionsContextType | null>(null);
-
+export const workflowGroupsContext = createContext<WorkflowGroup[]>([]);
+export const workflowSessionsContext = createContext<workflowChatSession[]>([]);
+export const workflowGroupActionsContext =
+	createContext<WorkflowGroupActionsContextType>({
+		setSelectedId: () => {},
+		addWorkflowGroup: () => {},
+		deleteWorkflowGroup: () => {},
+		fetchNewWorkflowGroup: () => {},
+		addChatGrouptoWorkflow: () => {},
+		updateWorkflowChatGroup: () => {},
+	});
+export const workflowSessionActionsContext =
+	createContext<workflowSessionActionsContextType>({
+		moveSession: () => {},
+		deleteSessionFromGroup: () => {},
+		getworkFlowSessions: () => Promise.resolve({}),
+	});
 export const WorkflowProvider = ({
 	children,
 }: {
@@ -93,7 +102,6 @@ export const WorkflowProvider = ({
 		if (res.data) {
 			updateLocalWorkflowStoreHandler(res.data);
 		}
-
 		return res;
 	}, []);
 
@@ -311,46 +319,71 @@ export const WorkflowProvider = ({
 	};
 
 	return (
-		<WorkflowActionsContext.Provider
+		<workflowSessionActionsContext.Provider
 			value={{
-				setSelectedId,
-				fetchNewWorkflowGroup,
-				addWorkflowGroup: addWorkflowGroupHandler,
-				deleteWorkflowGroup: deleteWorkflowGroupHandler,
-				addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
 				getworkFlowSessions,
-				updateWorkflowChatGroup,
 			}}
 		>
-			<WorkflowContext.Provider
+			<workflowGroupActionsContext.Provider
 				value={{
-					// workflowGroups,
-					selectedId,
-					// workflowSessions,
-					workflowSessionsIndex,
+					setSelectedId,
+					fetchNewWorkflowGroup,
+					addWorkflowGroup: addWorkflowGroupHandler,
+					deleteWorkflowGroup: deleteWorkflowGroupHandler,
+					addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
+					updateWorkflowChatGroup,
 				}}
 			>
-				{contextHolder}
-				{children}
-			</WorkflowContext.Provider>
-		</WorkflowActionsContext.Provider>
+				<workflowSessionsContext.Provider value={workflowSessions}>
+					<workflowGroupsContext.Provider value={workflowGroups}>
+						{contextHolder}
+						{children}
+					</workflowGroupsContext.Provider>
+				</workflowSessionsContext.Provider>
+			</workflowGroupActionsContext.Provider>
+		</workflowSessionActionsContext.Provider>
 	);
 };
 
 // 自定义钩子
-export const useWorkflowContext = () => {
-	const context = useContext(WorkflowContext);
-	const actions = useContext(WorkflowActionsContext);
+export const useWorkflowGroups = () => {
+	const context = useContext(workflowGroupsContext);
+	if (context === undefined) {
+		throw new Error("useworkflowGroups must be used within a WorkflowProvider");
+	}
+	return context;
+};
 
-	if (context === null) {
+export const useWorkflowSessions = () => {
+	const context = useContext(workflowSessionsContext);
+	if (context === undefined) {
 		throw new Error(
-			"useWorkflowContext must be used within a WorkflowProvider",
+			"useworkflowSessions must be used within a WorkflowProvider",
 		);
 	}
-	return {
-		...context,
-		...actions,
-	};
+	return context;
 };
+
+export const useWorkflowGroupActions = () => {
+	const context = useContext(workflowGroupActionsContext);
+	if (context === undefined) {
+		throw new Error(
+			"useWorkflowGroupActions must be used within a WorkflowProvider",
+		);
+	}
+	return context;
+};
+
+export const useWorkflowSessionActions = () => {
+	const context = useContext(workflowSessionActionsContext);
+	if (context === undefined) {
+		throw new Error(
+			"useWorkflowSessionActions must be used within a WorkflowProvider",
+		);
+	}
+	return context;
+};
+
+export default WorkflowProvider;

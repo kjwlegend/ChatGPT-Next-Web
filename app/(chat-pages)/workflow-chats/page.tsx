@@ -21,9 +21,10 @@ import Locale, { Lang } from "../../locales";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import {
-	WorkflowContext,
 	WorkflowProvider,
-	useWorkflowContext,
+	useWorkflowGroupActions,
+	useWorkflowGroups,
+	useWorkflowSessions,
 } from "./workflowContext";
 
 import { createWorkflowSession } from "../../api/backend/chat";
@@ -72,11 +73,12 @@ const useHasHydrated = (): boolean => {
 
 const SimpleWorkflow: React.FC = () => {
 	const isAuthenticated = useAuthStore().isAuthenticated;
-	const { selectedId, addWorkflowGroup, workflowSessionsIndex, moveSession } =
-		useWorkflowContext();
+
+	const { addWorkflowGroup } = useWorkflowGroupActions();
+	const workflowGroups = useWorkflowGroups();
+	const workflowSessions = useWorkflowSessions();
 
 	const workflowStore = useWorkflowStore.getState();
-	const { workflowGroups, workflowSessions } = workflowStore;
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
