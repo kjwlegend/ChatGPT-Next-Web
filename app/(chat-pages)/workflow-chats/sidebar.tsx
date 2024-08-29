@@ -24,9 +24,8 @@ export function WorkflowSidebar(props: { className?: string }) {
 		handleChatItemDelete,
 	} = useSimpleWorkflowService();
 
-	const workflowGroups = useWorkflowGroups();
-	const workflowSessions = useWorkflowSessions();
-	console.log("workflowSessions", workflowSessions);
+	const { workflowGroups } = useWorkflowGroups();
+	const { workflowSessions } = useWorkflowStore();
 
 	if (!workflowGroups) return;
 
@@ -34,38 +33,38 @@ export function WorkflowSidebar(props: { className?: string }) {
 	const [editWrokflow, setEditWorkflow] = useState<WorkflowGroup | undefined>();
 	const [showWorkflowModal, setShowWorkflowModal] = useState(false);
 	const [agentList, setAgentList] = useState<any[]>([]);
-	const [sessions, setSessions] = useState<any[]>([]);
 
-	// 每次 workflowSessions 变化时, 重新渲染
+	// 使用 useRef 来存储最新的 workflowSessions
+	const workflowSessionsRef = useRef(workflowSessions);
+
+	// 每次 workflowSessions 变化时更新 ref
 	useEffect(() => {
-		console.log("workflowSessions updated", workflowSessions);
-		setSessions(workflowSessions);
+		workflowSessionsRef.current = workflowSessions;
 	}, [workflowSessions]);
 
-	// 打印 sessions 确认其更新
-	useEffect(() => {
-		console.log(
-			"sessions",
-			sessions.map((session) => session.id),
+	const getSessions = useCallback((workflowGroupId: string | number) => {
+		const currentWorkflowSessions = workflowSessionsRef.current;
+
+		if (!currentWorkflowSessions) return [];
+
+		return currentWorkflowSessions.filter(
+			(session) => session.workflow_group_id === workflowGroupId,
 		);
-	}, [sessions]);
+	}, []);
+
+	const getWorkflowGroup = (workflowGroupId: string | number) => {
+		return workflowGroups.find((group) => group.id === workflowGroupId);
+	};
 
 	const handleItemEditClick = (workflowgroupId: string | number) => {
-		console.log("workflow group id", workflowgroupId);
-		const currentWorkflowGroup = workflowGroups.find(
-			(item) => item.id === workflowgroupId,
-		);
+		// 找到当前的 workflowGroup 和 sesions
 
-		// 确保在点击时使用最新的 sessions
-		console.log("sessions in itemedit click", sessions);
-		const currentWorkflowGroupSessions =
-			sessions.filter(
-				(session) => session.workflow_group_id === workflowgroupId,
-			) ?? [];
+		const currentWorkflowGroup = getWorkflowGroup(workflowgroupId);
+		const currentAgents = getSessions(workflowgroupId);
 
 		setEditWorkflow(currentWorkflowGroup);
-		setAgentList(currentWorkflowGroupSessions);
-		console.log("currentWorkflowGroupSessions", currentWorkflowGroupSessions);
+		setAgentList(currentAgents);
+
 		setShowWorkflowModal(true);
 	};
 

@@ -15,6 +15,7 @@ import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import {
 	useWorkflowSessionActions,
+	useWorkflowSessions,
 	WorkflowProvider,
 } from "../workflowContext";
 
@@ -118,7 +119,6 @@ export default function AgentList(props: {
 	const [orderedSessions, setOrderedSessions] = useState<any[]>(props.sessions);
 
 	const [currentGroup, setCurrentGroup] = useState<any>(props.workflowGroup);
-
 	const { id: groupId, topic, description } = currentGroup;
 
 	useEffect(() => {
@@ -126,7 +126,7 @@ export default function AgentList(props: {
 		setCurrentGroup(props.workflowGroup);
 	}, [props.sessions, props.workflowGroup]);
 
-	console.log("agentList", orderedSessions);
+	console.log("debug agentList", orderedSessions);
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
@@ -186,7 +186,7 @@ export default function AgentList(props: {
 							>
 								{orderedSessions.map((item, i) => (
 									<ChatItemShort
-										title={item.mask.name}
+										title={item.mask.name ?? ""}
 										time={new Date(item.lastUpdateTime).toLocaleString()}
 										count={item.messages.length}
 										key={item.id}

@@ -40,7 +40,7 @@ type State = {
 	workflowSessions: workflowChatSession[];
 	workflowSessionsIndex: { [groupId: string]: any[] };
 	selectedId: string;
-	setSelectedId: (index: string) => void;
+	setSelectedId: (groupId: string) => void;
 	addWorkflowGroup: (groupId: string, groupName: string) => void;
 	updateWorkflowGroup: (
 		groupId: string,
@@ -75,6 +75,7 @@ type State = {
 		message: ChatMessage[],
 		workflowChatSession: workflowChatSession,
 	) => void;
+	getMessages: (sessionId: string) => ChatMessage[];
 	updatedChatMessage: (sessionId: string, message: string) => void;
 };
 
@@ -84,7 +85,10 @@ export const useWorkflowStore = create<State>()(
 			workflowGroups: [],
 			workflowGroupIndex: {},
 			selectedId: "",
-			setSelectedId: (index) => set({ selectedId: index }),
+			setSelectedId: (groupId) => {
+				console.log("workflow setselectedid", groupId);
+				set({ selectedId: groupId });
+			},
 			workflowSessions: [],
 			workflowSessionsIndex: {},
 			addWorkflowGroup: (groupId, topic) => {
@@ -334,6 +338,8 @@ export const useWorkflowStore = create<State>()(
 
 					state.workflowSessions[sessionIndex] = updatedSession;
 
+					// return state;
+
 					return {
 						workflowSessions: state.workflowSessions.map((session) =>
 							session.id === sessionId && session.workflow_group_id === groupId
@@ -527,7 +533,10 @@ export const useWorkflowStore = create<State>()(
 					// 发送函数回调
 					const onUpdateCallback = (message: string) => {
 						// 其他需要在 onUpdate 时执行的逻辑
-						console.log(`Message updated: ${message}`);
+						// console.log(
+						// 	`Message updated: ${message}, botmessage: `,
+						// 	botMessage,
+						// );
 						botMessage.content = message;
 						const updates = {
 							messages: fullMessageList,
@@ -575,6 +584,9 @@ export const useWorkflowStore = create<State>()(
 						botMessage.isFinished = true;
 						botMessage.isTransfered = false;
 						botMessage.token_counts_total = tokenCount;
+						get().updateWorkflowSession(session.workflow_group_id, sessionId, {
+							messages: fullMessageList,
+						});
 					};
 					// 调用发送消息函数
 					sendChatMessage(
@@ -623,6 +635,14 @@ export const useWorkflowStore = create<State>()(
 					),
 				}));
 			},
+			getMessages(sessionId: string): ChatMessage[] {
+				const session = get().workflowSessions.find(
+					(session) => session.id === sessionId,
+				);
+				if (!session) return [];
+				return session.messages;
+			},
+
 			updatedChatMessage: (sessionId, message) => {},
 		}),
 

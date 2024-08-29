@@ -122,9 +122,9 @@ const MessageItem: React.FC<MessageItemProps> = ({
 
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
-	useEffect(() => {
-		console.log("MessageItem rendered", message.content);
-	}, [message]);
+	// useEffect(() => {
+	// 	console.log("MessageItem rendered", message.content);
+	// }, [message]);
 
 	useEffect(() => {
 		if (

@@ -204,12 +204,6 @@ export function Chatbody(props: {
 			msgRenderIndex + 3 * CHAT_PAGE_SIZE,
 			renderMessages.length,
 		);
-		console.log(
-			"msgRenderIndex",
-			msgRenderIndex,
-			"endRenderIndex",
-			endRenderIndex,
-		);
 
 		return renderMessages.slice(msgRenderIndex, endRenderIndex);
 	}, [msgRenderIndex, renderMessages]);

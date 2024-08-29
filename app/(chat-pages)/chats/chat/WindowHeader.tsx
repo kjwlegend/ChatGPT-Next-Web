@@ -277,9 +277,11 @@ function WindowActions(props: {
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
-	const clientConfig = useMemo(() => getClientConfig(), []);
-	const showMaxIcon =
-		!isMobileScreen && !clientConfig?.isApp && !props.isworkflow;
+	// const clientConfig = useMemo(() => getClientConfig(), []);
+	// const showMaxIcon =
+	// 	!isMobileScreen && !clientConfig?.isApp && !props.isworkflow;
+
+	const showMaxIcon = !isMobileScreen && !props.isworkflow;
 
 	const [isEditingMessage, setIsEditingMessage] = useState(false);
 

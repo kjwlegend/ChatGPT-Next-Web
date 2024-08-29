@@ -12,6 +12,7 @@ import React, {
 	useMemo,
 } from "react";
 import { RenderMessage } from "../chatbody/MessageList";
+import { useWorkflowStore } from "@/app/store/workflow";
 
 interface ActionContextType {
 	setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
@@ -60,10 +61,23 @@ export const ChatSettingContext = React.createContext(defaultChatContextValue);
 export const ChatProvider = ({
 	_session,
 	children,
+	storeType,
 }: {
 	_session: ChatSession;
 	children: React.ReactNode;
+	storeType: string;
 }) => {
+	let store;
+	if (storeType === "workflow") {
+		store = useWorkflowStore();
+	} else if (storeType === "chatstore") {
+		store = useChatStore();
+	}
+
+	if (!store) {
+		console.log("no store");
+		return null;
+	}
 	const [hitBottom, setHitBottom] = useState(true);
 	const [autoScroll, setAutoScroll] = useState(true);
 	const [showPromptModal, setShowPromptModal] = useState(false);
@@ -74,13 +88,16 @@ export const ChatProvider = ({
 		"chat" | "workflow" | "multiagent"
 	>("chat");
 
-	const messages = useChatStore(
-		(state) =>
-			state.sessions.find((item) => item.id == session.id)?.messages ?? [],
-	);
-	console.log("context refresh", session);
+	// const messages = session.messages || [];
+	const messages = store.getMessages(session.id) || [];
+	console.log("chatcontext refresh", session);
 
-	const currentSessionId = useChatStore((state) => state.currentSessionId);
+	const currentSessionId = session.id;
+
+	useEffect(() => {
+		console.log("chatcontext, props changed");
+		setSession(_session);
+	}, [_session]);
 
 	return (
 		<ChatActionContext.Provider

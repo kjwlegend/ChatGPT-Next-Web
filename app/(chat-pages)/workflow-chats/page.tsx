@@ -8,6 +8,7 @@ import React, {
 	Fragment,
 	use,
 	useContext,
+	Suspense,
 } from "react";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
@@ -24,6 +25,7 @@ import {
 	WorkflowProvider,
 	useWorkflowGroupActions,
 	useWorkflowGroups,
+	useWorkflowSessionActions,
 	useWorkflowSessions,
 } from "./workflowContext";
 
@@ -43,7 +45,7 @@ import {
 
 import { _Chat } from "@/app/(chat-pages)/chats/chat/main";
 
-import { useWorkflowStore } from "../../store/workflow";
+import { useWorkflowStore, workflowChatSession } from "../../store/workflow";
 import { useAuthStore } from "../../store/auth";
 import { WorkflowSidebar } from "./sidebar";
 import { message } from "antd";
@@ -75,16 +77,28 @@ const SimpleWorkflow: React.FC = () => {
 	const isAuthenticated = useAuthStore().isAuthenticated;
 
 	const { addWorkflowGroup } = useWorkflowGroupActions();
-	const workflowGroups = useWorkflowGroups();
+	const { workflowGroups, selectedId } = useWorkflowGroups();
+	const { deleteSessionFromGroup, moveSession } = useWorkflowSessionActions();
 	const workflowSessions = useWorkflowSessions();
 
-	const { selectedId, workflowSessionsIndex } = useWorkflowStore.getState();
+	// const { workflowGroups, selectedId, workflowSessions } = useWorkflowStore();
+
+	const { workflowSessionsIndex } = useWorkflowStore.getState();
 	const [isAuth, setIsAuth] = useState(false);
 	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
 	const { onDelete, onChat } = useAgentActions();
 
 	const { handleAgentClick } = useSimpleWorkflowService();
+
+	// create a workflowsession ref to make sure get latest workflowsessions
+
+	const workflowSessionsRef = useRef(workflowSessions);
+
+	useEffect(() => {
+		workflowSessionsRef.current = workflowSessions;
+		console.log("workflowSessionsRef.current", workflowSessionsRef.current);
+	}, [workflowSessions]);
 
 	useEffect(() => {
 		setIsAuth(isAuthenticated);
@@ -95,22 +109,24 @@ const SimpleWorkflow: React.FC = () => {
 		return workflowGroups.find((group) => group.id === selectedId);
 	}, [selectedId, workflowGroups]);
 
-	// 根据 selectedID 获取对应的 sessions
-	const currentSessions = useMemo(() => {
-		const sessionIds = workflowSessionsIndex[selectedId] ?? [];
-		return sessionIds.map(
-			(id) =>
-				workflowSessions.find((session) => session.id === id) ?? undefined,
+	const [currentSessions, setCurrentSessions] = useState<any[]>([]);
+
+	useEffect(() => {
+		console.log("currentsessions rerender");
+		const sessions = workflowSessionsRef.current.filter(
+			(session) => session.workflow_group_id === selectedId,
 		);
-	}, [selectedId, workflowSessionsIndex]);
+		// sort sessions based on order
+		setCurrentSessions(sessions.sort((a, b) => a.order - b.order));
+	}, [selectedId, workflowSessions]);
 
 	if (!currentSessions) {
 		return null;
 	}
 
-	const handleModalClick = () => {
+	const handleModalClick = useCallback(() => {
 		setShowAgentList(!showAgentList);
-	};
+	}, [showAgentList]);
 
 	if (!useHasHydrated()) {
 		return (
@@ -121,20 +137,24 @@ const SimpleWorkflow: React.FC = () => {
 		);
 	}
 
-	if (currentSessions == undefined) return;
+	const WelcomeContainer = ({ children }: { children: React.ReactNode }) => (
+		<div className={styles["welcome-container"]}>
+			<div className={styles["logo"]}>
+				<Image
+					className={styles["logo-image"]}
+					src="/logo-2.png"
+					alt="Logo"
+					width={200}
+					height={253}
+				/>
+			</div>
+			{children}
+		</div>
+	);
 	const MainScreen = () => {
 		if (!isAuth) {
 			return (
-				<div className={styles["welcome-container"]}>
-					<div className={styles["logo"]}>
-						<Image
-							className={styles["logo-image"]}
-							src="/logo-2.png"
-							alt="Logo"
-							width={200}
-							height={253}
-						/>
-					</div>
+				<WelcomeContainer>
 					<div className={styles["title"]}>您还未登录, 请登录后开启该功能</div>
 					<div className={styles["actions"]}>
 						<Button
@@ -148,50 +168,34 @@ const SimpleWorkflow: React.FC = () => {
 							登录
 						</Button>
 					</div>
-				</div>
+				</WelcomeContainer>
 			);
 		}
-
 		if (currentSessions.length !== 0) {
-			return currentSessions.map((session, index) => {
-				return (
-					<>
-						{/* {index} {session.id} {session.topic} , */}
-						<_Chat
-							key={session.session_id}
-							_session={session}
-							index={index}
-							isworkflow={true}
-							submitType="workflow"
-						/>
-					</>
-				);
-			});
+			return currentSessions.map((session, index) => (
+				<_Chat
+					key={`workflow-${session?.id}`}
+					_session={session}
+					index={index}
+					isworkflow={true}
+					submitType="workflow"
+					storeType="workflow"
+				/>
+			));
 		}
 
 		if (workflowGroups.length !== 0 && currentSessions.length === 0) {
 			return (
-				<div className={styles["welcome-container"]}>
-					<div className={styles["logo"]}>
-						<Image
-							className={styles["logo-image"]}
-							src="/logo-2.png"
-							alt="Logo"
-							width={200}
-							height={253}
-						/>
-					</div>
+				<WelcomeContainer>
 					<div className={styles["title"]}>
-						<a onClick={(e) => e.preventDefault()}>
-							<Button
-								type="dashed"
-								className={styles["plus"]}
-								icon={<PlusCircleOutlined />}
-								onClick={() => handleModalClick()}
-							>
-								新增助手
-							</Button>
-						</a>
+						<Button
+							type="dashed"
+							className={styles["plus"]}
+							icon={<PlusCircleOutlined />}
+							onClick={handleModalClick}
+						>
+							新增助手
+						</Button>
 						来开启工作流
 					</div>
 					<div className={styles["sub-title"]}>
@@ -199,39 +203,30 @@ const SimpleWorkflow: React.FC = () => {
 						手机端无法使用.
 						<p>该功能属于会员功能, 目前限时开放.</p>
 					</div>
-				</div>
+				</WelcomeContainer>
 			);
 		}
 
 		return (
-			<div className={styles["welcome-container"]}>
-				<div className={styles["logo"]}>
-					<Image
-						className={styles["logo-image"]}
-						src="/logo-2.png"
-						alt="Logo"
-						width={200}
-						height={253}
-					/>
-				</div>
+			<WelcomeContainer>
 				<div className={styles["title"]}>
 					您还没有建立对话, 点击{" "}
 					<Button
 						type="dashed"
 						className={styles["plus"]}
 						icon={<PlusCircleOutlined />}
-						onClick={() => addWorkflowGroup()}
+						onClick={addWorkflowGroup}
 					>
 						新建对话
 					</Button>
 					按钮开始
 				</div>
-			</div>
+			</WelcomeContainer>
 		);
 	};
 
 	return (
-		<Layout style={{ flexDirection: "row" }} className="tight-container">
+		<Layout className="tight-container">
 			<WorkflowSidebar />
 			<Layout
 				className={`${styles2["window-content"]} ${styles["background"]}`}
@@ -267,7 +262,9 @@ const App = () => {
 	return (
 		<WorkflowProvider>
 			<HashRouter>
-				<SimpleWorkflow />
+				<Suspense fallback={<div>loading..</div>}>
+					<SimpleWorkflow />
+				</Suspense>
 			</HashRouter>
 		</WorkflowProvider>
 	);

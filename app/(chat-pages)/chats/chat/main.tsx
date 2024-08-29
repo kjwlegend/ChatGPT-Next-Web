@@ -67,6 +67,7 @@ interface ChatProps {
 	index?: number;
 	isworkflow: boolean;
 	submitType: "chat" | "workflow" | undefined;
+	storeType: string;
 }
 
 export const _Chat: React.FC<ChatProps> = memo((props) => {
@@ -83,7 +84,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 	const sessionId = session.id;
 
 	return (
-		<ChatProvider _session={_session}>
+		<ChatProvider _session={_session} storeType={props.storeType}>
 			<div
 				className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""}`}
 				key={sessionId}
@@ -130,19 +131,19 @@ export function Chat() {
 	const session = chatStore.currentSession();
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		if (!session) {
-			navigate(Path.NewChat);
-		}
-	}, [session]);
-
+	useEffect(() => {}, [session]);
+	if (!session) {
+		navigate(Path.NewChat);
+		return null;
+	}
 	return (
 		<_Chat
 			_session={session}
-			key={sessionIndex}
+			key={`main-chat-${session.id}`}
 			index={sessionIndex}
 			isworkflow={false}
 			submitType="chat"
+			storeType="chat"
 		></_Chat>
 	);
 }

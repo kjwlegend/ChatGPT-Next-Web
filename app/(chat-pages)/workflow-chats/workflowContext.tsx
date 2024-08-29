@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+	createContext,
+	useContext,
+	useState,
+	useCallback,
+	useEffect,
+} from "react";
 import {
 	useWorkflowStore,
 	workflowChatSession,
@@ -43,8 +49,15 @@ interface workflowSessionActionsContextType {
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
 	getworkFlowSessions: (param: any) => Promise<any>;
 }
+interface WorkflowContextValue {
+	selectedId: string;
+	workflowGroups: Array<WorkflowGroup>;
+}
 
-export const workflowGroupsContext = createContext<WorkflowGroup[]>([]);
+export const workflowGroupsContext = createContext<WorkflowContextValue>({
+	selectedId: "",
+	workflowGroups: [],
+});
 export const workflowSessionsContext = createContext<workflowChatSession[]>([]);
 export const workflowGroupActionsContext =
 	createContext<WorkflowGroupActionsContextType>({
@@ -83,6 +96,7 @@ export const WorkflowProvider = ({
 	} = useWorkflowStore();
 
 	const [messageApi, contextHolder] = message.useMessage();
+	console.log("workflowcontext refresh", workflowSessions);
 
 	const userid = useUserStore.getState().user.id;
 	const maskStore = useMaskStore();
@@ -160,15 +174,19 @@ export const WorkflowProvider = ({
 				content: "会话添加中",
 				type: "loading",
 			});
+
 			try {
 				const apidata = {
 					agent: agent.id,
-					workflow_session: groupId,
+					workflow_session: groupId ?? selectedId,
 				};
 				console.log(apidata, "apidata");
 				const mask = maskStore.get(agent.id);
 				console.log(mask, "mask");
-				const res = await createWorkflowSessionChatGroup(apidata, groupId);
+				const res = await createWorkflowSessionChatGroup(
+					apidata,
+					groupId ?? selectedId,
+				);
 				const newsession = createEmptySession({ id: res.id, mask });
 				addSessionToGroup(groupId ?? selectedId, newsession);
 				messageApi.destroy();
@@ -177,7 +195,7 @@ export const WorkflowProvider = ({
 				messageApi.error(`会话添加失败: ${error.message}`);
 			}
 		},
-		[addSessionToGroup],
+		[],
 	);
 
 	const moveSessionHandler = useCallback(
@@ -337,7 +355,9 @@ export const WorkflowProvider = ({
 				}}
 			>
 				<workflowSessionsContext.Provider value={workflowSessions}>
-					<workflowGroupsContext.Provider value={workflowGroups}>
+					<workflowGroupsContext.Provider
+						value={{ selectedId, workflowGroups }}
+					>
 						{contextHolder}
 						{children}
 					</workflowGroupsContext.Provider>
@@ -349,11 +369,9 @@ export const WorkflowProvider = ({
 
 // 自定义钩子
 export const useWorkflowGroups = () => {
-	const context = useContext(workflowGroupsContext);
-	if (context === undefined) {
-		throw new Error("useworkflowGroups must be used within a WorkflowProvider");
-	}
-	return context;
+	const { selectedId, workflowGroups } = useContext(workflowGroupsContext);
+
+	return { selectedId, workflowGroups };
 };
 
 export const useWorkflowSessions = () => {

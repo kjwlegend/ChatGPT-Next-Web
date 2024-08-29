@@ -47,6 +47,7 @@ import { fillTemplateWith } from "@/app/chains/base";
 import { MultimodalContent } from "../client/api";
 import { Tracing } from "trace_events";
 import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
+import { getMessages } from "@fortaine/fetch-event-source/lib/cjs/parse";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
@@ -468,7 +469,7 @@ export const useChatStore = createPersistStore(
 						await createChatDataAndFetchId(createChatData);
 
 					const userContent = content;
-					console.log("[User Input] after template: ", userContent);
+					// console.log("[User Input] after template: ", userContent);
 
 					let mContent: string | MultimodalContent[] = userContent;
 
@@ -533,7 +534,7 @@ export const useChatStore = createPersistStore(
 
 						get().updateCurrentSession((session) => {
 							session.messages = session.messages.concat();
-							console.log("onUpdateCallback", session.messages);
+							// console.log("onUpdateCallback", session.messages);
 							session.lastUpdateTime = Date.now();
 						});
 					};
@@ -545,7 +546,7 @@ export const useChatStore = createPersistStore(
 						// 这里可以进行 tool 更新的逻辑
 						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
 						get().updateCurrentSession((session) => {
-							session.messages = [...session.messages];
+							session.messages = session.messages.concat();
 							session.lastUpdateTime = Date.now();
 						});
 					};
@@ -685,6 +686,10 @@ export const useChatStore = createPersistStore(
 				});
 				sessions[index].lastUpdateTime = Date.now();
 				set(() => ({ sessions }));
+			},
+
+			getMessages(sessionId: string) {
+				return get().currentSession().messages;
 			},
 
 			resetSession() {

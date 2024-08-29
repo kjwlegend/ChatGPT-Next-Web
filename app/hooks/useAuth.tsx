@@ -59,7 +59,6 @@ export default function useAuth() {
 
 		// 假设 latest_balance 是一个数组，包含多个 BalanceType 对象
 		const balanceObjects = user.latest_balance as [BalanceType];
-		console.log(balanceObjects);
 		// 使用 reduce 来构建新的余额对象
 		const newBalance = balanceObjects.reduce((acc, element) => {
 			const balanceEntry = getBalance(element);
@@ -85,7 +84,7 @@ export default function useAuth() {
 				...balance,
 			},
 		};
-		console.log(updatedUser);
+		// console.log(updatedUser);
 
 		userStore.setUser(updatedUser);
 	};

@@ -19,6 +19,7 @@ const ChatList = ({
 	onChatItemDelete,
 	onChatItemEdit,
 }: ChatListProps) => {
+	
 	const [chatlist, setChatlist] = useState(chatSessions ? chatSessions : []);
 
 	console.log("debug: chatsessions", chatlist);

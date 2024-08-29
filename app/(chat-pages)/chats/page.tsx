@@ -163,7 +163,6 @@ const loadAsyncGoogleFont = () => {
 	document.head.appendChild(linkEl);
 };
 function Screen() {
-	const config = useAppConfig();
 	const location = useLocation();
 	const isAuth = location.pathname === Path.Auth;
 	const isHome = location.pathname === Path.Home;
@@ -171,22 +170,17 @@ function Screen() {
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
 	const router = useRouter();
-	const chatStore = useChatStore();
-	const {
-		currentSessionId,
-		selectSession,
-		selectSessionById,
-		moveSession,
-		sortSession,
-	} = chatStore;
+
 	const navigate = useNavigate();
 	const {
-		chatSessions,
 		loadMoreSessions,
 		handleAddClick,
 		handleChatItemClick,
 		handleChatItemDelete,
 	} = useChatService();
+
+	const chatstore = useChatStore();
+	const sessionlist = chatstore.sessions;
 	const { onDelete, onChat } = useAgentActions();
 
 	useEffect(() => {
@@ -224,7 +218,7 @@ function Screen() {
 			<>
 				<SideBar
 					className={isHome ? styles["sidebar-show"] : ""}
-					chatSessions={chatSessions}
+					chatSessions={sessionlist}
 					loadMoreSessions={loadMoreSessions}
 					onAddClick={handleAddClick}
 					onChatItemClick={handleChatItemClick}
