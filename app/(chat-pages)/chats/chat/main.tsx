@@ -71,48 +71,43 @@ interface ChatProps {
 }
 
 export const _Chat: React.FC<ChatProps> = memo((props) => {
-	const { _session, index, isworkflow, submitType } = props;
+	const { _session, index, isworkflow, submitType, storeType } = props;
 	const chatStore = useChatStore.getState();
-	if (!_session) return;
-
 	const { setSession } = useChatActions();
-	useEffect(() => {
-		setSession(_session);
-	}, []);
 
-	const session = _session;
-	const sessionId = session.id;
+	useEffect(() => {
+		if (_session) {
+			setSession(_session);
+		}
+	}, [_session, setSession]);
+
+	if (!_session) return null;
+
+	const sessionId = _session.id;
+
+	const commonProps = useMemo(
+		() => ({
+			_session,
+			index,
+			isworkflow,
+		}),
+		[_session, index, isworkflow],
+	);
 
 	return (
-		<ChatProvider _session={_session} storeType={props.storeType}>
+		<ChatProvider _session={_session} storeType={storeType}>
 			<div
 				className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""}`}
 				key={sessionId}
 				data-index={sessionId}
 			>
-				<WindowHeader
-					_session={session}
-					index={index}
-					isworkflow={isworkflow}
-					key={`header-${session.id}`}
-				/>
-				<ChatbodyDynamic
-					_session={session}
-					index={index}
-					isworkflow={isworkflow}
-					key={`body-${session.id}`}
-				/>
-				<InputpanelDynamic
-					_session={session}
-					index={index}
-					key={`input-${session.id}`}
-					submitType={submitType}
-				/>
+				<WindowHeader {...commonProps} />
+				<ChatbodyDynamic {...commonProps} />
+				<InputpanelDynamic {...commonProps} submitType={submitType} />
 			</div>
 		</ChatProvider>
 	);
 });
-
 export function useLoadData() {
 	const config = useAppConfig();
 
@@ -143,7 +138,7 @@ export function Chat() {
 			index={sessionIndex}
 			isworkflow={false}
 			submitType="chat"
-			storeType="chat"
+			storeType="chatstore"
 		></_Chat>
 	);
 }

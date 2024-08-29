@@ -78,12 +78,23 @@ export const ChatProvider = ({
 		console.log("no store");
 		return null;
 	}
+
+	// 分离 session 数据
+	const { messages: sessionMessages, ...sessionData } = _session;
+
+	// 独立管理 session 的其他属性
+	const [session, setSession] =
+		useState<Omit<ChatSession, "messages">>(sessionData);
+
+	// 独立管理 messages
+	const [chatMessages, setChatMessages] =
+		useState<ChatMessage[]>(sessionMessages);
+
+	// 其他状态
 	const [hitBottom, setHitBottom] = useState(true);
 	const [autoScroll, setAutoScroll] = useState(true);
 	const [showPromptModal, setShowPromptModal] = useState(false);
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
-	const [session, setSession] = useState<ChatSession>(_session);
-
 	const [submitType, setSubmitType] = useState<
 		"chat" | "workflow" | "multiagent"
 	>("chat");

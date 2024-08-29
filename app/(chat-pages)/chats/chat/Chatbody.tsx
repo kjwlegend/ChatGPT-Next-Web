@@ -277,7 +277,6 @@ export function Chatbody(props: {
 			}}
 		>
 			<MessageList
-				session={session}
 				messages={messagesfinal}
 				isLoading={isLoading}
 				hasNextPage={hasNextPage}

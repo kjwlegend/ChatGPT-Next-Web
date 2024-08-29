@@ -62,19 +62,13 @@ import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { useWorkflowStore } from "@/app/store/workflow";
 interface MessageItemProps {
 	message: ChatMessage;
-	session: ChatSession;
 	i: number;
-	context: RenderMessage[];
-	clearContextIndex: number;
-	onUserStop?: (messageId: string) => void;
-	onResend?: (message: ChatMessage) => void;
-	onDelete?: (messageId: string) => void;
-	onPinMessage?: (message: ChatMessage) => void;
-	onPlayAudio?: (message: ChatMessage) => void;
 }
 
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
 import IconTooltipButton from "@/app/components/iconButton";
+import { useMessages, useSessions } from "../hooks/useChatContext";
+import { useMessageActions } from "./useMessageActions";
 
 const Markdown = dynamic(
 	async () => (await import("@/app/components/markdown")).Markdown,
@@ -83,48 +77,42 @@ const Markdown = dynamic(
 	},
 );
 
-const MessageItem: React.FC<MessageItemProps> = ({
-	message,
-	session,
-	i,
-	context,
-	clearContextIndex,
-	onUserStop,
-	onResend,
-	onDelete,
-	onPinMessage,
-	onPlayAudio,
-}) => {
+const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	const [userInput, setUserInput] = useState("");
 	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
+	const [showToastModal, setshowToastModal] = useState(false);
 
 	const chatStore = useChatStore.getState();
 	const userStore = useUserStore.getState();
 	const workflowStore = useWorkflowStore();
+	const session = useSessions();
+	const sessionId = session.id;
 	const config = useAppConfig();
 	const fontSize = config.fontSize;
 	const router = useRouter();
 
-	const sessionId = session.id;
 	const isworkflow = session.isworkflow;
-	const messages = session.messages;
+	const messages = useMessages();
 
 	const messageText = getMessageTextContent(message);
 	const messageImages = getMessageImages(message);
 	const isUser = message.role === "user";
 	const mjstatus = message.mjstatus;
 	const actions = mjstatus?.action;
-	const isContext = i < context.length;
-	const showActions =
-		i > 0 && !(message.preview || messageText.length === 0) && !isContext;
+	// const isContext = i < context.length;
+	const showActions = true;
 	const showTyping = message.preview || message.streaming;
-	const shouldShowClearContextDivider = i === clearContextIndex - 1;
+	const shouldShowClearContextDivider = i === messages.length - 1;
 
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
-	// useEffect(() => {
-	// 	console.log("MessageItem rendered", message.content);
-	// }, [message]);
+	const {
+		handleUserStop,
+		handleDelete,
+		handlePinMessage,
+		handleResend,
+		handlePlayAudio,
+	} = useMessageActions(session, setshowToastModal);
 
 	useEffect(() => {
 		if (
@@ -220,7 +208,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 				<IconTooltipButton
 					text={Locale.Chat.Actions.Retry}
 					icon={<ResetIcon />}
-					onClick={() => (onResend ? onResend(message) : null)}
+					onClick={() => handleResend(message)}
 					tooltipProps={{}}
 					shape="circle"
 				/>
@@ -228,7 +216,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 				<IconTooltipButton
 					text={Locale.Chat.Actions.Delete}
 					icon={<DeleteIcon />}
-					onClick={() => (onDelete ? onDelete(message.id) : null)}
+					onClick={() => handleDelete(message.id)}
 					tooltipProps={{}}
 					shape="circle"
 				/>
@@ -236,7 +224,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 				<IconTooltipButton
 					text={Locale.Chat.Actions.Pin}
 					icon={<PinIcon />}
-					onClick={() => (onPinMessage ? onPinMessage(message) : null)}
+					onClick={() => handlePinMessage(message)}
 					tooltipProps={{}}
 					shape="circle"
 				/>
@@ -283,9 +271,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 							<div
 								className={`${isUser ? styles["user"] + " " + styles["play"] : styles["bot"] + " " + styles["play"]}`}
 							>
-								<button
-									onClick={() => (onPlayAudio ? onPlayAudio(message) : null)}
-								>
+								<button onClick={() => handlePlayAudio(message)}>
 									<PlayIcon></PlayIcon>
 								</button>
 							</div>
@@ -412,11 +398,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 									<ChatAction
 										text={Locale.Chat.Actions.Stop}
 										icon={<StopIcon />}
-										onClick={() =>
-											onUserStop
-												? onUserStop(message.nanoid ?? message.id)
-												: null
-										}
+										onClick={() => handleUserStop(message.id)}
 									/>
 								) : (
 									RenderMessageActions
@@ -424,8 +406,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
 							</div>
 							<div className={styles["chat-message-notes"]}>
 								<div>
-									Token counts: {message.token_counts_total} |{" "}
-									{isContext ? Locale.Chat.IsContext : message.date} |
+									Token counts: {message.token_counts_total} | {message.date} |
 									messageid: {message.id}
 								</div>
 							</div>

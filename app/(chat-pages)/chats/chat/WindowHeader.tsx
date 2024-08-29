@@ -356,61 +356,58 @@ function WindowActions(props: {
 	);
 }
 
-export function WindowHeader(props: {
-	_session: ChatSession;
-	index?: number;
-	isworkflow: boolean;
-	MultiAgent?: boolean;
-}) {
-	const { _session, index, isworkflow, MultiAgent } = props;
-	// isworkflow = true then, session use props.session. else use currentSession
+export const WindowHeader = React.memo(
+	(props: {
+		_session: ChatSession;
+		index?: number;
+		isworkflow: boolean;
+		MultiAgent?: boolean;
+	}) => {
+		const { _session, index, isworkflow, MultiAgent } = props;
 
-	const session = useSessions();
+		const session = useSessions();
+		const hitBottom = false;
 
-	const hitBottom = false;
+		const { showPromptModal } = useChatSetting();
+		const { setShowPromptModal } = useChatActions();
+		const [isEditingMessage, setIsEditingMessage] = useState(false);
 
-	const { showPromptModal } = useChatSetting();
-	const { setShowPromptModal } = useChatActions();
-	const [isEditingMessage, setIsEditingMessage] = useState(false);
+		const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
-	const isMobileScreen = useContext(AppGeneralContext).isMobile;
+		const commonProps = useMemo(
+			() => ({
+				session,
+				index,
+				isworkflow,
+			}),
+			[session, index, isworkflow],
+		);
 
-	return (
-		<div className="window-header" data-tauri-drag-region>
-			{isMobileScreen && !props.isworkflow && <ReturnButton />}
+		return (
+			<div className="window-header" data-tauri-drag-region>
+				{isMobileScreen && !isworkflow && <ReturnButton />}
 
-			<WindowHeaderTitle
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
+				<WindowHeaderTitle {...commonProps} />
 
-			<LLMModelSwitch session={session} isworkflow={props.isworkflow} />
+				<LLMModelSwitch {...commonProps} />
 
-			<WindowActions
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
+				<WindowActions {...commonProps} />
 
-			<PromptToast
-				showToast={!hitBottom}
-				showModal={showPromptModal}
-				setShowModal={setShowPromptModal}
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
-			<MaskModal
-				showModal={showPromptModal}
-				setShowModal={setShowPromptModal}
-				session={session}
-				index={index}
-				isworkflow={props.isworkflow}
-			/>
-		</div>
-	);
-}
+				<PromptToast
+					showToast={!hitBottom}
+					showModal={showPromptModal}
+					setShowModal={setShowPromptModal}
+					{...commonProps}
+				/>
+				<MaskModal
+					showModal={showPromptModal}
+					setShowModal={setShowPromptModal}
+					{...commonProps}
+				/>
+			</div>
+		);
+	},
+);
 
 export function MultiAgentWindowHeader(props: {
 	session?: MultiAgentChatSession;
