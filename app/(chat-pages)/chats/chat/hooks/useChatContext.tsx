@@ -13,7 +13,9 @@ import React, {
 } from "react";
 import { RenderMessage } from "../chatbody/MessageList";
 import { useWorkflowStore } from "@/app/store/workflow";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 
+import { workflowChatSession, sessionConfig } from "@/app/types/";
 interface ActionContextType {
 	setHitBottom: React.Dispatch<React.SetStateAction<boolean>>;
 	setAutoScroll: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,6 +46,7 @@ const ChatActionContext = React.createContext<ActionContextType>({
 	setSubmitType: () => {},
 	setMessages: () => {},
 });
+
 const ChatSessionContext = React.createContext({});
 const ChatMessagesContext = React.createContext({});
 
@@ -63,7 +66,7 @@ export const ChatProvider = ({
 	children,
 	storeType,
 }: {
-	_session: ChatSession;
+	_session: ChatSession | workflowChatSession;
 	children: React.ReactNode;
 	storeType: string;
 }) => {
@@ -80,15 +83,12 @@ export const ChatProvider = ({
 	}
 
 	// 分离 session 数据
-	const { messages: sessionMessages, ...sessionData } = _session;
 
 	// 独立管理 session 的其他属性
-	const [session, setSession] =
-		useState<Omit<ChatSession, "messages">>(sessionData);
+	const [session, setSession] = useState(_session);
 
 	// 独立管理 messages
-	const [chatMessages, setChatMessages] =
-		useState<ChatMessage[]>(sessionMessages);
+	const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
 	// 其他状态
 	const [hitBottom, setHitBottom] = useState(true);
@@ -142,7 +142,7 @@ export const ChatProvider = ({
 };
 
 export const useSessions = () => {
-	const session = useContext(ChatSessionContext) as ChatSession;
+	const session = useContext(ChatSessionContext);
 	return session;
 };
 export const useMessages = () => {

@@ -73,7 +73,7 @@ export function useDoSubmit(
 
 			updateUserInfo(userStore.user.id);
 		} catch (error: any) {
-			messageApi.error(error.message);
+			console.error(error.message);
 			if (error.message.includes("登录")) {
 				setTimeout(() => {
 					authHook.logoutHook();

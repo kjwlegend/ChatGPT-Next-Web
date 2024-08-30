@@ -64,40 +64,55 @@ import {
 
 import { useMaskStore } from "@/app/store/mask";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
+import { useSessions } from "../hooks/useChatContext";
+import { useWorkflowStore } from "@/app/store/workflow";
 
+import { sessionConfig, workflowChatSession } from "@/app/types/";
 // import { cloneDeep } from "lodash";
 
 export function SessionConfigModal(props: {
 	onClose: () => void;
-	index?: number;
-	session?: ChatSession;
+	session?: sessionConfig;
 	isworkflow: boolean;
 }) {
 	const chatStore = useChatStore.getState();
-	const session = props.session || chatStore.currentSession();
-	const index = props.index || chatStore.sessions.indexOf(session);
+	const workflowStore = useWorkflowStore.getState();
+	const session = useSessions();
 	const sessionId = session.id;
 
 	const maskStore = useMaskStore();
 	// 用于保存子组件的 session 数据
-	const [childSessionData, setChildSessionData] =
-		React.useState<ChatSession>(session);
+	const [childSessionData, setChildSessionData] = useState(session);
+	const isWorkflow = props.isworkflow;
+	// 使用类型守卫和默认值处理
+	const workflowId = isWorkflow
+		? (session as workflowChatSession)?.workflow_group_id
+		: null;
+
+	// 如果session 存在 workflow_group_id, 则为 workflow
 
 	const handleOnSave = (e: any) => {
 		setChildSessionData(e);
 	};
 
 	const handleSave = () => {
-		chatStore.updateSession(
-			sessionId,
-			(session) => {
-				Object.assign(session, childSessionData);
-			},
-			true,
-		);
+		if (isWorkflow) {
+			workflowStore.updateWorkflowSession(
+				workflowId ?? "0",
+				sessionId,
+				childSessionData,
+			);
+		} else {
+			chatStore.updateSession(
+				sessionId,
+				(session) => {
+					Object.assign(session, childSessionData);
+				},
+				true,
+			);
+		}
 		props.onClose();
 	};
-
 	return (
 		<div className="modal-mask">
 			<Modal

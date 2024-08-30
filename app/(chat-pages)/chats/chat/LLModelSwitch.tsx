@@ -32,9 +32,10 @@ import { DownOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import styles from "./chats.module.scss";
 import { isProModel } from "@/app/utils";
 import { useWorkflowStore } from "@/app/store/workflow";
+import { sessionConfig } from "@/app/types/";
 
 export function LLMModelSwitch(
-	props: { session?: ChatSession; isworkflow?: boolean } = {
+	props: { session?: sessionConfig; isworkflow?: boolean } = {
 		isworkflow: false,
 	},
 ) {

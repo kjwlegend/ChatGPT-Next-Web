@@ -8,7 +8,7 @@ import { DragIcon, CopyIcon, AddIcon } from "@/app/icons";
 import { Button } from "antd";
 import { genPrompt } from "@/app/chains/promptgen";
 
-import { ChatMessage, ChatSession, Mask } from "@/app/types/";
+import { ChatMessage, ChatSession, Mask, sessionConfig } from "@/app/types/";
 import { DEFAULT_MASK_AVATAR, useMaskStore } from "@/app/store/mask";
 import {
 	createMessage,
@@ -43,8 +43,6 @@ import {
 import { Updater } from "@/app/typing";
 import { ModelConfigList } from "./model-config";
 import { FileName, Path } from "@/app/constant";
-import { BUILTIN_MASK_STORE } from "@/app/masks";
-import { nanoid } from "nanoid";
 
 import {
 	DragDropContext,
@@ -58,8 +56,7 @@ import { Tabs, Radio, Input as AntdInput } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useAllModels } from "@/app/utils/hooks";
-import { MultiAgentChatSession } from "@/app/store/multiagents";
-import { Chat } from "../chat/main";
+import { workflowChatSession } from "@/app/types/";
 
 const { TextArea } = AntdInput;
 
@@ -315,8 +312,8 @@ export function ContextPrompts(props: {
 export function MaskConfig(props: {
 	mask: Mask;
 	updateMask: Updater<Mask>;
-	session: ChatSession | MultiAgentChatSession;
-	onSave: (sessionData: ChatSession | MultiAgentChatSession) => void; // 新增的回调函数
+	session: sessionConfig;
+	onSave: (sessionData: sessionConfig) => void; // 新增的回调函数
 	extraListItems?: JSX.Element;
 	readonly?: boolean;
 	shouldSyncFromGlobal?: boolean;
@@ -325,9 +322,7 @@ export function MaskConfig(props: {
 	const [tabPosition, setTabPosition] = useState<TabPosition>("left");
 
 	const allModels = useAllModels();
-	const [sessionData, setSessionData] = useState<
-		ChatSession | MultiAgentChatSession
-	>(props.session);
+	const [sessionData, setSessionData] = useState<sessionConfig>(props.session);
 
 	useEffect(() => {
 		setSessionData(props.session);
@@ -390,11 +385,11 @@ export function MaskConfig(props: {
 				title="信息"
 				subTitle={`创建时间: ${sessionData.created_at} | 最后更新时间:  ${sessionData.updated_at}`}
 			>
-				<p>{sessionData.messages.length} 条对话</p>
+				<p>对话记忆</p>
 			</ListItem>
 			{"mask" in sessionData && sessionData.mask.modelConfig.sendMemory ? (
 				<ListItem
-					title={`${Locale.Memory.Title} (${sessionData.lastSummarizeIndex} of ${sessionData.messages.length})`}
+					title={`${Locale.Memory.Title} (${sessionData.lastSummarizeIndex})`}
 					subTitle={sessionData.memoryPrompt || Locale.Memory.EmptyContent}
 				></ListItem>
 			) : null}

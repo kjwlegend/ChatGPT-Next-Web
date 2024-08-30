@@ -161,7 +161,6 @@ export function Markdown(
 		content: string;
 		loading?: boolean;
 		fontSize?: number;
-		defaultShow?: boolean;
 		imageBase64?: string;
 	} & React.DOMAttributes<HTMLDivElement>,
 ) {

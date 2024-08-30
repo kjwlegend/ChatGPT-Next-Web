@@ -58,23 +58,17 @@ import { last } from "cheerio/lib/api/traversing";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
-export function Chatbody(props: {
-	_session: ChatSession;
-	index?: number;
-	isworkflow?: boolean;
-}) {
+const MemoMessageList = React.memo(MessageList);
+export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 	const chatStore = useChatStore.getState();
 
-	const { _session, index, isworkflow } = props;
+	const { index, isworkflow } = props;
 
 	const session = useSessions();
 	const messages = useMessages();
 
 	// if props._session is not provided, use current session
 	const sessionId = session.id;
-
-	const config = useAppConfig();
-	const accessStore = useAccessStore.getState();
 
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -259,7 +253,7 @@ export function Chatbody(props: {
 		const isTouchTopEdge = e.scrollTop <= edgeThreshold;
 		const isTouchBottomEdge = bottomHeight >= e.scrollHeight - edgeThreshold;
 		const isHitBottom =
-			bottomHeight >= e.scrollHeight - (isMobileScreen ? 5 : 10);
+			bottomHeight >= e.scrollHeight - (isMobileScreen ? 10 : 20);
 
 		return { isTouchTopEdge, isTouchBottomEdge, isHitBottom };
 	};
@@ -276,7 +270,7 @@ export function Chatbody(props: {
 				// setAutoScroll(false);
 			}}
 		>
-			<MessageList
+			<MemoMessageList
 				messages={messagesfinal}
 				isLoading={isLoading}
 				hasNextPage={hasNextPage}

@@ -10,7 +10,7 @@ import React, {
 	useContext,
 	Suspense,
 } from "react";
-import { ChatMessage, ChatSession, Mask } from "@/app/types/";
+import { ChatMessage, ChatSession, Mask, sessionConfig } from "@/app/types/";
 
 import { HashRouter } from "react-router-dom";
 import { useChatStore, useUserStore } from "../../store";
@@ -45,7 +45,7 @@ import {
 
 import { _Chat } from "@/app/(chat-pages)/chats/chat/main";
 
-import { useWorkflowStore, workflowChatSession } from "../../store/workflow";
+import { workflowChatSession } from "@/app/types/";
 import { useAuthStore } from "../../store/auth";
 import { WorkflowSidebar } from "./sidebar";
 import { message } from "antd";
@@ -55,7 +55,7 @@ import Router, { useRouter } from "next/navigation";
 import AgentList from "./components/agentList";
 import MaskList from "../chats/masklist/MaskList";
 import { useMasks } from "@/app/hooks/useMasks";
-import { Modal } from "antd";
+
 import { MaskPage } from "../chats/masklist/mask";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";
@@ -75,36 +75,23 @@ const useHasHydrated = (): boolean => {
 
 const SimpleWorkflow: React.FC = () => {
 	const isAuthenticated = useAuthStore().isAuthenticated;
-
-	const { addWorkflowGroup } = useWorkflowGroupActions();
 	const { workflowGroups, selectedId } = useWorkflowGroups();
-	const { deleteSessionFromGroup, moveSession } = useWorkflowSessionActions();
-	const workflowSessions = useWorkflowSessions();
+	const workflowSessions = useWorkflowSessions() as workflowChatSession[];
+	const { addWorkflowGroup } = useWorkflowGroupActions();
 
-	// const { workflowGroups, selectedId, workflowSessions } = useWorkflowStore();
-
-	const { workflowSessionsIndex } = useWorkflowStore.getState();
 	const [isAuth, setIsAuth] = useState(false);
-	const [showAgentList, setShowAgentList] = useState(false);
 	const router = useRouter();
-	const { onDelete, onChat } = useAgentActions();
-
-	const { handleAgentClick } = useSimpleWorkflowService();
-
-	// create a workflowsession ref to make sure get latest workflowsessions
 
 	const workflowSessionsRef = useRef(workflowSessions);
 
 	useEffect(() => {
 		workflowSessionsRef.current = workflowSessions;
-		console.log("workflowSessionsRef.current", workflowSessionsRef.current);
 	}, [workflowSessions]);
 
 	useEffect(() => {
 		setIsAuth(isAuthenticated);
 	}, [isAuthenticated]);
 
-	// // 根据 selectedID 获取对应的 workflowGroup
 	const currentWorkflowGroup = useMemo(() => {
 		return workflowGroups.find((group) => group.id === selectedId);
 	}, [selectedId, workflowGroups]);
@@ -112,21 +99,11 @@ const SimpleWorkflow: React.FC = () => {
 	const [currentSessions, setCurrentSessions] = useState<any[]>([]);
 
 	useEffect(() => {
-		console.log("currentsessions rerender");
 		const sessions = workflowSessionsRef.current.filter(
 			(session) => session.workflow_group_id === selectedId,
 		);
-		// sort sessions based on order
 		setCurrentSessions(sessions.sort((a, b) => a.order - b.order));
 	}, [selectedId, workflowSessions]);
-
-	if (!currentSessions) {
-		return null;
-	}
-
-	const handleModalClick = useCallback(() => {
-		setShowAgentList(!showAgentList);
-	}, [showAgentList]);
 
 	if (!useHasHydrated()) {
 		return (
@@ -137,21 +114,40 @@ const SimpleWorkflow: React.FC = () => {
 		);
 	}
 
-	const WelcomeContainer = ({ children }: { children: React.ReactNode }) => (
-		<div className={styles["welcome-container"]}>
-			<div className={styles["logo"]}>
-				<Image
-					className={styles["logo-image"]}
-					src="/logo-2.png"
-					alt="Logo"
-					width={200}
-					height={253}
-				/>
-			</div>
-			{children}
-		</div>
+	return (
+		<Layout className="tight-container">
+			<WorkflowSidebar />
+			<Layout
+				className={`${styles2["window-content"]} ${styles["background"]}`}
+			>
+				{selectedId !== "" && (
+					<AgentList
+						sessions={currentSessions}
+						workflowGroup={currentWorkflowGroup}
+					/>
+				)}
+				<div className={styles["chats-container"]}>
+					<MainScreen
+						isAuth={isAuth}
+						currentSessions={currentSessions}
+						workflowGroups={workflowGroups}
+						addWorkflowGroup={addWorkflowGroup}
+						router={router}
+					/>
+				</div>
+			</Layout>
+		</Layout>
 	);
-	const MainScreen = () => {
+};
+
+const MainScreen: React.FC<{
+	isAuth: boolean;
+	currentSessions: any[];
+	workflowGroups: any[];
+	addWorkflowGroup: () => void;
+	router: any;
+}> = React.memo(
+	({ isAuth, currentSessions, workflowGroups, addWorkflowGroup, router }) => {
 		if (!isAuth) {
 			return (
 				<WelcomeContainer>
@@ -192,7 +188,7 @@ const SimpleWorkflow: React.FC = () => {
 							type="dashed"
 							className={styles["plus"]}
 							icon={<PlusCircleOutlined />}
-							onClick={handleModalClick}
+							onClick={() => console.log("add")}
 						>
 							新增助手
 						</Button>
@@ -223,40 +219,25 @@ const SimpleWorkflow: React.FC = () => {
 				</div>
 			</WelcomeContainer>
 		);
-	};
+	},
+);
 
-	return (
-		<Layout className="tight-container">
-			<WorkflowSidebar />
-			<Layout
-				className={`${styles2["window-content"]} ${styles["background"]}`}
-			>
-				{selectedId !== "" && (
-					<AgentList
-						sessions={currentSessions}
-						workflowGroup={currentWorkflowGroup}
-						showModal={handleModalClick}
-					/>
-				)}
-				<div className={styles["chats-container"]}>
-					<MainScreen />
-				</div>
-				{showAgentList && (
-					<Modal
-						open={showAgentList}
-						onCancel={handleModalClick}
-						footer={null}
-						width="70vw"
-						height="80vh"
-						style={{ overflow: "scroll" }}
-					>
-						<MaskPage onItemClick={handleAgentClick} onDelete={onDelete} />
-					</Modal>
-				)}
-			</Layout>
-		</Layout>
-	);
-};
+const WelcomeContainer: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => (
+	<div className={styles["welcome-container"]}>
+		<div className={styles["logo"]}>
+			<Image
+				className={styles["logo-image"]}
+				src="/logo-2.png"
+				alt="Logo"
+				width={200}
+				height={253}
+			/>
+		</div>
+		{children}
+	</div>
+);
 
 const App = () => {
 	return (

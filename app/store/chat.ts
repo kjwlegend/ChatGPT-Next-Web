@@ -11,7 +11,7 @@ import { nanoid } from "nanoid";
 
 import { UserStore, useUserStore } from "./user";
 import { BUILTIN_MASKS, DEFAULT_MASK } from "../masks";
-import type { BuiltinMask } from "../types/index";
+import type { BuiltinMask, sessionConfig } from "../types/index";
 import { Plugin, usePluginStore } from "../store/plugin";
 import {
 	sendChatMessage,

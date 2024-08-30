@@ -5,6 +5,7 @@ import React, {
 	useEffect,
 	useMemo,
 	useCallback,
+	Fragment,
 } from "react";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
@@ -31,6 +32,7 @@ import {
 	Switch,
 	Layout,
 	Flex,
+	Modal,
 } from "antd";
 import { DeleteIcon } from "@/app/icons";
 import Locale from "@/app/locales";
@@ -43,7 +45,10 @@ import {
 	OnDragEndResponder,
 	OnDragUpdateResponder,
 } from "@hello-pangea/dnd";
-import { workflowChatSession } from "@/app/store/workflow";
+import { workflowChatSession } from "@/app/types/";
+import { useSimpleWorkflowService } from "../hooks/useSimpleWorkflowHook";
+import { MaskPage } from "../../chats/masklist/mask";
+import { useAgentActions } from "@/app/hooks/useAgentActions";
 
 export function ChatItemShort(props: {
 	onClick?: () => void;
@@ -111,7 +116,6 @@ export function ChatItemShort(props: {
 export default function AgentList(props: {
 	workflowGroup: any;
 	sessions: any[];
-	showModal: () => void;
 }) {
 	const [selectIndex, setSelectIndex] = useState(0);
 	const { deleteSessionFromGroup, moveSession } = useWorkflowSessionActions();
@@ -127,6 +131,13 @@ export default function AgentList(props: {
 	}, [props.sessions, props.workflowGroup]);
 
 	console.log("debug agentList", orderedSessions);
+	const [showAgentList, setShowAgentList] = useState(false);
+	const handleModalClick = useCallback(() => {
+		setShowAgentList(!showAgentList);
+	}, [showAgentList]);
+
+	const { handleAgentClick } = useSimpleWorkflowService();
+	const { onDelete, onChat } = useAgentActions();
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
@@ -156,8 +167,9 @@ export default function AgentList(props: {
 	};
 
 	return (
-		<div className={styles["session-container"]}>
-			{/* <div className={styles["session-description"]}>
+		<Fragment>
+			<div className={styles["session-container"]}>
+				{/* <div className={styles["session-description"]}>
 					<div className={styles["session-title"]}>{currentGroup?.topic}</div>
 					<div className={styles["session-subtitle"]}>
 						id: {groupId}
@@ -166,52 +178,65 @@ export default function AgentList(props: {
 
 
 				</div> */}
-			<Button
-				type="dashed"
-				className={styles["plus"]}
-				icon={<PlusCircleOutlined />}
-				onClick={() => props.showModal()}
-				size="small"
-			>
-				新增助手
-			</Button>
-			{orderedSessions && (
-				<DragDropContext onDragEnd={onDragEnd}>
-					<Droppable droppableId="chat-list" direction="horizontal">
-						{(provided) => (
-							<div
-								className={styles["session-list"]}
-								ref={provided.innerRef}
-								{...provided.droppableProps}
-							>
-								{orderedSessions.map((item, i) => (
-									<ChatItemShort
-										title={item.mask.name ?? ""}
-										time={new Date(item.lastUpdateTime).toLocaleString()}
-										count={item.messages.length}
-										key={item.id}
-										id={item.id}
-										index={i}
-										selected={i === selectIndex}
-										onClick={() => {
-											itemClickHandler(item, i);
-										}}
-										onDelete={async () => {
-											itemDeleteHandler(item);
-										}}
-										mask={item.mask}
-									/>
-								))}
-								{provided.placeholder}
-							</div>
-						)}
-					</Droppable>
-				</DragDropContext>
+				<Button
+					type="dashed"
+					className={styles["plus"]}
+					icon={<PlusCircleOutlined />}
+					onClick={() => setShowAgentList(!showAgentList)}
+					size="small"
+				>
+					新增助手
+				</Button>
+				{orderedSessions && (
+					<DragDropContext onDragEnd={onDragEnd}>
+						<Droppable droppableId="chat-list" direction="horizontal">
+							{(provided) => (
+								<div
+									className={styles["session-list"]}
+									ref={provided.innerRef}
+									{...provided.droppableProps}
+								>
+									{orderedSessions.map((item, i) => (
+										<ChatItemShort
+											title={item.mask.name ?? ""}
+											time={new Date(item.lastUpdateTime).toLocaleString()}
+											count={0}
+											key={item.id}
+											id={item.id}
+											index={i}
+											selected={i === selectIndex}
+											onClick={() => {
+												itemClickHandler(item, i);
+											}}
+											onDelete={async () => {
+												itemDeleteHandler(item);
+											}}
+											mask={item.mask}
+										/>
+									))}
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+					</DragDropContext>
+				)}
+
+				{/* button 样式 新增session */}
+
+				{/* 下拉菜单 */}
+			</div>
+			{showAgentList && (
+				<Modal
+					open={showAgentList}
+					onCancel={handleModalClick}
+					footer={null}
+					width="70vw"
+					height="80vh"
+					style={{ overflow: "scroll" }}
+				>
+					<MaskPage onItemClick={handleAgentClick} onDelete={onDelete} />
+				</Modal>
 			)}
-
-			{/* button 样式 新增session */}
-
-			{/* 下拉菜单 */}
-		</div>
+		</Fragment>
 	);
 }

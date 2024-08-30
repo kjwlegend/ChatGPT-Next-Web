@@ -130,6 +130,7 @@ import { ClientApi } from "@/app/client/api";
 
 import { createFromIconfontCN } from "@ant-design/icons";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
+import { sessionConfig } from "@/app/types/";
 export const IconFont = createFromIconfontCN({
 	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
@@ -242,7 +243,7 @@ export const ChatActions = memo(
 		showPromptModal: () => void;
 		hitBottom: boolean;
 		uploading: boolean;
-		session?: ChatSession;
+		session?: sessionConfig;
 		index?: number;
 		workflows?: boolean;
 	}) => {

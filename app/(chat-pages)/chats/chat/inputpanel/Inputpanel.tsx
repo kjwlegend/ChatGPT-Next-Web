@@ -143,13 +143,15 @@ import {
 	useChatSetting,
 	useSessions,
 } from "../hooks/useChatContext";
+import { sessionConfig } from "@/app/types/";
 let voicetext: string[] = [];
 
 export function Inputpanel(props: {
-	_session: ChatSession;
 	index?: number;
+	isworkflow: boolean;
 	submitType?: "chat" | "workflow";
 }) {
+	const { index, isworkflow, submitType } = props;
 	const config = useAppConfig();
 	const session = useSessions();
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
@@ -300,7 +302,7 @@ export function Inputpanel(props: {
 				uploading={uploading}
 				session={session}
 				index={props.index}
-				workflows={props._session.isworkflow}
+				workflows={isworkflow}
 			/>
 			<label
 				className={`${styles["chat-input-panel-inner"]} ${

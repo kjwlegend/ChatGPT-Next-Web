@@ -47,9 +47,10 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 		<>
 			{messages.map((message, i) => (
 				<Fragment key={message.id}>
-					<MemoMessageItem i={i} key={message.id} message={message} />
+					<MessageItem i={i} key={message.id} message={message} />
 				</Fragment>
 			))}
 		</>
 	);
 };
+ 

@@ -92,7 +92,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	const router = useRouter();
 
 	const isworkflow = session.isworkflow;
-	const messages = useMessages();
+	// const messages = useMessages();
 
 	const messageText = getMessageTextContent(message);
 	const messageImages = getMessageImages(message);
@@ -102,7 +102,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	// const isContext = i < context.length;
 	const showActions = true;
 	const showTyping = message.preview || message.streaming;
-	const shouldShowClearContextDivider = i === messages.length - 1;
+	// const shouldShowClearContextDivider = i === messages.length - 1;
 
 	const [messageApi, contextHolder] = messagepop.useMessage();
 
@@ -323,7 +323,6 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 								setUserInput(messageText);
 							}}
 							fontSize={fontSize}
-							defaultShow={i >= messages.length - 6}
 						/>
 
 						{/* 文件信息展示 */}
@@ -415,10 +414,10 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 				</div>
 			</div>
 
-			{/* 清除上下文分隔线 */}
+			{/* 清除上下文分隔线
 			{shouldShowClearContextDivider && (
 				<ClearContextDivider sessionId={sessionId} />
-			)}
+			)} */}
 		</Fragment>
 	);
 };

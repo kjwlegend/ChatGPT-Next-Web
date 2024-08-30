@@ -4,7 +4,7 @@ import { fillTemplateWith } from "@/app/chains/base";
 import Locale, { getLang } from "@/app/locales";
 import { estimateTokenLength } from "@/app/utils/chat/token";
 import { getMessageTextContent } from "@/app/utils";
-import { workflowChatSession } from "@/app/store/workflow";
+import { workflowChatSession } from "@/app/types/";
 export function getMessagesWithMemory(
 	session: ChatSession | workflowChatSession,
 ) {

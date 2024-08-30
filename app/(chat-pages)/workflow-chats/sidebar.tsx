@@ -8,7 +8,7 @@ import styles from "@/app/(chat-pages)/chats/home.module.scss";
 import { useWorkflowStore } from "../../store/workflow";
 
 import { message } from "antd";
-import { WorkflowGroup } from "../../store/workflow";
+import { WorkflowGroup } from "@/app/types/";
 
 import { useWorkflowGroups, useWorkflowSessions } from "./workflowContext";
 import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";

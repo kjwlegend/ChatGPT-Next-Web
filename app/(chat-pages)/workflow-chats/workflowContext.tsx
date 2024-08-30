@@ -6,11 +6,13 @@ import React, {
 	useCallback,
 	useEffect,
 } from "react";
+import { useWorkflowStore } from "@/app/store/workflow";
+
 import {
-	useWorkflowStore,
+	sessionConfig,
 	workflowChatSession,
 	WorkflowGroup,
-} from "@/app/store/workflow";
+} from "@/app/types/";
 import { createEmptySession, useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
@@ -58,7 +60,7 @@ export const workflowGroupsContext = createContext<WorkflowContextValue>({
 	selectedId: "",
 	workflowGroups: [],
 });
-export const workflowSessionsContext = createContext<workflowChatSession[]>([]);
+export const workflowSessionsContext = createContext<sessionConfig[]>([]);
 export const workflowGroupActionsContext =
 	createContext<WorkflowGroupActionsContextType>({
 		setSelectedId: () => {},
@@ -97,6 +99,11 @@ export const WorkflowProvider = ({
 
 	const [messageApi, contextHolder] = message.useMessage();
 	console.log("workflowcontext refresh", workflowSessions);
+
+	const filteredWorkflowSessions = workflowSessions.map((session) => {
+		const { messages, ...rest } = session;
+		return rest;
+	});
 
 	const userid = useUserStore.getState().user.id;
 	const maskStore = useMaskStore();
@@ -354,7 +361,7 @@ export const WorkflowProvider = ({
 					updateWorkflowChatGroup,
 				}}
 			>
-				<workflowSessionsContext.Provider value={workflowSessions}>
+				<workflowSessionsContext.Provider value={filteredWorkflowSessions}>
 					<workflowGroupsContext.Provider
 						value={{ selectedId, workflowGroups }}
 					>

@@ -43,7 +43,7 @@ import styles from "./chats.module.scss";
 import { WindowHeader } from "./WindowHeader";
 
 import { useNavigate } from "react-router-dom";
-import { workflowChatSession } from "@/app/store/workflow";
+import { workflowChatSession } from "@/app/types/";
 import { createContext } from "vm";
 import { ChatProvider, useChatActions } from "./hooks/useChatContext";
 
@@ -87,7 +87,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 
 	const commonProps = useMemo(
 		() => ({
-			_session,
+			// _session,
 			index,
 			isworkflow,
 		}),

@@ -41,7 +41,7 @@ import { getClientConfig } from "@/app/config/client";
 
 import { message, Switch } from "antd";
 
-import { SessionConfigModal } from "./SessionConfigModal";
+import { SessionConfigModal } from "./modals/SessionConfigModal";
 
 import MultiAgent, { MultiAgentChatSession } from "@/app/store/multiagents";
 import { LLMModelSwitch } from "./LLModelSwitch";
@@ -51,11 +51,14 @@ import {
 	useChatSetting,
 	useSessions,
 } from "./hooks/useChatContext";
+import MaskModal from "../masklist/MaskModal";
+import { SessionModal } from "./modals/sessionConfig";
+import { sessionConfig } from "@/app/types/";
 
 export function EditMessageModal(props: {
 	onClose: () => void;
 	index?: number;
-	session: ChatSession;
+	session: sessionConfig;
 	isworkflow: boolean;
 	MultiAgent?: boolean;
 }) {
@@ -115,37 +118,14 @@ export function EditMessageModal(props: {
 		</div>
 	);
 }
-const MaskModal = (props: {
-	session?: ChatSession;
-	index?: number;
-	isworkflow: boolean;
-	showModal?: boolean;
-	setShowModal: (_: boolean) => void;
-	MultiAgent?: boolean;
-}) => {
-	const chatStore = useChatStore.getState();
-	const session = props.session;
 
-	return (
-		<div className={styles["prompt-toast"]} key="prompt-toast">
-			{props.showModal && (
-				<SessionConfigModal
-					onClose={() => props.setShowModal(false)}
-					session={session}
-					index={props.index}
-					isworkflow={props.isworkflow}
-				/>
-			)}
-		</div>
-	);
-};
 export function PromptToast(props: {
 	showToast?: boolean;
 	showModal?: boolean;
 	setShowModal: (_: boolean) => void;
 	isworkflow: boolean;
 	index?: number;
-	session: ChatSession;
+	session: sessionConfig;
 }) {
 	const chatStore = useChatStore.getState();
 
@@ -175,7 +155,7 @@ export function PromptToast(props: {
 // window header title
 
 type WindowHeaderTitleProps = {
-	session: ChatSession;
+	session: sessionConfig;
 	index?: number;
 	isworkflow: boolean;
 	MultiAgent?: boolean;
@@ -187,9 +167,7 @@ function WindowHeaderTitle({
 	isworkflow,
 	MultiAgent,
 }: WindowHeaderTitleProps) {
-	const chatStore = useChatStore.getState();
 	const currentSession = session;
-
 	const [isEditingMessage, setIsEditingMessage] = useState(false);
 
 	return (
@@ -265,7 +243,7 @@ function AutoFlowSwitch({
 }
 
 function WindowActions(props: {
-	session: ChatSession;
+	session: sessionConfig;
 	index?: number;
 	isworkflow: boolean;
 }) {
@@ -357,13 +335,8 @@ function WindowActions(props: {
 }
 
 export const WindowHeader = React.memo(
-	(props: {
-		_session: ChatSession;
-		index?: number;
-		isworkflow: boolean;
-		MultiAgent?: boolean;
-	}) => {
-		const { _session, index, isworkflow, MultiAgent } = props;
+	(props: { index?: number; isworkflow: boolean; MultiAgent?: boolean }) => {
+		const { index, isworkflow, MultiAgent } = props;
 
 		const session = useSessions();
 		const hitBottom = false;
@@ -399,7 +372,7 @@ export const WindowHeader = React.memo(
 					setShowModal={setShowPromptModal}
 					{...commonProps}
 				/>
-				<MaskModal
+				<SessionModal
 					showModal={showPromptModal}
 					setShowModal={setShowPromptModal}
 					{...commonProps}
