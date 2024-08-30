@@ -54,6 +54,7 @@ import {
 import MaskModal from "../masklist/MaskModal";
 import { SessionModal } from "./modals/sessionConfig";
 import { sessionConfig } from "@/app/types/";
+import { useWorkflowStore } from "@/app/store/workflow";
 
 export function EditMessageModal(props: {
 	onClose: () => void;
@@ -217,15 +218,24 @@ function ReturnButton() {
 }
 // auto flow switch
 type AutoFlowSwitchProps = {
-	enableAutoFlow: boolean;
-	setEnableAutoFlow: (checked: boolean) => void;
 	index: number;
+	session: sessionConfig;
 };
-function AutoFlowSwitch({
-	enableAutoFlow,
-	setEnableAutoFlow,
-	index,
-}: AutoFlowSwitchProps) {
+function AutoFlowSwitch({ index, session }: AutoFlowSwitchProps) {
+	const enable = session.enableAutoFlow;
+
+	const [enableAutoFlow, setEnableAutoFlow] = useState(enable);
+
+	const workflowStore = useWorkflowStore();
+
+	const handleChange = () => {
+		const newEnableAutoFlow = !enableAutoFlow;
+		setEnableAutoFlow(newEnableAutoFlow);
+		workflowStore.updateWorkflowSession(session.workflow_group_id, session.id, {
+			enableAutoFlow: newEnableAutoFlow,
+		});
+	};
+
 	return (
 		<div>
 			<span style={{ marginRight: "10px", fontSize: "12px" }}>自动流</span>
@@ -233,10 +243,7 @@ function AutoFlowSwitch({
 				checkedChildren="开启"
 				unCheckedChildren="人工"
 				defaultChecked={enableAutoFlow}
-				onChange={(checked) => {
-					console.log(checked, index);
-					setEnableAutoFlow(checked);
-				}}
+				onChange={handleChange}
 			/>
 		</div>
 	);
@@ -252,7 +259,6 @@ function WindowActions(props: {
 
 	const config = useAppConfig();
 	const [showExport, setShowExport] = useState(false);
-	const [enableAutoFlow, setEnableAutoFlow] = useState(false);
 
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 	// const clientConfig = useMemo(() => getClientConfig(), []);
@@ -265,11 +271,7 @@ function WindowActions(props: {
 
 	const AutoFlowSwitchButton = () => (
 		<div className="window-action-button">
-			<AutoFlowSwitch
-				enableAutoFlow={enableAutoFlow}
-				setEnableAutoFlow={setEnableAutoFlow}
-				index={index}
-			/>
+			<AutoFlowSwitch index={index} session={session} />
 		</div>
 	);
 
@@ -338,7 +340,7 @@ export const WindowHeader = React.memo(
 	(props: { index?: number; isworkflow: boolean; MultiAgent?: boolean }) => {
 		const { index, isworkflow, MultiAgent } = props;
 
-		const session = useSessions();
+		const session = useSessions() as sessionConfig;
 		const hitBottom = false;
 
 		const { showPromptModal } = useChatSetting();

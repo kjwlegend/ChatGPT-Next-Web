@@ -16,4 +16,5 @@ export interface WorkflowGroup {
 export type workflowChatSession = ChatSession & {
 	workflow_group_id: string;
 	order: number;
+	enableAutoFlow?: boolean;
 };

@@ -131,6 +131,7 @@ import { ClientApi } from "@/app/client/api";
 import { createFromIconfontCN } from "@ant-design/icons";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import { sessionConfig } from "@/app/types/";
+import { sessionConfigUpdate } from "../../../utils/chatUtils";
 export const IconFont = createFromIconfontCN({
 	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
@@ -243,9 +244,9 @@ export const ChatActions = memo(
 		showPromptModal: () => void;
 		hitBottom: boolean;
 		uploading: boolean;
-		session?: sessionConfig;
+		session: sessionConfig;
 		index?: number;
-		workflows?: boolean;
+		workflow?: boolean;
 	}) => {
 		const config = useAppConfig();
 		const chatStore = useChatStore.getState();
@@ -259,6 +260,9 @@ export const ChatActions = memo(
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			[],
 		);
+
+		const updateType = props.workflow ? "workflow" : "chat";
+		const workflowGroupId = props.workflow ? session.workflow_group_id : null;
 
 		const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -402,18 +406,33 @@ export const ChatActions = memo(
 			chatStore.updateSession(sessionId, () => {
 				session.mask.modelConfig.enableUserInfos =
 					!session.mask.modelConfig.enableUserInfos;
-				setEnableUserInfo(session.mask.modelConfig.enableUserInfos);
 			});
+			setEnableUserInfo(session.mask.modelConfig.enableUserInfos);
 		};
 
 		const handleInjectRelatedQuestions = () => {
-			chatStore.updateSession(sessionId, () => {
-				session.mask.modelConfig.enableRelatedQuestions =
-					!session.mask.modelConfig.enableRelatedQuestions;
-				setEnableRelatedQuestions(
-					session.mask.modelConfig.enableRelatedQuestions,
-				);
+			// chatStore.updateSession(sessionId, () => {
+			// 	session.mask.modelConfig.enableRelatedQuestions =
+			// 		!session.mask.modelConfig.enableRelatedQuestions;
+
+			// });
+
+			const newstate = !enableRelatedQuestions;
+
+			sessionConfigUpdate(updateType, {
+				sessionId: sessionId,
+				groupId: workflowGroupId,
+				updates: {
+					mask: {
+						...session.mask,
+						modelConfig: {
+							...session.mask.modelConfig,
+							enableRelatedQuestions: newstate,
+						},
+					},
+				},
 			});
+			setEnableRelatedQuestions(!enableRelatedQuestions);
 		};
 
 		return (

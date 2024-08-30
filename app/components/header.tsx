@@ -131,8 +131,8 @@ export default function MainNav() {
 						/>
 						<Link href="/">
 							<div className={styles["logo-text"]}>
-								<p className={styles["headline"]}>小光AI</p>
-								<p className={styles["subline"]}>xiaoguang.fun</p>
+								<p className={styles["headline"]}>小光AI 3.0</p>
+								<p className={styles["subline"]}>XiaoGuang</p>
 							</div>
 						</Link>
 					</div>

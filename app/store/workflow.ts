@@ -35,11 +35,11 @@ type State = {
 	deleteWorkflowGroup: (groupId: string | number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	sortWorkflowGroups: () => void;
-	addSessionToGroup: (groupId: string, session: ChatSession) => void;
+	addSessionToGroup: (groupId: string, session: workflowChatSession) => void;
 	updateWorkflowSession: (
 		groupId: string,
 		sessionId: string,
-		updates: Partial<ChatSession>,
+		updates: Partial<workflowChatSession>,
 	) => void;
 
 	moveSession: (
@@ -48,6 +48,7 @@ type State = {
 		destinationIndex: number,
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
+	getNextSession: (sessionId: string) => workflowChatSession | undefined;
 	getWorkflowSessionId: (groupId: string) => string[];
 	getCurrentWorkflowGroup: (selectedId: string) => WorkflowGroup | null;
 	onUserInput: (
@@ -387,6 +388,29 @@ export const useWorkflowStore = create<State>()(
 					};
 				});
 			},
+			getNextSession: (sessionId: string) => {
+				const currentSession = get().workflowSessions.find(
+					(session) => session.id === sessionId,
+				);
+				if (!currentSession) return undefined;
+
+				const workflowGroupId = currentSession.workflow_group_id;
+				const sessionIds = get().workflowSessionsIndex[workflowGroupId];
+				if (!sessionIds) return undefined;
+
+				const sessionIndex = sessionIds.indexOf(sessionId);
+				if (sessionIndex === -1 || sessionIndex >= sessionIds.length - 1)
+					return undefined;
+
+				const nextSessionId = sessionIds[sessionIndex + 1];
+				if (!nextSessionId) return undefined;
+
+				const nextSession = get().workflowSessions.find(
+					(session) => session.id === nextSessionId,
+				);
+
+				return nextSession;
+			},
 
 			deleteSessionFromGroup: (groupId: string, sessionId: string | number) => {
 				set((state) => {
@@ -428,6 +452,8 @@ export const useWorkflowStore = create<State>()(
 				attachFiles: FileInfo[],
 				session: workflowChatSession,
 			) => {
+				console.log("workflow submit debug", session);
+
 				const sessionId = session.id;
 				const sessionModel = session.mask.modelConfig.model;
 				const modelConfig = session.mask.modelConfig;
@@ -450,6 +476,8 @@ export const useWorkflowStore = create<State>()(
 					content_type: "workflowchatgroup",
 				};
 
+				console.log("workflow submit debug , before try");
+
 				try {
 					const createChatData = {
 						...commonChatData,
@@ -460,9 +488,12 @@ export const useWorkflowStore = create<State>()(
 						sender_name: nickname,
 						totalTokenCount: total_token_count,
 					};
+					console.log("workflow submit debug, before api");
 
 					const { chat_id, id } =
 						await createChatDataAndFetchId(createChatData);
+
+					console.log("workflow submit debug, after api");
 
 					const userContent = content;
 					console.log("[User Input] after template: ", userContent);
@@ -572,6 +603,26 @@ export const useWorkflowStore = create<State>()(
 						get().updateWorkflowSession(session.workflow_group_id, sessionId, {
 							messages: fullMessageList,
 						});
+
+						if (session.enableAutoFlow) {
+							// 如果在激活了 autoflow 的基础上, 则找到 nextSession
+							const nextSession = get().getNextSession(sessionId);
+							// 如果存在 next session , 则调用自身onuserinput, 将 botMessage 发送出去
+							if (nextSession) {
+								console.log("next session", nextSession);
+								get().onUserInput(
+									message,
+									attachImages,
+									attachFiles,
+									nextSession,
+								);
+							}
+							// 若不存在, 则终止
+							else {
+								console.log("no next session");
+								return;
+							}
+						}
 					};
 					// 调用发送消息函数
 					sendChatMessage(
@@ -587,7 +638,7 @@ export const useWorkflowStore = create<State>()(
 						),
 					);
 				} catch (error) {
-					console.error(error);
+					console.log(error);
 					throw error;
 				}
 			},

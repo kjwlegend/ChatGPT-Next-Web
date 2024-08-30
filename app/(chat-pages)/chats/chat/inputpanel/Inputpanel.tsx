@@ -186,7 +186,6 @@ export function Inputpanel(props: {
 	const handleSubmit = async () => {
 		await doSubmit(userInput);
 		setUserInput("");
-		console.log(userInput, "after submit");
 		setAttachImages([]);
 		setAttachFiles([]);
 		if (!isMobileScreen) inputRef.current?.focus();
@@ -302,7 +301,7 @@ export function Inputpanel(props: {
 				uploading={uploading}
 				session={session}
 				index={props.index}
-				workflows={isworkflow}
+				workflow={isworkflow}
 			/>
 			<label
 				className={`${styles["chat-input-panel-inner"]} ${

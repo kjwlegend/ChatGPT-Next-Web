@@ -100,11 +100,6 @@ export const WorkflowProvider = ({
 	const [messageApi, contextHolder] = message.useMessage();
 	console.log("workflowcontext refresh", workflowSessions);
 
-	const filteredWorkflowSessions = workflowSessions.map((session) => {
-		const { messages, ...rest } = session;
-		return rest;
-	});
-
 	const userid = useUserStore.getState().user.id;
 	const maskStore = useMaskStore();
 
@@ -361,7 +356,7 @@ export const WorkflowProvider = ({
 					updateWorkflowChatGroup,
 				}}
 			>
-				<workflowSessionsContext.Provider value={filteredWorkflowSessions}>
+				<workflowSessionsContext.Provider value={workflowSessions}>
 					<workflowGroupsContext.Provider
 						value={{ selectedId, workflowGroups }}
 					>
