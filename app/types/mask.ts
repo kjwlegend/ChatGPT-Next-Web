@@ -35,7 +35,7 @@ export type Mask = {
 	builtin: boolean;
 	syncGlobalConfig?: boolean;
 	usePlugins?: boolean;
-	plugins?: string[];
+	plugins: string[];
 	hotness?: number;
 	updatedAt: number;
 	createdAt: number;

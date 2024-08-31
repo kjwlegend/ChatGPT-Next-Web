@@ -46,6 +46,7 @@ export function sessionConfigUpdate(
 		} else if (updateType === "workflow") {
 			const { sessionId, groupId, updates } = updateData as WorkflowUpdateData;
 			const { ...workflowUpdates } = updates;
+			console.log("workflowUpdates", workflowUpdates, updateData);
 			useworkflowStore.updateWorkflowSession(
 				groupId,
 				sessionId,

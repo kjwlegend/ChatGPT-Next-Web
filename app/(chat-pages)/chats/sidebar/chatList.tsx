@@ -19,13 +19,8 @@ const ChatList = ({
 	onChatItemDelete,
 	onChatItemEdit,
 }: ChatListProps) => {
-	
-	const [chatlist, setChatlist] = useState(chatSessions ? chatSessions : []);
-
-	console.log("debug: chatsessions", chatlist);
-	useEffect(() => {
-		setChatlist(chatSessions);
-	}, [chatSessions]); // 依赖于
+	const chatlist = chatSessions;
+	console.log("debug: chatlist", chatlist);
 
 	const [selectedChatId, setSelectedChatId] = useState<string | null>(null); // 管理选中的聊天项
 
@@ -71,9 +66,20 @@ const ChatList = ({
 	);
 };
 
-const updateCompare = (prevProps: ChatListProps, nextProps: ChatListProps) => {
-	// 比较props中chatsessions.length , 如不变化则不重新渲染
-	return prevProps.chatSessions.length === nextProps.chatSessions.length;
-};
+// const updateCompare = (prevProps: ChatListProps, nextProps: ChatListProps) => {
+// 	// 比较props中chatsessions[0] 的 id是否相同
+// 	console.log(
+// 		"debug: updateCompare",
+// 		prevProps.chatSessions[0]?.id,
+// 		prevProps.chatSessions[0]?.lastUpdateTime,
+// 		nextProps.chatSessions[0]?.id,
+// 		nextProps.chatSessions[0]?.lastUpdateTime,
+// 	);
+// 	return (
+// 		prevProps.chatSessions[0]?.id === nextProps.chatSessions[0]?.id &&
+// 		prevProps.chatSessions[0]?.lastUpdateTime ===
+// 			nextProps.chatSessions[0]?.lastUpdateTime
+// 	);
+// };
 
-export default memo(ChatList, updateCompare);
+export default memo(ChatList);

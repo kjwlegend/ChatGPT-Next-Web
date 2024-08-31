@@ -201,7 +201,7 @@ export function sendChatMessage(
 
 	// 根据是否启用插件使用不同的API
 	const useToolAgent =
-		pluginConfig.enable && session.mask.usePlugins && allPlugins.length > 0;
+		session.mask.plugins?.length! > 0 && allPlugins.length > 0;
 
 	if (useToolAgent) {
 		console.log("[ToolAgent] start");

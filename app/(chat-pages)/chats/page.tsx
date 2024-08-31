@@ -181,6 +181,7 @@ function Screen() {
 
 	const chatstore = useChatStore();
 	const sessionlist = chatstore.sessions;
+	console.log("sessionlist", sessionlist);
 	const { onDelete, onChat } = useAgentActions();
 
 	useEffect(() => {

@@ -317,24 +317,24 @@ export const ChatActions = memo(
 				key: p.name,
 				label: (
 					<Checkbox
-						checked={
-							session.mask.plugins &&
-							session.mask.plugins.includes(p.toolName ?? p.name)
-						}
+						value={(session.mask.plugins ?? []).includes(p.toolName ?? p.name)}
 						onChange={(e) => {
-							chatStore.updateSession(
-								session.id,
-								() => {
-									if (e.target.checked) {
-										session.mask.plugins?.push(p.toolName ?? p.name);
-									} else {
-										session.mask.plugins = session.mask.plugins?.filter(
-											(name) => name !== p.toolName,
-										);
-									}
+							const updatedPlugins = e.target.checked
+								? [...(session.mask.plugins ?? []), p.toolName ?? p.name]
+								: (session.mask.plugins ?? []).filter(
+										(name) => name !== (p.toolName ?? p.name),
+									);
+
+							sessionConfigUpdate(updateType, {
+								sessionId: sessionId,
+								groupId: workflowGroupId,
+								updates: {
+									mask: {
+										...session.mask,
+										plugins: updatedPlugins,
+									},
 								},
-								false,
-							);
+							});
 
 							switchUsePlugins();
 						}}
@@ -403,11 +403,21 @@ export const ChatActions = memo(
 		);
 
 		const handleInjectUserInfo = () => {
-			chatStore.updateSession(sessionId, () => {
-				session.mask.modelConfig.enableUserInfos =
-					!session.mask.modelConfig.enableUserInfos;
+			const newEnableUserInfos = !enableUserInfo;
+			sessionConfigUpdate(updateType, {
+				sessionId: sessionId,
+				groupId: workflowGroupId,
+				updates: {
+					mask: {
+						...session.mask,
+						modelConfig: {
+							...session.mask.modelConfig,
+							enableUserInfos: newEnableUserInfos,
+						},
+					},
+				},
 			});
-			setEnableUserInfo(session.mask.modelConfig.enableUserInfos);
+			setEnableUserInfo(newEnableUserInfos);
 		};
 
 		const handleInjectRelatedQuestions = () => {
@@ -432,7 +442,7 @@ export const ChatActions = memo(
 					},
 				},
 			});
-			setEnableRelatedQuestions(!enableRelatedQuestions);
+			setEnableRelatedQuestions(newstate);
 		};
 
 		return (

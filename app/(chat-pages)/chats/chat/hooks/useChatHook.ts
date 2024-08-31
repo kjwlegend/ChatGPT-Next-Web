@@ -57,9 +57,10 @@ export const useChatService = () => {
 	const handleChatItemClick = useCallback(async (id: string) => {
 		const param = { limit: 60 };
 		try {
-			const chatSessionList = await getChatSessionChats(param, id);
-			const chats = chatSessionList.data;
-			// UpdateChatMessages(id, chats);
+			console.log("get chatSession list", id);
+			const res = await getChatSessionChats(param, id); // 获取聊天记录
+			const chats = res.data;
+			UpdateChatMessages(id, chats);
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}
@@ -89,6 +90,7 @@ export const useChatService = () => {
 	};
 };
 
+// 获取chatsession 列表
 export function updateChatSessions(newSessionsData: any[]) {
 	const chatStore = useChatStore.getState();
 
@@ -132,7 +134,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 	});
 }
 
-// 获取服务器消息列表
+// 获取chatsession 对应的messages
 export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 	const chatStore = useChatStore.getState();
 	const session = chatStore.sessions.find((s: ChatSession) => s.id === id);

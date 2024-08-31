@@ -20,6 +20,9 @@ import { convertTextToSpeech } from "@/app/utils/voicetotext";
 import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
 import { useChatActions } from "../hooks/useChatContext";
+import { useWorkflowStore } from "@/app/store/workflow";
+import { sessionConfigUpdate } from "../../utils/chatUtils";
+import { sessionConfig, workflowChatSession } from "@/app/types/";
 
 interface UseMessageActions {
 	handleUserStop: (messageId: string) => void;
@@ -30,84 +33,118 @@ interface UseMessageActions {
 }
 
 export const useMessageActions = (
-	session: ChatSession,
+	session: sessionConfig,
 	setShowPromptModal: (show: boolean) => void,
 ): UseMessageActions => {
 	const chatStore = useChatStore.getState();
+	const workflowStore = useWorkflowStore.getState();
+
+	const updateType = session.workflow_group_id ? "workflow" : "chat";
+
+	const workflowGroupId =
+		updateType == "workflow" ? session.workflow_group_id : null;
+
 	const sessionid = session.id;
 
-	const handleUserStop = useCallback((messageId: string) => {
-		// 用户停止操作逻辑
-		ChatControllerPool.stop(sessionid, messageId);
-	}, []);
+	const handleUserStop = useCallback(
+		(messageId: string) => {
+			// 用户停止操作逻辑
+			ChatControllerPool.stop(sessionid, messageId);
+		},
+		[sessionid],
+	);
 
-	const handleResend = useCallback((message: ChatMessage) => {
-		// 消息重发逻辑
-		// when it is resending a message
-		// 1. for a user's message, find the next bot response
-		// 2. for a bot's message, find the last user's input
-		// 3. delete original user input and bot's message
-		// 4. resend the user's input
+	const handleResend = useCallback(
+		(message: ChatMessage) => {
+			// 消息重发逻辑
+			// when it is resending a message
+			// 1. for a user's message, find the next bot response
+			// 2. for a bot's message, find the last user's input
+			// 3. delete original user input and bot's message
+			// 4. resend the user's input
 
-		console.log("hooks, resend");
-		const resendingIndex = session.messages.findIndex(
-			(m) => m.id === message.id,
-		);
+			console.log("hooks, resend");
+			const resendingIndex = session.messages.findIndex(
+				(m) => m.id === message.id,
+			);
 
-		if (resendingIndex <= 0 || resendingIndex >= session.messages.length) {
-			console.error("[Chat] failed to find resending message", message);
-			return;
-		}
+			if (resendingIndex <= 0 || resendingIndex >= session.messages.length) {
+				console.error("[Chat] failed to find resending message", message);
+				return;
+			}
 
-		let userMessage: ChatMessage | undefined;
-		let botMessage: ChatMessage | undefined;
+			let userMessage: ChatMessage | undefined;
+			let botMessage: ChatMessage | undefined;
 
-		if (message.role === "assistant") {
-			botMessage = message;
-			for (let i = resendingIndex; i >= 0; i -= 1) {
-				if (session.messages[i].role === "user") {
-					userMessage = session.messages[i];
-					break;
+			if (message.role === "assistant") {
+				botMessage = message;
+				for (let i = resendingIndex; i >= 0; i -= 1) {
+					if (session.messages[i].role === "user") {
+						userMessage = session.messages[i];
+						break;
+					}
+				}
+			} else if (message.role === "user") {
+				userMessage = message;
+				for (let i = resendingIndex; i < session.messages.length; i += 1) {
+					if (session.messages[i].role === "assistant") {
+						botMessage = session.messages[i];
+						break;
+					}
 				}
 			}
-		} else if (message.role === "user") {
-			userMessage = message;
-			for (let i = resendingIndex; i < session.messages.length; i += 1) {
-				if (session.messages[i].role === "assistant") {
-					botMessage = session.messages[i];
-					break;
-				}
+
+			if (userMessage === undefined) {
+				console.error("[Chat] failed to resend", message);
+				return;
 			}
-		}
 
-		if (userMessage === undefined) {
-			console.error("[Chat] failed to resend", message);
-			return;
-		}
+			handleDelete(userMessage.id);
+			if (botMessage) handleDelete(botMessage.id);
 
-		handleDelete(userMessage.id);
-		if (botMessage) handleDelete(botMessage.id);
-
-		// setIsLoading(true);
-		chatStore.onUserInput(
-			getMessageTextContent(userMessage),
-			getMessageImages(userMessage),
-			undefined,
-			session,
-		);
-		// .then(() => setIsLoading(false));
-		// inputRef.current?.focus();
-	}, []);
+			// setIsLoading(true);
+			if (updateType == "chat") {
+				chatStore.onUserInput(
+					getMessageTextContent(userMessage),
+					getMessageImages(userMessage),
+					undefined,
+					session as ChatSession,
+				);
+			} else {
+				workflowStore.onUserInput(
+					getMessageTextContent(userMessage),
+					getMessageImages(userMessage),
+					undefined,
+					session as workflowChatSession,
+				);
+			}
+		},
+		[session, sessionid, sessionConfigUpdate],
+	);
 
 	const handleDelete = useCallback(
 		(messageId: string) => {
+			if (!session.messages) {
+				console.error("session.messages is not defined");
+				return;
+			}
+
+			const updatedMessages = session.messages.filter(
+				(m) => m.id !== messageId,
+			);
+
 			console.log("message click delete", messageId);
-			chatStore.updateSession(sessionid, (session) => {
-				// 注意这里使用了 session 来确保最新的会话状态被使用
-				session.messages = session.messages.filter((m) => m.id !== messageId);
+			console.log("updatedMessages", updatedMessages);
+
+			sessionConfigUpdate(updateType, {
+				groupId: workflowGroupId,
+				sessionId: sessionid,
+				updates: {
+					messages: updatedMessages,
+				},
 			});
 		},
-		[sessionid],
+		[session, sessionid, sessionConfigUpdate, updateType, workflowGroupId],
 	);
 
 	const handlePinMessage = useCallback(

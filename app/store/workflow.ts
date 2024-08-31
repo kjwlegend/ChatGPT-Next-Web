@@ -54,7 +54,7 @@ type State = {
 	onUserInput: (
 		content: string,
 		attachImages: string[],
-		attachFiles: FileInfo[],
+		attachFiles: FileInfo[] | undefined,
 		session: workflowChatSession,
 	) => Promise<void>;
 	onNewMessage: (

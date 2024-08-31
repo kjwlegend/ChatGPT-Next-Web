@@ -284,14 +284,12 @@ function MobileSideBar({
 }
 
 export function SideBar(props: SideBarProps) {
-	const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
-	useEffect(() => {
-		forceUpdate();
-	}, [props.chatSessions]);
-
 	const { toggleSideBar, shouldNarrow } = useToggleSideBar();
 	const isMobileScreen = useMobileScreen();
+
+	useEffect(() => {
+		console.log("sidebar render", props.chatSessions);
+	}, [props.chatSessions]);
 
 	useHotKey();
 

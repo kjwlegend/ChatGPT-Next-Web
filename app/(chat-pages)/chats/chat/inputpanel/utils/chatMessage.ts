@@ -24,15 +24,12 @@ export function getMessagesWithMemory(
 		injectUserInfo: modelConfig.enableUserInfos,
 		injectRelatedQuestions: modelConfig.enableRelatedQuestions,
 	};
-	const systemPrompts = shouldInjectSystemPrompts
-		? [
-				createMessage({
-					role: "system",
-					content: fillTemplateWith("", injectSetting),
-				}),
-			]
-		: [];
-
+	const systemPrompts = [
+		createMessage({
+			role: "system",
+			content: fillTemplateWith("", injectSetting),
+		}),
+	];
 	const MemoryPrompt = {
 		role: "system",
 		content:

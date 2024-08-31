@@ -32,6 +32,7 @@ export const createEmptyMask = () =>
 		name: "未命名自定义助手",
 		prompt_type: "assistant",
 		intro: "欢迎使用自定义助手",
+		description: "",
 		context: [],
 		syncGlobalConfig: true, // use global config as default
 		modelConfig: { ...useAppConfig.getState().modelConfig },

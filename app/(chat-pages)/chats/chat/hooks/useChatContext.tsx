@@ -142,7 +142,7 @@ export const ChatProvider = ({
 };
 
 export const useSessions = () => {
-	const session = useContext(ChatSessionContext);
+	const session = useContext(ChatSessionContext) as sessionConfig;
 	return session;
 };
 export const useMessages = () => {

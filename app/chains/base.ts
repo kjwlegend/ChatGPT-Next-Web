@@ -74,15 +74,16 @@ interface PromptVariables {
 // 填充模板函数
 export function fillTemplateWith(
 	input: string,
-	injectSetting?: PromptVariables,
+	promptConfig?: PromptVariables,
 	PromptVariables?: Record<string, string>,
 ): string {
-	injectSetting = {
-		injectUserInfo: false,
-		injectRelatedQuestions: false,
-		...injectSetting,
+	const injectSetting = {
+		injectUserInfo: true,
+		injectRelatedQuestions: true,
+		...promptConfig,
 	};
 
+	console.log("inject setting", injectSetting);
 	const userTemplate = injectSetting.injectUserInfo
 		? getUserInfoTemplate()
 		: "";

@@ -397,22 +397,17 @@ export const useChatStore = createPersistStore(
 			},
 			sortSession() {
 				set((state) => {
-					// Create a new sorted array instead of modifying the existing state directly
 					const sortedSessions = [...state.sessions].sort(
 						(a, b) => b.lastUpdateTime - a.lastUpdateTime,
 					);
 
-					// Check if the sorted array is different from the current state to avoid unnecessary updates
-					if (
-						JSON.stringify(state.sessions) !== JSON.stringify(sortedSessions)
-					) {
+					// 避免不必要的更新
+					if (state.sessions !== sortedSessions) {
 						return { sessions: sortedSessions };
 					}
 
-					// If the sorted array is the same as the current state, do not update the state
 					return state;
 				});
-				// console.log("sortSession", get().sessions);
 			},
 
 			addSession(newSession: ChatSession) {
@@ -526,6 +521,13 @@ export const useChatStore = createPersistStore(
 					);
 
 					get().sortSession();
+					// set currentsession index to 0
+
+					set((state) => {
+						return {
+							currentSessionIndex: 0,
+						};
+					});
 
 					// 发送函数回调
 					const onUpdateCallback = (message: string) => {
@@ -535,7 +537,6 @@ export const useChatStore = createPersistStore(
 						get().updateCurrentSession((session) => {
 							session.messages = session.messages.concat();
 							// console.log("onUpdateCallback", session.messages);
-							session.lastUpdateTime = Date.now();
 						});
 					};
 
