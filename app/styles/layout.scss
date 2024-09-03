@@ -43,6 +43,16 @@
 		flex-direction: row;
 		justify-content: space-between;
 	}
+	&.center {
+		justify-content: center;
+	}
+
+	&.start {
+		justify-content: flex-start;
+	}
+	&.space-between {
+		justify-content: space-between;
+	}
 }
 
 .form-container {

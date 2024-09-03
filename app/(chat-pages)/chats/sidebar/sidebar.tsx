@@ -166,7 +166,7 @@ const DesktopSideBar = ({
 			}`}
 		>
 			<div className={styles["sidebar-header-bar"]}>
-				<div className="flex-container">
+				<div className="flex-container space-between">
 					<IconButton
 						icon={<AddIcon styles={{ fill: "white" }} />}
 						text={shouldNarrow ? undefined : Locale.Home.NewChat}

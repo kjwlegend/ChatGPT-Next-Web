@@ -7,6 +7,7 @@ import Upload from "../../utils/upload";
 import { updateProfile } from "../../api/backend/user";
 import { server_url } from "../../constant";
 import Link from "next/link";
+import { updateUser } from "@/app/services/api/user";
 
 const formItemLayout = {
 	labelCol: {
@@ -27,7 +28,7 @@ const SecurityInfoTab = () => {
 	const onFinish = (values: any) => {
 		console.log("Received values of form: ", values);
 
-		updateProfile(user.id, values)
+		updateUser(values, user.id)
 			.then((response) => {
 				console.log("User info updated successfully:", response);
 				// 在这里处理更新成功后的逻辑

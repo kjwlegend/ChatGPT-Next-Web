@@ -131,6 +131,7 @@ export default function useAuth() {
 		await authStore.logout();
 		userStore.clearUser();
 		chatStore.clearChatData();
+		localStorage.clear();
 	};
 
 	return {

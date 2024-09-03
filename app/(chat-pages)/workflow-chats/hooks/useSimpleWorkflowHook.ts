@@ -13,7 +13,11 @@ import { getMultiAgentSession } from "../../../services/api/chats";
 
 import { useUserStore } from "../../../store";
 import { useWorkflowStore } from "../../../store/workflow";
-import { useWorkflowGroupActions, useWorkflowGroups } from "../workflowContext";
+import {
+	useWorkflowGroupActions,
+	useWorkflowGroups,
+	useWorkflowSessionActions,
+} from "../workflowContext";
 import { Mask } from "@/app/types/mask";
 
 export const useSimpleWorkflowService = () => {
@@ -26,7 +30,13 @@ export const useSimpleWorkflowService = () => {
 		addWorkflowGroup,
 		fetchNewWorkflowGroup,
 		addChatGrouptoWorkflow,
+		getworkFlowSessions,
 	} = useWorkflowGroupActions();
+
+	const {
+		fetchWorkflowChatSessionsHandler,
+		fetchWorkflowChatSessionChatsHandler,
+	} = useWorkflowSessionActions();
 
 	const { workflowGroups, selectedId } = useWorkflowGroups();
 
@@ -37,10 +47,11 @@ export const useSimpleWorkflowService = () => {
 		async (page: number) => {
 			const param = { limit: 20, page };
 			try {
-				const res = await getWorkflowSession(param);
-				fetchNewWorkflowGroup(res.data);
+				const res = await getworkFlowSessions(param);
+				// fetchNewWorkflowGroup(res.data);
 				const newsessions = workflowGroups;
-				// console.log("loadmore sessions", newsessions);
+
+				console.log("loadmore sessions", newsessions);
 				return { data: newsessions, is_next: res.is_next };
 			} catch {
 				throw new Error("登录已过期");
@@ -62,11 +73,9 @@ export const useSimpleWorkflowService = () => {
 	}, []);
 	const handleChatItemClick = useCallback(
 		async (id: string) => {
-			const param = { limit: 60 };
+			console.log("aaaa");
 			try {
-				// const chatSessionList = await getChatSessionChats(param, id);
-				// const chats = chatSessionList.results;
-				// UpdateChatMessages(id, chats);
+				fetchWorkflowChatSessionChatsHandler(id);
 			} catch (error) {
 				console.log("get chatSession list error", error);
 			}

@@ -27,7 +27,7 @@ export const createChatDataAndFetchId = async (options: {
 	model: ModelType;
 	totalTokenCount: number;
 	sender_name: string;
-	contentType?: string; // 增加 contentType 参数，默认为 "chatsession"
+	contentType: string; // 增加 contentType 参数，默认为 "chatsession"
 	chat_role?: "user" | "assistant" | "system" | string;
 }) => {
 	const {
@@ -39,7 +39,7 @@ export const createChatDataAndFetchId = async (options: {
 		model,
 		totalTokenCount,
 		sender_name,
-		contentType = "chatsession",
+		contentType, // 移除默认值
 		chat_role = "user",
 	} = options;
 

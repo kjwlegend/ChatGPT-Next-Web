@@ -26,6 +26,7 @@ import {
 	createWorkflowSessionChatGroup,
 	deleteWorkflowSessionChatGroup,
 	updateWorkflowSessionChatGroupOrder,
+	getWorkflowSessionChats,
 } from "@/app/services/api/chats";
 import { useMaskStore } from "@/app/store/mask";
 
@@ -33,11 +34,12 @@ export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
 interface WorkflowGroupActionsContextType {
 	setSelectedId: (index: string) => void;
+	getworkFlowSessions: (param: any) => Promise<any>;
 	addWorkflowGroup: () => void;
 	deleteWorkflowGroup: (groupId: number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	addChatGrouptoWorkflow: (Mask: Mask, groupId?: string) => void;
-	updateWorkflowChatGroup: (
+	updateWorkflowSessionInfo: (
 		groupId: string,
 		newGroup: Partial<WorkflowGroup>,
 	) => void;
@@ -49,7 +51,8 @@ interface workflowSessionActionsContextType {
 		destinationIndex: number,
 	) => void;
 	deleteSessionFromGroup: (groupId: string, sessionId: string) => void;
-	getworkFlowSessions: (param: any) => Promise<any>;
+	fetchWorkflowChatSessionsHandler: (param: any) => Promise<any>;
+	fetchWorkflowChatSessionChatsHandler: (param: any) => Promise<any>;
 }
 interface WorkflowContextValue {
 	selectedId: string;
@@ -64,17 +67,19 @@ export const workflowSessionsContext = createContext<sessionConfig[]>([]);
 export const workflowGroupActionsContext =
 	createContext<WorkflowGroupActionsContextType>({
 		setSelectedId: () => {},
+		getworkFlowSessions: () => Promise.resolve({}),
 		addWorkflowGroup: () => {},
 		deleteWorkflowGroup: () => {},
 		fetchNewWorkflowGroup: () => {},
 		addChatGrouptoWorkflow: () => {},
-		updateWorkflowChatGroup: () => {},
+		updateWorkflowSessionInfo: () => {},
 	});
 export const workflowSessionActionsContext =
 	createContext<workflowSessionActionsContextType>({
 		moveSession: () => {},
 		deleteSessionFromGroup: () => {},
-		getworkFlowSessions: () => Promise.resolve({}),
+		fetchWorkflowChatSessionsHandler: () => Promise.resolve({}),
+		fetchWorkflowChatSessionChatsHandler: () => Promise.resolve({}),
 	});
 export const WorkflowProvider = ({
 	children,
@@ -95,6 +100,7 @@ export const WorkflowProvider = ({
 		moveSession,
 		deleteSessionFromGroup,
 		getWorkflowSessionId,
+		updateWorkflowSession: updateLocalWorkflowSession,
 	} = useWorkflowStore();
 
 	const [messageApi, contextHolder] = message.useMessage();
@@ -104,6 +110,10 @@ export const WorkflowProvider = ({
 	const maskStore = useMaskStore();
 
 	const getworkFlowSessions = useCallback(async (param: any) => {
+		messageApi.open({
+			content: "工作流组获取中",
+			type: "loading",
+		});
 		const data = {
 			user: userid,
 			...param,
@@ -116,7 +126,8 @@ export const WorkflowProvider = ({
 		}
 
 		if (res.data) {
-			updateLocalWorkflowStoreHandler(res.data);
+			fetchWorkflowChatSessionsHandler(res.data);
+			messageApi.destroy();
 		}
 		return res;
 	}, []);
@@ -266,7 +277,7 @@ export const WorkflowProvider = ({
 		[deleteSessionFromGroup],
 	);
 
-	const updateWorkflowChatGroup = async (
+	const updateWorkflowSessionInfo = async (
 		groupId: string,
 		newGroup: Partial<WorkflowGroup>,
 	) => {
@@ -299,61 +310,104 @@ export const WorkflowProvider = ({
 		}
 	};
 
-	const updateLocalWorkflowStoreHandler = (newData: any) => {
-		// TODO: 本地store 方法还没做完
-		newData.forEach(async (item: any) => {
-			const groupId = item.id;
-			const topic = item.topic;
-			const lastUpdateTime = item.last_updated;
-			const sessionIds = item.chat_sessions;
-			let sessions: any = [];
-			const existingGroup = workflowGroups.find(
-				(group) => group.id === groupId,
-			);
+	const fetchWorkflowChatSessionsHandler = async (newData: any) => {
+		messageApi.open({
+			content: "工作流组更新中",
+			type: "loading",
+		});
+		console.log("newdata", newData);
+		fetchNewWorkflowGroup(newData);
+		//  上述步骤完成了 workflowgroup 的创建, 接下来要更新 workflowsession
+		//  首先判断当前的session 是否存在, 如果存在则更新, 如果不存在则创建
 
-			if (!existingGroup) {
-				console.log("workflowGroup", groupId);
-				console.log("sessionIds", sessionIds);
-			}
+		newData.map((group) => {
+			const currentWorkflowgroupId = group.id;
+			const chatsessions = group.chat_groups;
 
-			if (sessionIds) {
-				for (const session of sessionIds) {
-					try {
-						// const res = await getSingleChatSession(session);
-						// sessions.push(res);
-					} catch (error) {
-						console.error("Error fetching chat session details:", error);
-					}
+			chatsessions.map((session) => {
+				const currentSessionId = session.id;
+				const currentSession = useWorkflowStore
+					.getState()
+					.workflowSessions.find((session) => session.id === currentSessionId);
+				if (currentSession) {
+					const agentPrompts = {
+						contexts: session.prompts,
+					};
+					updateLocalWorkflowSession(
+						currentWorkflowgroupId,
+						currentSessionId,
+						agentPrompts,
+					);
+				} else {
+					// 如果不存在则采用addSessionToGroup 新建
+					const agent = useMaskStore.getState().masks[session.agent] as Mask;
+					const newsession = createEmptySession({
+						id: currentSessionId,
+						mask: agent,
+					});
+					addSessionToGroup(currentWorkflowgroupId, newsession);
 				}
-			}
-
-			const newGroup = {
-				id: groupId,
-				topic: topic,
-				lastUpdateTime: lastUpdateTime,
-				sessions: sessionIds,
-			};
-
-			updateWorkflowGroup(groupId, newGroup);
+			});
 		});
 	};
+
+	const fetchWorkflowChatSessionChatsHandler = useCallback(
+		async (workflow_group_id: string) => {
+			const chatGroupids =
+				useWorkflowStore.getState().workflowSessionsIndex[workflow_group_id] ||
+				[];
+			console.log(chatGroupids, "chatGroupids");
+
+			const limit = 100;
+			chatGroupids.map(async (sessionId) => {
+				console.log(sessionId, "sessionId");
+				try {
+					const res = await getWorkflowSessionChats(
+						{
+							chat_group_id: sessionId,
+							limit,
+						},
+						workflow_group_id,
+					);
+					const chats = res.chats.data;
+
+					updateLocalWorkflowSession(workflow_group_id, sessionId, {
+						messages: chats,
+					});
+
+					if (res.code === 401) {
+						throw new Error("登录状态已过期, 请重新登录");
+					}
+				} catch (error) {
+					console.error("Error fetching workflow chat session chats:", error);
+				}
+			});
+		},
+		[
+			workflowSessionsIndex,
+			getWorkflowSessionChats,
+			updateLocalWorkflowSession,
+		],
+	);
 
 	return (
 		<workflowSessionActionsContext.Provider
 			value={{
 				moveSession: moveSessionHandler,
 				deleteSessionFromGroup: deleteSessionFromGroupHandler,
-				getworkFlowSessions,
+				fetchWorkflowChatSessionsHandler,
+				fetchWorkflowChatSessionChatsHandler,
 			}}
 		>
 			<workflowGroupActionsContext.Provider
 				value={{
 					setSelectedId,
 					fetchNewWorkflowGroup,
+					getworkFlowSessions,
 					addWorkflowGroup: addWorkflowGroupHandler,
 					deleteWorkflowGroup: deleteWorkflowGroupHandler,
 					addChatGrouptoWorkflow: addChatGrouptoWorkflowHandler,
-					updateWorkflowChatGroup,
+					updateWorkflowSessionInfo,
 				}}
 			>
 				<workflowSessionsContext.Provider value={workflowSessions}>

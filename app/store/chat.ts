@@ -446,7 +446,7 @@ export const useChatStore = createPersistStore(
 					user: userStore.user.id,
 					sessionId: sessionId, // 替换为实际的聊天会话 ID
 					model: session.mask.modelConfig.model,
-					content_type: "chatsession",
+					contentType: "chatsession",
 				};
 
 				try {

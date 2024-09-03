@@ -18,6 +18,7 @@ import { FileInfo } from "../client/platforms/utils";
 import { message } from "antd";
 
 import { WorkflowGroup, workflowChatSession } from "../types/workflow";
+import { createChat } from "../api/backend/chat";
 
 type State = {
 	workflowGroups: WorkflowGroup[];
@@ -35,7 +36,7 @@ type State = {
 	deleteWorkflowGroup: (groupId: string | number) => void;
 	fetchNewWorkflowGroup: (data: Array<WorkflowGroup>) => void;
 	sortWorkflowGroups: () => void;
-	addSessionToGroup: (groupId: string, session: workflowChatSession) => void;
+	addSessionToGroup: (groupId: string, session: ChatSession) => void;
 	updateWorkflowSession: (
 		groupId: string,
 		sessionId: string,
@@ -63,6 +64,7 @@ type State = {
 	) => void;
 	getMessages: (sessionId: string) => ChatMessage[];
 	updatedChatMessage: (sessionId: string, message: string) => void;
+	clearWorkflowData: () => void;
 };
 
 export const useWorkflowStore = create<State>()(
@@ -162,7 +164,7 @@ export const useWorkflowStore = create<State>()(
 				}
 			},
 			fetchNewWorkflowGroup: (data: WorkflowGroup[]) => {
-				// console.log("store debug:adding workflow", data);
+				console.log("store debug:adding workflow", data);
 				const existingGroups = get().workflowGroups;
 				const existingIndex = get().workflowGroupIndex;
 
@@ -273,6 +275,8 @@ export const useWorkflowStore = create<State>()(
 						...session,
 						workflow_group_id: groupId,
 						order: sessions.length,
+						isworkflow: true,
+						enableAutoFlow: true,
 					};
 
 					// 确保 newSession.id 存在
@@ -449,7 +453,7 @@ export const useWorkflowStore = create<State>()(
 			onUserInput: async (
 				content: string,
 				attachImages: string[],
-				attachFiles: FileInfo[],
+				attachFiles: FileInfo[] | undefined,
 				session: workflowChatSession,
 			) => {
 				console.log("workflow submit debug", session);
@@ -473,7 +477,7 @@ export const useWorkflowStore = create<State>()(
 					user: userid,
 					sessionId: sessionId, // 替换为实际的聊天会话 ID
 					model: sessionModel,
-					content_type: "workflowchatgroup",
+					contentType: "workflowchatgroup",
 				};
 
 				console.log("workflow submit debug , before try");
@@ -488,7 +492,7 @@ export const useWorkflowStore = create<State>()(
 						sender_name: nickname,
 						totalTokenCount: total_token_count,
 					};
-					console.log("workflow submit debug, before api");
+					console.log("workflow submit debug, before api", createChatData);
 
 					const { chat_id, id } =
 						await createChatDataAndFetchId(createChatData);
@@ -680,6 +684,11 @@ export const useWorkflowStore = create<State>()(
 			},
 
 			updatedChatMessage: (sessionId, message) => {},
+			clearWorkflowData: () => {
+				console.log("test");
+				// clear localstory
+				localStorage.removeItem("workflow-store");
+			},
 		}),
 
 		{

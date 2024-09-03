@@ -47,7 +47,7 @@ import { List, Input, Form, Row, Col } from "antd";
 import { Avatar } from "@/app//components/avatar";
 
 import { CopyOutlined } from "@ant-design/icons";
-import { workflowChatSession, WorkflowGroup } from "@/app/store/workflow";
+import { workflowChatSession, WorkflowGroup } from "@/app/types/workflow";
 
 const { TextArea } = Input;
 
@@ -59,7 +59,7 @@ export function WorkflowModalConfig(props: {
 	const { workflow, workflowSessions, onClose } = props;
 	const { topic, description, summary, id, created_at } = workflow;
 
-	const { updateWorkflowChatGroup } = useWorkflowGroupActions();
+	const { updateWorkflowSessionInfo } = useWorkflowGroupActions();
 
 	const [workflowName, setWorkflowName] = useState(topic);
 	const [workflowDescription, setWorkflowDescription] = useState(description);
@@ -68,7 +68,7 @@ export function WorkflowModalConfig(props: {
 	console.log("agentlist", agentlist);
 
 	const handleSave = async () => {
-		await updateWorkflowChatGroup(workflow.id, {
+		await updateWorkflowSessionInfo(workflow.id, {
 			topic: workflowName,
 			description: workflowDescription,
 			lastUpdateTime: new Date().toISOString(),

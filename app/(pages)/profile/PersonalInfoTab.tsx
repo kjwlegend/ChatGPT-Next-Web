@@ -13,6 +13,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { updateProfile } from "../../api/backend/user";
 import { server_url } from "../../constant";
 import Link from "next/link";
+import { updateUser } from "@/app/services/api/user";
 
 const formItemLayout = {
 	labelCol: {
@@ -41,7 +42,7 @@ const PersonalInfoTab = () => {
 			key: "loading",
 		});
 
-		updateProfile(user.id, values)
+		updateUser(values, user.id)
 			.then((response) => {
 				console.log("User info updated successfully:", response);
 				// 在这里处理更新成功后的逻辑
