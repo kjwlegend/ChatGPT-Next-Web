@@ -84,7 +84,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 
 	const chatStore = useChatStore.getState();
 	const userStore = useUserStore.getState();
-	const workflowStore = useWorkflowStore();
+	const workflowStore = useWorkflowStore.getState();
 	const session = useSessions();
 	const sessionId = session.id;
 	const config = useAppConfig();
@@ -114,64 +114,11 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 		handlePlayAudio,
 	} = useMessageActions(session, setshowToastModal);
 
-	useEffect(() => {
-		if (
-			enableAutoFlow &&
-			message.isFinished &&
-			message.isTransfered == false &&
-			!isUser &&
-			messageText !== ""
-		) {
-			onNextworkflow(messageText);
-			chatStore.updateSession(sessionId, () => {
-				session.responseStatus = false;
-				message.isTransfered = true;
-			});
-		}
-	}, [message.isFinished]);
-
 	/**
 	 * @description: 下一个工作流
 	 */
-	const onNextworkflow = (message: string) => {
-		const workflowGroup = Object.values(workflowStore.workflowGroup).find(
-			(group) => group.sessions.includes(sessionId),
-		);
-		if (!workflowGroup) {
-			console.error("当前 session 所在的 workflow group 未找到");
-			return;
-		}
-
-		const currentSessionIndex = workflowGroup.sessions.indexOf(sessionId);
-		const nextSessionIndex = workflowGroup.sessions.findIndex(
-			(s, i) => i > currentSessionIndex,
-		);
-
-		if (nextSessionIndex !== -1) {
-			const nextSessionId = workflowGroup.sessions[nextSessionIndex];
-			console.log("下一个 session 的 ID 是：", nextSessionId);
-		} else {
-			console.log("没有找到下一个 workflow session");
-			return;
-		}
-
-		const nextSessionId = workflowGroup.sessions[nextSessionIndex];
-		const nextSession = chatStore.sessions.find((s) => s.id === nextSessionId);
-
-		chatStore
-			.onUserInput(message, undefined, undefined, nextSession)
-			.then(() => updateUserInfo(userStore.user.id))
-			.catch((error) => {
-				messageApi.error(error.message);
-
-				if (error.message.includes("登录")) {
-					setTimeout(() => {
-						authHook.logoutHook();
-						router.push("/auth/");
-					}, 2000);
-				}
-			});
-
+	const onNextworkflow = (message: ChatMessage) => {
+		workflowStore.sendMessagetoNextSession(sessionId, message);
 		localStorage.setItem(LAST_INPUT_KEY, userInput);
 	};
 
@@ -236,15 +183,15 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 					tooltipProps={{}}
 					shape="circle"
 				/>
-
 				{/* next icon */}
-				{isworkflow && (
-					<ChatAction
-						text={Locale.Chat.Actions.Next}
-						icon={<NextIcon />}
-						onClick={() => onNextworkflow(messageText)}
-					/>
-				)}
+				<IconTooltipButton
+					text={Locale.Chat.Actions.Next}
+					icon={<NextIcon />}
+					onClick={() => onNextworkflow(message)}
+					tooltipProps={{}}
+					shape="circle"
+					className={styles["action-buttons"]}
+				/>
 			</div>
 		);
 	}, [showActions, isUser, message.streaming, message.isError]);

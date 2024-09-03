@@ -13,7 +13,7 @@ import EditIcon from "./rename.svg";
 import StopIcon from "./pause.svg";
 import PlayIcon from "./play.svg";
 import CheckmarkIcon from "./checkmark.svg";
-import NextIcon from "./next.svg";
+import NextIcon from "./next-2.svg";
 import SettingsIcon from "./settings.svg";
 
 import GithubIcon from "./github.svg";

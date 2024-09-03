@@ -19,6 +19,7 @@ import { message } from "antd";
 
 import { WorkflowGroup, workflowChatSession } from "../types/workflow";
 import { createChat } from "../api/backend/chat";
+import { getMessageImages, getMessageTextContent } from "../utils";
 
 type State = {
 	workflowGroups: WorkflowGroup[];
@@ -63,6 +64,7 @@ type State = {
 		workflowChatSession: workflowChatSession,
 	) => void;
 	getMessages: (sessionId: string) => ChatMessage[];
+	sendMessagetoNextSession: (sessionId: string, message: ChatMessage) => void;
 	updatedChatMessage: (sessionId: string, message: string) => void;
 	clearWorkflowData: () => void;
 };
@@ -681,6 +683,15 @@ export const useWorkflowStore = create<State>()(
 				);
 				if (!session) return [];
 				return session.messages;
+			},
+			sendMessagetoNextSession(sessionId: string, message: ChatMessage) {
+				const nextSession = get().getNextSession(sessionId);
+				if (nextSession) {
+					const content = getMessageTextContent(message);
+					const images = getMessageImages(message);
+
+					get().onUserInput(content, images, [], nextSession);
+				}
 			},
 
 			updatedChatMessage: (sessionId, message) => {},

@@ -476,6 +476,13 @@
 			background: #fbf3ff;
 		}
 	}
+
+	.action-buttons {
+		svg {
+			width: 16;
+			height: 16px;
+		}
+	}
 }
 .chat-message-user > .chat-message-container > .chat-message-item {
 	background-color: rgb(91 79 254 / 15%);
