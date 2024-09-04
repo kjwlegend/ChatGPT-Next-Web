@@ -46,6 +46,7 @@ export const useAuthStore = create<AuthState>()(
 
 					document.cookie = `access_token=${result.access}; expires=${newExpirationDate.toUTCString()}; path=/`;
 					document.cookie = `refresh_token=${result.refresh}; expires=${newExpirationDate.toUTCString()}; path=/`;
+					document.cookie = `expire_time=${newExpirationDate.toDateString()}; path=/`;
 					set({
 						isAuthenticated: true,
 						accessToken: result.access,

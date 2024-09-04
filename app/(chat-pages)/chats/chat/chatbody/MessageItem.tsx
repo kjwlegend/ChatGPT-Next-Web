@@ -183,15 +183,16 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 					tooltipProps={{}}
 					shape="circle"
 				/>
-				{/* next icon */}
-				<IconTooltipButton
-					text={Locale.Chat.Actions.Next}
-					icon={<NextIcon />}
-					onClick={() => onNextworkflow(message)}
-					tooltipProps={{}}
-					shape="circle"
-					className={styles["action-buttons"]}
-				/>
+				{isworkflow && (
+					<IconTooltipButton
+						text={Locale.Chat.Actions.Next}
+						icon={<NextIcon />}
+						onClick={() => onNextworkflow(message)}
+						tooltipProps={{}}
+						shape="circle"
+						className={styles["action-buttons"]}
+					/>
+				)}
 			</div>
 		);
 	}, [showActions, isUser, message.streaming, message.isError]);

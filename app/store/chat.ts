@@ -134,7 +134,7 @@ function countMessages(msgs: ChatMessage[]) {
 }
 
 const DEFAULT_CHAT_STATE = {
-	sessions: [createEmptySession({})],
+	sessions: [] as ChatSession[],
 	currentSessionIndex: 0,
 	currentSessionId: "",
 };
@@ -257,8 +257,6 @@ export const useChatStore = createPersistStore(
 						topic: DEFAULT_TOPIC,
 						mask: mask,
 					});
-
-					if (isworkflow) session.isworkflow = true;
 
 					session.mask = {
 						...selectedMask,

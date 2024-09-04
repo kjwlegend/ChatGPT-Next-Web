@@ -44,6 +44,7 @@ import ChatList from "./sidebar/chatList";
 
 import { useChatService } from "@/app/(chat-pages)/chats/chat/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
+import { useCheckCookieExpiration } from "@/app/hooks/useExpireCheck";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -263,6 +264,9 @@ export default function Home() {
 	useSwitchTheme();
 	useLoadData();
 	useHtmlLang();
+
+	// use messageapi
+	const Test = useCheckCookieExpiration();
 
 	useEffect(() => {
 		console.log("[Config] got config from build time", getClientConfig());

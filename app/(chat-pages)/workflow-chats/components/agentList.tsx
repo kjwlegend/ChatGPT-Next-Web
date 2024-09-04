@@ -230,9 +230,14 @@ export default function AgentList(props: {
 					open={showAgentList}
 					onCancel={handleModalClick}
 					footer={null}
-					width="70vw"
+					width="80vw"
 					height="80vh"
-					style={{ overflow: "scroll" }}
+					styles={{
+						body: {
+							height: "75vh",
+							overflow: "scroll",
+						},
+					}}
 				>
 					<MaskPage onItemClick={handleAgentClick} onDelete={onDelete} />
 				</Modal>
