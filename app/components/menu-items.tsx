@@ -71,18 +71,17 @@ export const TopMenuItems: MenuItem[] = [
 		url: "/music",
 	},
 	{
-		label: "商城(开发中)",
-		key: "mall",
-		disabled: true,
-		url: "/mall",
+		label: "商城",
+		key: "products",
+		url: "/products",
 	},
 
 	{
 		label: "社区(开发中)",
-		key: "test",
+		key: "community",
 		icon: <IconFont type="iconfont-lightfill" />,
 		disabled: true,
-		url: "/updates",
+		url: "/community",
 	},
 ];
 
