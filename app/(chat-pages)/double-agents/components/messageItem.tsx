@@ -11,7 +11,6 @@ import { useChatStore, useUserStore } from "@/app/store";
 
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
-import { ChatContext } from "@/app/(chat-pages)/chats/chat/main";
 import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";
 
@@ -46,7 +45,6 @@ import {
 	copyToClipboard,
 	getMessageTextContent,
 	selectOrCopy,
-	useMobileScreen,
 } from "@/app/utils";
 import {
 	ContextPrompts,
@@ -104,19 +102,6 @@ export const AgentMessageItem: React.FC<MessageItemProps> = ({
 	const config = useAppConfig();
 	const fontSize = config.fontSize;
 	const user = useUserStore().user;
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		scrollRef,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
 
 	const { conversation } = useMultiAgentChatContext();
 

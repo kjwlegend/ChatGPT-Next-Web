@@ -1,4 +1,4 @@
-import { DEFAULT_TOPIC } from "../store";
+import { DEFAULT_TOPIC } from "@/app/store";
 
 import {
 	ChatSession,
@@ -8,43 +8,45 @@ import {
 	Mask,
 } from "@/app/types/";
 
-import { useChatStore } from "../store";
-import { useUserStore } from "../store";
-import { RequestMessage, api } from "../client/api";
-import { SUMMARIZE_MODEL } from "../constant";
-import { createMessage } from "../store";
+import { useChatStore } from "@/app/store";
+import { useUserStore } from "@/app/store";
+import { RequestMessage, api } from "@/app/client/api";
+import { SUMMARIZE_MODEL } from "@/app/constant";
+import { createMessage } from "@/app/store";
 
-import { useAppConfig } from "../store";
-import { usePluginStore } from "../store/plugin";
-import { ChatControllerPool } from "../client/controller";
+import { useAppConfig } from "@/app/store";
+import { usePluginStore } from "@/app/store/plugin";
+import { ChatControllerPool } from "@/app/client/controller";
 
-import { prettyObject } from "../utils/format";
+import { prettyObject } from "@/app/utils/format";
 
-import { ModelConfig } from "../store";
+import { ModelConfig } from "@/app/store";
 import {
 	CreateChatData,
 	MultiAgentData,
 	createAgentChat,
 	createChat,
 	uploadMultiAgentSession,
-} from "../api/backend/chat";
-import MultiAgent, { createMultiAgentChatMessage } from "../store/multiagents";
+} from "@/app/api/backend/chat";
+import MultiAgent, {
+	createMultiAgentChatMessage,
+} from "@/app/store/multiagents";
 
 import {
 	MultiAgentChatSession,
 	MultiAgentChatMessage,
-} from "../store/multiagents";
+} from "@/app/store/multiagents";
 import { create } from "domain";
 import { send } from "process";
 
 import {
 	InitialConversationChatTemplate,
 	ConversationChatTemplate,
-} from "../chains/multiagents";
-import useAuth from "../hooks/useAuth";
-import { useAuthStore } from "../store/auth";
+} from "@/app/chains/multiagents";
+import useAuth from "@/app/hooks/useAuth";
+import { useAuthStore } from "@/app/store/auth";
 import { first } from "cheerio/lib/api/traversing";
-import { getMessageTextContent } from "../utils";
+import { getMessageTextContent } from "@/app/utils";
 
 // 假设我们有一个函数来启动对话
 

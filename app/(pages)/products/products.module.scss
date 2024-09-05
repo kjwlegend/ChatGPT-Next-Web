@@ -1,0 +1,210 @@
+//  membership =============
+.card {
+	border: 1px solid var(--white);
+	border-radius: 10px;
+	padding: 16px;
+	width: 250px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+	background-color: rgba(255, 255, 255, 0.4);
+	transition: box-shadow 0.3s ease;
+
+	&:hover {
+		box-shadow: 0 4px 8px rgba(29, 63, 231, 0.3);
+	}
+
+	.cardHeader {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 5px;
+
+		h3 {
+			font-size: 18px;
+			font-weight: bold;
+			margin-right: 8px;
+		}
+
+		.currentButton {
+			background-color: rgb(68, 221, 68);
+			color: white;
+			border: none;
+			border-radius: 4px;
+			padding: 4px 8px;
+			cursor: default;
+		}
+
+		.upgradeButton {
+			background-color: rgb(124, 170, 249);
+			color: white;
+			border: none;
+			border-radius: 4px;
+			padding: 4px 8px;
+			cursor: pointer;
+		}
+	}
+	.price {
+		// 特殊样式...
+		font-size: 18px;
+		margin-bottom: 10px;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
+		margin-bottom: 2px;
+	}
+
+	.description {
+		color: var(--black);
+		font-size: 16px;
+		flex: 1;
+	}
+
+	.value {
+		color: var(--black);
+		font-weight: bold;
+		flex: 1;
+		text-align: right;
+	}
+}
+
+// 优化部分
+.cardcontainer {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	gap: 30px;
+	margin-bottom: 30px;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+.singleItemsPage,
+.membershipUpgrade {
+	h2 {
+		text-align: center;
+		margin-bottom: 30px;
+		font-size: 2rem;
+	}
+}
+
+.singleItemsContainer {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	gap: 30px;
+}
+
+.singleItemPurchase {
+	@extend .card;
+
+	.price {
+		font-size: 1.1rem;
+		font-weight: bold;
+		margin-bottom: 15px;
+	}
+
+	.quantitySelector {
+		margin-bottom: 15px;
+
+		.ant-input-number {
+			width: 100%;
+		}
+	}
+
+	button {
+		width: 100%;
+	}
+}
+
+//  payment modal =============
+
+.payment-modal-container {
+	:global .ant-modal-content {
+		background-image: url("/bg.png");
+		background-size: cover;
+		background-repeat: no-repeat;
+	}
+	:global .ant-modal-header {
+		background: none;
+	}
+
+	.modal-content-container {
+		display: flex;
+		justify-content: space-evenly;
+	}
+
+	.service,
+	.balance,
+	.deduction,
+	.remaining {
+		/* 设置字体大小 */
+		font-size: 16px;
+		/* 设置字体颜色为渐变色 */
+		color: #636363;
+		/* 设置行高 */
+		line-height: 1.5;
+		/* 设置字体加粗 */
+		// font-weight: bold;
+	}
+	.payment-image {
+		margin-left: 10px;
+		@media screen and (max-width: 768px) {
+			display: none;
+		}
+	}
+
+	.payment-method {
+		/* 设置背景颜色为渐变色 */
+		background: linear-gradient(to right, #f4d5ff 0%, #d2f8f8 100%);
+		/* 设置边框为无 */
+		border: none;
+		/* 设置字体颜色为白色 */
+		color: white;
+		/* 设置内边距 */
+		padding: 10px 20px;
+		/* 设置圆角 */
+		border-radius: 20px;
+		/* 设置字体大小 */
+		font-size: 16px;
+		/* 设置字体加粗 */
+		font-weight: bold;
+	}
+
+	.payment-method .ant-radio-button-wrapper {
+		/* 设置背景色为透明 */
+		background: transparent;
+		/* 设置边框为无 */
+		border: none;
+		/* 设置字体颜色为白色 */
+		color: white;
+	}
+
+	.payment-method .ant-radio-button-wrapper-checked {
+		/* 设置背景色为深色渐变色 */
+		background: linear-gradient(to right, #5effec 0%, rgb(102, 255, 247) 100%);
+		/* 设置边框为无 */
+		border: none;
+		/* 设置字体颜色为白色 */
+		color: white;
+	}
+}
+
+.switchContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 20px;
+
+	span {
+		margin: 0 10px;
+	}
+}
+
+.originalPrice {
+	text-decoration: line-through;
+	color: #999;
+	margin-right: 5px;
+}

@@ -41,30 +41,12 @@ import {
 
 import dynamic from "next/dynamic";
 
-import { ChatContext } from "@/app/(chat-pages)/chats/chat/main";
-
-import {
-	ChatActions,
-	ChatAction,
-} from "@/app/(chat-pages)/chats/chat/Inputpanel";
-import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "@/app/(chat-pages)/chats/chat/chat-controller";
+import { useScrollToBottom } from "@/app/hooks/useGeneralChatHook";
 
 import { CreateChatData, createChat } from "@/app/api/backend/chat";
 import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 
 import { message, Button } from "antd";
-import useAuth from "@/app/hooks/useAuth";
-import { ChatData } from "@/app/api/backend/chat";
-import { getChat } from "@/app/api/backend/chat";
-import { UpdateChatMessages } from "@/app/services/chatservice";
-import { useRouter } from "next/navigation";
-import { FloatButton } from "antd";
-import { UnorderedListOutlined } from "@ant-design/icons";
-import { MJFloatButton } from "@/app/(chat-pages)/chats/chat/midjourney";
 
 import { MultiAgentMessageList } from "./messageList";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
@@ -91,20 +73,6 @@ export function MultiAgentChatbody(props: {
 	const isMobileScreen = useMobileScreen();
 
 	const [messageApi, contextHolder] = message.useMessage();
-
-	const {
-		hitBottom,
-		setHitBottom,
-		showPromptModal,
-		setShowPromptModal,
-		userInput,
-		setUserInput,
-		enableAutoFlow,
-		setEnableAutoFlow,
-		// scrollRef,
-		userImage,
-		setUserImage,
-	} = useContext(ChatContext);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const { setAutoScroll, scrollDomToBottom } = useScrollToBottom();

@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Modal } from "antd";
+import { Modal, Button, message } from "antd";
 import styles from "./welcome.module.scss";
-import { Button } from "antd";
 import Image from "next/image";
 import { useAuthStore } from "../store/auth";
+import { getDailyCheckIn } from "../services/api/user";
 
 const ModalPopup = () => {
 	const [visible, setVisible] = useState(true);
+	const [checkedIn, setCheckedIn] = useState(false);
 	const useAuth = useAuthStore();
 
 	const isLogin = useAuth.isAuthenticated;
@@ -37,6 +38,31 @@ const ModalPopup = () => {
 		setVisible(false);
 	};
 
+	const handleDontShowToday = () => {
+		const today = new Date().toDateString();
+		localStorage.setItem("lastDismissDate", today);
+		setVisible(false);
+	};
+
+	// 更新签到功能
+	const handleCheckin = async () => {
+		try {
+			const res = await getDailyCheckIn();
+			if (res.status === "success") {
+				setCheckedIn(true);
+				message.success("签到成功！获得高级模型20次，基础模型200次使用额度。");
+			} else if (res.status === "already_checked_in") {
+				setCheckedIn(true);
+				message.info("您今天已经签到过了");
+			} else {
+				message.error(res.message || "签到失败，请稍后再试。");
+			}
+		} catch (error) {
+			console.error("签到出错:", error);
+			message.error("签到失败，请稍后再试。");
+		}
+	};
+
 	return (
 		<Modal
 			centered
@@ -57,12 +83,17 @@ const ModalPopup = () => {
 					/>
 				</div>
 
-				<p className={styles.title}> 进群可领取邀请码, 领取1个月免费福利</p>
+				<p className={styles.title}>进群将获取每日免费额度上限提高</p>
 
-				{/* 基于工作 , 生活, 娱乐 3大块, 以flex组件帮我生成带有 小标题, 描述的代码 */}
 				<div className={styles.description}>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>对话及绘画</p>
+						<p className={styles["description-title"]}>每日签到奖励</p>
+						<p className={styles["description-content"]}>
+							每日签到可获得高级模型20次，基础模型200次的使用额度。
+						</p>
+					</div>
+					<div className={styles["description-item"]}>
+						<p className={styles["description-title"]}>对话</p>
 						<p className={styles["description-content"]}>
 							集成合规大模型,并加入了大量定制化微调. 专业提示词工程师研究.
 						</p>
@@ -73,24 +104,25 @@ const ModalPopup = () => {
 							可支持无限制工作流定制, 集成双AI特色训练.
 						</p>
 					</div>
-					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>命理运势</p>
-						<p className={styles["description-content"]}>
-							由专业塔罗师设计的塔罗牌阵, 结合大模型给出专业解读, 专业解答.
-						</p>
-					</div>
+				</div>
+
+				<div className={styles["update-content"]}>
+					<p className={styles["update-title"]}>最新更新内容</p>
+					<ul className={styles["update-list"]}>
+						<li>新增每日签到功能，获取更多使用额度</li>
+						<li>优化对话模型，提升回答质量</li>
+						<li>增加更多工作流模板，提高使用效率</li>
+					</ul>
 				</div>
 
 				<p className={styles.button}>
-					{/* 插入四个Button , 立即注册, 查看介绍 立即登录 */}
-
 					{isLogin ? (
 						<>
 							<Button type="primary" onClick={handleOk}>
 								开始对话
 							</Button>
-							<Button type="primary" href="/tarot">
-								塔罗占卜
+							<Button onClick={handleCheckin} disabled={checkedIn}>
+								{checkedIn ? "已签到" : "签到"}
 							</Button>
 						</>
 					) : (
@@ -98,12 +130,12 @@ const ModalPopup = () => {
 							<Button type="primary" href="/auth#tab2">
 								立即注册
 							</Button>
-
 							<Button type="primary" href="/auth">
 								立即登录
 							</Button>
 						</>
 					)}
+					<Button onClick={handleDontShowToday}>今日不再提示</Button>
 				</p>
 			</div>
 		</Modal>

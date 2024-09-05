@@ -36,12 +36,7 @@ import {
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "@/app//types/";
 
 import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
-import {
-	copyToClipboard,
-	selectOrCopy,
-	autoGrowTextArea,
-	useMobileScreen,
-} from "@/app/utils";
+import { copyToClipboard, selectOrCopy, autoGrowTextArea } from "@/app/utils";
 
 import Locale from "@/app/locales";
 
@@ -51,11 +46,7 @@ import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import useAuth from "@/app/hooks/useAuth";
 import { message } from "antd";
 
-import {
-	useSubmitHandler,
-	useScrollToBottom,
-	ClearContextDivider,
-} from "@/app/(chat-pages)/chats/chat/chat-controller";
+import { useSubmitHandler } from "@/app/hooks/useGeneralChatHook";
 
 import usemultiAgentStore, {
 	MultiAgentChatSession,
@@ -64,8 +55,7 @@ import { Button, Input, InputNumber, Flex } from "antd";
 import {
 	continueConversation,
 	startConversation,
-} from "@/app/services/MultiAgentService";
-import Icon from "@ant-design/icons/lib/components/Icon";
+} from "@/app/services/api/MultiAgentService";
 
 export function MultiAgentInput() {
 	const multiAgentStore = usemultiAgentStore();

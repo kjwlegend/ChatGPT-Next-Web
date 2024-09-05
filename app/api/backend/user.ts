@@ -27,12 +27,7 @@ export async function getUserInfo(userId: any) {
 }
 
 // Member type 包含 normal, monthly, quarterly, yearly
-export type membership_level =
-	| "normal"
-	| "monthly"
-	| "quarterly"
-	| "halfyearly"
-	| "yearly";
+export type membership_level = "free" | "gold" | "diamond";
 
 interface upgradeMemberParams {
 	user_id: number;

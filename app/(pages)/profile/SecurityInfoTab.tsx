@@ -3,7 +3,7 @@ import React from "react";
 import { useUserStore } from "../../store/user";
 import { Form, Input, Button, message, Space } from "antd";
 
-import Upload from "../../utils/upload";
+import Upload from "./components/upload";
 import { updateProfile } from "../../api/backend/user";
 import { server_url } from "../../constant";
 import Link from "next/link";

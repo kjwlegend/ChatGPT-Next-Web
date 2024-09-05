@@ -48,7 +48,7 @@ export default function AuthPage() {
 
 	if (!show) {
 		return (
-			<div className="main">
+			<div className="body-container">
 				<LoadingIcon />{" "}
 			</div>
 		);

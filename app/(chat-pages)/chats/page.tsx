@@ -264,9 +264,9 @@ export default function Home() {
 	useSwitchTheme();
 	useLoadData();
 	useHtmlLang();
+	useCheckCookieExpiration(); // 直接调用 hook
 
-	// use messageapi
-	const Test = useCheckCookieExpiration();
+	const [messageApi, contextHolder] = message.useMessage();
 
 	useEffect(() => {
 		console.log("[Config] got config from build time", getClientConfig());
@@ -281,6 +281,7 @@ export default function Home() {
 		<Router>
 			<SEOHeader />
 			<Screen />
+			{contextHolder}
 		</Router>
 	);
 }

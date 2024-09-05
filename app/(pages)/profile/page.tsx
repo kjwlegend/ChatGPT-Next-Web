@@ -20,11 +20,7 @@ const items: TabsProps["items"] = [
 		label: "个人信息",
 		children: <PersonalInfoTab />,
 	},
-	{
-		key: "2",
-		label: "会员信息",
-		children: <MembershipTab />,
-	},
+
 	{
 		key: "3",
 		label: "密码信息",
@@ -73,7 +69,7 @@ const ProfilePage = () => {
 	console.log("activeTab:", activeTab);
 
 	return (
-		<div className="main">
+		<div className="body-container">
 			<h1>用户中心</h1>
 			{isAuthenticated && isClient ? (
 				<div className={styles.profiletab}>
