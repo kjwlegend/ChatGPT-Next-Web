@@ -189,7 +189,7 @@ export const DEFAULT_MODELS = [
 
 import { getServerSideConfig } from "@/app/config/server";
 
-export const oss = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
+export const oss_base = "https://xiaoguangai.oss-cn-shanghai.aliyuncs.com";
 
 // const env = getServerSideConfig().server_url;
 // console.log("env", env);

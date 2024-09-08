@@ -11,6 +11,7 @@ interface AvatarProps {
 	nickname?: string;
 	size?: any;
 }
+import { oss_base } from "../constant";
 
 export const Avatar: React.FC<AvatarProps> = ({
 	model,
@@ -34,7 +35,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 		}
 
 		if (avatar) {
-			return <AntdAvatar size={size} src={avatar} />;
+			return <AntdAvatar size={size} src={`${oss_base}${avatar}`} />;
 		}
 
 		return (

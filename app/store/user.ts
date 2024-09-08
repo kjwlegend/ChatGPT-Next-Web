@@ -24,7 +24,7 @@ export interface User {
 		draw_balance: number;
 		basic_chat_balance: number;
 		pro_chat_balance: number;
-		tarot_balance: number;
+		basic_tarot_balance: number;
 	};
 
 	// 其他字段
@@ -53,7 +53,7 @@ const defaultUser: User = {
 		draw_balance: 0,
 		basic_chat_balance: 0,
 		pro_chat_balance: 0,
-		tarot_balance: 0,
+		basic_tarot_balance: 0,
 	},
 };
 

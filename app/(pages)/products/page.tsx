@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../products.module.scss";
 import { useUserStore } from "../../store/user";
 import useAuth from "../../hooks/useAuth";
-import { membership_level, upgradeMember } from "../../api/backend/user";
+import { membership_level } from "../../api/backend/user";
 import Image from "next/image";
 import {
 	Col,

@@ -21,19 +21,16 @@ export default function useAuth() {
 	const authStore = useAuthStore();
 	const userStore = useUserStore();
 	const chatStore = useChatStore();
-
 	const handleMembershipLevel = (level: string): string => {
 		switch (level) {
 			case "1":
-				return "普通会员";
+				return "免费会员";
 			case "2":
 				return "黄金会员";
-			case "3":
-				return "白金会员";
 			case "4":
 				return "钻石会员";
 			default:
-				return "普通会员";
+				return "免费会员";
 		}
 	};
 
@@ -75,7 +72,7 @@ export default function useAuth() {
 		const balance = updateUserBalance(user);
 		const updatedUser = {
 			...user,
-			membership_level: handleMembershipLevel(user.membership_level),
+			membership_level: user.membership_level,
 			membership_expiry_date: handleMembershipExpiryDate(
 				user.membership_expiry_date,
 			),

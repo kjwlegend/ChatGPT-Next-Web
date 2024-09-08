@@ -89,13 +89,13 @@ const ModalPopup = () => {
 					<div className={styles["description-item"]}>
 						<p className={styles["description-title"]}>每日签到奖励</p>
 						<p className={styles["description-content"]}>
-							每日签到可获得高级模型20次，基础模型200次的使用额度。
+							每日签到可获得高级模型5次，基础模型200次的使用额度。
 						</p>
 					</div>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>对话</p>
+						<p className={styles["description-title"]}>对话质量升级</p>
 						<p className={styles["description-content"]}>
-							集成合规大模型,并加入了大量定制化微调. 专业提示词工程师研究.
+							集合先进大模型,并加入了大量定制化微调,专业提示词工程师研究.
 						</p>
 					</div>
 					<div className={styles["description-item"]}>
@@ -107,15 +107,16 @@ const ModalPopup = () => {
 				</div>
 
 				<div className={styles["update-content"]}>
-					<p className={styles["update-title"]}>最新更新内容</p>
+					<p className={styles["update-title"]}>小光AI 3.0 全新升级</p>
 					<ul className={styles["update-list"]}>
-						<li>新增每日签到功能，获取更多使用额度</li>
+						<li>新增每日签到功能，普通模型大幅度免费</li>
 						<li>优化对话模型，提升回答质量</li>
 						<li>增加更多工作流模板，提高使用效率</li>
+						<li>优化新界面细节, 加快对话速度</li>
 					</ul>
 				</div>
 
-				<p className={styles.button}>
+				<p className={styles.buttons}>
 					{isLogin ? (
 						<>
 							<Button type="primary" onClick={handleOk}>

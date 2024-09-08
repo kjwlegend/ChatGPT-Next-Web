@@ -27,9 +27,8 @@ export function useCheckCookieExpiration() {
 		checkExpiration();
 
 		// 可选：设置定期检查
-		const intervalId = setInterval(checkExpiration, 60000); // 每分钟检查一次
+		const intervalId = setInterval(checkExpiration, 3600000); // 每1小时检查一次
 
 		return () => clearInterval(intervalId); // 清理函数
 	}, []);
 }
-

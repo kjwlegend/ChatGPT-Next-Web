@@ -4,26 +4,21 @@ import { Button, InputNumber } from "antd";
 import CheckoutModal from "./CheckoutModal";
 import { useUserStore } from "@/app/store/user";
 import useAuth from "@/app/hooks/useAuth";
+import { getProductInfo, ProductKey, getAllProducts } from "../productUtils";
 
 interface SingleItemPurchaseProps {
-	title: string;
-	description: string;
-	price: number;
-	unit: string;
-	productType: string;
+	productKey: ProductKey;
 }
 
 const SingleItemPurchase: React.FC<SingleItemPurchaseProps> = ({
-	title,
-	description,
-	price,
-	unit,
-	productType,
+	productKey,
 }) => {
 	const [quantity, setQuantity] = useState(1);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { user } = useUserStore();
 	const { updateUserInfo } = useAuth();
+
+	const productInfo = getProductInfo(productKey);
 
 	const handleQuantityChange = (value: number | null) => {
 		if (value !== null) {
@@ -35,25 +30,23 @@ const SingleItemPurchase: React.FC<SingleItemPurchaseProps> = ({
 		setIsModalVisible(true);
 	};
 
-	const getProductInfo = () => {
-		const totalQuantity =
-			quantity *
-			(productType === "basic" ? 100 : productType === "advanced" ? 15 : 1);
+	const createProductInfo = () => {
 		return {
-			name: title,
-			price: quantity * price,
-			description: `购买 ${totalQuantity} ${unit}`,
-			productType: productType,
-			quantity: totalQuantity,
+			name: productInfo.name,
+			price: quantity * productInfo.price,
+			productKey: productInfo.product_key,
+			description: `购买 ${quantity * productInfo.quantity} 次 ${productInfo.name}`,
+			productType: productInfo.product_type,
+			quantity: quantity * productInfo.quantity,
 		};
 	};
 
 	return (
 		<div className={styles.singleItemPurchase}>
-			<h3>{title}</h3>
-			<p>{description}</p>
+			<h3>{productInfo.name}</h3>
+			<p>{productInfo.description}</p>
 			<p className={styles.price}>
-				价格: ¥{price.toFixed(2)} / {unit}
+				价格: ¥{productInfo.price.toFixed(2)} / {productInfo.unit}
 			</p>
 			<div className={styles.quantitySelector}>
 				<InputNumber
@@ -79,39 +72,27 @@ const SingleItemPurchase: React.FC<SingleItemPurchaseProps> = ({
 			<CheckoutModal
 				isVisible={isModalVisible}
 				onClose={() => setIsModalVisible(false)}
-				product={getProductInfo()}
+				product={createProductInfo()}
+				quantity={quantity}
 				user={user}
 			/>
 		</div>
 	);
 };
 
-const SingleItemsPage = () => {
+const SingleItemsPage: React.FC = () => {
+	const products = getAllProducts();
+
 	return (
 		<div className={styles.singleItemsPage}>
 			<h2>单品购买</h2>
 			<div className={styles.singleItemsContainer}>
-				<SingleItemPurchase
-					title="基础对话次数"
-					description="购买基础对话次数，提升您的日常交互体验"
-					price={1}
-					unit="100次"
-					productType="basic"
-				/>
-				<SingleItemPurchase
-					title="高级对话次数"
-					description="购买高级对话次数，体验更智能的交互"
-					price={1}
-					unit="15次"
-					productType="advanced"
-				/>
-				<SingleItemPurchase
-					title="塔罗占卜次数"
-					description="购买塔罗占卜次数，探索神秘的塔罗世界"
-					price={1}
-					unit="1次"
-					productType="tarot"
-				/>
+				{products.map((product) => (
+					<SingleItemPurchase
+						key={product.product_key}
+						productKey={product.product_key as ProductKey}
+					/>
+				))}
 			</div>
 		</div>
 	);

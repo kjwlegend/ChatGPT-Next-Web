@@ -66,7 +66,7 @@ export function getMessagesWithMemory(
 	const contextStartIndex = Math.max(clearContextIndex, memoryStartIndex);
 	const maxTokenThreshold = modelConfig.max_tokens;
 
-	// get recent messages as much as possible
+	// get recent messages as much as poss_baseible
 	const reversedRecentMessages = [];
 	for (
 		let i = totalMessageCount - 1, tokenCount = 0;

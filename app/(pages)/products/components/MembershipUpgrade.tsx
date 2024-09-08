@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../products.module.scss";
 import { useUserStore } from "@/app/store/user";
 import useAuth from "@/app/hooks/useAuth";
-import { membership_level, upgradeMember } from "@/app/api/backend/user";
+import { membership_level } from "@/app/api/backend/user";
 import { Switch, message } from "antd";
 import CardComponent from "./CardComponent";
 import CheckoutModal from "./CheckoutModal";
@@ -15,6 +15,7 @@ const MembershipUpgrade = () => {
 	const [selectedMembershipType, setSelectedMembershipType] =
 		useState<membership_level>("free");
 	const [isYearly, setIsYearly] = useState(false);
+	const [productKey, setProductKey] = useState("");
 
 	const currentPackage = (packageType: string) => {
 		return user.membership_level === packageType;
@@ -51,12 +52,13 @@ const MembershipUpgrade = () => {
 				isVisible={isModalVisible}
 				onClose={() => setIsModalVisible(false)}
 				product={{
+					productKey: productKey,
 					name: selectedMembershipType === "gold" ? "黄金会员" : "钻石会员",
 					price: getPrice(selectedMembershipType, isYearly).discounted,
 					description: `${isYearly ? "年费" : "月费"}会员升级`,
-					membershipType: selectedMembershipType,
 					productType: "membership",
 				}}
+				quantity={isYearly ? 12 : 1}
 				user={user}
 				isYearly={isYearly}
 			/>
@@ -81,7 +83,10 @@ const MembershipUpgrade = () => {
 						{ description: "塔罗占卜", value: "1次/每日" },
 					]}
 					isCurrentPackage={currentPackage("free")}
-					onUpgrade={() => handleUpgrade("free")}
+					onUpgrade={() => {
+						setProductKey("free_membership"); // 假设免费会员的 product_id 为 1
+						handleUpgrade("free");
+					}}
 				/>
 				<CardComponent
 					title="黄金会员"
@@ -103,7 +108,10 @@ const MembershipUpgrade = () => {
 						{ description: "塔罗占卜", value: "5次/每日" },
 					]}
 					isCurrentPackage={currentPackage("gold")}
-					onUpgrade={() => handleUpgrade("gold")}
+					onUpgrade={() => {
+						setProductKey("gold_membership"); // 假设黄金会员的 product_id 为 2
+						handleUpgrade("gold");
+					}}
 				/>
 				<CardComponent
 					title="钻石会员"
@@ -125,7 +133,10 @@ const MembershipUpgrade = () => {
 						{ description: "塔罗占卜", value: "10次" },
 					]}
 					isCurrentPackage={currentPackage("diamond")}
-					onUpgrade={() => handleUpgrade("diamond")}
+					onUpgrade={() => {
+						setProductKey("diamond_membership"); // 假设钻石会员的 product_id 为 3
+						handleUpgrade("diamond");
+					}}
 				/>
 			</div>
 		</div>

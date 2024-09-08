@@ -29,26 +29,6 @@ export async function getUserInfo(userId: any) {
 // Member type 包含 normal, monthly, quarterly, yearly
 export type membership_level = "free" | "gold" | "diamond";
 
-interface upgradeMemberParams {
-	user_id: number;
-	membership_level: membership_level;
-	order_amount: number;
-	payment_type: string;
-}
-
-// upgradeMember
-export async function upgradeMember(params: upgradeMemberParams) {
-	return request({
-		url: `/gpt/orders/`,
-		method: "post",
-		data: params,
-	})
-		.then((res) => res.data)
-		.catch((err) => {
-			return err.response.data;
-		});
-}
-
 export async function resetTarotBalance(userId: number) {
 	return request({
 		url: `/gpt/reset-tarot/`,

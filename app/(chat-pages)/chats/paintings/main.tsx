@@ -25,7 +25,7 @@ import CloudFailIcon from "@/app/icons/cloud-fail.svg";
 import Masonry from "react-masonry-css";
 import { Image, MenuProps, Space, TabsProps, Button, Modal } from "antd";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { oss } from "@/app/constant";
+import { oss_base } from "@/app/constant";
 
 import {
 	DownloadOutlined,
@@ -111,7 +111,7 @@ interface PaintingsMasonryProps {
 
 const ImageContainer = ({ painting }: { painting: Painting }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	// const oss = "your-oss-url"; // 请替换成你的实际 OSS URL
+	// const oss_base = "your-oss_base-url"; // 请替换成你的实际 oss_base URL
 	const user = useUserStore((state) => state.user?.id);
 
 	const paintingParams = {
@@ -156,7 +156,7 @@ const ImageContainer = ({ painting }: { painting: Painting }) => {
 			className={styles["masonry-grid-item"]}
 		>
 			<Image
-				src={`${oss}${painting.image_url}!thumbnail`}
+				src={`${oss_base}${painting.image_url}!thumbnail`}
 				alt={painting.prompt_en}
 				style={{ width: "100%", height: "auto" }}
 				className={styles["gallery-image"]}
@@ -178,7 +178,7 @@ const ImageContainer = ({ painting }: { painting: Painting }) => {
 				<div className={styles["modal-content"]}>
 					<div className={styles["modal-image-wrapper"]}>
 						<Image
-							src={`${oss}${painting.image_url}!webp90`}
+							src={`${oss_base}${painting.image_url}!webp90`}
 							alt={painting.prompt_en}
 							// 添加你的 preview 配置
 							preview={{
@@ -212,7 +212,7 @@ const ImageContainer = ({ painting }: { painting: Painting }) => {
 										/>
 									</Space>
 								),
-								src: `${oss}${painting.image_url}!webp90`,
+								src: `${oss_base}${painting.image_url}!webp90`,
 
 								mask: (
 									<div className={styles["gallery-image-mask"]}>
@@ -330,14 +330,14 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 					// 	className={styles["masonry-grid-item"]}
 					// >
 					// 	<Image
-					// 		src={`${oss}${painting.image_url}!thumbnail`}
-					// 		// srcSet={`${oss}${painting.image_url}!webp90 300w`}
+					// 		src={`${oss_base}${painting.image_url}!thumbnail`}
+					// 		// srcSet={`${oss_base}${painting.image_url}!webp90 300w`}
 					// 		alt={painting.prompt_en}
 					// 		style={{ width: "100%", height: "auto" }}
 					// 		className={styles["gallery-image"]}
 					// 		// placeholder={
 					// 		// 	<Image
-					// 		// 		src={`${oss}${painting.image_url}!thumbnail`}
+					// 		// 		src={`${oss_base}${painting.image_url}!thumbnail`}
 					// 		// 		alt={painting.prompt_en}
 					// 		// 		style={{ width: "100%", filter: "blur(20px)" }}
 					// 		// 	/>
@@ -373,7 +373,7 @@ const PaintingsMasonry: React.FC<PaintingsMasonryProps> = ({
 					// 					/>
 					// 				</Space>
 					// 			),
-					// 			src: `${oss}${painting.image_url}!webp90`,
+					// 			src: `${oss_base}${painting.image_url}!webp90`,
 
 					// 			mask: (
 					// 				<div className={styles["gallery-image-mask"]}>

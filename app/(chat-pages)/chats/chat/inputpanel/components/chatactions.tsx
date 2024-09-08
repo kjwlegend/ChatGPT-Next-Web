@@ -36,7 +36,7 @@ import LoadingIcon from "@/app/icons/three-dots.svg";
 import LoadingButtonIcon from "@/app/icons/loading.svg";
 import ImageIcon from "@/app/icons/image.svg";
 
-import { oss } from "@/app/constant";
+import { oss_base } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 import { FileInfo } from "@/app/client/platforms/utils";
 
@@ -277,7 +277,7 @@ export const ChatActions = memo(
 			const fileName = await api.file.upload(file, "upload");
 			props.imageSelected({
 				fileName,
-				fileUrl: `${oss}${fileName}!uploadthumbnail`,
+				fileUrl: `${oss_base}${fileName}!uploadthumbnail`,
 			});
 			e.target.value = null;
 		};

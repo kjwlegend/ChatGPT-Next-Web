@@ -8,7 +8,7 @@ import {
 import { useChatStore } from "../store";
 import { useUserStore } from "../store";
 import { RequestMessage, api } from "../client/api";
-import { SUMMARIZE_MODEL } from "../constant";
+import { oss_base, SUMMARIZE_MODEL } from "../constant";
 import { createMessage } from "../store";
 import { CreateChatData } from "../api/backend/chat";
 import {
@@ -386,7 +386,7 @@ export async function pollForProgress(
 					message +
 					`\n 绘画已完成！总耗时：${(elapsedTime / 1000).toFixed(
 						2,
-					)}秒。\n查看结果: \n [![${mjtaskid}](${oss}${filePath}!webp90)](${oss}${filePath}!webp90)`;
+					)}秒。\n查看结果: \n [![${mjtaskid}](${oss_base}${filePath}!webp90)](${oss_base}${filePath}!webp90)`;
 
 				createChatData.message = content;
 				createChatData.mjstatus = fetchRes;

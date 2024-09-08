@@ -3,9 +3,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload } from "antd";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
-import { server_url } from "../../../constant";
+import { oss_base, server_url } from "../../../constant";
 import axios from "axios";
-import { oss } from "../../../constant";
 
 const getBase64 = (file: RcFile): Promise<string> =>
 	new Promise((resolve, reject) => {
@@ -34,7 +33,7 @@ const App: React.FC<AppProps> = ({ avatar, onImgListChange }) => {
 					uid: "-1",
 					name: "image.png",
 					status: "done",
-					url: oss + avatar,
+					url: oss_base + avatar,
 				},
 			]);
 		}
@@ -106,7 +105,7 @@ const App: React.FC<AppProps> = ({ avatar, onImgListChange }) => {
 				<img
 					alt="example"
 					style={{ width: "100%" }}
-					src={`${oss}/${previewImage}`}
+					src={`${oss_base}/${previewImage}`}
 				/>
 			</Modal>
 		</>

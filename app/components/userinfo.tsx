@@ -25,6 +25,7 @@ import style from "./welcome.module.scss";
 import Image from "next/image";
 import { text } from "stream/consumers";
 import { SettingsIcon } from "../icons";
+import { oss_base } from "../constant";
 
 export const ConfigMemu = () => {
 	const [visible, setVisible] = useState(false);
@@ -140,7 +141,7 @@ export default function UserInfo() {
 		<div className={styles["user-info-wrapper"]}>
 			{isLogin ? (
 				<div className={styles["user-info"]}>
-					<Avatar src={user?.avatar} size="large">
+					<Avatar src={`${oss_base}/${user?.avatar}`} size="large">
 						{user.nickname || "神秘人"}{" "}
 					</Avatar>
 					<div className={styles["user-details"]}>

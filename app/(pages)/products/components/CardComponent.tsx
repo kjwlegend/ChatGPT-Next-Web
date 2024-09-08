@@ -22,8 +22,10 @@ const CardComponent: React.FC<CardComponentProps> = ({
 	isCurrentPackage,
 	onUpgrade,
 }) => {
+	const cardId = `card-${title.toLowerCase().replace(/\s+/g, "-")}`;
+
 	return (
-		<div className={styles.card}>
+		<div className={styles.card} id={cardId}>
 			<div className={styles.cardHeader}>
 				<h3>{title}</h3>
 				<button
@@ -38,7 +40,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
 			<p className={styles.price}>{price}</p>
 
 			{data.map((item, index) => (
-				<div key={index} className={styles.row}>
+				<div key={`${cardId}-row-${index}`} className={styles.row}>
 					<p className={styles.description}>{item.description}</p>
 					<p className={styles.value}>{item.value}</p>
 				</div>

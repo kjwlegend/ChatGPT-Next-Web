@@ -34,7 +34,7 @@ import LoadingIcon from "@/app/icons/three-dots.svg";
 import LoadingButtonIcon from "@/app/icons/loading.svg";
 import ImageIcon from "@/app/icons/image.svg";
 
-import { oss } from "@/app/constant";
+import { oss_base } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 import { FileInfo } from "@/app/client/platforms/utils";
 

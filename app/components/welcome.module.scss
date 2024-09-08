@@ -81,11 +81,10 @@
 		}
 	}
 }
-.button {
-	a {
-		margin-left: 10px;
-		margin-right: 10px;
-	}
+.buttons {
+	display: flex;
+	justify-content: space-around;
+	gap: 10px;
 }
 
 @media screen and (max-width: 768px) {
@@ -99,5 +98,39 @@
 	}
 	.button {
 		display: flex;
+	}
+}
+
+.update-content {
+	border-radius: 8px;
+	padding: 20px;
+
+	.update-title {
+		font-size: 1.2rem;
+		font-weight: bold;
+		color: #1890ff;
+		margin-bottom: 10px;
+	}
+
+	.update-list {
+		list-style-type: none;
+		padding-left: 0;
+
+		li {
+			position: relative;
+			padding-left: 20px;
+			margin-bottom: 8px;
+			font-size: 0.9rem;
+			color: #333;
+			text-align: start;
+
+			&:before {
+				content: "•";
+				position: absolute;
+				left: 0;
+				color: #1890ff;
+				font-size: 1.2rem;
+			}
+		}
 	}
 }

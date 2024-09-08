@@ -85,7 +85,7 @@ export default function AuthPage() {
 
 	return (
 		<>
-			<div className={styles["auth-page"] + " main"}>
+			<div className={styles["auth-page"] + " body-container"}>
 				<div className={styles["welcome-header"]}>
 					<div className={styles["auth-title"]}>{Locale.Auth.Title}</div>
 					<div className={styles["auth-tips"]}>{Locale.Auth.Tips}</div>

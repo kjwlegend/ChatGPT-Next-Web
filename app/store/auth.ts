@@ -40,13 +40,24 @@ export const useAuthStore = create<AuthState>()(
 						newExpirationDate.getTime() + 48 * 60 * 60 * 1000,
 					); // 当前时间的 48 小时后
 
+
+					const formattedExpireTime = newExpirationDate.toLocaleString('zh-CN', {
+						year: 'numeric',
+						month: '2-digit',
+						day: '2-digit',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false
+					});
+					
+
 					document.cookie = `authenticated=true; expires=${newExpirationDate.toUTCString()}; path=/`;
 					document.cookie = `user_id=${result.user.username}; expires=${newExpirationDate.toUTCString()}; path=/`;
 					//  add token to cookie
 
 					document.cookie = `access_token=${result.access}; expires=${newExpirationDate.toUTCString()}; path=/`;
 					document.cookie = `refresh_token=${result.refresh}; expires=${newExpirationDate.toUTCString()}; path=/`;
-					document.cookie = `expire_time=${newExpirationDate.toDateString()}; path=/`;
+					document.cookie = `expire_time=${formattedExpireTime}; path=/`;
 					set({
 						isAuthenticated: true,
 						accessToken: result.access,
