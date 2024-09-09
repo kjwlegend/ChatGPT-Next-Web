@@ -91,7 +91,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 				messageApi.open({
 					key: "status",
 					type: "error",
-					content: `创建订单失败: ${createOrderResponse.message}`,
+					content: `创建订单失败: ${createOrderResponse.message || createOrderResponse.error}`,
 					duration: 2,
 				});
 			}

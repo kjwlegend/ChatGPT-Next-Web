@@ -19,6 +19,7 @@ const SingleItemPurchase: React.FC<SingleItemPurchaseProps> = ({
 	const { updateUserInfo } = useAuth();
 
 	const productInfo = getProductInfo(productKey);
+	console.log(productInfo);
 
 	const handleQuantityChange = (value: number | null) => {
 		if (value !== null) {

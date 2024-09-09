@@ -44,6 +44,7 @@ $black-color: var(--black);
 		position: absolute;
 		left: -100%;
 		z-index: 10;
+		padding: 10px;
 		height: $full-height;
 		transition: all ease 0.3s;
 		box-shadow: none;
@@ -55,7 +56,7 @@ $black-color: var(--black);
 }
 
 .sidebar-drag {
-	$width: 14px;
+	$width: 10px;
 
 	position: absolute;
 	top: 0;
@@ -146,7 +147,7 @@ $black-color: var(--black);
 	.sidebar-tail {
 		flex-direction: column-reverse;
 		align-items: center;
-		
+
 		.sidebar-actions {
 			flex-direction: column-reverse;
 			align-items: center;

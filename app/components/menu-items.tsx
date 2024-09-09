@@ -46,18 +46,20 @@ export const TopMenuItems: MenuItem[] = [
 	{
 		label: "双AI对话",
 		key: "double-agents",
-		icon: <IconFont type="iconfont-bx-cool" />,
 		disabled: false,
 		url: "/double-agents",
 	},
 	{
 		label: "工作流",
 		key: "workflow-chats",
-		icon: <IconFont type="iconfont-workflow" />,
 		disabled: false,
 		url: "/workflow-chats",
 	},
-
+	{
+		label: "商城",
+		key: "products",
+		url: "/products",
+	},
 	{
 		label: "绘图",
 		key: "draw",
@@ -71,15 +73,8 @@ export const TopMenuItems: MenuItem[] = [
 		url: "/music",
 	},
 	{
-		label: "商城",
-		key: "products",
-		url: "/products",
-	},
-
-	{
 		label: "社区(开发中)",
 		key: "community",
-		icon: <IconFont type="iconfont-lightfill" />,
 		disabled: true,
 		url: "/community",
 	},

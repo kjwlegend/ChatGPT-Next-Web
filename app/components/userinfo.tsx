@@ -145,7 +145,10 @@ export default function UserInfo() {
 						{user.nickname || "神秘人"}{" "}
 					</Avatar>
 					<div className={styles["user-details"]}>
-						<p>会员类型：{user?.membership_level}</p>
+						<p>
+							会员类型：
+							{user?.membership_level ? user?.membership_level : "免费会员"}
+						</p>
 						<p>到期时间：{user?.membership_expiry_date}</p>
 						<p>基础对话余额：{user_balance.basic_chat_balance}</p>
 						<p>高级对话余额：{user_balance.pro_chat_balance}</p>

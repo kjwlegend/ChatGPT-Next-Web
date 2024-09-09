@@ -73,17 +73,7 @@ const ModalPopup = () => {
 			footer={null}
 		>
 			<div className={styles.content}>
-				<div className={styles.banner}>
-					<Image
-						src="/assets/banner-2.png"
-						alt="banner"
-						fill={true}
-						objectFit="contain"
-						style={{ objectFit: "contain" }}
-					/>
-				</div>
-
-				<p className={styles.title}>进群将获取每日免费额度上限提高</p>
+				<p className={styles.title}>小光AI 3.0 全新升级</p>
 
 				<div className={styles.description}>
 					<div className={styles["description-item"]}>
@@ -105,15 +95,28 @@ const ModalPopup = () => {
 						</p>
 					</div>
 				</div>
-
 				<div className={styles["update-content"]}>
-					<p className={styles["update-title"]}>小光AI 3.0 全新升级</p>
-					<ul className={styles["update-list"]}>
-						<li>新增每日签到功能，普通模型大幅度免费</li>
-						<li>优化对话模型，提升回答质量</li>
-						<li>增加更多工作流模板，提高使用效率</li>
-						<li>优化新界面细节, 加快对话速度</li>
-					</ul>
+					<div className={styles["update-image-container"]}>
+						<Image
+							src="/assets/android-chrome-512x512.png"
+							alt="更新图片"
+							width={200}
+							height={200}
+							className={styles["update-image"]}
+						/>
+						<p className={styles["update-title"]}>
+							进群将获取每日免费额度上限提高
+						</p>
+					</div>
+					<div className={styles["update-text-container"]}>
+						0908更新日志:
+						<ul className={styles["update-list"]}>
+							<li>新增每日签到功能，普通模型大幅度免费</li>
+							<li>优化对话模型，提升回答质量</li>
+							<li>增加更多工作流模板，提高使用效率</li>
+							<li>优化新界面细节, 加快对话速度</li>
+						</ul>
+					</div>
 				</div>
 
 				<p className={styles.buttons}>
