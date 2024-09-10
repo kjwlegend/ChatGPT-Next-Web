@@ -184,6 +184,7 @@ const MainScreen: React.FC<{
 			return (
 				<WelcomeContainer>
 					<div className={styles["title"]}>
+						点击左上角
 						<Button
 							type="dashed"
 							className={styles["plus"]}
@@ -195,8 +196,6 @@ const MainScreen: React.FC<{
 						来开启工作流
 					</div>
 					<div className={styles["sub-title"]}>
-						在本页删除助手, 不会影响正常页的会话. 超级对话功能只在电脑端生效,
-						手机端无法使用.
 						<p>该功能属于会员功能, 目前限时开放.</p>
 					</div>
 				</WelcomeContainer>
