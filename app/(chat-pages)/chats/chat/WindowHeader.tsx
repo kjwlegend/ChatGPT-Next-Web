@@ -383,28 +383,3 @@ export const WindowHeader = React.memo(
 		);
 	},
 );
-
-export function MultiAgentWindowHeader(props: {
-	session?: MultiAgentChatSession;
-}) {
-	const chatStore = MultiAgent();
-	let session = props.session ?? chatStore.currentSession();
-	const sessionId = session.id;
-	const [showExport, setShowExport] = useState(false);
-	const [isEditingMessage, setIsEditingMessage] = useState(false);
-	const isMobileScreen = useMobileScreen();
-	const clientConfig = useMemo(() => getClientConfig(), []);
-
-	return (
-		<div className="window-header" data-tauri-drag-region>
-			<div className={`window-header-title ${styles["chat-body-title"]}`}>
-				<div
-					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
-					onClickCapture={() => setIsEditingMessage(true)}
-				>
-					{!session.topic ? DEFAULT_TOPIC : session.topic}
-				</div>
-			</div>
-		</div>
-	);
-}

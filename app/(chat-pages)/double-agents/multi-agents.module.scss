@@ -58,3 +58,95 @@
 		margin: 10px;
 	}
 }
+
+// ============== conversation header
+.windowHeader {
+	padding: 16px;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.headerContent {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.topRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.title {
+	margin: 0;
+}
+
+.buttonGroup {
+	display: flex;
+	gap: 8px;
+}
+
+.infoRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.roundInfo {
+	color: rgba(0, 0, 0, 0.45);
+}
+
+.modeSelector {
+	min-width: 120px;
+}
+
+// =========messageItem
+.emptyState {
+	text-align: center;
+	padding: 20px;
+	color: #888;
+}
+
+.loadingMore {
+	text-align: center;
+	padding: 10px;
+	color: #888;
+}
+
+.messageItem {
+	display: flex;
+	margin-bottom: 16px;
+}
+
+.userMessage {
+	justify-content: flex-end;
+}
+
+.agentMessage {
+	justify-content: flex-start;
+}
+
+.avatar {
+	margin-right: 12px;
+}
+
+.messageContent {
+	max-width: 70%;
+}
+
+.messageHeader {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 4px;
+	font-size: 0.9em;
+	color: #888;
+}
+
+.sender {
+	font-weight: bold;
+}
+
+.timestamp {
+	font-size: 0.8em;
+}

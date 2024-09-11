@@ -5,12 +5,12 @@ import { updateMultiAgentSession } from "@/app/services/api/chats";
 import { Path } from "../../constant";
 import { useNavigate } from "react-router-dom";
 import { getMultiAgentSession } from "../../services/api/chats";
-import usedoubleAgent from "@/app/store/multiagents";
+import { useMultipleAgentStore } from "@/app/store/multiagents";
 import { useMultiAgentChatContext } from "./multiAgentContext";
 import { useUserStore } from "../../store";
 import { Mask } from "@/app/types/mask";
 
-export const useMultipleAgentsChatService = () => {
+export const useMultipleAgentsChatHook = () => {
 	const navigate = useNavigate();
 	const userid = useUserStore((state) => state.user?.id);
 
@@ -21,7 +21,7 @@ export const useMultipleAgentsChatService = () => {
 		deleteConversation,
 		fetchNewConversations,
 		sortedConversations,
-	} = usedoubleAgent();
+	} = useMultipleAgentStore();
 
 	const [chatSessions, setChatSessions] = useState<any[]>(conversations);
 	const { startNewConversation, addAgent } = useMultiAgentChatContext();

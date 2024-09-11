@@ -7,7 +7,7 @@ import React, {
 	useEffect,
 } from "react";
 import { MultiAgentChatSession } from "@/app/store/multiagents";
-import multiAgentStore from "@/app/store/multiagents";
+import { useMultipleAgentStore } from "@/app/store/multiagents";
 // @/app. 其他必要的 imports
 import { useUserStore } from "@/app/store";
 import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
@@ -37,11 +37,11 @@ export const MultiAgentChatContext = createContext<ChatContext>({
 
 // ChatProvider组件，用于包装应用程序并共享聊天状态和方法
 export const MultiAgentChatProvider = ({ children }: any) => {
-	const [state, setState] = useState(() => multiAgentStore.getState());
+	const [state, setState] = useState(() => useMultipleAgentStore.getState());
 
 	useEffect(() => {
-		const unsubscribe = multiAgentStore.subscribe(() => {
-			setState(multiAgentStore.getState());
+		const unsubscribe = useMultipleAgentStore.subscribe(() => {
+			setState(useMultipleAgentStore.getState());
 		});
 		return () => unsubscribe();
 	}, []);
@@ -76,7 +76,7 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 
 	// 获取最新的 currentConversationId
 	const getCurrentConversationId = () => {
-		return multiAgentStore.getState().currentConversationId;
+		return useMultipleAgentStore.getState().currentConversationId;
 	};
 
 	// 开始新对话的处理函数

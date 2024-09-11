@@ -32,10 +32,11 @@ import {
 } from "@hello-pangea/dnd";
 
 import styles from "./AIConfig.module.scss";
-import usemultiAgentStore, {
+import {
+	useMultipleAgentStore,
 	MultiAgentChatSession,
 } from "@/app/store/multiagents";
-import { AIConfig } from "./types";
+import { AIConfig } from "../types";
 import { Mask } from "@/app/types/";
 import { usePluginStore } from "@/app/store/plugin";
 import { getLang } from "@/app/locales";
@@ -147,7 +148,7 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 		clearAIConfig,
 		updateConversation,
 		currentConversationId,
-	} = usemultiAgentStore();
+	} = useMultipleAgentStore();
 
 	const handleSliderChange = (value: number) => {
 		// 更新滑块值的逻辑

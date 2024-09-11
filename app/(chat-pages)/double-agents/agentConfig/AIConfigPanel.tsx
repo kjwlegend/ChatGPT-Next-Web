@@ -2,7 +2,8 @@
 // src/components/ChatArea/AIConfigPanel.tsx
 
 import { BotAvatar as MaskAvatar } from "@/app/components/emoji";
-import usemultiAgentStore, {
+import {
+	useMultipleAgentStore,
 	MultiAgentChatSession,
 } from "@/app/store/multiagents";
 import styles from "../multi-agents.module.scss";
@@ -23,7 +24,7 @@ import { getLang, getISOLang } from "@/app/locales";
 import { IconButton } from "@/app/components/button";
 import { useMultiAgentChatContext } from "../multiAgentContext";
 import { MaskPage } from "../../chats/masklist/mask";
-import { useMultipleAgentsChatService } from "@/app/(chat-pages)/double-agents/useMultipleAgentsHook";
+import { useMultipleAgentsChatHook } from "@/app/(chat-pages)/double-agents/useMultipleAgentsHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import React, { useState, useMemo, useEffect } from "react";
 import {
@@ -64,9 +65,9 @@ const AIConfigPanel: React.FC = () => {
 		currentConversationId,
 		updateConversation,
 		setAIConfig,
-	} = usemultiAgentStore();
+	} = useMultipleAgentStore();
 
-	const { handleAgentClick } = useMultipleAgentsChatService();
+	const { handleAgentClick } = useMultipleAgentsChatHook();
 	const { onDelete } = useAgentActions();
 	const [showAgentList, setShowAgentList] = useState(false);
 	const [showAgentEdit, setShowAgentEdit] = useState(false);
@@ -119,7 +120,7 @@ const AIConfigPanel: React.FC = () => {
 		return null;
 	}
 
-	const onDragEnd = (result) => {
+	const onDragEnd = (result: any) => {
 		if (!result.destination) return;
 
 		const items = Array.from(aiConfigs);

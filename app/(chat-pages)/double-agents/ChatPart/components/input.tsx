@@ -48,17 +48,18 @@ import { message } from "antd";
 
 import { useSubmitHandler } from "@/app/hooks/useGeneralChatHook";
 
-import usemultiAgentStore, {
+import {
+	useMultipleAgentStore,
 	MultiAgentChatSession,
 } from "@/app/store/multiagents";
 import { Button, Input, InputNumber, Flex } from "antd";
 import {
 	continueConversation,
 	startConversation,
-} from "@/app/services/api/MultiAgentService";
+} from "@/app/(chat-pages)/double-agents/MultiAgentService";
 
 export function MultiAgentInput() {
-	const multiAgentStore = usemultiAgentStore();
+	const multiAgentStore = useMultipleAgentStore();
 	const { conversations, currentConversationId } = multiAgentStore;
 	const [conversation, setConversation] = useState<
 		MultiAgentChatSession | undefined
@@ -199,15 +200,6 @@ export function MultiAgentInput() {
 		}
 		if (userid === 0) {
 			messageApi.error("用户未登录");
-			return null;
-		}
-
-		//  check firstAIConfig and secondAIConfig object is not empty
-		if (
-			!conversation.firstAIConfig.modelConfig ||
-			!conversation.secondAIConfig.modelConfig
-		) {
-			messageApi.error("agent 未设定");
 			return null;
 		}
 

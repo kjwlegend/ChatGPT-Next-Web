@@ -5,9 +5,12 @@ import { Row, Col } from "antd";
 
 import dynamic from "next/dynamic";
 
-const AIConfigPanel = dynamic(async () => await import("./AIConfigPanel"), {
-	ssr: false,
-});
+const AIConfigPanel = dynamic(
+	async () => await import("../agentConfig/AIConfigPanel"),
+	{
+		ssr: false,
+	},
+);
 const ConversationWindow = dynamic(
 	async () => await import("./ConversationWindow"),
 	{
@@ -16,17 +19,15 @@ const ConversationWindow = dynamic(
 );
 
 const ChatArea: React.FC = () => {
-	useEffect(() => {}, []);
 	return (
-		<Row gutter={16}>
+		<Row gutter={16} style={{ height: "100%" }}>
 			<Col span={6}>
 				<AIConfigPanel />
 			</Col>
-			<Col span={18}>
+			<Col span={18} style={{ height: "100%" }}>
 				<ConversationWindow />
 			</Col>
 		</Row>
-		// </>
 	);
 };
 

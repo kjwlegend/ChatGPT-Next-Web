@@ -11,6 +11,10 @@ import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
 import { getMessageTextContent } from "../utils";
 import { createMultipleAgentSession } from "../services/api/chats";
+import { FileInfo } from "../client/platforms/utils";
+import { useUserStore } from "./user";
+import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
+import { createMessage } from "./chat";
 export type MultiAgentChatMessage = ChatMessage & {
 	agentId?: number;
 };
@@ -36,7 +40,11 @@ export const MULTI_AGENT_DEFAULT_TOPIC = "未定义话题";
 type StoreState = {
 	currentConversationId: string; // 当前会话ID
 	conversations: MultiAgentChatSession[]; // 会话列表
-	startNewConversation: (topic: string, conversationId: string) => void;
+	startConversation: (
+		topic: string,
+		conversationId: string,
+		initialInput: string,
+	) => void;
 	setCurrentConversationId: (id: string) => void;
 	fetchNewConversations: (data: any) => void;
 	currentSession: () => MultiAgentChatSession;
@@ -61,14 +69,15 @@ type StoreState = {
 	) => void;
 	deleteConversation: (conversationId: string | number) => void;
 	// return round
+	onUserInput: (
+		content: string,
+		attachImages: string[],
+		attachFiles: FileInfo[] | undefined,
+		session: MultiAgentChatSession,
+	) => Promise<void>;
 	updateRound: (conversationId: string) => { round: number };
 	getHistory: (conversationId: string) => MultiAgentChatMessage[];
 	summarizeSession: (conversationId: string) => Promise<any>;
-
-	decideNextAgent: (
-		conversationId: string,
-		strategy: "round-robin" | "random" | "intelligent",
-	) => number;
 };
 export function createMultiAgentChatMessage(
 	override: Partial<MultiAgentChatMessage>,
@@ -91,35 +100,39 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	aiConfigs: [], // 存储多个 agent 的配置
 
 	conversations: [],
-	startNewConversation: (topic: string, conversationId: string) => {
+	startConversation: (
+		topic: string,
+		conversationId: string,
+		initialInput: string,
+	) => {
 		set((state) => {
 			const newConversation: MultiAgentChatSession = {
 				id: conversationId,
 				aiConfigs: [],
 				topic: topic,
-				initialInput: "",
+				initialInput: initialInput,
 				messages: [
-					// createMultiAgentChatMessage({
-					// 	content: initialInput,
-					// 	role: "user",
-					// }),
+					createMultiAgentChatMessage({
+						content: initialInput,
+						role: "user",
+					}),
 				],
 				lastUpdateTime: new Date().getTime(),
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
 				memory: "",
-				// 初始化其他可能的会话相关状态
 				totalRounds: 0,
 				round: 0,
-				paused: true,
+				paused: false,
 				next_agent_type: "round-robin",
 			};
-			get().sortedConversations();
 
-			return {
+			const newState = {
 				currentConversationId: conversationId,
 				conversations: [...state.conversations, newConversation],
 			};
+
+			return newState;
 		});
 	},
 	setCurrentConversationId: (id) => set({ currentConversationId: id }),
@@ -403,6 +416,193 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		);
 		return { round: updatedSession ? updatedSession.round : -1 };
 	},
+	onUserInput: async (
+		content: string,
+		attachImages: string[],
+		attachFiles: FileInfo[] | undefined,
+		session: MultiAgentChatSession,
+	) => {
+		console.log("workflow submit debug", session);
+
+		const sessionId = session.id;
+		const sessionModel = session.mask.modelConfig.model;
+		const modelConfig = session.mask.modelConfig;
+		const { id: userid, nickname } = useUserStore.getState().user;
+		// 获取最近的消息
+		const { recentMessages, recentMessagesTokenCount } =
+			getMessagesWithMemory(session);
+
+		const contentTokenCount = estimateTokenLength(content);
+		const total_token_count = recentMessagesTokenCount + contentTokenCount;
+
+		let userMessage: ChatMessage;
+		let botMessage: ChatMessage;
+		let sendMessages: ChatMessage[];
+
+		const commonChatData = {
+			user: userid,
+			sessionId: sessionId, // 替换为实际的聊天会话 ID
+			model: sessionModel,
+			contentType: "workflowchatgroup",
+		};
+
+		console.log("workflow submit debug , before try");
+
+		try {
+			const createChatData = {
+				...commonChatData,
+				content: content, // 使用用户输入作为 message 参数
+				attachImages: attachImages,
+				recentMessages: recentMessages,
+				chat_role: "user",
+				sender_name: nickname,
+				totalTokenCount: total_token_count,
+			};
+			console.log("workflow submit debug, before api", createChatData);
+
+			const { chat_id, id } = await createChatDataAndFetchId(createChatData);
+
+			console.log("workflow submit debug, after api");
+
+			const userContent = content;
+			console.log("[User Input] after template: ", userContent);
+
+			let mContent: string | MultimodalContent[] = userContent;
+
+			if (attachImages && attachImages.length > 0) {
+				mContent = [
+					{
+						type: "text",
+						text: userContent,
+					},
+				];
+				mContent = mContent.concat(
+					attachImages.map((url) => ({
+						type: "image_url",
+						image_url: { url },
+					})),
+				);
+			}
+
+			userMessage = createMessage({
+				id,
+				chat_id,
+				role: "user",
+				content: mContent,
+				image_url: attachImages,
+				// fileInfos: attachFiles,
+				token_counts_total: total_token_count,
+			});
+
+			console.log("[userMessage] ", userMessage);
+
+			botMessage = createMessage({
+				role: "assistant",
+				streaming: true,
+				model: modelConfig.model,
+				toolMessages: [],
+				isFinished: false,
+			});
+
+			const newMessages = [userMessage, botMessage];
+			const fullMessageList = session.messages.concat(newMessages);
+			const updates: Partial<ChatSession> = {
+				messages: fullMessageList,
+			};
+
+			//  找到对应的session, 将 userMessage 和botMessage 进行更新
+
+			get().onNewMessage(newMessages, session);
+
+			sendMessages = recentMessages.concat(userMessage);
+			// 发送函数回调
+			const onUpdateCallback = (message: string) => {
+				// 其他需要在 onUpdate 时执行的逻辑
+				// console.log(
+				// 	`Message updated: ${message}, botmessage: `,
+				// 	botMessage,
+				// );
+				botMessage.content = message;
+				const updates = {
+					messages: fullMessageList,
+				};
+				get().updateWorkflowSession(
+					session.workflow_group_id,
+					sessionId,
+					updates,
+				);
+			};
+
+			const onToolUpdateCallback = (toolName: string, toolInput: string) => {
+				// 这里可以进行 tool 更新的逻辑
+				console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
+			};
+
+			const onFinishCallback = async (message: string) => {
+				// updateSession(message);
+				console.log(`Message finished: ${message}`);
+
+				// 其他需要在 onFinish 时执行的逻辑
+				const tokenCount = estimateTokenLength(message);
+
+				const createBotChatData = {
+					...commonChatData,
+					content: message,
+					attachImages: attachImages,
+					recentMessages: recentMessages,
+					chat_role: "assistant",
+					sender_name: session.mask.name,
+					sender_id: session.mask.id,
+					totalTokenCount: tokenCount,
+				};
+
+				const { chat_id, id } =
+					await createChatDataAndFetchId(createBotChatData);
+
+				if (id) {
+					botMessage.id = id;
+					botMessage.chat_id = chat_id.toString();
+				}
+				botMessage.isFinished = true;
+				botMessage.isTransfered = false;
+				botMessage.token_counts_total = tokenCount;
+				get().updateWorkflowSession(session.workflow_group_id, sessionId, {
+					messages: fullMessageList,
+				});
+
+				if (session.enableAutoFlow) {
+					// 如果在激活了 autoflow 的基础上, 则找到 nextSession
+					const nextSession = get().getNextSession(sessionId);
+					// 如果存在 next session , 则调用自身onuserinput, 将 botMessage 发送出去
+					if (nextSession) {
+						console.log("next session", nextSession);
+						get().onUserInput(message, attachImages, attachFiles, nextSession);
+					}
+					// 若不存在, 则终止
+					else {
+						console.log("no next session");
+						return;
+					}
+				}
+			};
+			// 调用发送消息函数
+			sendChatMessage(
+				session,
+				sendMessages,
+				handleChatCallbacks(
+					botMessage,
+					userMessage,
+					session,
+					onUpdateCallback,
+					onToolUpdateCallback,
+					onFinishCallback,
+				),
+			);
+		} catch (error) {
+			console.log(error);
+			throw error;
+		}
+	},
 	getHistory: (conversationId: string) => {
 		// return messages
 		const MAX_TOKEN_COUNT = 3000; // 最大的token数量
@@ -490,29 +690,9 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		});
 		return summary || "";
 	},
-
-	decideNextAgent: (conversationId, strategy) => {
-		const conversation = get().conversations.find(
-			(conv) => conv.id === conversationId,
-		);
-		if (!conversation) throw new Error("Conversation not found");
-
-		const totalAgents = conversation.aiConfigs.length;
-		switch (strategy) {
-			case "round-robin":
-				return conversation.round % totalAgents;
-			case "random":
-				return Math.floor(Math.random() * totalAgents);
-			case "intelligent":
-				// 智能选择逻辑，暂时返回第一个 agent
-				return 0;
-			default:
-				throw new Error("Unknown strategy");
-		}
-	},
 });
 
-const multipleAgents = create<StoreState>()(
+export const useMultipleAgentStore = create<StoreState>()(
 	persist(storeCreator, {
 		name: "double-agent-storage",
 		version: 1.0,
@@ -527,11 +707,10 @@ const multipleAgents = create<StoreState>()(
 );
 
 // 增加错误处理机制
-multipleAgents.subscribe((state) => {
+useMultipleAgentStore.subscribe((state) => {
 	try {
 		localStorage.setItem("double-agent-storage", JSON.stringify(state));
 	} catch (error) {
 		console.error("Failed to persist state:", error);
 	}
 });
-export default multipleAgents;

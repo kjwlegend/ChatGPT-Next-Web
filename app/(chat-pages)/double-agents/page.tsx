@@ -3,7 +3,7 @@ import React, { use, useState, useCallback } from "react";
 import { useEffect } from "react";
 import { Button, Layout, message } from "antd";
 // import Sidebar from "./components/Sidebar";
-import ChatArea from "./chatarea/layout";
+import ChatArea from "./ChatPart/chatLayout";
 import { Path, SlotID } from "@/app/constant";
 import styles from "./multi-agents.module.scss";
 import styles2 from "@/app/(chat-pages)/chats/home.module.scss";
@@ -21,7 +21,7 @@ import {
 	useMultiAgentChatContext,
 } from "./multiAgentContext";
 
-import usemultiAgentStore from "@/app/store/multiagents";
+import { useMultipleAgentStore } from "@/app/store/multiagents";
 import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { useAccessStore, useAppConfig, useUserStore } from "@/app/store";
 import dynamic from "next/dynamic";
@@ -99,7 +99,7 @@ const EmptyIntro = () => {
 };
 
 const DoulbeAgentLayout: React.FC = () => {
-	const MultiAgents = usemultiAgentStore();
+	const MultiAgents = useMultipleAgentStore();
 	const userid = useUserStore.getState().user.id;
 	const isAuth = useAuthStore.getState().isAuthenticated;
 
