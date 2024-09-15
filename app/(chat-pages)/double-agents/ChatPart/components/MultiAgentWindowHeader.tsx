@@ -10,7 +10,7 @@ import {
 	MultiAgentChatSession,
 	useMultipleAgentStore,
 } from "@/app/store/multiagents";
-import { decideNextAgent } from "../../MultiAgentService";
+import { continueConversation, decideNextAgent } from "../../MultiAgentService";
 import styles from "../../multi-agents.module.scss";
 
 const { Title } = Typography;
@@ -23,7 +23,6 @@ interface MultiAgentWindowHeaderProps {
 
 const MultiAgentWindowHeader: React.FC<MultiAgentWindowHeaderProps> = ({
 	session,
-	onModeChange,
 }) => {
 	const multiAgentStore = useMultipleAgentStore();
 	const [messageApi, contextHolder] = message.useMessage();
@@ -45,8 +44,10 @@ const MultiAgentWindowHeader: React.FC<MultiAgentWindowHeaderProps> = ({
 	const handleModeChange = (
 		value: "round-robin" | "random" | "intelligent",
 	) => {
-		onModeChange(value);
-		decideNextAgent(session.id, value);
+		const next_agent_type = value;
+		multiAgentStore.updateMultiAgentsChatsession(session.id, {
+			next_agent_type,
+		});
 	};
 
 	const handleRoundChange = (value: number | null) => {

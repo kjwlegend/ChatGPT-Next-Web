@@ -7,7 +7,8 @@ import { DEFAULT_INPUT_TEMPLATE } from "../chains/base";
 import { createPersistStore } from "../utils/store";
 
 export type ModelType =
-	(typeof DEFAULT_MODELS)[number]["models"][number]["name"];
+	| (typeof DEFAULT_MODELS)[number]["models"][number]["name"]
+	| string;
 
 export enum SubmitKey {
 	Enter = "Enter",
@@ -136,8 +137,6 @@ export const useAppConfig = createPersistStore(
 				models: newModels,
 			}));
 		},
-
-
 	}),
 	{
 		name: StoreKey.Config,

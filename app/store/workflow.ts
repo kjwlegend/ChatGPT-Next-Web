@@ -474,6 +474,7 @@ export const useWorkflowStore = create<State>()(
 				let userMessage: ChatMessage;
 				let botMessage: ChatMessage;
 				let sendMessages: ChatMessage[];
+				const agent = session.mask;
 
 				const commonChatData = {
 					user: userid,
@@ -632,7 +633,7 @@ export const useWorkflowStore = create<State>()(
 					};
 					// 调用发送消息函数
 					sendChatMessage(
-						session,
+						agent,
 						sendMessages,
 						handleChatCallbacks(
 							botMessage,

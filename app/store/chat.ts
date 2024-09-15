@@ -375,12 +375,15 @@ export const useChatStore = createPersistStore(
 				return session;
 			},
 
-			onNewMessage(message: ChatMessage) {
+			async onNewMessage(message: ChatMessage) {
+				const currentsession = get().currentSession();
+				const { summary } = await summarizeSession(currentsession);
+
 				get().updateCurrentSession((session) => {
 					session.messages = session.messages.concat();
 					session.lastUpdateTime = Date.now();
+					session.memoryPrompt = summary;
 				});
-				summarizeSession();
 			},
 
 			addMessageToSession: (sessionId: string, newMessage: ChatMessage) => {
@@ -580,8 +583,9 @@ export const useChatStore = createPersistStore(
 						}
 					};
 					// 调用发送消息函数
+					const agent = session.mask;
 					sendChatMessage(
-						session,
+						agent,
 						sendMessages,
 						handleChatCallbacks(
 							botMessage,

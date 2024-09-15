@@ -49,7 +49,7 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 	const {
 		conversations,
 		currentConversationId,
-		startNewConversation,
+		startConversation,
 		setCurrentConversationId,
 		setAIConfig,
 		addAgent,
@@ -102,9 +102,10 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 				const res = await createMultipleAgentSession(data);
 
 				const conversationId = res.id;
-				startNewConversation(
+				startConversation(
 					topic ?? MULTI_AGENT_DEFAULT_TOPIC,
 					conversationId,
+					"",
 				);
 				setCurrentConversationId(conversationId);
 				hideLoading();
@@ -115,7 +116,7 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 				console.error("对话创建失败:", error);
 			}
 		},
-		[startNewConversation, setCurrentConversationId],
+		[startConversation, setCurrentConversationId],
 	);
 
 	const addAgentToConversationHandler = useCallback(
@@ -133,7 +134,7 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 
 			messageApi.success("智能体创建成功");
 		},
-		[startNewConversation, setCurrentConversationId],
+		[startConversation, setCurrentConversationId],
 	);
 
 	// 提供上下文值

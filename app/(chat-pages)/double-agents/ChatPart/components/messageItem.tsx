@@ -26,13 +26,23 @@ export const AgentMessageItem: React.FC<AgentMessageItemProps> = ({
 			<div className={styles.messageContent}>
 				<div className={styles.messageHeader}>
 					<span className={styles.sender}>
-						{isUser ? "You" : `Agent ${message.agentId}`}
+						{isUser
+							? "You"
+							: `Agent_id ${message.agentId} ${message.agentName}`}
 					</span>
-					<span className={styles.timestamp}>
+					<p className={styles.timestamp}>
 						{new Date(message.date).toLocaleTimeString()}
-					</span>
+					</p>
 				</div>
 				<MarkdownContent content={message.content as string} />
+				<div className={styles.messageInfo}>
+					<p>ID: {message.id}</p>
+
+					<p>Chat ID: {message.chat_id}</p>
+					<p>Is Finished: {message.isFinished ? "Yes" : "No"}</p>
+					<p>Is Transferred: {message.isTransfered ? "Yes" : "No"}</p>
+					<p>Token Count: {message.token_counts_total}</p>
+				</div>
 			</div>
 		</div>
 	);

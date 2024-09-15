@@ -1,6 +1,6 @@
 import { DEFAULT_TOPIC, ModelType, useChatStore } from "../store";
 
-import { ChatSession, ChatMessage, MJMessage } from "@/app/types/";
+import { ChatSession, ChatMessage, MJMessage, Mask } from "@/app/types/";
 import { useUserStore } from "../store";
 import { RequestMessage, api } from "../client/api";
 import { SUMMARIZE_MODEL } from "../constant";
@@ -173,7 +173,7 @@ export function handleChatCallbacks(
 }
 // 然后创建一个统一的发送消息函数
 export function sendChatMessage(
-	session: ChatSession,
+	agent: Mask,
 	sendMessages: ChatMessage[] | RequestMessage[],
 	callbacks: {
 		onUpdate?: (message: string) => void;
@@ -182,16 +182,14 @@ export function sendChatMessage(
 		onController?: (controller: AbortController) => void;
 		onToolUpdate?: (toolName: string, toolInput: string) => void;
 	},
-	modelConfig?: ModelConfig,
+
 	stream?: boolean,
 ) {
 	const config = useAppConfig.getState();
 	const pluginConfig = config.pluginConfig;
 	const allPlugins = usePluginStore.getState().getAll();
 
-	if (!modelConfig) {
-		modelConfig = session.mask.modelConfig;
-	}
+	const modelConfig = agent.modelConfig;
 
 	const chatOptions = {
 		messages: sendMessages,
@@ -200,12 +198,11 @@ export function sendChatMessage(
 	};
 
 	// 根据是否启用插件使用不同的API
-	const useToolAgent =
-		session.mask.plugins?.length! > 0 && allPlugins.length > 0;
+	const useToolAgent = agent.plugins?.length! > 0 && allPlugins.length > 0;
 
 	if (useToolAgent) {
 		console.log("[ToolAgent] start");
-		const pluginToolNames = session.mask.plugins;
+		const pluginToolNames = agent.plugins;
 		api.llm.toolAgentChat({
 			messages: sendMessages,
 			config: { ...modelConfig, stream: stream ?? true },

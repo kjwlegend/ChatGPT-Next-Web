@@ -32,7 +32,7 @@ const ConversationWindow: React.FC = () => {
 
 	return (
 		<Card className={styles.conversationCard}>
-			<MultiAgentWindowHeader session={conversation} onModeChange={() => {}} />
+			<MultiAgentWindowHeader session={conversation} />
 			<div className={styles.chatbodyContainer}>
 				<Chatbody />
 			</div>

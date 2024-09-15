@@ -17,9 +17,8 @@ import { UserStore, useUserStore } from "@/app/store/user";
 import { BUILTIN_MASKS } from "../masks";
 import { Plugin, usePluginStore } from "../store/plugin";
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "../types/";
-import { sendChatMessage } from "../services/chatService";
 import { useChatStore, createMessage, DEFAULT_TOPIC } from "../store";
-import { DoubleAgentChatMessage } from "../store/multiagents";
+import { MultiAgentChatMessage } from "../store/multiagents";
 import { strictLLMResult } from "./basic";
 import { getMessageTextContent } from "../utils";
 
@@ -67,15 +66,17 @@ export async function summarizeTitle(
 	return null;
 }
 
-export async function summarizeSession(_session?: ChatSession) {
-	const chatStoreState = useChatStore.getState();
-	const { getSession, updateCurrentSession } = chatStoreState;
-	const session = getSession(_session);
+export async function summarizeSession(session: ChatSession): Promise<{
+	summary: string;
+	title: string | null;
+	newSummarizeIndex: number;
+}> {
 	const {
 		messages,
 		mask: { modelConfig },
 		lastSummarizeIndex,
 		clearContextIndex,
+		memoryPrompt,
 	} = session;
 	const {
 		max_tokens = 4000,
@@ -94,18 +95,11 @@ export async function summarizeSession(_session?: ChatSession) {
 		toBeSummarizedMsgs = toBeSummarizedMsgs.slice(-historyMessageCount);
 	}
 
-	const memoryPrompt = {
-		role: "system",
-		content:
-			session.memoryPrompt?.length > 0
-				? Locale.Store.Prompt.History(session.memoryPrompt)
-				: "",
-		date: "",
-	} as ChatMessage;
-
 	toBeSummarizedMsgs.unshift({
-		role: memoryPrompt.role,
-		content: memoryPrompt.content,
+		role: "system",
+		content: memoryPrompt?.length > 0
+			? Locale.Store.Prompt.History(memoryPrompt)
+			: "",
 	});
 
 	const newSummarizeIndex = messages.length;
@@ -123,26 +117,15 @@ export async function summarizeSession(_session?: ChatSession) {
 			content: Locale.Store.Prompt.Summarize,
 		});
 
-		const message = await strictLLMResult(summarizeMessages);
-		updateCurrentSession((session) => {
-			session.lastSummarizeIndex = newSummarizeIndex;
-			session.memoryPrompt = message;
-		});
-
-		const updateObject: UpdateChatSessionData = {
-			session_summary: message,
-		};
-
-		if (title) {
-			updateObject.topic = title;
-		}
-
-		await updateChatSession(updateObject, session.id);
+		const summary = await strictLLMResult(summarizeMessages);
+		return { summary, title, newSummarizeIndex };
 	}
+
+	return { summary: "", title, newSummarizeIndex };
 }
 
 export async function contextSummarize(
-	message: ChatMessage[] | DoubleAgentChatMessage[] | RequestMessage[],
+	message: ChatMessage[] | MultiAgentChatMessage[] | RequestMessage[],
 	historysummary: string,
 ): Promise<string> {
 	const summaryMessages: RequestMessage[] = [

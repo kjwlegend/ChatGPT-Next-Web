@@ -4,7 +4,6 @@ import { MultiAgentMessageList } from "./messageList";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import {
 	useMultipleAgentStore,
-	MultiAgentChatSession,
 	MultiAgentChatMessage,
 } from "@/app/store/multiagents";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
@@ -28,11 +27,12 @@ export function MultiAgentChatbody() {
 	// 初始化显示消息和检查是否还有更多消息
 	useEffect(() => {
 		if (session) {
+			const totalMessages = session.messages.length;
 			const initialMessages = session.messages.slice(-CHAT_PAGE_SIZE);
 			setDisplayMessages(initialMessages);
-			setHasNextPage(session.messages.length > CHAT_PAGE_SIZE);
+			setHasNextPage(totalMessages > CHAT_PAGE_SIZE);
 		}
-	}, [session]);
+	}, [session?.id]); // 只在会话ID变化时重新初始化
 
 	// 处理滚动事件
 	const handleScroll = useCallback(() => {
@@ -56,13 +56,36 @@ export function MultiAgentChatbody() {
 				Math.max(0, session.messages.length - currentLength - CHAT_PAGE_SIZE),
 				session.messages.length - currentLength,
 			);
-			setDisplayMessages((prevMessages) => [...newMessages, ...prevMessages]);
+			setDisplayMessages((prevMessages) => {
+				const uniqueMessages = newMessages.filter(
+					(msg) => !prevMessages.some((prevMsg) => prevMsg.id === msg.id),
+				);
+				return [...uniqueMessages, ...prevMessages];
+			});
 			setHasNextPage(
 				session.messages.length > currentLength + newMessages.length,
 			);
 			setIsLoading(false);
 		}
 	}, [session, displayMessages, hasNextPage]);
+
+	// 监听新消息
+	useEffect(() => {
+		if (session) {
+			const totalMessages = session.messages.length;
+			const displayedCount = displayMessages.length;
+
+			if (totalMessages > displayedCount) {
+				const newMessages = session.messages.slice(displayedCount);
+				setDisplayMessages((prevMessages) => {
+					const uniqueNewMessages = newMessages.filter(
+						(msg) => !prevMessages.some((prevMsg) => prevMsg.id === msg.id),
+					);
+					return [...prevMessages, ...uniqueNewMessages];
+				});
+			}
+		}
+	}, [session?.messages]);
 
 	// 自动滚动到底部
 	useEffect(() => {
@@ -71,18 +94,11 @@ export function MultiAgentChatbody() {
 		}
 	}, [displayMessages, autoScroll]);
 
-	// 监听新消息
-	useEffect(() => {
-		if (session && session.messages.length > displayMessages.length) {
-			const newMessages = session.messages.slice(displayMessages.length);
-			setDisplayMessages((prevMessages) => [...prevMessages, ...newMessages]);
-		}
-	}, [session?.messages]);
-
 	if (!session) {
 		return null;
 	}
 
+	console.log("double agent message", displayMessages);
 	return (
 		<div
 			className={styles["chat-body"]}

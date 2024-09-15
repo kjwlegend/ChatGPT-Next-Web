@@ -5,6 +5,7 @@ import Locale, { getLang } from "@/app/locales";
 import { estimateTokenLength } from "@/app/utils/chat/token";
 import { getMessageTextContent } from "@/app/utils";
 import { workflowChatSession } from "@/app/types/";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 export function getMessagesWithMemory(
 	session: ChatSession | workflowChatSession,
 ) {

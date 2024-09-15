@@ -3,20 +3,28 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { StateCreator } from "zustand";
 import { DoubleAgentData, createDoubleAgentSession } from "../api/backend/chat";
-import { RequestMessage } from "../client/api";
+import { MultimodalContent, RequestMessage } from "../client/api";
 import { nanoid } from "nanoid";
 import { estimateTokenLength } from "../utils/chat/token";
 import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
 import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
-import { getMessageTextContent } from "../utils";
+import { getMessageImages, getMessageTextContent } from "../utils";
 import { createMultipleAgentSession } from "../services/api/chats";
 import { FileInfo } from "../client/platforms/utils";
 import { useUserStore } from "./user";
 import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
 import { createMessage } from "./chat";
+import { createChatDataAndFetchId } from "../services/chatService";
+import {
+	decideNextAgent,
+	sendNextAgentMessage,
+} from "../(chat-pages)/double-agents/MultiAgentService";
+import { AttachImages } from "../(chat-pages)/chats/chat/inputpanel/components/AttachImages";
+
 export type MultiAgentChatMessage = ChatMessage & {
 	agentId?: number;
+	agentName?: string;
 };
 
 export type MultiAgentChatSession = {
@@ -59,9 +67,14 @@ type StoreState = {
 	) => void;
 	updateSingleMessage: (
 		conversationId: string,
-		messageIndex: number,
-		newMessageContent: string,
+		messageId: string,
+		newMessageContent: ChatMessage,
 		toolsMessage?: ChatToolMessage[],
+		newMessageId?: string,
+	) => void;
+	updateMultiAgentsChatsession: (
+		conversationId: string,
+		updates: Partial<MultiAgentChatSession>,
 	) => void;
 	updateConversation: (
 		conversationId: string,
@@ -75,9 +88,34 @@ type StoreState = {
 		attachFiles: FileInfo[] | undefined,
 		session: MultiAgentChatSession,
 	) => Promise<void>;
+	handleUserInput: (
+		content: string,
+		attachImages: string[],
+		attachFiles: FileInfo[] | undefined,
+		session: MultiAgentChatSession,
+	) => Promise<{
+		userMessage: ChatMessage;
+		recentMessages: ChatMessage[];
+	}>;
+
 	updateRound: (conversationId: string) => { round: number };
 	getHistory: (conversationId: string) => MultiAgentChatMessage[];
 	summarizeSession: (conversationId: string) => Promise<any>;
+
+	prepareBotMessage: (conversationId: string) => {
+		botMessage: MultiAgentChatMessage;
+		selectedAgent: Mask;
+		nextAgentIndex: number;
+	};
+	updateBotMessage: (
+		sessionId: string,
+		message: MultiAgentChatMessage,
+		newMessageId?: string,
+	) => void;
+	finalizeBotMessage: (
+		sessionId: string,
+		message: ChatMessage,
+	) => Promise<ChatMessage>;
 };
 export function createMultiAgentChatMessage(
 	override: Partial<MultiAgentChatMessage>,
@@ -108,15 +146,10 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		set((state) => {
 			const newConversation: MultiAgentChatSession = {
 				id: conversationId,
-				aiConfigs: [],
+				aiConfigs: [] as Mask[],
 				topic: topic,
 				initialInput: initialInput,
-				messages: [
-					createMultiAgentChatMessage({
-						content: initialInput,
-						role: "user",
-					}),
-				],
+				messages: [],
 				lastUpdateTime: new Date().getTime(),
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
@@ -312,36 +345,49 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	// 更新单条消息
 	updateSingleMessage: (
 		conversationId: string,
-		messageIndex: number,
-		newMessageContent: string,
+		messageId: string,
+		newMessageContent: ChatMessage,
 		toolsMessage?: ChatToolMessage[],
+		newMessageId?: string,
 	) =>
 		set((state) => {
+			console.log(
+				"updateSingleMessage",
+				conversationId,
+				messageId,
+				newMessageContent.content,
+				toolsMessage,
+				newMessageId,
+			);
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
-					// 确保消息索引在范围内
-					if (messageIndex >= 0 && messageIndex < session.messages.length) {
+					const messageIndex = session.messages.findIndex(
+						(msg) => msg.id === messageId,
+					);
+
+					// 确保找到了消息
+					if (messageIndex !== -1) {
 						const currentMessage = session.messages[messageIndex];
 						// 检查新旧消息内容是否一致
-						if (currentMessage.content === newMessageContent) {
-							// 消息内容没有变化，无需更新
-							return session;
-						}
+						// if (currentMessage.content === newMessageContent.content) {
+						// 	// 消息内容没有变化，无需更新
+						// 	return session;
+						// }
 
 						// 创建一个新的消息数组，其中包含更新后的消息
-						const updatedMessages = session.messages.map((message, index) => {
-							if (index === messageIndex) {
+						const updatedMessages = session.messages.map((message) => {
+							if (message.id === messageId) {
 								// 更新消息内容
 								return {
 									...message,
-									content: newMessageContent,
+									id: newMessageId || message.id,
+									content: newMessageContent.content,
 									// 如果需要，还可以更新timestamp或其他属性
 									//如果存在 toolsMessage, 则更新
 									toolMessages:
 										toolsMessage !== undefined
 											? toolsMessage
 											: message.toolMessages,
-
 									timestamp: Date.now(),
 								};
 							}
@@ -382,6 +428,27 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: updatedConversations,
 			};
 		}),
+
+	updateMultiAgentsChatsession: (
+		conversationId: string,
+		updates: Partial<MultiAgentChatSession>,
+	) =>
+		set((state) => {
+			const updatedConversations = state.conversations.map((conversation) => {
+				if (conversation.id === conversationId) {
+					return {
+						...conversation,
+						...updates,
+						updated_at: new Date().toISOString(),
+					};
+				}
+				return conversation;
+			});
+
+			return {
+				conversations: updatedConversations,
+			};
+		}),
 	deleteConversation: (conversationId: string | number) =>
 		set((state) => {
 			const updatedConversations = state.conversations.filter(
@@ -416,193 +483,160 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		);
 		return { round: updatedSession ? updatedSession.round : -1 };
 	},
+
+	prepareBotMessage: (sessionId: string) => {
+		const session = get().conversations.find((m) => m.id === sessionId);
+		if (!session) throw new Error("Session not found");
+
+		const nextAgentIndex = decideNextAgent(sessionId, session.next_agent_type);
+		const selectedAgent = session.aiConfigs[nextAgentIndex];
+
+		console.log("double agent", nextAgentIndex, selectedAgent);
+
+		if (!selectedAgent) throw new Error("No agent available for response");
+
+		const botMessage = createMultiAgentChatMessage({
+			role: "assistant",
+			content: "...",
+			agentId: nextAgentIndex,
+			agentName: selectedAgent.name,
+		});
+
+		get().updateMessages(sessionId, botMessage);
+
+		return { botMessage, selectedAgent, nextAgentIndex };
+	},
+
+	updateBotMessage: (
+		sessionId: string,
+		message: MultiAgentChatMessage,
+		newMessageId?: string,
+	) => {
+		// retrive data from message props
+		const { id: messageId } = message;
+		const { toolsMessage } = message;
+
+		get().updateSingleMessage(
+			sessionId,
+			messageId,
+			message,
+			toolsMessage,
+			newMessageId,
+		);
+	},
+
+	finalizeBotMessage: async (sessionId: string, message: ChatMessage) => {
+		const { id: userid } = useUserStore.getState().user;
+		const session = get().conversations.find((m) => m.id === sessionId);
+		if (!session) throw new Error("Session not found");
+
+		const createBotChatData = {
+			user: userid,
+			sessionId: sessionId,
+			model: message.model,
+			contentType: "multiagentchatsession",
+			content: getMessageTextContent(message),
+			attachImages: getMessageImages(message),
+			recentMessages: get().getHistory(sessionId),
+			chat_role: "assistant",
+			sender_name: message.sender_name,
+			sender_id: message.sender_id,
+			totalTokenCount: estimateTokenLength(getMessageTextContent(message)),
+		};
+
+		const { chat_id, id } = await createChatDataAndFetchId(createBotChatData);
+
+		const updatedMessage = {
+			...message,
+			id: id || message.id,
+			chat_id: chat_id?.toString() || message.chat_id,
+			isFinished: true,
+			isTransfered: false,
+			token_counts_total: createBotChatData.totalTokenCount,
+		};
+
+		get().updateBotMessage(sessionId, message, updatedMessage.id);
+		get().updateRound(sessionId);
+
+		return updatedMessage;
+	},
 	onUserInput: async (
 		content: string,
 		attachImages: string[],
 		attachFiles: FileInfo[] | undefined,
 		session: MultiAgentChatSession,
 	) => {
-		console.log("workflow submit debug", session);
-
-		const sessionId = session.id;
-		const sessionModel = session.mask.modelConfig.model;
-		const modelConfig = session.mask.modelConfig;
-		const { id: userid, nickname } = useUserStore.getState().user;
-		// 获取最近的消息
-		const { recentMessages, recentMessagesTokenCount } =
-			getMessagesWithMemory(session);
-
-		const contentTokenCount = estimateTokenLength(content);
-		const total_token_count = recentMessagesTokenCount + contentTokenCount;
-
-		let userMessage: ChatMessage;
-		let botMessage: ChatMessage;
-		let sendMessages: ChatMessage[];
-
-		const commonChatData = {
-			user: userid,
-			sessionId: sessionId, // 替换为实际的聊天会话 ID
-			model: sessionModel,
-			contentType: "workflowchatgroup",
-		};
-
-		console.log("workflow submit debug , before try");
-
 		try {
-			const createChatData = {
-				...commonChatData,
-				content: content, // 使用用户输入作为 message 参数
-				attachImages: attachImages,
-				recentMessages: recentMessages,
-				chat_role: "user",
-				sender_name: nickname,
-				totalTokenCount: total_token_count,
-			};
-			console.log("workflow submit debug, before api", createChatData);
-
-			const { chat_id, id } = await createChatDataAndFetchId(createChatData);
-
-			console.log("workflow submit debug, after api");
-
-			const userContent = content;
-			console.log("[User Input] after template: ", userContent);
-
-			let mContent: string | MultimodalContent[] = userContent;
-
-			if (attachImages && attachImages.length > 0) {
-				mContent = [
-					{
-						type: "text",
-						text: userContent,
-					},
-				];
-				mContent = mContent.concat(
-					attachImages.map((url) => ({
-						type: "image_url",
-						image_url: { url },
-					})),
-				);
-			}
-
-			userMessage = createMessage({
-				id,
-				chat_id,
-				role: "user",
-				content: mContent,
-				image_url: attachImages,
-				// fileInfos: attachFiles,
-				token_counts_total: total_token_count,
-			});
-
-			console.log("[userMessage] ", userMessage);
-
-			botMessage = createMessage({
-				role: "assistant",
-				streaming: true,
-				model: modelConfig.model,
-				toolMessages: [],
-				isFinished: false,
-			});
-
-			const newMessages = [userMessage, botMessage];
-			const fullMessageList = session.messages.concat(newMessages);
-			const updates: Partial<ChatSession> = {
-				messages: fullMessageList,
-			};
-
-			//  找到对应的session, 将 userMessage 和botMessage 进行更新
-
-			get().onNewMessage(newMessages, session);
-
-			sendMessages = recentMessages.concat(userMessage);
-			// 发送函数回调
-			const onUpdateCallback = (message: string) => {
-				// 其他需要在 onUpdate 时执行的逻辑
-				// console.log(
-				// 	`Message updated: ${message}, botmessage: `,
-				// 	botMessage,
-				// );
-				botMessage.content = message;
-				const updates = {
-					messages: fullMessageList,
-				};
-				get().updateWorkflowSession(
-					session.workflow_group_id,
-					sessionId,
-					updates,
-				);
-			};
-
-			const onToolUpdateCallback = (toolName: string, toolInput: string) => {
-				// 这里可以进行 tool 更新的逻辑
-				console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
-			};
-
-			const onFinishCallback = async (message: string) => {
-				// updateSession(message);
-				console.log(`Message finished: ${message}`);
-
-				// 其他需要在 onFinish 时执行的逻辑
-				const tokenCount = estimateTokenLength(message);
-
-				const createBotChatData = {
-					...commonChatData,
-					content: message,
-					attachImages: attachImages,
-					recentMessages: recentMessages,
-					chat_role: "assistant",
-					sender_name: session.mask.name,
-					sender_id: session.mask.id,
-					totalTokenCount: tokenCount,
-				};
-
-				const { chat_id, id } =
-					await createChatDataAndFetchId(createBotChatData);
-
-				if (id) {
-					botMessage.id = id;
-					botMessage.chat_id = chat_id.toString();
-				}
-				botMessage.isFinished = true;
-				botMessage.isTransfered = false;
-				botMessage.token_counts_total = tokenCount;
-				get().updateWorkflowSession(session.workflow_group_id, sessionId, {
-					messages: fullMessageList,
-				});
-
-				if (session.enableAutoFlow) {
-					// 如果在激活了 autoflow 的基础上, 则找到 nextSession
-					const nextSession = get().getNextSession(sessionId);
-					// 如果存在 next session , 则调用自身onuserinput, 将 botMessage 发送出去
-					if (nextSession) {
-						console.log("next session", nextSession);
-						get().onUserInput(message, attachImages, attachFiles, nextSession);
-					}
-					// 若不存在, 则终止
-					else {
-						console.log("no next session");
-						return;
-					}
-				}
-			};
-			// 调用发送消息函数
-			sendChatMessage(
+			const { userMessage, recentMessages } = await get().handleUserInput(
+				content,
+				attachImages,
+				attachFiles,
 				session,
-				sendMessages,
-				handleChatCallbacks(
-					botMessage,
-					userMessage,
-					session,
-					onUpdateCallback,
-					onToolUpdateCallback,
-					onFinishCallback,
-				),
 			);
 		} catch (error) {
-			console.log(error);
+			console.error("Error in onUserInput:", error);
 			throw error;
 		}
 	},
+	handleUserInput: async (
+		content: string,
+		attachImages: string[],
+		attachFiles: FileInfo[] | undefined,
+		session: MultiAgentChatSession,
+	) => {
+		const sessionId = session.id;
+		const { id: userid, nickname } = useUserStore.getState().user;
+		// const { recentMessages, recentMessagesTokenCount } =
+		// 	getMessagesWithMemory(session);
+
+		const messages = [] as ChatMessage[];
+		const recentMessages = [] as ChatMessage[];
+
+		const contentTokenCount = estimateTokenLength(content);
+		const total_token_count = 0; // recentMessagesTokenCount + contentTokenCount;
+
+		const userModel = "userMessage";
+
+		const createChatData = {
+			user: userid,
+			sessionId: sessionId,
+			model: userModel,
+			contentType: "multiagentchatsession",
+			content: content,
+			attachImages: attachImages,
+			recentMessages: messages, //recentMessages,
+			chat_role: "user",
+			sender_name: nickname,
+			totalTokenCount: total_token_count,
+		};
+
+		const { chat_id, id } = await createChatDataAndFetchId(createChatData);
+
+		let mContent: string | MultimodalContent[] = content;
+
+		const userMessage = createMessage({
+			id,
+			chat_id,
+			role: "user",
+			content: mContent,
+			image_url: attachImages,
+			token_counts_total: total_token_count,
+		});
+
+		const newMessages = userMessage;
+		console.log("newMessages", newMessages);
+
+		if (attachImages && attachImages.length > 0) {
+			mContent = [{ type: "text", text: content }].concat(
+				attachImages.map((url) => ({ type: "image_url", image_url: { url } })),
+			);
+		}
+
+		get().updateMessages(sessionId, newMessages);
+
+		return { userMessage, recentMessages };
+	},
+
 	getHistory: (conversationId: string) => {
 		// return messages
 		const MAX_TOKEN_COUNT = 3000; // 最大的token数量
