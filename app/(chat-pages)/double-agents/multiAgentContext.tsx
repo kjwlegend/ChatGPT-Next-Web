@@ -1,86 +1,40 @@
 import React, {
 	createContext,
 	useContext,
-	useState,
 	useCallback,
-	use,
+	useState,
 	useEffect,
 } from "react";
-import { MultiAgentChatSession } from "@/app/store/multiagents";
-import { useMultipleAgentStore } from "@/app/store/multiagents";
-// @/app. 其他必要的 imports
-import { useUserStore } from "@/app/store";
-import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
+import {
+	MultiAgentChatSession,
+	useMultipleAgentStore,
+} from "@/app/store/multiagents";
 import { message } from "antd";
 import { Mask } from "@/app/types/mask";
-import { createMultipleAgentSession } from "@/app/services/api/chats";
+import {
+	createMultipleAgentSession,
+	updateMultiAgentSession,
+} from "@/app/services/api/chats";
+import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
+import { useUserStore } from "@/app/store";
 
-// 扩展ChatContext接口以包含startNewConversation方法
-interface ChatContext {
-	conversations: MultiAgentChatSession[];
-	conversation: any;
-	conversationId: string;
-	userid: number;
+const ConversationActionsContext = createContext<{
 	startNewConversation: (topic?: string) => Promise<void>;
-	addAgent: (mask: Mask, ...args: any) => Promise<void>;
-}
-
-// 创建一个基础上下文，不包含startNewConversation方法
-export const MultiAgentChatContext = createContext<ChatContext>({
-	conversations: [],
-	conversation: {},
-	conversationId: "",
-	userid: 0,
-	startNewConversation: async (topic) => {},
+	addAgent: (mask: Mask) => Promise<void>;
+	deleteAgent: (agentId: number) => Promise<void>;
+}>({
+	startNewConversation: async () => {},
 	addAgent: async () => {},
+	deleteAgent: async () => {},
 });
 
-// ChatProvider组件，用于包装应用程序并共享聊天状态和方法
-export const MultiAgentChatProvider = ({ children }: any) => {
-	const [state, setState] = useState(() => useMultipleAgentStore.getState());
-
-	useEffect(() => {
-		const unsubscribe = useMultipleAgentStore.subscribe(() => {
-			setState(useMultipleAgentStore.getState());
-		});
-		return () => unsubscribe();
-	}, []);
-
-	const {
-		conversations,
-		currentConversationId,
-		startConversation,
-		setCurrentConversationId,
-		setAIConfig,
-		addAgent,
-	} = state;
-
-	const userid = useUserStore.getState().user.id;
-	const [conversation, setConversation] = useState<
-		MultiAgentChatSession | undefined
-	>(undefined);
-
-	// 同步conversation状态
-	useEffect(() => {
-		const currentConversation = conversations.find(
-			(conv) => conv.id === currentConversationId,
-		);
-		if (currentConversation) {
-			setConversation(currentConversation);
-		} else {
-			console.error("未找到当前对话");
-		}
-	}, [conversations, currentConversationId]);
-
+export const ConversationActionsProvider: React.FC<{
+	children: React.ReactNode;
+}> = ({ children }) => {
 	const [messageApi, contextHolder] = message.useMessage();
+	const userid = useUserStore.getState().user.id;
 
-	// 获取最新的 currentConversationId
-	const getCurrentConversationId = () => {
-		return useMultipleAgentStore.getState().currentConversationId;
-	};
-
-	// 开始新对话的处理函数
-	const startNewConversationHandler = useCallback(
+	const startNewConversation = useCallback(
 		async (topic?: string) => {
 			console.log("multipleagents debug:, topic: ", topic);
 			const hideLoading = messageApi.open({
@@ -102,12 +56,16 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 				const res = await createMultipleAgentSession(data);
 
 				const conversationId = res.id;
-				startConversation(
-					topic ?? MULTI_AGENT_DEFAULT_TOPIC,
-					conversationId,
-					"",
-				);
-				setCurrentConversationId(conversationId);
+				useMultipleAgentStore
+					.getState()
+					.startConversation(
+						topic ?? MULTI_AGENT_DEFAULT_TOPIC,
+						conversationId,
+						"",
+					);
+				useMultipleAgentStore
+					.getState()
+					.setCurrentConversationId(conversationId);
 				hideLoading();
 				messageApi.success("对话创建成功");
 			} catch (error) {
@@ -116,51 +74,224 @@ export const MultiAgentChatProvider = ({ children }: any) => {
 				console.error("对话创建失败:", error);
 			}
 		},
-		[startConversation, setCurrentConversationId],
+		[messageApi, userid],
 	);
 
-	const addAgentToConversationHandler = useCallback(
+	const addAgent = useCallback(
 		async (mask: Mask) => {
 			console.log("addAgenttoConversationHandler");
-			messageApi.open({
+			const hideLoading = messageApi.open({
 				content: "智能体创建中",
 				type: "loading",
 			});
-			console.log(
-				"multipleagents debug: addAgentToConversationHandler",
-				currentConversationId,
-			);
-			addAgent(getCurrentConversationId(), mask);
 
-			messageApi.success("智能体创建成功");
+			try {
+				// 获取最新的 store 状态
+				const store = useMultipleAgentStore.getState();
+				const currentConversationId = store.currentConversationId;
+
+				console.log(
+					"multipleagents debug: addAgentToConversationHandler",
+					currentConversationId,
+				);
+
+				// 添加代理到当前会话
+				store.addAgent(currentConversationId, mask);
+
+				// 获取更新后的 aiConfigs
+				const updatedSession = store.currentSession();
+				if (!updatedSession) {
+					throw new Error("当前会话不存在");
+				}
+				const aiconfigs = updatedSession.aiConfigs;
+
+				const custom_agents_data = { custom_agents_data: aiconfigs };
+
+				// 更新服务器
+				await updateMultiAgentSession(
+					custom_agents_data,
+					currentConversationId,
+				);
+
+				console.log("multipleagents debug: updateSession completed");
+
+				hideLoading();
+				messageApi.success("智能体创建成功");
+			} catch (error) {
+				hideLoading();
+				console.error("智能体创建失败:", error);
+				messageApi.error("智能体创建失败，请重试");
+			}
 		},
-		[startConversation, setCurrentConversationId],
+		[messageApi],
 	);
 
-	// 提供上下文值
+	const deleteAgent = useCallback(
+		async (agentId: number) => {
+			const hideLoading = messageApi.open({
+				content: "正在删除智能体",
+				type: "loading",
+			});
+
+			try {
+				// 获取最新的 store 状态
+				const store = useMultipleAgentStore.getState();
+				const currentConversationId = store.currentConversationId;
+
+				// 再次确认当前的 conversation
+				const currentSession = store.currentSession();
+				if (!currentSession || currentSession.id !== currentConversationId) {
+					throw new Error("当前会话已更改，请刷新页面后重试");
+				}
+
+				// 更新本地状态
+				store.clearAIConfig(currentConversationId, agentId);
+				const updatedAiConfigs = store.currentSession().aiConfigs;
+
+				// 更新服务器
+				const custom_agents_data = { custom_agents_data: updatedAiConfigs };
+				await updateMultiAgentSession(
+					custom_agents_data,
+					currentConversationId,
+				);
+
+				hideLoading();
+				messageApi.success("智能体删除成功");
+			} catch (error) {
+				hideLoading();
+				if (error instanceof Error) {
+					messageApi.error(error.message);
+				} else {
+					messageApi.error("智能体删除失败，请重试");
+				}
+				console.error("智能体删除失败:", error);
+			}
+		},
+		[messageApi],
+	);
 
 	return (
-		<MultiAgentChatContext.Provider
-			value={{
-				conversations,
-				conversation,
-				conversationId: currentConversationId,
-				userid,
-				startNewConversation: startNewConversationHandler,
-				addAgent: addAgentToConversationHandler,
-			}}
+		<ConversationActionsContext.Provider
+			value={{ startNewConversation, addAgent, deleteAgent }}
 		>
 			{contextHolder}
 			{children}
-		</MultiAgentChatContext.Provider>
+		</ConversationActionsContext.Provider>
 	);
 };
 
-// 自定义钩子，用于方便地访问ChatContext
-export const useMultiAgentChatContext = () => {
-	const context = useContext(MultiAgentChatContext);
-	if (context === undefined) {
-		throw new Error("useChatContext must be used within a ChatProvider");
-	}
-	return context;
+export const useConversationActions = () =>
+	useContext(ConversationActionsContext);
+
+const ConversationsContext = createContext<{
+	conversations: MultiAgentChatSession[];
+}>({ conversations: [] });
+
+export const ConversationsProvider: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => {
+	const [conversations, setConversations] = useState(
+		() => useMultipleAgentStore.getState().conversations,
+	);
+
+	useEffect(() => {
+		const unsubscribe = useMultipleAgentStore.subscribe((state) =>
+			setConversations(state.conversations),
+		);
+		return () => unsubscribe();
+	}, []);
+
+	return (
+		<ConversationsContext.Provider value={{ conversations }}>
+			{children}
+		</ConversationsContext.Provider>
+	);
+};
+
+export const useConversations = () => useContext(ConversationsContext);
+
+const CurrentConversationContext = createContext<{
+	conversation: MultiAgentChatSession | undefined;
+	conversationId: string;
+}>({ conversation: undefined, conversationId: "" });
+
+export const CurrentConversationProvider: React.FC<{
+	children: React.ReactNode;
+}> = ({ children }) => {
+	const [state, setState] = useState(() => {
+		const store = useMultipleAgentStore.getState();
+		return {
+			conversation: store.conversations.find(
+				(conv) => conv.id === store.currentConversationId,
+			),
+			conversationId: store.currentConversationId,
+		};
+	});
+
+	useEffect(() => {
+		const unsubscribe = useMultipleAgentStore.subscribe((store) => {
+			setState({
+				conversation: store.conversations.find(
+					(conv) => conv.id === store.currentConversationId,
+				),
+				conversationId: store.currentConversationId,
+			});
+		});
+		return () => unsubscribe();
+	}, []);
+
+	return (
+		<CurrentConversationContext.Provider value={state}>
+			{children}
+		</CurrentConversationContext.Provider>
+	);
+};
+
+export const useCurrentConversation = () =>
+	useContext(CurrentConversationContext);
+
+const MessagesContext = createContext<{
+	messages: any[]; // 根据您的消息类型进行调整
+}>({ messages: [] });
+
+export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => {
+	const [messages, setMessages] = useState<any[]>([]);
+	const { conversationId } = useCurrentConversation();
+
+	useEffect(() => {
+		if (!conversationId) return;
+
+		const unsubscribe = useMultipleAgentStore.subscribe((state) => {
+			const currentConversation = state.conversations.find(
+				(conv) => conv.id === conversationId,
+			);
+			setMessages(currentConversation?.messages || []);
+		});
+
+		return () => unsubscribe();
+	}, [conversationId]);
+
+	return (
+		<MessagesContext.Provider value={{ messages }}>
+			{children}
+		</MessagesContext.Provider>
+	);
+};
+
+export const useMessages = () => useContext(MessagesContext);
+
+export const MultiAgentChatProvider: React.FC<{
+	children: React.ReactNode;
+}> = ({ children }) => {
+	return (
+		<ConversationsProvider>
+			<CurrentConversationProvider>
+				<MessagesProvider>
+					<ConversationActionsProvider>{children}</ConversationActionsProvider>
+				</MessagesProvider>
+			</CurrentConversationProvider>
+		</ConversationsProvider>
+	);
 };

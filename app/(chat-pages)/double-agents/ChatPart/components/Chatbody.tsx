@@ -7,17 +7,20 @@ import {
 	MultiAgentChatMessage,
 } from "@/app/store/multiagents";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
+import useMessage from "antd/es/message/useMessage";
+import { useCurrentConversation, useMessages } from "../../multiAgentContext";
 
 export function MultiAgentChatbody() {
-	const chatStore = useMultipleAgentStore();
-	const currentSessionId = chatStore.currentConversationId;
-	const session = chatStore.conversations.find(
-		(conv) => conv.id === currentSessionId,
-	);
+	const { conversation, conversationId } = useCurrentConversation();
 
-	const [displayMessages, setDisplayMessages] = useState<
-		MultiAgentChatMessage[]
-	>([]);
+	const currentSessionId = conversationId;
+	const session = conversation;
+
+	const { messages } = useMessages();
+
+	const [displayMessages, setDisplayMessages] =
+		useState<MultiAgentChatMessage[]>(messages);
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(true);
 
@@ -105,7 +108,7 @@ export function MultiAgentChatbody() {
 			ref={chatBodyRef}
 			onScroll={handleScroll}
 			style={{
-				height: "60vh",
+				height: "50vh",
 				overflowY: "auto",
 			}}
 		>

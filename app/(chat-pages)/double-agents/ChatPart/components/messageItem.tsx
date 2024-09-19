@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { MultiAgentChatMessage } from "@/app/store/multiagents";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import { Avatar } from "antd";
-import { MarkdownContent } from "@/app/components/markdown";
+import { Markdown } from "@/app/components/markdown";
+import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";
+import { useAppConfig } from "@/app/store";
+import { getMessageImages } from "@/app/utils";
 
 interface AgentMessageItemProps {
 	message: MultiAgentChatMessage;
@@ -14,34 +17,98 @@ export const AgentMessageItem: React.FC<AgentMessageItemProps> = ({
 	index,
 }) => {
 	const isUser = message.role === "user";
+	const config = useAppConfig();
+	const fontSize = config.fontSize;
+
 	const avatarUrl = isUser
 		? "/user-avatar.png"
 		: `/agent-${message.agentId}-avatar.png`;
 
+	const RenderedAvatar = useMemo(() => {
+		return isUser ? (
+			<Avatar src={avatarUrl} className={styles.avatar} />
+		) : (
+			<MaskAvatar mask={{ avatar: avatarUrl, name: message.agentName! }} />
+		);
+	}, [isUser, avatarUrl, message.agentName]);
+
+	const messageImages = getMessageImages(message);
+
 	return (
 		<div
-			className={`${styles.messageItem} ${isUser ? styles.userMessage : styles.agentMessage}`}
+			className={isUser ? styles["chat-message-user"] : styles["chat-message"]}
 		>
-			<Avatar src={avatarUrl} className={styles.avatar} />
-			<div className={styles.messageContent}>
-				<div className={styles.messageHeader}>
-					<span className={styles.sender}>
-						{isUser
-							? "You"
-							: `Agent_id ${message.agentId} ${message.agentName}`}
-					</span>
-					<p className={styles.timestamp}>
-						{new Date(message.date).toLocaleTimeString()}
-					</p>
+			<div className={styles["chat-message-container"]}>
+				<div className={styles["chat-message-header"]}>
+					<div className={styles["chat-message-avatar"]}>{RenderedAvatar}</div>
 				</div>
-				<MarkdownContent content={message.content as string} />
-				<div className={styles.messageInfo}>
-					<p>ID: {message.id}</p>
 
-					<p>Chat ID: {message.chat_id}</p>
-					<p>Is Finished: {message.isFinished ? "Yes" : "No"}</p>
-					<p>Is Transferred: {message.isTransfered ? "Yes" : "No"}</p>
-					<p>Token Count: {message.token_counts_total}</p>
+				<div className={styles["chat-message-item"]}>
+					<Markdown content={message.content as string} fontSize={fontSize} />
+
+					{/* 文件信息展示 */}
+					{message.fileInfos && message.fileInfos.length > 0 && (
+						<nav
+							className={styles["chat-message-item-files"]}
+							style={
+								{
+									"--file-count": message.fileInfos.length,
+								} as React.CSSProperties
+							}
+						>
+							{message.fileInfos.map((fileInfo, index) => (
+								<a
+									key={index}
+									href={fileInfo.filePath}
+									className={styles["chat-message-item-file"]}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{fileInfo.originalFilename}
+								</a>
+							))}
+						</nav>
+					)}
+
+					{/* 单张图片展示 */}
+					{messageImages.length === 1 && (
+						<img
+							className={styles["chat-message-item-image"]}
+							src={messageImages[0]}
+							alt=""
+						/>
+					)}
+
+					{/* 多张图片展示 */}
+					{messageImages.length > 1 && (
+						<div
+							className={styles["chat-message-item-images"]}
+							style={
+								{
+									"--image-count": messageImages.length,
+								} as React.CSSProperties
+							}
+						>
+							{messageImages.map((image, index) => (
+								<img
+									className={styles["chat-message-item-image-multi"]}
+									key={index}
+									src={image}
+									alt=""
+								/>
+							))}
+						</div>
+					)}
+
+					<div className={styles["chat-message-actions"]}>
+						<div className={styles["chat-message-notes"]}>
+							<div>
+								Token counts: {message.token_counts_total} |{" "}
+								{new Date(message.date).toLocaleString()} | messageid:{" "}
+								{message.id}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

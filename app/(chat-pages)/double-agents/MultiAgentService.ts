@@ -103,7 +103,6 @@ export async function sendNextAgentMessage(
 		streaming: true,
 	});
 
-	let callBackMessage = "";
 	await sendChatMessage(selectedAgent, concatMessage, {
 		onUpdate: (message: string) => {
 			botMessage.content = message;
@@ -122,6 +121,9 @@ export async function sendNextAgentMessage(
 		onFinish: async (message: string) => {
 			botMessage.content = message;
 			await MultiAgentStore.finalizeBotMessage(conversationId, botMessage);
+			// 结束后继续发送
+			sendNextAgentMessage(conversationId, message);
+			console.log("sendNextAgentMessage", conversationId, message);
 		},
 
 		onError: (error: Error) => {

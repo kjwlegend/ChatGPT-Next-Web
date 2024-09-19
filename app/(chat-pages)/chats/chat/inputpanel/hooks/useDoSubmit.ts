@@ -27,16 +27,21 @@ import {
 } from "@/app/constant";
 import { FileInfo } from "@/app/client/platforms/utils";
 import { useWorkflowStore } from "@/app/store/workflow";
+import { useMultipleAgentStore } from "@/app/store/multiagents";
+import { sendNextAgentMessage } from "@/app/(chat-pages)/double-agents/MultiAgentService";
 
 export function useDoSubmit(
 	session: any,
 	attachImages: string[],
 	attachFiles: FileInfo[],
-	submitType: "chat" | "workflow" | "other" = "chat", // 根据需要定义类型
+	submitType: "chat" | "workflow" | "multi-agent" = "chat", // 根据需要定义类型
+	onError: (message: string) => void, // 新增的错误回调函数
 ) {
 	const chatStore = useChatStore.getState();
 	const userStore = useUserStore.getState();
-	const workflowStore = useWorkflowStore();
+	const multiAgentStore = useMultipleAgentStore.getState();
+	const { round, totalRounds } = multiAgentStore.currentSession();
+	const workflowStore = useWorkflowStore.getState();
 	const authHook = useAuth();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [isLoading, setIsLoading] = useState(false);
@@ -65,8 +70,30 @@ export function useDoSubmit(
 					attachFiles,
 					session,
 				);
-			} else if (submitType === "other") {
+			} else if (submitType === "multi-agent") {
 				// 其他逻辑
+				console.log("multi-agent submit");
+				if (userInput.length === 0) {
+					onError("信息不能为空");
+					return null;
+				}
+				if (userInput.length > 1000) {
+					onError("信息长度超过限制");
+					return null;
+				}
+				if (round === totalRounds) {
+					onError("对话已结束");
+					return null;
+				}
+
+				result = await multiAgentStore.onUserInput(
+					userInput,
+					attachImages,
+					attachFiles,
+					session,
+				);
+				sendNextAgentMessage(session.id, userInput);
+				console.log("multi-agent submit", result);
 			} else {
 				throw new Error("Invalid submit type");
 			}
@@ -74,11 +101,7 @@ export function useDoSubmit(
 			updateUserInfo(userStore.user.id);
 		} catch (error: any) {
 			console.error(error.message);
-			if (error.message.includes("登录")) {
-				setTimeout(() => {
-					authHook.logoutHook();
-				}, 2000);
-			}
+			onError(error.message); // 使用回调函数处理错误
 		} finally {
 			setIsLoading(false);
 		}

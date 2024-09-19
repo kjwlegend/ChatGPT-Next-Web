@@ -41,27 +41,7 @@ import { Mask } from "@/app/types/";
 import { usePluginStore } from "@/app/store/plugin";
 import { getLang } from "@/app/locales";
 import { Avatar } from "@/app/components/avatar";
-const renderSlider = (
-	title: string,
-	field: keyof Mask["modelConfig"],
-	value: number,
-	step: number,
-	max: number,
-	tooltip: string,
-) => (
-	<div className={styles.sliderContainer}>
-		<Tooltip title={tooltip}>
-			<p>{title}</p>
-		</Tooltip>
-		<Slider
-			defaultValue={value}
-			step={step}
-			max={max}
-			onChange={(newValue) => handleSliderChange(newValue)}
-			onChangeComplete={(newValue) => handleSliderAfterChange(newValue, field)}
-		/>
-	</div>
-);
+import { useConversationActions } from "../multiAgentContext";
 
 interface AgentCardProps {
 	name: string;
@@ -150,6 +130,8 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 		currentConversationId,
 	} = useMultipleAgentStore();
 
+	const { deleteAgent } = useConversationActions();
+
 	const handleSliderChange = (value: number) => {
 		// 更新滑块值的逻辑
 	};
@@ -176,23 +158,9 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 			</Checkbox>
 		),
 	}));
-	const handleSliderAfterChange = (
-		value: number,
-		field: keyof Mask["modelConfig"],
-	) => {
-		const updatedConfigs = aiConfigs.map((config) => ({
-			...config,
-			modelConfig: {
-				...config.modelConfig,
-				[field]: value,
-			},
-		}));
-
-		setAIConfig(currentConversationId, updatedConfigs);
-	};
 
 	const handleDeleteAI = (agentId: number) => {
-		clearAIConfig(currentConversationId, agentId);
+		deleteAgent(agentId);
 	};
 
 	return (

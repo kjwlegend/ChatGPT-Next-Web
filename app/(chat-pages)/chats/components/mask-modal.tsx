@@ -68,12 +68,8 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
 	return result;
 }
 
-export function MaskAvatar(props: { mask: Mask }) {
-	return props.mask.avatar !== DEFAULT_MASK_AVATAR ? (
-		<BotAvatar mask={props.mask} />
-	) : (
-		<BotAvatar mask={props.mask} />
-	);
+export function MaskAvatar({ mask }: { mask: Mask }) {
+	return <BotAvatar mask={mask} />;
 }
 
 type TabPosition = "left" | "right" | "top" | "bottom";

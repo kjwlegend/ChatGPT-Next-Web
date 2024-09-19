@@ -27,6 +27,43 @@ export type MultiAgentChatMessage = ChatMessage & {
 	agentName?: string;
 };
 
+// 定义服务端返回的消息类型
+interface ServerMessage {
+	id: number;
+	chat_id: string;
+	content: string;
+	chat_role: string;
+	chat_model: string;
+	chat_images: string[];
+	function_calls: any[];
+	token_counts_total: number;
+	object_id: number;
+	sender_name: string;
+	sender_id: string | null;
+	created_at: string;
+	updated_at: string;
+	user: number;
+}
+
+// 转换函数
+const mapServerMessageToChatMessage = (
+	serverMessage: ServerMessage,
+): MultiAgentChatMessage => {
+	return {
+		id: serverMessage.id.toString(),
+		chat_id: serverMessage.chat_id,
+		content: serverMessage.content,
+		role: serverMessage.chat_role as "system" | "user" | "assistant",
+		date: new Date(serverMessage.created_at).toISOString(),
+		model: serverMessage.chat_model,
+		image_url: serverMessage.chat_images,
+		token_counts_total: serverMessage.token_counts_total,
+		sender_name: serverMessage.sender_name,
+		sender_id: serverMessage.sender_id,
+		// 根据需要添加其他字段的映射
+	};
+};
+
 export type MultiAgentChatSession = {
 	id: string;
 	aiConfigs: Mask[]; // 存储多个 agent 的配置
@@ -55,6 +92,7 @@ type StoreState = {
 	) => void;
 	setCurrentConversationId: (id: string) => void;
 	fetchNewConversations: (data: any) => void;
+	fetchNewMessages: (conversationId: string, messages: any) => void;
 	currentSession: () => MultiAgentChatSession;
 	addAgent: (conversationId: string, config: Mask) => void;
 	setAIConfig: (conversationId: string, agentId: number, config: Mask) => void;
@@ -227,6 +265,47 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		});
 		get().sortedConversations();
 	},
+	fetchNewMessages: (conversationId: string, messages: any) => {
+		set((state) => {
+			const updatedConversations = state.conversations.map((session) => {
+				if (session.id === conversationId) {
+					const newMessages = messages.map(mapServerMessageToChatMessage);
+
+					// 创建一个 Map 来存储现有消息，以便快速查找
+					const existingMessagesMap = new Map(
+						session.messages.map((msg) => [msg.id, msg]),
+					);
+
+					// 处理新消息：更新现有消息或添加新消息
+					newMessages.forEach((newMsg) => {
+						if (existingMessagesMap.has(newMsg.id)) {
+							// 如果消息已存在，更新它
+							existingMessagesMap.set(newMsg.id, {
+								...existingMessagesMap.get(newMsg.id),
+								...newMsg,
+							});
+						} else {
+							// 如果是新消息，添加到 Map 中
+							existingMessagesMap.set(newMsg.id, newMsg);
+						}
+					});
+
+					// 将 Map 转换回数组
+					const updatedMessages = Array.from(existingMessagesMap.values());
+
+					return {
+						...session,
+						messages: updatedMessages,
+					};
+				}
+				return session;
+			});
+
+			return {
+				conversations: updatedConversations,
+			};
+		});
+	},
 	addAgent(conversationId, config) {
 		//  Add a new agent to the conversation
 
@@ -308,9 +387,10 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 	clearAIConfig: (conversationId: string, agentId: number) =>
 		set((state) => {
+			let updatedAIConfigs: Mask[] = [];
 			const updatedConversations = state.conversations.map((conversation) => {
 				if (conversation.id === conversationId) {
-					const updatedAIConfigs = conversation.aiConfigs.filter(
+					updatedAIConfigs = conversation.aiConfigs.filter(
 						(_, index) => index !== agentId,
 					);
 					return {
@@ -530,10 +610,13 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		const session = get().conversations.find((m) => m.id === sessionId);
 		if (!session) throw new Error("Session not found");
 
+		//  get message model
+		const messageModel = session.aiConfigs[message.agentId].model;
+
 		const createBotChatData = {
 			user: userid,
 			sessionId: sessionId,
-			model: message.model,
+			model: messageModel,
 			contentType: "multiagentchatsession",
 			content: getMessageTextContent(message),
 			attachImages: getMessageImages(message),
@@ -573,6 +656,9 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				attachFiles,
 				session,
 			);
+
+			// make session unpaused
+			get().updateMultiAgentsChatsession(session.id, { paused: false });
 		} catch (error) {
 			console.error("Error in onUserInput:", error);
 			throw error;
@@ -596,7 +682,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		const total_token_count = 0; // recentMessagesTokenCount + contentTokenCount;
 
 		const userModel = "userMessage";
-
+		console.log(sessionId, "sessionid debug");
 		const createChatData = {
 			user: userid,
 			sessionId: sessionId,

@@ -16,9 +16,8 @@ import {
 } from "react-router-dom";
 
 import {
-	MultiAgentChatContext,
 	MultiAgentChatProvider,
-	useMultiAgentChatContext,
+	useConversationActions,
 } from "./multiAgentContext";
 
 import { useMultipleAgentStore } from "@/app/store/multiagents";
@@ -48,7 +47,7 @@ const MultiAgentSideBar = dynamic(
 const { Header, Content, Sider, Footer } = Layout;
 
 const EmptyIntro = () => {
-	const { startNewConversation } = useMultiAgentChatContext();
+	const { startNewConversation } = useConversationActions();
 
 	return (
 		<div className={styles["welcome-container"]}>

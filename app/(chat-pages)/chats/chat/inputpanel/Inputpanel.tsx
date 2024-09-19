@@ -59,7 +59,10 @@ import {
 	useUserStore,
 } from "@/app/store";
 
-import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
+import {
+	MULTI_AGENT_DEFAULT_TOPIC,
+	useMultipleAgentStore,
+} from "@/app/store/multiagents";
 import {
 	copyToClipboard,
 	selectOrCopy,
@@ -126,7 +129,7 @@ export const IconFont = createFromIconfontCN({
 	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
 
-import { ChatActions } from "./components/chatactions";
+import { ChatActions, SimpleChatActions } from "./components/chatactions";
 import { DeleteImageButton, DeleteFileButton } from "./components/chatactions";
 import { AttachImages } from "./components/AttachImages";
 
@@ -149,11 +152,17 @@ let voicetext: string[] = [];
 export function Inputpanel(props: {
 	index?: number;
 	isworkflow: boolean;
-	submitType?: "chat" | "workflow";
+	submitType?: "chat" | "workflow" | "multi-agent";
 }) {
 	const { index, isworkflow, submitType } = props;
 	const config = useAppConfig();
-	const session = useSessions();
+	const multiAgentStore = useMultipleAgentStore.getState();
+	let session;
+	if (props.submitType === "multi-agent") {
+		session = multiAgentStore.currentSession();
+	} else {
+		session = useSessions();
+	}
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
 	const promptStore = usePromptStore();
@@ -175,17 +184,24 @@ export function Inputpanel(props: {
 	const { submitKey, shouldSubmit } = useSubmitHandler();
 
 	const textareaMinHeight = userImage ? 121 : 68;
+	const [messageApi, contextHolder] = message.useMessage();
 
-	const { doSubmit, isLoading, contextHolder } = useDoSubmit(
+	const handleError = (errorMessage: string) => {
+		messageApi.error(errorMessage);
+	};
+
+	const { doSubmit, isLoading } = useDoSubmit(
 		session,
 		attachImages,
 		attachFiles,
 		props.submitType,
+		handleError,
 	);
-
 	const handleSubmit = async () => {
-		await doSubmit(userInput);
-		setUserInput("");
+		const currentInput = userInput; // 保存当前输入
+		setUserInput(""); // 立即清空输入框
+		await doSubmit(currentInput);
+		console.log("input area debug", currentInput);
 		setAttachImages([]);
 		setAttachFiles([]);
 		if (!isMobileScreen) inputRef.current?.focus();
@@ -288,21 +304,29 @@ export function Inputpanel(props: {
 
 	return (
 		<div className={styles["chat-input-panel"]}>
-			{/* {contextHolder} */}
+			{contextHolder}
 
-			<ChatActions
-				uploadImage={handleUploadImage}
-				uploadFile={handleUploadFile}
-				setAttachImages={setAttachImages}
-				setAttachFiles={setAttachFiles}
-				setUploading={setUploading}
-				showPromptModal={handleShowPromptModal}
-				hitBottom={hitBottom}
-				uploading={uploading}
-				session={session}
-				index={props.index}
-				workflow={isworkflow}
-			/>
+			{submitType === "multi-agent" ? (
+				<SimpleChatActions
+					uploadImage={handleUploadImage}
+					uploadFile={handleUploadFile}
+					uploading={uploading}
+				/>
+			) : (
+				<ChatActions
+					uploadImage={handleUploadImage}
+					uploadFile={handleUploadFile}
+					setAttachImages={setAttachImages}
+					setAttachFiles={setAttachFiles}
+					setUploading={setUploading}
+					showPromptModal={handleShowPromptModal}
+					hitBottom={hitBottom}
+					uploading={uploading}
+					session={session}
+					index={props.index}
+					workflow={isworkflow}
+				/>
+			)}
 			<label
 				className={`${styles["chat-input-panel-inner"]} ${
 					attachImages.length != 0 || attachFiles.length != 0

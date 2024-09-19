@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 
-import { updateMultiAgentSession } from "@/app/services/api/chats";
+import {
+	getMultiAgentSessionChats,
+	updateMultiAgentSession,
+} from "@/app/services/api/chats";
 
 import { Path } from "../../constant";
 import { useNavigate } from "react-router-dom";
 import { getMultiAgentSession } from "../../services/api/chats";
 import { useMultipleAgentStore } from "@/app/store/multiagents";
-import { useMultiAgentChatContext } from "./multiAgentContext";
+import { useConversationActions } from "./multiAgentContext";
 import { useUserStore } from "../../store";
 import { Mask } from "@/app/types/mask";
 
@@ -21,10 +24,11 @@ export const useMultipleAgentsChatHook = () => {
 		deleteConversation,
 		fetchNewConversations,
 		sortedConversations,
+		fetchNewMessages,
 	} = useMultipleAgentStore();
 
 	const [chatSessions, setChatSessions] = useState<any[]>(conversations);
-	const { startNewConversation, addAgent } = useMultiAgentChatContext();
+	const { startNewConversation, addAgent } = useConversationActions();
 
 	const loadMoreSessions = async (page: number) => {
 		const param = { limit: 20, page };
@@ -61,7 +65,9 @@ export const useMultipleAgentsChatHook = () => {
 		} catch (error) {
 			console.log("get chatSession list error", error);
 		}
-		// getMessages(item.id);
+		const res = await getMultiAgentSessionChats(param, id);
+		// 更新消息
+		fetchNewMessages(id, res.data);
 		navigate(Path.Chat);
 	};
 

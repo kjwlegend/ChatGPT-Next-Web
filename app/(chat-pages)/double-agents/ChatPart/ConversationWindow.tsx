@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "antd";
 import dynamic from "next/dynamic";
-import { useMultiAgentChatContext } from "../multiAgentContext";
+import { useCurrentConversation } from "../multiAgentContext";
 import MultiAgentWindowHeader from "./components/MultiAgentWindowHeader";
 import styles from "../multi-agents.module.scss";
 const Chatbody = dynamic(
@@ -11,13 +11,9 @@ const Chatbody = dynamic(
 	{ ssr: false },
 );
 
-const Inputpanel = dynamic(
-	async () => (await import("./components/input")).MultiAgentInput,
-	{ ssr: false },
-);
-
+import { Inputpanel } from "../../chats/chat/inputpanel/Inputpanel";
 const ConversationWindow: React.FC = () => {
-	const { conversation } = useMultiAgentChatContext();
+	const { conversation } = useCurrentConversation();
 	const [shouldRender, setShouldRender] = useState(false);
 
 	useEffect(() => {
@@ -37,7 +33,7 @@ const ConversationWindow: React.FC = () => {
 				<Chatbody />
 			</div>
 			<div className={styles.inputContainer}>
-				<Inputpanel />
+				<Inputpanel isworkflow={false} submitType="multi-agent" />
 			</div>
 		</Card>
 	);

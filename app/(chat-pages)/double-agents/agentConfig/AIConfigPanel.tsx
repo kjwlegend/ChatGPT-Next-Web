@@ -22,7 +22,6 @@ import { usePluginStore } from "@/app/store/plugin";
 
 import { getLang, getISOLang } from "@/app/locales";
 import { IconButton } from "@/app/components/button";
-import { useMultiAgentChatContext } from "../multiAgentContext";
 import { MaskPage } from "../../chats/masklist/mask";
 import { useMultipleAgentsChatHook } from "@/app/(chat-pages)/double-agents/useMultipleAgentsHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
@@ -58,14 +57,13 @@ import {
 } from "@hello-pangea/dnd";
 
 import AIConfigCard from "./AIConfigCard";
+import { updateMultiAgentSession } from "@/app/services/api/chats";
+import { useCurrentConversation } from "../multiAgentContext";
 // import styles from "./AIConfigPanel.module.css"; // 假设你有一个CSS模块文件
 const AIConfigPanel: React.FC = () => {
-	const {
-		conversations,
-		currentConversationId,
-		updateConversation,
-		setAIConfig,
-	} = useMultipleAgentStore();
+	const { updateConversation, setAIConfig } = useMultipleAgentStore();
+
+	const { conversation, conversationId } = useCurrentConversation();
 
 	const { handleAgentClick } = useMultipleAgentsChatHook();
 	const { onDelete } = useAgentActions();
@@ -74,16 +72,10 @@ const AIConfigPanel: React.FC = () => {
 	const [agentIndex, setAgentIndex] = useState(0);
 	const [agentData, setAgentData] = useState<Mask>({} as Mask);
 
-	const session = conversations.find(
-		(c: MultiAgentChatSession) => c.id === currentConversationId,
-	);
-
+	const session = conversation;
 	const aiConfigs = useMemo(() => {
-		const session = conversations.find(
-			(c: MultiAgentChatSession) => c.id === currentConversationId,
-		);
-		return session?.aiConfigs || [];
-	}, [conversations, currentConversationId]);
+		return conversation?.aiConfigs || [];
+	}, [conversation]);
 
 	const [currentAgent, setCurrentAgent] = useState<Mask>(aiConfigs[0]);
 
@@ -103,16 +95,23 @@ const AIConfigPanel: React.FC = () => {
 		setShowAgentEdit(true);
 	};
 
-	const handleAgentUpdate = () => {
-		setAIConfig(currentConversationId, agentIndex, agentData); // 暂时使用第一个配置
+	const handleAgentUpdate = async () => {
+		setAIConfig(conversationId, agentIndex, agentData); // 暂时使用第一个配置
 		setShowAgentEdit(false);
+
+		// update multiagentchatsession
+		const res = await updateMultiAgentSession(
+			{ custom_agents_data: aiConfigs },
+			conversationId,
+		);
+		console.log("multipleagents debug: handleAgentUpdate", res);
 	};
 
 	if (!aiConfigs) {
 		return null;
 	}
 
-	if (!conversations) {
+	if (!conversation) {
 		return null;
 	}
 
@@ -120,7 +119,7 @@ const AIConfigPanel: React.FC = () => {
 		return null;
 	}
 
-	const onDragEnd = (result: any) => {
+	const onDragEnd = async (result: any) => {
 		if (!result.destination) return;
 
 		const items = Array.from(aiConfigs);
@@ -128,10 +127,17 @@ const AIConfigPanel: React.FC = () => {
 		items.splice(result.destination.index, 0, reorderedItem);
 
 		// 更新会话顺序
-		updateConversation(currentConversationId, {
+		updateConversation(conversationId, {
 			...session,
 			aiConfigs: items,
 		});
+
+		// 更新会话顺序
+		const res = await updateMultiAgentSession(
+			{ custom_agents_data: items },
+			conversationId,
+		);
+		console.log("multipleagents debug: onDragEnd", res);
 	};
 
 	return (

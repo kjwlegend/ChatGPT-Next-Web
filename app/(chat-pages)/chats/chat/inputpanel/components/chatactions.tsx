@@ -453,7 +453,7 @@ export const ChatActions = memo(
 							onClick={stopAll}
 							text={Locale.Chat.InputActions.Stop}
 							icon={<StopIcon />}
-							hidetext={props.workflows ? true : false}
+							hidetext={props.workflow ? true : false}
 						/>
 					)}
 					{!props.hitBottom && (
@@ -461,7 +461,7 @@ export const ChatActions = memo(
 							onClick={() => {}}
 							text={Locale.Chat.InputActions.ToBottom}
 							icon={<BottomIcon />}
-							hidetext={props.workflows ? true : false}
+							hidetext={props.workflow ? true : false}
 						/>
 					)}
 					{props.hitBottom && (
@@ -469,7 +469,7 @@ export const ChatActions = memo(
 							onClick={props.showPromptModal}
 							text={Locale.Chat.InputActions.Settings}
 							icon={<SettingTwoTone style={{ fontSize: "15px" }} />}
-							hidetext={props.workflows ? true : false}
+							hidetext={props.workflow ? true : false}
 						/>
 					)}
 					{/* <ChatAction
@@ -496,7 +496,7 @@ export const ChatActions = memo(
 					onClick={() => setShowModelSelector(true)}
 					text={currentModel}
 					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
-					hidetext={props.workflows ? true : false}
+						hidetext={props.workflow ? true : false}
 				/> */}
 
 					{showUploadImage && (
@@ -510,7 +510,7 @@ export const ChatActions = memo(
 					{showUploadFile && (
 						<ChatAction
 							onClick={props.uploadFile}
-							text={Locale.Chat.InputActions.UploadFle}
+							text={Locale.Chat.InputActions.UploadFile}
 							icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
 						/>
 					)}
@@ -539,7 +539,7 @@ export const ChatActions = memo(
 							}
 							type="dropdown"
 							dropdownItems={{ items }}
-							hidetext={props.workflows ? true : false}
+							hidetext={props.workflow ? true : false}
 						/>
 					)}
 
@@ -583,6 +583,48 @@ export const ChatActions = memo(
 							对话余额: {basic_chat_balance}
 						</span>
 					</div>
+				</div>
+			</div>
+		);
+	},
+);
+// simple Chatactions ,只保留上传图片和文件, 用于多轮对话
+
+// 简化版 ChatActions，只保留上传图片和文件功能
+export const SimpleChatActions = memo(
+	(props: {
+		uploadImage: () => void;
+		uploadFile: () => void;
+		uploading: boolean;
+	}) => {
+		const [showUploadImage, setShowUploadImage] = useState(false);
+		const [showUploadFile, setShowUploadFile] = useState(false);
+		const config = useAppConfig();
+		const currentModel = config.modelConfig.model;
+
+		useEffect(() => {
+			const show = isVisionModel(currentModel);
+			setShowUploadImage(show);
+			setShowUploadFile(show);
+		}, [currentModel]);
+
+		return (
+			<div className={styles["chat-input-actions"]}>
+				<div>
+					{showUploadImage && (
+						<ChatAction
+							onClick={props.uploadImage}
+							text={Locale.Chat.InputActions.UploadImage}
+							icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
+						/>
+					)}
+					{showUploadFile && (
+						<ChatAction
+							onClick={props.uploadFile}
+							text={Locale.Chat.InputActions.UploadFile}
+							icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
+						/>
+					)}
 				</div>
 			</div>
 		);

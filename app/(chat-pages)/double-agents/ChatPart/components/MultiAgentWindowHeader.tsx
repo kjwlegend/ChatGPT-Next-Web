@@ -18,13 +18,12 @@ const { Option } = Select;
 
 interface MultiAgentWindowHeaderProps {
 	session: MultiAgentChatSession;
-	onModeChange: (mode: "round-robin" | "random" | "intelligent") => void;
 }
 
 const MultiAgentWindowHeader: React.FC<MultiAgentWindowHeaderProps> = ({
 	session,
 }) => {
-	const multiAgentStore = useMultipleAgentStore();
+	const multiAgentStore = useMultipleAgentStore.getState();
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const handleRestart = () => {
