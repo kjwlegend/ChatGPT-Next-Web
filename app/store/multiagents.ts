@@ -568,7 +568,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		const session = get().conversations.find((m) => m.id === sessionId);
 		if (!session) throw new Error("Session not found");
 
-		const nextAgentIndex = decideNextAgent(sessionId, session.next_agent_type);
+		const nextAgentIndex = decideNextAgent(sessionId);
 		const selectedAgent = session.aiConfigs[nextAgentIndex];
 
 		console.log("double agent", nextAgentIndex, selectedAgent);
@@ -657,6 +657,11 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				session,
 			);
 
+			// update session topic
+			get().updateMultiAgentsChatsession(session.id, {
+				topic: content,
+			});
+
 			// make session unpaused
 			get().updateMultiAgentsChatsession(session.id, { paused: false });
 		} catch (error) {
@@ -700,6 +705,21 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 		let mContent: string | MultimodalContent[] = content;
 
+		if (attachImages && attachImages.length > 0) {
+			mContent = [
+				{
+					type: "text",
+					text: content,
+				},
+			];
+			mContent = mContent.concat(
+				attachImages.map((url) => ({
+					type: "image_url",
+					image_url: { url },
+				})),
+			);
+		}
+
 		const userMessage = createMessage({
 			id,
 			chat_id,
@@ -711,12 +731,6 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 		const newMessages = userMessage;
 		console.log("newMessages", newMessages);
-
-		if (attachImages && attachImages.length > 0) {
-			mContent = [{ type: "text", text: content }].concat(
-				attachImages.map((url) => ({ type: "image_url", image_url: { url } })),
-			);
-		}
 
 		get().updateMessages(sessionId, newMessages);
 
@@ -808,7 +822,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: updatedConversations,
 			};
 		});
-		return summary || "";
+		return summary;
 	},
 });
 

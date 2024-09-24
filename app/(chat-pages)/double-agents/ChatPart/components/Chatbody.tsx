@@ -35,7 +35,12 @@ export function MultiAgentChatbody() {
 			setDisplayMessages(initialMessages);
 			setHasNextPage(totalMessages > CHAT_PAGE_SIZE);
 		}
-	}, [session?.id]); // 只在会话ID变化时重新初始化
+	}, [session?.id, currentSessionId]); // 只在会话ID变化时重新初始化
+
+	// 监听 messages 的变化并更新 displayMessages
+	useEffect(() => {
+		setDisplayMessages(messages);
+	}, [messages]);
 
 	// 处理滚动事件
 	const handleScroll = useCallback(() => {
@@ -107,10 +112,6 @@ export function MultiAgentChatbody() {
 			className={styles["chat-body"]}
 			ref={chatBodyRef}
 			onScroll={handleScroll}
-			style={{
-				height: "50vh",
-				overflowY: "auto",
-			}}
 		>
 			<MultiAgentMessageList
 				messages={displayMessages}

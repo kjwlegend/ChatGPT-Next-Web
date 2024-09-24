@@ -279,7 +279,6 @@ export const MessagesProvider: React.FC<{ children: React.ReactNode }> = ({
 		</MessagesContext.Provider>
 	);
 };
-
 export const useMessages = () => useContext(MessagesContext);
 
 export const MultiAgentChatProvider: React.FC<{

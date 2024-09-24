@@ -147,6 +147,10 @@ import {
 	useSessions,
 } from "../hooks/useChatContext";
 import { sessionConfig } from "@/app/types/";
+import {
+	useConversations,
+	useCurrentConversation,
+} from "@/app/(chat-pages)/double-agents/multiAgentContext";
 let voicetext: string[] = [];
 
 export function Inputpanel(props: {
@@ -157,9 +161,10 @@ export function Inputpanel(props: {
 	const { index, isworkflow, submitType } = props;
 	const config = useAppConfig();
 	const multiAgentStore = useMultipleAgentStore.getState();
+	const { conversation, conversationId } = useCurrentConversation();
 	let session;
 	if (props.submitType === "multi-agent") {
-		session = multiAgentStore.currentSession();
+		session = conversation;
 	} else {
 		session = useSessions();
 	}
@@ -243,7 +248,7 @@ export function Inputpanel(props: {
 	useEffect(measure, [userInput]);
 
 	useEffect(() => {
-		const key = UNFINISHED_INPUT(session.id);
+		const key = UNFINISHED_INPUT(session?.id ?? "unkown");
 		const mayBeUnfinishedInput = localStorage.getItem(key);
 		if (mayBeUnfinishedInput && userInput.length === 0) {
 			setUserInput(mayBeUnfinishedInput);
@@ -253,7 +258,7 @@ export function Inputpanel(props: {
 		return () => {
 			localStorage.setItem(key, dom?.value ?? "");
 		};
-	}, [session.id, userInput]);
+	}, [session?.id, userInput]);
 
 	const handlePaste = useCallback(
 		(event: React.ClipboardEvent<HTMLTextAreaElement>) => {

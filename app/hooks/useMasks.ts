@@ -83,11 +83,27 @@ export function useMasks() {
 				roleSetting: undefined, // 如果有对应字段可以填入
 			}));
 
-			setMasks((prevMasks) => [...prevMasks, ...mappedMasks]);
+			// 更新本地状态
+			setMasks((prevMasks) => {
+				const newMasks = [...prevMasks];
+				mappedMasks.forEach((newMask) => {
+					const existingIndex = newMasks.findIndex(
+						(mask) => mask.id === newMask.id,
+					);
+					if (existingIndex !== -1) {
+						// 如果 mask 已存在，更新它
+						newMasks[existingIndex] = newMask;
+					} else {
+						// 如果是新的 mask，添加它
+						newMasks.push(newMask);
+					}
+				});
+				return newMasks;
+			});
 
-			// 将新获取的 masks 添加到 maskStore
+			// 更新 maskStore
 			mappedMasks.forEach((mask) => {
-				maskStore.add(mask);
+				maskStore.add(mask); // 使用 add 方法，它会处理更新和添加
 			});
 
 			return { data: mappedMasks, total, is_next };

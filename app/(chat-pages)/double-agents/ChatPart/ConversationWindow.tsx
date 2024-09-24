@@ -13,29 +13,18 @@ const Chatbody = dynamic(
 
 import { Inputpanel } from "../../chats/chat/inputpanel/Inputpanel";
 const ConversationWindow: React.FC = () => {
-	const { conversation } = useCurrentConversation();
-	const [shouldRender, setShouldRender] = useState(false);
-
-	useEffect(() => {
-		if (conversation) {
-			setShouldRender(true);
-		}
-	}, [conversation]);
-
-	if (!shouldRender || !conversation) {
-		return null;
-	}
-
 	return (
-		<Card className={styles.conversationCard}>
-			<MultiAgentWindowHeader session={conversation} />
-			<div className={styles.chatbodyContainer}>
-				<Chatbody />
+		<div className={styles.conversationWrapper}>
+			<div className={styles.conversationCard}>
+				<MultiAgentWindowHeader />
+				<div className={styles.chatbodyContainer}>
+					<Chatbody />
+				</div>
+				<div className={styles.inputContainer}>
+					<Inputpanel isworkflow={false} submitType="multi-agent" />
+				</div>
 			</div>
-			<div className={styles.inputContainer}>
-				<Inputpanel isworkflow={false} submitType="multi-agent" />
-			</div>
-		</Card>
+		</div>
 	);
 };
 

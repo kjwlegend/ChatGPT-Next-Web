@@ -13,10 +13,7 @@ import {
 	useMultipleAgentStore,
 	createMultiAgentChatMessage,
 } from "@/app/store/multiagents";
-import {
-	ConversationChatTemplate,
-	InitialConversationChatTemplate,
-} from "@/app/chains/multiagents";
+import { ConversationChatTemplate } from "@/app/chains/multiagents";
 import { getMessageTextContent } from "@/app/utils";
 import { sendChatMessage } from "@/app/services/chatService";
 import { AttachImages } from "../chats/chat/inputpanel/components/AttachImages";
@@ -53,8 +50,14 @@ export async function startConversation(
 export async function sendNextAgentMessage(
 	conversationId: string,
 	messageContent: string,
+	attachImages: string[] = [],
 ) {
-	console.log("sendNextAgentMessage", conversationId, messageContent);
+	console.log(
+		"sendNextAgentMessage",
+		conversationId,
+		messageContent,
+		attachImages,
+	);
 	const MultiAgentStore = useMultipleAgentStore.getState();
 	const session = MultiAgentStore.conversations.find(
 		(m) => m.id === conversationId,
@@ -73,28 +76,36 @@ export async function sendNextAgentMessage(
 	const historyMessages = MultiAgentStore.getHistory(conversationId);
 	let concatMessage = [];
 
-	if (round > 1) {
-		const historySummary =
-			await MultiAgentStore.summarizeSession(conversationId);
-		const template = ConversationChatTemplate(
-			selectedAgent,
-			selectedAgent,
-			session.topic,
-			historySummary,
-			historyMessages.map((m) => `${m.role}: ${m.content}`).join("\n"),
+	// 处理消息内容，包括文本和图片
+	let mContent: any[] = [{ type: "text", text: messageContent }];
+	if (attachImages && attachImages.length > 0) {
+		mContent = mContent.concat(
+			attachImages.map((url) => ({
+				type: "image_url",
+				image_url: { url },
+			})),
 		);
-		concatMessage = [template];
-	} else {
-		const template = InitialConversationChatTemplate(
-			selectedAgent,
-			selectedAgent,
-			session.topic,
-		);
+	}
+
+	const historySummary =
+		round > 1 ? await MultiAgentStore.summarizeSession(conversationId) : "";
+
+	const template = ConversationChatTemplate(
+		selectedAgent,
+		session.aiConfigs, // 假设这里存储了所有的agent配置
+		session.topic,
+		historySummary,
+		historyMessages.map((m) => `${m.agentName}: ${m.content}`).join("\n"),
+	);
+
+	concatMessage = [template];
+
+	if (round === 1) {
 		const userMessage = createMultiAgentChatMessage({
 			role: "user",
-			content: messageContent,
+			content: mContent,
 		});
-		concatMessage = [template, userMessage];
+		concatMessage.push(userMessage);
 	}
 
 	const messageTemplate = createMultiAgentChatMessage({
@@ -125,7 +136,6 @@ export async function sendNextAgentMessage(
 			sendNextAgentMessage(conversationId, message);
 			console.log("sendNextAgentMessage", conversationId, message);
 		},
-
 		onError: (error: Error) => {
 			const isAborted = error.message.includes("aborted");
 			messageTemplate.content +=

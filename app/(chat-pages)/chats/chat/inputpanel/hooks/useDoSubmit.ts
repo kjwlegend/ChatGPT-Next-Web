@@ -92,7 +92,7 @@ export function useDoSubmit(
 					attachFiles,
 					session,
 				);
-				sendNextAgentMessage(session.id, userInput);
+				sendNextAgentMessage(session.id, userInput,attachImages);
 				console.log("multi-agent submit", result);
 			} else {
 				throw new Error("Invalid submit type");

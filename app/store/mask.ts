@@ -102,19 +102,6 @@ export const useMaskStore = createPersistStore(
 
 			return masks; // 返回更新后的 masks 对象
 		},
-		addTags(tags: Tags) {
-			const { tags: currentTags } = get();
-
-			let currentTagsCopy = { ...currentTags };
-
-			if (tags.tag_id) {
-				currentTagsCopy[tags.tag_id] = tags;
-			}
-
-			set({ tags: currentTagsCopy });
-			return currentTagsCopy;
-		},
-
 		updateMask(id: string, updater: (mask: Mask) => void) {
 			const masks = get().masks;
 			const mask = masks[id];
@@ -128,6 +115,19 @@ export const useMaskStore = createPersistStore(
 			set(() => ({ masks }));
 			get().markUpdate();
 		},
+		addTags(tags: Tags) {
+			const { tags: currentTags } = get();
+
+			let currentTagsCopy = { ...currentTags };
+
+			if (tags.tag_id) {
+				currentTagsCopy[tags.tag_id] = tags;
+			}
+
+			set({ tags: currentTagsCopy });
+			return currentTagsCopy;
+		},
+
 		async saveMask(id: string) {
 			const masks = get().masks;
 			const mask = masks[id];

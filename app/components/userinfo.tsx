@@ -123,7 +123,10 @@ export default function UserInfo() {
 	const { id, user_balance } = user;
 	const isLogin = !!id && id != 0;
 	const [visible, setVisible] = useState(false);
-	const [expanded, setExpanded] = useState(false); // 控制展开状态
+
+	const handleButtonClick = () => {
+		setVisible(true);
+	};
 
 	const handleOk = () => {
 		setVisible(false);
@@ -133,28 +136,30 @@ export default function UserInfo() {
 		setVisible(false);
 	};
 
-	const handleButtonClick = () => {
-		setVisible(true);
-	};
-
 	return (
 		<div className={styles["user-info-wrapper"]}>
 			{isLogin ? (
 				<div className={styles["user-info"]}>
-					<Avatar src={`${oss_base}/${user?.avatar}`} size="large">
-						{user.nickname || "神秘人"}{" "}
-					</Avatar>
+					<div className={styles["user-profile"]}>
+						<Avatar src={`${oss_base}/${user?.avatar}`} size="large">
+							{user.nickname || "神秘人"}{" "}
+						</Avatar>
+						<div className={styles["user-name-type"]}>
+							<span className={styles["user-nickname"]}>
+								{user.nickname || "神秘人"}
+							</span>
+							<span className={styles["user-type"]}>
+								{user?.membership_level ? user?.membership_level : "免费会员"}
+							</span>
+						</div>
+						<div className={styles["user-actions"]}>
+							<ConfigMemu />
+						</div>
+					</div>
 					<div className={styles["user-details"]}>
-						<p>
-							会员类型：
-							{user?.membership_level ? user?.membership_level : "免费会员"}
-						</p>
 						<p>到期时间：{user?.membership_expiry_date}</p>
 						<p>基础对话余额：{user_balance.basic_chat_balance}</p>
 						<p>高级对话余额：{user_balance.pro_chat_balance}</p>
-					</div>
-					<div>
-						<ConfigMemu />
 					</div>
 				</div>
 			) : (

@@ -1,5 +1,13 @@
 import React from "react";
-import { Typography, Space, Button, Select, message, InputNumber } from "antd";
+import {
+	Typography,
+	Space,
+	Button,
+	Select,
+	message,
+	InputNumber,
+	Tooltip,
+} from "antd";
 import {
 	ReloadOutlined,
 	PauseOutlined,
@@ -12,19 +20,21 @@ import {
 } from "@/app/store/multiagents";
 import { continueConversation, decideNextAgent } from "../../MultiAgentService";
 import styles from "../../multi-agents.module.scss";
+import { useCurrentConversation } from "../../multiAgentContext";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-interface MultiAgentWindowHeaderProps {
-	session: MultiAgentChatSession;
-}
-
-const MultiAgentWindowHeader: React.FC<MultiAgentWindowHeaderProps> = ({
-	session,
-}) => {
+const MultiAgentWindowHeader: React.FC = () => {
 	const multiAgentStore = useMultipleAgentStore.getState();
 	const [messageApi, contextHolder] = message.useMessage();
+
+	const { conversation } = useCurrentConversation();
+	const session = conversation;
+
+	if (!session) {
+		return null;
+	}
 
 	const handleRestart = () => {
 		multiAgentStore.clearConversation(session.id);
@@ -60,9 +70,23 @@ const MultiAgentWindowHeader: React.FC<MultiAgentWindowHeaderProps> = ({
 			{contextHolder}
 			<div className={styles.headerContent}>
 				<div className={styles.topRow}>
-					<Title level={4} className={styles.title}>
-						{session.topic}
-					</Title>
+					<Tooltip
+						title={session.memory}
+						overlayStyle={{
+							width: "50vw",
+							maxWidth: "unset",
+						}}
+						overlayInnerStyle={{
+							fontSize: "14px",
+							lineHeight: "1.5",
+							letterSpacing: "0.5px",
+						}}
+					>
+						<Title level={4} className={styles.title}>
+							{session.topic}
+						</Title>
+					</Tooltip>
+
 					<div className={styles.buttonGroup}>
 						<Button icon={<DeleteOutlined />} onClick={handleRestart}>
 							重新开始

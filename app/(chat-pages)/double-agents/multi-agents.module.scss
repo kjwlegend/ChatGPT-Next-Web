@@ -59,6 +59,28 @@
 	}
 }
 
+.conversationWrapper {
+	height: 90vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.conversationCard {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.chatbodyContainer {
+	flex: 1;
+	overflow-y: auto;
+}
+
+.inputContainer {
+	flex-shrink: 0;
+}
+
 // ============== conversation header
 .windowHeader {
 	border-bottom: 1px solid #f0f0f0;
@@ -79,6 +101,18 @@
 
 .title {
 	margin: 0;
+}
+.memory {
+	margin: 0;
+	color: var(--light-gray);
+	font-size: 0.8rem;
+	width: 400px;
+	text-overflow: ellipsis;
+	background-color: #f0f0f0;
+
+	.ant-tooltip-inner {
+		background-color: #f0f0f0;
+	}
 }
 
 .buttonGroup {
