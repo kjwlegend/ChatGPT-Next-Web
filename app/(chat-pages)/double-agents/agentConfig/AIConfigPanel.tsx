@@ -6,7 +6,6 @@ import {
 	useMultipleAgentStore,
 	MultiAgentChatSession,
 } from "@/app/store/multiagents";
-import styles from "../multi-agents.module.scss";
 
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
@@ -59,7 +58,7 @@ import {
 import AIConfigCard from "./AIConfigCard";
 import { updateMultiAgentSession } from "@/app/services/api/chats";
 import { useCurrentConversation } from "../multiAgentContext";
-// import styles from "./AIConfigPanel.module.css"; // 假设你有一个CSS模块文件
+import styles from "./AIConfig.module.scss";
 const AIConfigPanel: React.FC = () => {
 	const { updateConversation, setAIConfig } = useMultipleAgentStore();
 
@@ -142,6 +141,18 @@ const AIConfigPanel: React.FC = () => {
 
 	return (
 		<>
+			<div className={styles["addAgentButtonContainer"]}>
+				<Button
+					icon={<PlusCircleOutlined />}
+					onClick={handleModalClick}
+					className={styles["addAgentButton"]}
+					ghost
+					type="primary"
+				>
+					添加 Agent
+				</Button>
+			</div>
+
 			<div className={styles.scrollableContainer}>
 				<DragDropContext onDragEnd={onDragEnd}>
 					<Droppable droppableId="agents">
@@ -164,10 +175,8 @@ const AIConfigPanel: React.FC = () => {
 						)}
 					</Droppable>
 				</DragDropContext>
-				<Button icon={<PlusCircleOutlined />} onClick={handleModalClick}>
-					添加 Agent
-				</Button>
 			</div>
+
 			{showAgentEdit && (
 				<div className="modal-mask">
 					<Modal
