@@ -23,8 +23,8 @@ import {
 import { AttachImages } from "../(chat-pages)/chats/chat/inputpanel/components/AttachImages";
 
 export type MultiAgentChatMessage = ChatMessage & {
-	agentId?: number;
-	agentName?: string;
+	agentId: number | string | null;
+	agentName: string;
 };
 
 // 定义服务端返回的消息类型
@@ -58,8 +58,8 @@ const mapServerMessageToChatMessage = (
 		model: serverMessage.chat_model,
 		image_url: serverMessage.chat_images,
 		token_counts_total: serverMessage.token_counts_total,
-		sender_name: serverMessage.sender_name,
-		sender_id: serverMessage.sender_id,
+		agentName: serverMessage.sender_name,
+		agentId: serverMessage.sender_id,
 		// 根据需要添加其他字段的映射
 	};
 };
@@ -152,8 +152,8 @@ type StoreState = {
 	) => void;
 	finalizeBotMessage: (
 		sessionId: string,
-		message: ChatMessage,
-	) => Promise<ChatMessage>;
+		message: MultiAgentChatMessage,
+	) => Promise<MultiAgentChatMessage>;
 };
 export function createMultiAgentChatMessage(
 	override: Partial<MultiAgentChatMessage>,
@@ -166,6 +166,8 @@ export function createMultiAgentChatMessage(
 		streaming: false,
 		toolMessages: [],
 		preview: false,
+		agentId: null, // Add this line
+		agentName: "", // Add this line
 
 		...override,
 	};
@@ -265,7 +267,10 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		});
 		get().sortedConversations();
 	},
-	fetchNewMessages: (conversationId: string, messages: any) => {
+	fetchNewMessages: (
+		conversationId: string,
+		messages: MultiAgentChatMessage,
+	) => {
 		set((state) => {
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
@@ -277,7 +282,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 					);
 
 					// 处理新消息：更新现有消息或添加新消息
-					newMessages.forEach((newMsg) => {
+					newMessages.forEach((newMsg: MultiAgentChatMessage) => {
 						if (existingMessagesMap.has(newMsg.id)) {
 							// 如果消息已存在，更新它
 							existingMessagesMap.set(newMsg.id, {
@@ -605,13 +610,19 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		);
 	},
 
-	finalizeBotMessage: async (sessionId: string, message: ChatMessage) => {
+	finalizeBotMessage: async (
+		sessionId: string,
+		message: MultiAgentChatMessage,
+	) => {
 		const { id: userid } = useUserStore.getState().user;
 		const session = get().conversations.find((m) => m.id === sessionId);
 		if (!session) throw new Error("Session not found");
 
 		//  get message model
-		const messageModel = session.aiConfigs[message.agentId].model;
+		const selectedConfig = session.aiConfigs.find(
+			(config) => config.id === message.agentId!,
+		);
+		const messageModel = selectedConfig?.model || "gpt-4o-mini";
 
 		const createBotChatData = {
 			user: userid,
@@ -622,8 +633,8 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			attachImages: getMessageImages(message),
 			recentMessages: get().getHistory(sessionId),
 			chat_role: "assistant",
-			sender_name: message.sender_name,
-			sender_id: message.sender_id,
+			sender_name: message.agentName,
+			sender_id: message.agentId,
 			totalTokenCount: estimateTokenLength(getMessageTextContent(message)),
 		};
 
@@ -720,7 +731,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			);
 		}
 
-		const userMessage = createMessage({
+		const userMessage = createMultiAgentChatMessage({
 			id,
 			chat_id,
 			role: "user",

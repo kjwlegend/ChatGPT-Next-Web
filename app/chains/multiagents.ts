@@ -45,10 +45,11 @@ Guidelines for your response:
 4. Avoid repeating what has already been said; instead, expand on previous points or introduce new angles.
 5. If you notice the conversation becoming repetitive, steer it in a new direction or delve deeper into a specific aspect.
 6. Maintain a coherent flow with the previous messages (if any) while adding your unique insights.
+7. Keep your response concise, typically not exceeding 100 words, unless specifically requested to provide a longer explanation.
 
 Remember, there are ${allAgents.length} agents in this conversation, including yourself. Tailor your response to engage with the ideas presented by others and to further the collective understanding of the topic.
 
-Please provide your ${historySummary ? "next contribution" : "opening statement"} to the conversation in ${getLang()}.
+Please provide your ${historySummary ? "next contribution" : "opening statement"} to the conversation in ${getLang()}, keeping it brief and to the point.
 		`,
 	});
 }
