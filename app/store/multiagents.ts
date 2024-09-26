@@ -207,6 +207,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 			return newState;
 		});
+		get().sortedConversations();
 	},
 	setCurrentConversationId: (id) => set({ currentConversationId: id }),
 	currentSession: () => {

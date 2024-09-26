@@ -71,7 +71,7 @@ const MultiAgentWindowHeader: React.FC = () => {
 			<div className={styles.headerContent}>
 				<div className={styles.topRow}>
 					<Tooltip
-						title={session.memory}
+						title={`标题: ${session.topic}  \n\n 摘要: ${session.memory}`}
 						overlayStyle={{
 							width: "50vw",
 							maxWidth: "unset",
@@ -82,22 +82,8 @@ const MultiAgentWindowHeader: React.FC = () => {
 							letterSpacing: "0.5px",
 						}}
 					>
-						<Title level={4} className={styles.title}>
-							{session.topic}
-						</Title>
+						<p className={styles.title}>{session.topic}</p>
 					</Tooltip>
-
-					<div className={styles.buttonGroup}>
-						<Button icon={<DeleteOutlined />} onClick={handleRestart}>
-							重新开始
-						</Button>
-						<Button
-							icon={session.paused ? <CaretRightOutlined /> : <PauseOutlined />}
-							onClick={handlePauseResume}
-						>
-							{session.paused ? "继续" : "暂停"}
-						</Button>
-					</div>
 				</div>
 				<div className={styles.infoRow}>
 					<Space>
@@ -107,7 +93,7 @@ const MultiAgentWindowHeader: React.FC = () => {
 							onChange={handleRoundChange}
 							addonBefore="总轮数"
 							addonAfter={`当前第 ${session.round} 轮`}
-							style={{ width: 200 }}
+							style={{ width: 220 }}
 						/>
 						<Select
 							value={session.next_agent_type}
@@ -118,6 +104,19 @@ const MultiAgentWindowHeader: React.FC = () => {
 							<Option value="random">随机模式</Option>
 							<Option value="intelligent">智能决策</Option>
 						</Select>
+						<div className={styles.buttonGroup}>
+							<Button icon={<DeleteOutlined />} onClick={handleRestart}>
+								重新开始
+							</Button>
+							<Button
+								icon={
+									session.paused ? <CaretRightOutlined /> : <PauseOutlined />
+								}
+								onClick={handlePauseResume}
+							>
+								{session.paused ? "继续" : "暂停"}
+							</Button>
+						</div>
 					</Space>
 				</div>
 			</div>
