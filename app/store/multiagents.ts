@@ -583,8 +583,8 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 		const botMessage = createMultiAgentChatMessage({
 			role: "assistant",
-			content: "...",
-			agentId: nextAgentIndex,
+			content: "思考..",
+			agentId: selectedAgent.id,
 			agentName: selectedAgent.name,
 		});
 
@@ -635,7 +635,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			recentMessages: get().getHistory(sessionId),
 			chat_role: "assistant",
 			sender_name: message.agentName,
-			sender_id: message.agentId,
+			sender_id: message.agentId ?? 999,
 			totalTokenCount: estimateTokenLength(getMessageTextContent(message)),
 		};
 

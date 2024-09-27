@@ -346,6 +346,10 @@
 			transform: scale(1) translateY(0);
 		}
 	}
+
+	&.multi-agents {
+		flex-direction: row;
+	}
 }
 
 .chat-message-user > .chat-message-container {

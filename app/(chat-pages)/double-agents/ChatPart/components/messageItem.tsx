@@ -1,11 +1,13 @@
-import React, { useMemo } from "react";
+import React, { use, useMemo } from "react";
 import { MultiAgentChatMessage } from "@/app/store/multiagents";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
-import { Avatar } from "antd";
 import { Markdown } from "@/app/components/markdown";
 import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";
-import { useAppConfig } from "@/app/store";
+import { useAppConfig, useUserStore } from "@/app/store";
 import { getMessageImages } from "@/app/utils";
+
+import { Avatar } from "@/app/components/avatar";
+import { useMaskStore } from "@/app/store/mask";
 
 interface AgentMessageItemProps {
 	message: MultiAgentChatMessage;
@@ -20,17 +22,25 @@ export const AgentMessageItem: React.FC<AgentMessageItemProps> = ({
 	const config = useAppConfig();
 	const fontSize = config.fontSize;
 
-	const avatarUrl = isUser
-		? "/user-avatar.png"
-		: `/agent-${message.agentId}-avatar.png`;
+	const userStore = useUserStore.getState();
+	const maskStore = useMaskStore.getState();
+
+	const userAvatar = useMemo(() => {
+		return userStore.user.avatar;
+	}, [userStore]);
+
+	const agentAvatar = useMemo(() => {
+		const mask = maskStore.masks[message.agentId ?? 1];
+		return mask?.avatar || `/agent-${message.agentId}-avatar.png`;
+	}, [maskStore.masks, message.agentId]);
 
 	const RenderedAvatar = useMemo(() => {
 		return isUser ? (
-			<Avatar src={avatarUrl} className={styles.avatar} />
+			<Avatar avatar={userAvatar} nickname={userStore.user.nickname} />
 		) : (
-			<MaskAvatar mask={{ avatar: avatarUrl, name: message.agentName! }} />
+			<Avatar avatar={agentAvatar} nickname={message.agentName} />
 		);
-	}, [isUser, avatarUrl, message.agentName]);
+	}, [isUser, message.agentName]);
 
 	const messageImages = getMessageImages(message);
 
@@ -38,12 +48,24 @@ export const AgentMessageItem: React.FC<AgentMessageItemProps> = ({
 		<div
 			className={isUser ? styles["chat-message-user"] : styles["chat-message"]}
 		>
-			<div className={styles["chat-message-container"]}>
+			<div
+				className={`${styles["chat-message-container"]} ${styles["multi-agents"]}`}
+			>
 				<div className={styles["chat-message-header"]}>
 					<div className={styles["chat-message-avatar"]}>{RenderedAvatar}</div>
+					<span className={styles["chat-message-name"]}>
+						{!isUser
+							? `${message.agentId} - ${message.agentName}`
+							: userStore.user.nickname}
+					</span>
+					<span className={styles["chat-message-time"]}>
+						- {new Date(message.date).toLocaleString()}
+					</span>
 				</div>
 
-				<div className={styles["chat-message-item"]}>
+				<div
+					className={`${styles["chat-message-item"]} ${styles["multi-agents"]}`}
+				>
 					<Markdown content={message.content as string} fontSize={fontSize} />
 
 					{/* 文件信息展示 */}
@@ -103,8 +125,7 @@ export const AgentMessageItem: React.FC<AgentMessageItemProps> = ({
 					<div className={styles["chat-message-actions"]}>
 						<div className={styles["chat-message-notes"]}>
 							<div>
-								Token counts: {message.token_counts_total} |{" "}
-								{new Date(message.date).toLocaleString()} | messageid:{" "}
+								Token counts: {message.token_counts_total} | messageid:{" "}
 								{message.id}
 							</div>
 						</div>

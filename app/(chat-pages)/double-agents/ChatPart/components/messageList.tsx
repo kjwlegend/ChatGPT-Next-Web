@@ -16,7 +16,7 @@ export const MultiAgentMessageList: React.FC<
 	if (messages.length === 0 && !isLoading) {
 		return (
 			<div className={styles.emptyState}>
-				No messages yet. Start a conversation!
+				目前暂无任何对话, 请修改对话轮数, 在下方输入框输入探索主题.
 			</div>
 		);
 	}

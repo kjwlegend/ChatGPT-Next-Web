@@ -346,6 +346,11 @@
 	.chat-message-header {
 		flex-direction: row-reverse;
 	}
+	.multi-agents {
+		.chat-message-header {
+			flex-direction: unset;
+		}
+	}
 }
 
 .chat-message-header {
@@ -370,6 +375,16 @@
 			flex-wrap: nowrap;
 		}
 	}
+
+	.chat-message-name {
+		font-weight: bold;
+		margin-right: 5px;
+	}
+
+	.chat-message-time {
+		color: #888;
+		font-size: 0.9em;
+	}
 }
 
 .chat-message-container {
@@ -392,10 +407,18 @@
 
 		border-top: 1px solid #e6e6e6;
 	}
+	&.multi-agents {
+		flex-direction: column;
+	}
 }
 
 .chat-message-user > .chat-message-container {
 	flex-direction: row-reverse;
+
+	&.multi-agents {
+		flex-direction: column;
+		align-items: end;
+	}
 }
 
 .chat-message-avatar {
@@ -482,6 +505,10 @@
 			width: 16;
 			height: 16px;
 		}
+	}
+
+	&.multi-agents {
+		margin-top: 5px;
 	}
 }
 .chat-message-user > .chat-message-container > .chat-message-item {

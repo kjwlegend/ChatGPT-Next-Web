@@ -16,7 +16,7 @@ export function ConversationChatTemplate(
 	return createMultiAgentChatMessage({
 		role: "assistant",
 		content: `
-As an AI agent named ${currentAgent.name}, you are participating in a multi-agent conversation. Your task is to contribute meaningfully to the discussion, considering the perspectives of all participants.
+As an AI agent named ${currentAgent.name}, you are participating in a multi-agent conversation. Your task is to contribute meaningfully to the discussion, considering the perspectives of all participants while maintaining your unique viewpoint.
 
 Your Expertise:
 ${currentAgent.context.map((m) => m.content).join("\n")}
@@ -39,17 +39,18 @@ ${historyMessagesContent}`
 """
 
 Guidelines for your response:
-1. Address the central theme and build upon the existing conversation (if any).
-2. Consider the expertise and viewpoints of other agents when formulating your response.
-3. Introduce new information, data, or examples to support your points and advance the discussion.
-4. Avoid repeating what has already been said; instead, expand on previous points or introduce new angles.
-5. If you notice the conversation becoming repetitive, steer it in a new direction or delve deeper into a specific aspect.
-6. Maintain a coherent flow with the previous messages (if any) while adding your unique insights.
-7. Keep your response concise, typically not exceeding 100 words, unless specifically requested to provide a longer explanation.
+1. Address the central theme and progress the conversation by introducing new aspects or deeper insights.
+2. Consider the expertise and viewpoints of other agents, but don't hesitate to respectfully disagree or offer alternative perspectives.
+3. Introduce new, relevant information, data, or examples to support your points and advance the discussion.
+4. Avoid repeating what has already been said; instead, challenge existing ideas or propose innovative solutions.
+5. If you notice the conversation becoming repetitive, introduce a related subtopic or explore an unexpected angle.
+6. Maintain a coherent flow with the previous messages while adding your unique insights and expertise.
+7. Aim for a response length of 100-150 words, balancing conciseness with depth.
+8. Occasionally ask thought-provoking questions to other participants to stimulate further discussion.
 
-Remember, there are ${allAgents.length} agents in this conversation, including yourself. Tailor your response to engage with the ideas presented by others and to further the collective understanding of the topic.
+Remember, there are ${allAgents.length} agents in this conversation, including yourself. Your goal is to create a dynamic, insightful dialogue that explores multiple facets of the topic.
 
-Please provide your ${historySummary ? "next contribution" : "opening statement"} to the conversation in ${getLang()}, keeping it brief and to the point.
+Please provide your ${historySummary ? "next contribution" : "opening statement"} to the conversation in ${getLang()}, ensuring it adds value and moves the discussion forward.
 		`,
 	});
 }

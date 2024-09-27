@@ -48,10 +48,12 @@ interface AgentCardProps {
 	agentIndex: number;
 	modelTag: string;
 	description: string;
+
 	onEdit: () => void;
 	onDelete: () => void;
 	draggableProps: any;
 	dragHandleProps: any;
+	avatar?: string;
 }
 
 const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
@@ -65,6 +67,7 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 			onDelete,
 			draggableProps,
 			dragHandleProps,
+			avatar,
 		},
 		ref,
 	) => {
@@ -77,7 +80,7 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 			>
 				<div className={styles.cardContent}>
 					<div className={styles.avatarSection}>
-						<Avatar size={64} nickname={name} />
+						<Avatar size={64} avatar={avatar} nickname={name} />
 					</div>
 					<div>
 						<h3>
@@ -172,6 +175,7 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 					ref={provided.innerRef}
 					key={agent.id}
 					name={agent.name}
+					avatar={agent.avatar}
 					agentIndex={index}
 					modelTag={agent.modelConfig.model}
 					description={agent.description}

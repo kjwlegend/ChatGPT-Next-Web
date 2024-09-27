@@ -1,49 +1,45 @@
-import { ModelType } from "@/app/store";
-import { Mask } from "@/app/types/mask";
-import BotIcon from "@/app/icons/bot.svg";
-import BlackBotIcon from "@/app/icons/black-bot.svg";
 import { Avatar as AntdAvatar } from "antd";
-
 import React, { useMemo } from "react";
+import { oss_base } from "../constant";
+
 interface AvatarProps {
-	model?: Mask;
 	avatar?: string | null;
 	nickname?: string;
 	size?: any;
 }
-import { oss_base } from "../constant";
 
-export const Avatar: React.FC<AvatarProps> = ({
-	model,
-	avatar,
-	nickname,
-	size,
-}) => {
+// 生成随机颜色的函数
+const getRandomColor = () => {
+	const letters = "0123456789ABCDEF";
+	let color = "#";
+	for (let i = 0; i < 6; i++) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
+};
+
+export const Avatar: React.FC<AvatarProps> = ({ avatar, nickname, size }) => {
 	const RenderedAvatar = useMemo(() => {
-		if (model) {
-			return model.avatar?.startsWith("a-") ? (
-				<AntdAvatar src={`/avatars/${avatar}.png`} size={size}>
-					{model.name}
-				</AntdAvatar>
-			) : (
-				<BotIcon className="user-avatar" />
-			);
-		}
+		// if (avatar) {
+		// 	if (avatar.startsWith("a-")) {
+		// 		return <AntdAvatar src={`/avatars/${avatar}.png`} size={size} />;
+		// 	}
+		// 	return <AntdAvatar size={size} src={`${oss_base}${avatar}`} />;
+		// }
 
-		if (avatar && avatar.startsWith("a-")) {
-			return <AntdAvatar src={`/avatars/${avatar}.png`} />;
-		}
-
-		if (avatar) {
-			return <AntdAvatar size={size} src={`${oss_base}${avatar}`} />;
-		}
+		// 为默认头像生成随机背景色
+		const randomColor = "rgb(80 59 187)"; //getRandomColor();
 
 		return (
-			<AntdAvatar style={{ backgroundColor: "rgb(91,105,230)" }} size={size}>
+			<AntdAvatar
+				style={{ backgroundColor: randomColor }}
+				size={size}
+				src={`${oss_base}${avatar}`}
+			>
 				{nickname}
 			</AntdAvatar>
 		);
-	}, [model, avatar, nickname]);
+	}, [avatar, nickname, size]);
 
-	return <div className=" no-dark">{RenderedAvatar}</div>;
+	return <div className="no-dark">{RenderedAvatar}</div>;
 };

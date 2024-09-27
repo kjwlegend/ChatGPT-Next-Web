@@ -37,8 +37,8 @@ export interface CreateChatData {
 	chat_images?: string[];
 	function_calls?: string[];
 	content_type: string;
-	sender_id?: string;
-	sender_name?: string;
+	sender_id?: string | number | undefined;
+	sender_name?: string | undefined;
 	[property: string]: any;
 }
 
