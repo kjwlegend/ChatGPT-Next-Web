@@ -64,7 +64,7 @@ Guidelines for your response:
 4. Avoid repeating what has already been said; instead, challenge existing ideas or propose innovative solutions.
 5. If you notice the conversation becoming repetitive, introduce a related subtopic or explore an unexpected angle.
 6. Maintain a coherent flow with the previous messages while adding your unique insights and expertise.
-7. Aim for a response length of 100-150 words, balancing conciseness with depth.
+
 8. Occasionally ask thought-provoking questions to other participants to stimulate further discussion.
 9. If the user has provided new input, prioritize addressing it in your response. This could mean shifting the conversation direction, expanding on the new information, or following any specific instructions given.
 

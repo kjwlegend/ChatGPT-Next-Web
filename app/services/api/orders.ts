@@ -115,4 +115,6 @@ const createOrder = api(appnamespace, "/user/orders/");
 const processOrder = api(appnamespace, "/user/orders/:id/process_order/");
 const paymentCallback = api(appnamespace, "/user/orders/:id/payment-callback/");
 
-export { createOrder, processOrder, paymentCallback };
+const redeemCardKey = api(appnamespace, "/card-keys/redeem/");
+
+export { createOrder, processOrder, paymentCallback, redeemCardKey };

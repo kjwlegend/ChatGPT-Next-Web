@@ -28,9 +28,7 @@ const { Option } = Select;
 const MultiAgentWindowHeader: React.FC = () => {
 	const multiAgentStore = useMultipleAgentStore.getState();
 	const [messageApi, contextHolder] = message.useMessage();
-
-	const { conversation } = useCurrentConversation();
-	const session = conversation;
+	const { conversation: session } = useCurrentConversation();
 
 	if (!session) {
 		return null;
@@ -42,8 +40,9 @@ const MultiAgentWindowHeader: React.FC = () => {
 
 	const handlePauseResume = () => {
 		const newPausedState = !session.paused;
-		const updatedSession = { ...session, paused: newPausedState };
-		multiAgentStore.updateConversation(session.id, updatedSession);
+		multiAgentStore.updateMultiAgentsChatsession(session.id, {
+			paused: newPausedState,
+		});
 
 		if (!newPausedState) {
 			continueConversation(session.id, session.round);
@@ -53,9 +52,8 @@ const MultiAgentWindowHeader: React.FC = () => {
 	const handleModeChange = (
 		value: "round-robin" | "random" | "intelligent",
 	) => {
-		const next_agent_type = value;
 		multiAgentStore.updateMultiAgentsChatsession(session.id, {
-			next_agent_type,
+			next_agent_type: value,
 		});
 	};
 
@@ -102,7 +100,9 @@ const MultiAgentWindowHeader: React.FC = () => {
 						>
 							<Option value="round-robin">顺序模式</Option>
 							<Option value="random">随机模式</Option>
-							<Option value="intelligent">智能决策</Option>
+							<Option value="intelligent" disabled>
+								智能决策
+							</Option>
 						</Select>
 						<div className={styles.buttonGroup}>
 							<Button icon={<DeleteOutlined />} onClick={handleRestart}>

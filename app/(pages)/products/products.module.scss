@@ -160,8 +160,6 @@
 	margin-bottom: 16px;
 }
 
-
-
 .yearlyDiscount {
 	font-size: 14px;
 	color: #52c41a;
@@ -205,4 +203,24 @@
 	text-decoration: line-through;
 	color: #999;
 	margin-right: 5px;
+}
+
+.cardKeyRedeem {
+	margin-top: 30px;
+	text-align: center;
+
+	h2 {
+		margin-bottom: 20px;
+	}
+
+	.redeemInput {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+
+		input {
+			max-width: 300px;
+		}
+	}
 }

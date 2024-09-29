@@ -17,6 +17,7 @@ import {
 } from "antd";
 import MembershipUpgrade from "./components/MembershipUpgrade";
 import SingleItemsPage from "./components/SingleItemPurchase";
+import CardKeyRedeem from "./components/CardKeyRedeem";
 
 const ProductPage = () => {
 	const { user } = useUserStore();
@@ -110,6 +111,7 @@ const ProductPage = () => {
 		<div className="body-container">
 			<MembershipUpgrade />
 			<SingleItemsPage />
+			<CardKeyRedeem />
 		</div>
 	);
 };

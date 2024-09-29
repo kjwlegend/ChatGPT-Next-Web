@@ -201,7 +201,6 @@ const AIConfigPanel: React.FC = () => {
 			)}
 			{showAgentList && (
 				<AntdModal
-					key={currentAgent.id}
 					open={showAgentList}
 					onCancel={handleModalClick}
 					footer={null}
