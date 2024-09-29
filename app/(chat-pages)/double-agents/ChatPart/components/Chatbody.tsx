@@ -35,7 +35,7 @@ export function MultiAgentChatbody() {
 			setDisplayMessages(initialMessages);
 			setHasNextPage(totalMessages > CHAT_PAGE_SIZE);
 		}
-	}, [session?.id, currentSessionId]); // 只在会话ID变化时重新初始化
+	}, [session, currentSessionId]); // 只在会话ID变化时重新初始化
 
 	// 监听 messages 的变化并更新 displayMessages
 	useEffect(() => {

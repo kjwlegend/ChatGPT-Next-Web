@@ -1,6 +1,6 @@
 // src/components/ChatArea/AIConfigCard.tsx
 
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
 import {
 	Card,
 	Button,
@@ -10,6 +10,7 @@ import {
 	Tag,
 	Checkbox,
 	Badge,
+	Menu,
 } from "antd";
 import {
 	SettingOutlined,
@@ -22,7 +23,8 @@ import {
 	DeleteOutlined,
 	SwapOutlined,
 } from "@ant-design/icons";
-
+import { DownOutlined } from "@ant-design/icons";
+import { DEFAULT_MODELS } from "@/app/constant";
 import {
 	DragDropContext,
 	Droppable,
@@ -46,7 +48,7 @@ import { useConversationActions } from "../multiAgentContext";
 interface AgentCardProps {
 	name: string;
 	agentIndex: number;
-	modelTag: string;
+	modelTag: React.ReactNode;
 	description: string;
 
 	onEdit: () => void;
@@ -80,7 +82,7 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 			>
 				<div className={styles.cardContent}>
 					<div className={styles.avatarSection}>
-						<Avatar size={64} avatar={avatar} nickname={name} />
+						<Avatar size={50} avatar={avatar} nickname={name} />
 					</div>
 					<div>
 						<h3>
@@ -95,9 +97,7 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 							></Badge>
 							{name}
 						</h3>
-						<div>
-							<Tag color="blue">{modelTag}</Tag>
-						</div>
+						<div>{modelTag}</div>
 					</div>
 
 					<div className={styles.actionSection}>
@@ -116,6 +116,9 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 		);
 	},
 );
+
+AgentCard.displayName = "AgentCard";
+
 interface AIConfigCardProps {
 	agent: Mask;
 	index: number;
@@ -133,7 +136,7 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 		currentConversationId,
 	} = useMultipleAgentStore();
 
-	const { deleteAgent } = useConversationActions();
+	const { deleteAgent, updateAgent } = useConversationActions();
 
 	const handleSliderChange = (value: number) => {
 		// 更新滑块值的逻辑
@@ -166,6 +169,32 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 		deleteAgent(agentId);
 	};
 
+	const [currentModel, setCurrentModel] = useState(agent.modelConfig.model);
+
+	const handleModelChange = (newModel: string) => {
+		setCurrentModel(newModel);
+		const updatedAgent = {
+			...agent,
+			modelConfig: {
+				...agent.modelConfig,
+				model: newModel,
+			},
+		};
+		updateAgent(index, updatedAgent);
+	};
+
+	const modelMenu = (
+		<Menu onClick={({ key }) => handleModelChange(key as string)}>
+			{DEFAULT_MODELS.flatMap((provider) =>
+				provider.models
+					.filter((model) => model.available)
+					.map((model) => (
+						<Menu.Item key={model.name}>{model.displayName}</Menu.Item>
+					)),
+			)}
+		</Menu>
+	);
+
 	return (
 		<Draggable key={agent.id} draggableId={agent.id.toString()} index={index}>
 			{(provided) => (
@@ -177,92 +206,17 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 					name={agent.name}
 					avatar={agent.avatar}
 					agentIndex={index}
-					modelTag={agent.modelConfig.model}
+					modelTag={
+						<Dropdown overlay={modelMenu} trigger={["click"]}>
+							<Button>
+								{currentModel} <DownOutlined />
+							</Button>
+						</Dropdown>
+					}
 					description={agent.description}
 					onEdit={() => agentEditClick(agent)}
 					onDelete={() => handleDeleteAI(index)}
 				/>
-				// <Card
-				// 	ref={provided.innerRef}
-				// 	{...provided.draggableProps}
-				// 	{...provided.dragHandleProps}
-				// 	className={styles.aiConfigCard}
-				// 	actions={[
-				// 		<Button
-				// 			key={config.id + "setting"}
-				// 			onClick={() => setShowModal(true)}
-				// 			icon={<SettingOutlined />}
-				// 		>
-				// 			配置
-				// 		</Button>,
-				// 		<Button
-				// 			key={config.id + "delete"}
-				// 			danger
-				// 			onClick={() => handleDeleteAI(index)}
-				// 			icon={<PlusCircleOutlined />}
-				// 		>
-				// 			删除
-				// 		</Button>,
-				// 		<a onClick={(e) => e.preventDefault()}>
-				// 			<Button icon={<SwitcherOutlined />} onClick={() => {}}>
-				// 				替换
-				// 			</Button>
-				// 		</a>,
-				// 	]}
-				// >
-				// 	<div className="flex-container column">
-				// 		<Avatar size={55} icon={<UserOutlined />} />
-				// 		<h3>{config.name}</h3>
-				// 	</div>
-				// 	<p>{config.description}</p>
-				// 	<Tag>模型: {config.modelConfig.model}</Tag>
-				// 	<Dropdown menu={{ items: plugins }}>
-				// 		<Button
-				// 			icon={
-				// 				config.plugins.length > 0 ? (
-				// 					<ThunderboltTwoTone />
-				// 				) : (
-				// 					<ApiTwoTone />
-				// 				)
-				// 			}
-				// 			onClick={(e) => e.preventDefault()}
-				// 		>
-				// 			{config.plugins.length > 0 ? "禁用插件" : "启用插件"}
-				// 		</Button>
-				// 	</Dropdown>
-				// 	{renderSlider(
-				// 		"多样性（Temperature）",
-				// 		"temperature",
-				// 		config.modelConfig.temperature,
-				// 		0.01,
-				// 		1,
-				// 		"控制输出的随机性和多样性",
-				// 	)}
-				// 	{renderSlider(
-				// 		"概率阈值（Top P）",
-				// 		"top_p",
-				// 		config.modelConfig.top_p,
-				// 		0.01,
-				// 		1,
-				// 		"保留的概率阈值",
-				// 	)}
-				// 	{renderSlider(
-				// 		"新主题惩罚（Presence Penalty）",
-				// 		"presence_penalty",
-				// 		config.modelConfig.presence_penalty,
-				// 		0.01,
-				// 		1,
-				// 		"引入新主题的频率",
-				// 	)}
-				// 	{renderSlider(
-				// 		"重复主题惩罚（Frequency Penalty）",
-				// 		"frequency_penalty",
-				// 		config.modelConfig.frequency_penalty,
-				// 		0.01,
-				// 		1,
-				// 		"限制重复主题的频率",
-				// 	)}
-				// </Card>
 			)}
 		</Draggable>
 	);

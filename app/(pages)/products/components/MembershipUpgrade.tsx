@@ -129,8 +129,8 @@ const MembershipUpgrade = () => {
 					}
 					data={[
 						{ description: "基础对话", value: "无限" },
-						{ description: "高级对话", value: "100次" },
-						{ description: "塔罗占卜", value: "10次" },
+						{ description: "高级对话", value: "100次/每日" },
+						{ description: "塔罗占卜", value: "10次/每日" },
 					]}
 					isCurrentPackage={currentPackage("diamond")}
 					onUpgrade={() => {

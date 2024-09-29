@@ -253,8 +253,17 @@ function MobileSideBar({
 	return (
 		<div className={`${styles.sidebar} ${className}`}>
 			<div className={styles["sidebar-header-bar"]}>
-				<div className="flex-container row m-b-20">
+				<div className={styles["header-content"]}>
 					<DrawerMenu />
+					<div className={styles["logo-container"]}>
+						<Image
+							src="/bot.png"
+							alt="xiaoguang AI LOGO"
+							width={30}
+							height={30}
+						/>
+						<span className={styles["logo-text"]}>小光AI</span>
+					</div>
 				</div>
 			</div>
 
@@ -278,6 +287,13 @@ function MobileSideBar({
 
 			<div className={styles["sidebar-tail"]}>
 				<UserInfo />
+				<IconButton
+					icon={<AddIcon styles={{ fill: "white" }} />}
+					text={Locale.Home.NewChat}
+					onClick={onAddClick}
+					shadow
+					// type="primary"
+				/>
 			</div>
 		</div>
 	);

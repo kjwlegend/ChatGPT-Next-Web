@@ -22,10 +22,12 @@ const ConversationActionsContext = createContext<{
 	startNewConversation: (topic?: string) => Promise<void>;
 	addAgent: (mask: Mask) => Promise<void>;
 	deleteAgent: (agentId: number) => Promise<void>;
+	updateAgent: (agentId: number, updatedMask: Mask) => Promise<void>;
 }>({
 	startNewConversation: async () => {},
 	addAgent: async () => {},
 	deleteAgent: async () => {},
+	updateAgent: async () => {},
 });
 
 export const ConversationActionsProvider: React.FC<{
@@ -170,9 +172,59 @@ export const ConversationActionsProvider: React.FC<{
 		[messageApi],
 	);
 
+	const updateAgent = useCallback(
+		async (agentId: number, updatedMask: Mask) => {
+			const hideLoading = messageApi.open({
+				content: "正在更新智能体",
+				type: "loading",
+			});
+
+			try {
+				// 获取最新的 store 状态
+				const store = useMultipleAgentStore.getState();
+				const currentConversationId = store.currentConversationId;
+
+				// 再次确认当前的 conversation
+				const currentSession = store.currentSession();
+				if (!currentSession || currentSession.id !== currentConversationId) {
+					throw new Error("当前会话已更改，请刷新页面后重试");
+				}
+
+				// 使用 setAIConfig 更新本地状态
+				store.setAIConfig(currentConversationId, agentId, updatedMask);
+
+				// 获取更新后的 aiConfigs
+				const updatedSession = store.currentSession();
+				if (!updatedSession) {
+					throw new Error("当前会话不存在");
+				}
+				const updatedAiConfigs = updatedSession.aiConfigs;
+
+				// 更新服务器
+				const custom_agents_data = { custom_agents_data: updatedAiConfigs };
+				await updateMultiAgentSession(
+					custom_agents_data,
+					currentConversationId,
+				);
+
+				hideLoading();
+				messageApi.success("智能体更新成功");
+			} catch (error) {
+				hideLoading();
+				if (error instanceof Error) {
+					messageApi.error(error.message);
+				} else {
+					messageApi.error("智能体更新失败，请重试");
+				}
+				console.error("智能体更新失败:", error);
+			}
+		},
+		[messageApi],
+	);
+
 	return (
 		<ConversationActionsContext.Provider
-			value={{ startNewConversation, addAgent, deleteAgent }}
+			value={{ startNewConversation, addAgent, deleteAgent, updateAgent }}
 		>
 			{contextHolder}
 			{children}

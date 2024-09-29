@@ -59,6 +59,7 @@ import FilterOptions from "./FilterOptions";
 import MaskList from "./MaskList";
 import MaskModal from "./MaskModal";
 import styles from "./mask.module.scss";
+import { ReturnButton } from "../chat/WindowHeader";
 
 const { Meta } = Card;
 
@@ -186,6 +187,7 @@ export const MaskPage: React.FC<MaskPageProps> = ({
 		<ErrorBoundary>
 			<div className={styles["mask-page"]}>
 				<div className={styles["mask-page-body"]}>
+					<ReturnButton />
 					{Locale.Mask.Page.SubTitle(maskStore.total)}
 					<SegmentedControl
 						segmentValue={segmentValue}

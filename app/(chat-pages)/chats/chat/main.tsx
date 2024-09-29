@@ -81,18 +81,17 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 		}
 	}, [_session, setSession]);
 
-	if (!_session) return null;
-
-	const sessionId = _session.id;
-
 	const commonProps = useMemo(
 		() => ({
-			// _session,
 			index,
 			isworkflow,
 		}),
-		[_session, index, isworkflow],
+		[index, isworkflow],
 	);
+
+	if (!_session) return null;
+
+	const sessionId = _session.id;
 
 	return (
 		<ChatProvider _session={_session} storeType={storeType}>
@@ -108,6 +107,8 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 		</ChatProvider>
 	);
 });
+
+_Chat.displayName = "Chat";
 export function useLoadData() {
 	const config = useAppConfig();
 

@@ -27,8 +27,6 @@ export function WorkflowSidebar(props: { className?: string }) {
 	const { workflowGroups } = useWorkflowGroups();
 	const { workflowSessions } = useWorkflowStore();
 
-	if (!workflowGroups) return;
-
 	//  change chatsessions from object type to array type
 	const [editWrokflow, setEditWorkflow] = useState<WorkflowGroup | undefined>();
 	const [showWorkflowModal, setShowWorkflowModal] = useState(false);
@@ -67,6 +65,8 @@ export function WorkflowSidebar(props: { className?: string }) {
 
 		setShowWorkflowModal(true);
 	};
+
+	if (!workflowGroups) return;
 
 	return (
 		<>

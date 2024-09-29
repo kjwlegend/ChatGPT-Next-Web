@@ -2,7 +2,7 @@ import { StructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 import S3FileStorage from "../../utils/s3_file_storage";
 import AliOSS from "@/app/utils/alioss";
-import { oss } from "@/app/constant";
+import { oss_base } from "@/app/constant";
 
 export class DallEAPIWrapper extends StructuredTool {
 	name = "dalle_image_generator";
@@ -38,7 +38,7 @@ export class DallEAPIWrapper extends StructuredTool {
 		const buffer = Buffer.from(content);
 		const filename = `${Date.now()}.png`;
 		await AliOSS.put(filename, buffer, "dalle");
-		return `${oss}/dalle/${filename}!webp90`;
+		return `${oss_base}/dalle/${filename}!webp90`;
 	}
 
 	schema = z.object({

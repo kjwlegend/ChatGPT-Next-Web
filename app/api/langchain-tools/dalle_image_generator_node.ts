@@ -2,7 +2,7 @@ import { getServerSideConfig } from "@/app/config/server";
 import { DallEAPIWrapper } from "./dalle_image_generator";
 import S3FileStorage from "@/app/utils/s3_file_storage";
 import AliOSS from "@/app/utils/alioss";
-import { oss } from "@/app/constant";
+import { oss_base } from "@/app/constant";
 
 export class DallEAPINodeWrapper extends DallEAPIWrapper {
 	async saveImageFromUrl(url: string) {
@@ -15,6 +15,6 @@ export class DallEAPINodeWrapper extends DallEAPIWrapper {
 		var fileName = `${Date.now()}.png`;
 
 		await AliOSS.put(fileName, buffer, "dalle");
-		return `${oss}/dalle/${fileName}!webp90`;
+		return `${oss_base}/dalle/${fileName}!webp90`;
 	}
 }

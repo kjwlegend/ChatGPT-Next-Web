@@ -5,8 +5,7 @@ import { TAROT_BACK_IMAGE } from "../constants/tarotCards";
 import { Tooltip } from "antd";
 import styles from "../styles/Card.module.scss";
 import { on } from "events";
-import { oss } from "@/app/constant";
-
+import { oss_base } from "@/app/constant";
 const TAROT_BRAND = "golden-dawn";
 
 interface CardProps {
@@ -48,7 +47,10 @@ const Card: React.FC<CardProps> = ({
 				<img
 					src={
 						flipped
-							? oss + `/tarots/${TAROT_BRAND}/` + card.front + "!cards-350-webp"
+							? oss_base +
+								`/tarots/${TAROT_BRAND}/` +
+								card.front +
+								"!cards-350-webp"
 							: TAROT_BACK_IMAGE
 					}
 					alt={card.name}

@@ -8,6 +8,7 @@ export function ConversationChatTemplate(
 	topic: string,
 	historySummary: string,
 	historyMessagesContent: string,
+	userInput?: string, // 新增参数：用户最新输入
 ) {
 	const otherAgents = allAgents.filter(
 		(agent) => agent.name !== currentAgent.name,
@@ -24,19 +25,37 @@ ${currentAgent.context.map((m) => m.content).join("\n")}
 Other Participants in the Conversation:
 ${otherAgents.map((agent) => `- ${agent.name}: ${agent.description} -`).join("\n")}
 
-Central Theme of Dialogue: ${topic}
+Central Theme of Dialogue: 
+"""
+${topic}
+"""
+
 
 ${
 	historySummary
 		? `Conversation Summary:
+"""
 ${historySummary}
-
+"""
 Recent Messages:
 """
 ${historyMessagesContent}`
 		: "This is the start of the conversation. You may begin the discussion on the central theme."
 }
 """
+
+${
+	userInput
+		? `
+Recent User Input:
+"""
+${userInput}
+"""
+
+Please pay special attention to this recent input from the user. It may contain new information, a shift in topic, or additional instructions for the conversation. Adjust your response accordingly.
+`
+		: ""
+}
 
 Guidelines for your response:
 1. Address the central theme and progress the conversation by introducing new aspects or deeper insights.
@@ -47,6 +66,7 @@ Guidelines for your response:
 6. Maintain a coherent flow with the previous messages while adding your unique insights and expertise.
 7. Aim for a response length of 100-150 words, balancing conciseness with depth.
 8. Occasionally ask thought-provoking questions to other participants to stimulate further discussion.
+9. If the user has provided new input, prioritize addressing it in your response. This could mean shifting the conversation direction, expanding on the new information, or following any specific instructions given.
 
 Remember, there are ${allAgents.length} agents in this conversation, including yourself. Your goal is to create a dynamic, insightful dialogue that explores multiple facets of the topic.
 

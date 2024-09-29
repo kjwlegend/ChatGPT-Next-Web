@@ -10,7 +10,10 @@ import { Conversation } from "microsoft-cognitiveservices-speech-sdk";
 import { contextSummarize } from "../chains/summarize";
 import { Mask, ChatMessage, ChatToolMessage } from "../types/index";
 import { getMessageImages, getMessageTextContent } from "../utils";
-import { createMultipleAgentSession } from "../services/api/chats";
+import {
+	createMultipleAgentSession,
+	updateMultiAgentSession,
+} from "../services/api/chats";
 import { FileInfo } from "../client/platforms/utils";
 import { useUserStore } from "./user";
 import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
@@ -68,7 +71,7 @@ export type MultiAgentChatSession = {
 	id: string;
 	aiConfigs: Mask[]; // 存储多个 agent 的配置
 	topic: string;
-	initialInput: string;
+	userAdditionInput?: string;
 	messages: MultiAgentChatMessage[];
 	lastUpdateTime: number;
 	updated_at: string;
@@ -114,6 +117,7 @@ type StoreState = {
 		conversationId: string,
 		updates: Partial<MultiAgentChatSession>,
 	) => void;
+	putMultiAgentSessionData: (conversationId: string) => void;
 	updateConversation: (
 		conversationId: string,
 		conversation: MultiAgentChatSession,
@@ -178,17 +182,12 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 	aiConfigs: [], // 存储多个 agent 的配置
 
 	conversations: [],
-	startConversation: (
-		topic: string,
-		conversationId: string,
-		initialInput: string,
-	) => {
+	startConversation: (topic: string, conversationId: string) => {
 		set((state) => {
 			const newConversation: MultiAgentChatSession = {
 				id: conversationId,
 				aiConfigs: [] as Mask[],
 				topic: topic,
-				initialInput: initialInput,
 				messages: [],
 				lastUpdateTime: new Date().getTime(),
 				created_at: new Date().toISOString(),
@@ -225,7 +224,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				id: session.id,
 				aiConfigs: session.custom_agents_data || [], // 使用多个 agent 配置
 				topic: session.session_topic || MULTI_AGENT_DEFAULT_TOPIC,
-				initialInput: session.session_description || "",
+				userAdditionInput: "",
 				messages: [], // 这里假设没有初始消息，需要后续加载
 				lastUpdateTime: Date.parse(session.updated_at),
 				created_at: session.created_at,
@@ -535,6 +534,31 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				conversations: updatedConversations,
 			};
 		}),
+	putMultiAgentSessionData: async (conversationId: string) => {
+		const state = get();
+		const currentSession = state.conversations.find(
+			(session) => session.id === conversationId,
+		);
+
+		if (!currentSession) {
+			throw new Error("Session not found");
+		}
+
+		const sessionData = {
+			session_topic: currentSession.topic,
+			last_update_time: currentSession.lastUpdateTime,
+			session_summary: currentSession.memory,
+		};
+
+		try {
+			await updateMultiAgentSession(sessionData, conversationId);
+
+			return true;
+		} catch (error) {
+			console.error("Failed to update multi-agent session data:", error);
+			throw error;
+		}
+	},
 	deleteConversation: (conversationId: string | number) =>
 		set((state) => {
 			const updatedConversations = state.conversations.filter(
@@ -653,6 +677,8 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		get().updateBotMessage(sessionId, message, updatedMessage.id);
 		get().updateRound(sessionId);
 
+		get().putMultiAgentSessionData(sessionId);
+
 		return updatedMessage;
 	},
 	onUserInput: async (
@@ -669,13 +695,27 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				session,
 			);
 
-			// update session topic
-			get().updateMultiAgentsChatsession(session.id, {
-				topic: content,
-			});
+			// 检查当前的 topic 是否是默认 topic
+			if (session.topic === MULTI_AGENT_DEFAULT_TOPIC) {
+				// 如果是默认 topic，则将 content 设置为新的 topic
+				get().updateMultiAgentsChatsession(session.id, {
+					topic: content,
+				});
+			} else {
+				// 如果不是默认 topic，则将 content 添加到 userAdditionInput
+				const currentAdditionalInput = session.userAdditionInput || "";
+				const updatedAdditionalInput = currentAdditionalInput
+					? `${currentAdditionalInput}\n${content}`
+					: content;
+
+				get().updateMultiAgentsChatsession(session.id, {
+					userAdditionInput: updatedAdditionalInput,
+				});
+			}
 
 			// make session unpaused
 			get().updateMultiAgentsChatsession(session.id, { paused: false });
+			get().putMultiAgentSessionData(session.id);
 		} catch (error) {
 			console.error("Error in onUserInput:", error);
 			throw error;
@@ -782,7 +822,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 			}
 
 			tokenCount += messageTokenCount;
-			historyMessages.push(message); // 添加消息到历史消息数组
+			historyMessages.unshift(message); // 添加消息到历史消息数组
 		}
 
 		return historyMessages; // 返回历史消息
@@ -797,7 +837,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		}
 
 		// 获取历史消息
-		const historyMessages = get().getHistory(conversationId).reverse();
+		const historyMessages = get().getHistory(conversationId);
 		//  获取会话并转换成字符串
 		const historyMessageString = historyMessages
 			.map((m) => m.content)

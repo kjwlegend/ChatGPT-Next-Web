@@ -47,15 +47,16 @@ const GetMoreDrawsModal: React.FC<GetMoreDrawsModalProps> = ({
 	const balanceUpdate = async () => {
 		messageApi.loading("领取中");
 		try {
+			//TODO: 塔罗的签到接口 合并到每天的签到接口
 			const balance = await resetTarotBalance(user.id);
 			if (balance.data) {
 				const tarot_balance = balance.data.balance;
-
+				const basic_tarot_balance = balance.data.basic_tarot_balance;
 				updateUser({
 					...user,
 					user_balance: {
 						...user.user_balance,
-						tarot_balance,
+						basic_tarot_balance: tarot_balance,
 					},
 				});
 				messageApi.success({

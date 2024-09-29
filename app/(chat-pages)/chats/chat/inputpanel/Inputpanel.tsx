@@ -162,12 +162,11 @@ export function Inputpanel(props: {
 	const config = useAppConfig();
 	const multiAgentStore = useMultipleAgentStore.getState();
 	const { conversation, conversationId } = useCurrentConversation();
-	let session;
-	if (props.submitType === "multi-agent") {
-		session = conversation;
-	} else {
-		session = useSessions();
-	}
+	const sessions = useSessions(); // Call this hook unconditionally
+
+	// Then use the result conditionally
+	const session = submitType === "multi-agent" ? conversation : sessions;
+
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
 	const promptStore = usePromptStore();
@@ -327,7 +326,7 @@ export function Inputpanel(props: {
 					showPromptModal={handleShowPromptModal}
 					hitBottom={hitBottom}
 					uploading={uploading}
-					session={session}
+					session={session as sessionConfig}
 					index={props.index}
 					workflow={isworkflow}
 				/>

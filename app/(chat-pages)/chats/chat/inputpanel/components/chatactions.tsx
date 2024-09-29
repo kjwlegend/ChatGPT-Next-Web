@@ -135,7 +135,8 @@ import { sessionConfigUpdate } from "../../../utils/chatUtils";
 export const IconFont = createFromIconfontCN({
 	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
-export function ChatAction(props: {
+
+const ChatActionComponent = (props: {
 	text: string;
 	icon: JSX.Element;
 	loding?: boolean;
@@ -144,7 +145,7 @@ export function ChatAction(props: {
 	type?: "default" | "dropdown";
 	dropdownItems?: MenuProps;
 	hidetext?: boolean | undefined;
-}) {
+}) => {
 	const iconRef = useRef<HTMLDivElement>(null);
 	const textRef = useRef<HTMLDivElement>(null);
 	const [width, setWidth] = useState({
@@ -232,7 +233,10 @@ export function ChatAction(props: {
 			</div>
 		);
 	}
-}
+};
+ChatActionComponent.displayName = "ChatAction";
+
+export const ChatAction = ChatActionComponent;
 
 export const ChatActions = memo(
 	(props: {
@@ -275,10 +279,7 @@ export const ChatActions = memo(
 		const onImageSelected = async (e: any) => {
 			const file = e.target.files[0];
 			const fileName = await api.file.upload(file, "upload");
-			props.imageSelected({
-				fileName,
-				fileUrl: `${oss_base}${fileName}!uploadthumbnail`,
-			});
+			props.setAttachImages([`${oss_base}${fileName}!uploadthumbnail`]);
 			e.target.value = null;
 		};
 
@@ -383,16 +384,15 @@ export const ChatActions = memo(
 				setShowUploadFile(showFile);
 			}
 
-			// 只有在 currentModel 发生变化且 show 为 false 时才更新父组件状态
+			// Only update parent component state when currentModel changes and show is false
 			if (!show) {
-				// 使用 setTimeout 来避免在当前渲染周期中更新父组件状态
+				// Use setTimeout to avoid updating parent component state in the current render cycle
 				setTimeout(() => {
 					props.setAttachImages([]);
 					props.setUploading(false);
 				}, 0);
 			}
-			// 这里确保 useEffect 仅在 currentModel 发生变化时触发
-		}, [currentModel]);
+		}, [currentModel, isEnableRAG, showUploadImage, showUploadFile, props]);
 
 		const chatInjection = session.mask.modelConfig;
 		const [enableUserInfo, setEnableUserInfo] = useState(
@@ -421,12 +421,6 @@ export const ChatActions = memo(
 		};
 
 		const handleInjectRelatedQuestions = () => {
-			// chatStore.updateSession(sessionId, () => {
-			// 	session.mask.modelConfig.enableRelatedQuestions =
-			// 		!session.mask.modelConfig.enableRelatedQuestions;
-
-			// });
-
 			const newstate = !enableRelatedQuestions;
 
 			sessionConfigUpdate(updateType, {
@@ -472,33 +466,6 @@ export const ChatActions = memo(
 							hidetext={props.workflow ? true : false}
 						/>
 					)}
-					{/* <ChatAction
-					onClick={nextTheme}
-					text={Locale.Chat.InputActions.Theme[theme]}
-					icon={
-						<>
-							{theme === Theme.Auto ? (
-								<AutoIcon />
-							) : theme === Theme.Light ? (
-								<LightIcon />
-							) : theme === Theme.Dark ? (
-								<DarkIcon />
-							) : null}
-						</>
-					}
-				/> */}
-					{/* <ChatAction
-					onClick={props.showPromptHints}
-					text={Locale.Chat.InputActions.Prompt}
-					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
-				/> */}
-					{/* <ChatAction
-					onClick={() => setShowModelSelector(true)}
-					text={currentModel}
-					icon={<MessageTwoTone style={{ fontSize: "15px" }} />}
-						hidetext={props.workflow ? true : false}
-				/> */}
-
 					{showUploadImage && (
 						<ChatAction
 							onClick={props.uploadImage}
@@ -588,10 +555,12 @@ export const ChatActions = memo(
 		);
 	},
 );
+ChatActions.displayName = "ChatActions";
+
 // simple Chatactions ,只保留上传图片和文件, 用于多轮对话
 
 // 简化版 ChatActions，只保留上传图片和文件功能
-export const SimpleChatActions = memo(
+const SimpleChatActionsComponent = memo(
 	(props: {
 		uploadImage: () => void;
 		uploadFile: () => void;
@@ -630,6 +599,9 @@ export const SimpleChatActions = memo(
 		);
 	},
 );
+SimpleChatActionsComponent.displayName = "SimpleChatActions";
+
+export const SimpleChatActions = SimpleChatActionsComponent;
 
 export function DeleteImageButton(props: { deleteImage: () => void }) {
 	return (

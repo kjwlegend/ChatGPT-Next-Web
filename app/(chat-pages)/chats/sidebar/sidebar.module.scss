@@ -19,6 +19,7 @@ $black-color: var(--black);
 	.sidebar-header-bar {
 		display: flex;
 		margin-bottom: 20px;
+		width: 100%;
 
 		.sidebar-bar-button {
 			flex-grow: 1;
@@ -51,6 +52,7 @@ $black-color: var(--black);
 
 		&.sidebar-show {
 			left: 0;
+			background-color: white;
 		}
 	}
 }
@@ -144,41 +146,6 @@ $black-color: var(--black);
 			opacity: 1;
 		}
 	}
-	.sidebar-tail {
-		flex-direction: column-reverse;
-		align-items: center;
-
-		.sidebar-actions {
-			flex-direction: column-reverse;
-			align-items: center;
-			.sidebar-action {
-				margin-right: 0;
-				margin-top: 15px;
-			}
-		}
-	}
-}
-.sidebar-header {
-	position: relative;
-	padding-top: 20px;
-	padding-bottom: 20px;
-}
-.sidebar-logo {
-	position: absolute;
-	right: 0;
-	bottom: 18px;
-}
-
-.sidebar-title {
-	font-size: 20px;
-	font-weight: bold;
-	animation: slide-in ease 0.3s;
-}
-.sidebar-sub-title {
-	font-size: 12px;
-	font-weight: 400;
-	animation: slide-in ease 0.3s;
-	color: inherit;
 }
 
 .sidebar-body {
@@ -188,12 +155,49 @@ $black-color: var(--black);
 }
 .sidebar-tail {
 	display: flex;
+	align-items: center;
 	justify-content: space-between;
 	padding-top: 20px;
+
+	.sidebar-actions {
+		flex-direction: column-reverse;
+		align-items: center;
+	}
 }
 .sidebar-actions {
 	display: inline-flex;
 }
 .sidebar-action:not(:last-child) {
 	margin-right: 15px;
+}
+
+.header-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	width: 100%;
+}
+
+.logo-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 auto;
+}
+
+.logo-text {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+// 在移动设备上的样式调整（如果需要）
+@media (max-width: 768px) {
+	.sidebar-header-bar {
+		padding: 8px;
+	}
+
+	.logo-text {
+		font-size: 14px;
+	}
 }

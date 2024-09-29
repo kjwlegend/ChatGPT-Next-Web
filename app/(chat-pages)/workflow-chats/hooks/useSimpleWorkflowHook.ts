@@ -57,7 +57,12 @@ export const useSimpleWorkflowService = () => {
 				throw new Error("登录已过期");
 			}
 		},
-		[workflowGroups, addChatGrouptoWorkflow, fetchNewWorkflowGroup],
+		[
+			workflowGroups,
+			getworkFlowSessions,
+			addChatGrouptoWorkflow,
+			fetchNewWorkflowGroup,
+		],
 	);
 
 	useEffect(() => {

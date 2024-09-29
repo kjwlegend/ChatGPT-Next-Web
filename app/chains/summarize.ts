@@ -97,9 +97,8 @@ export async function summarizeSession(session: ChatSession): Promise<{
 
 	toBeSummarizedMsgs.unshift({
 		role: "system",
-		content: memoryPrompt?.length > 0
-			? Locale.Store.Prompt.History(memoryPrompt)
-			: "",
+		content:
+			memoryPrompt?.length > 0 ? Locale.Store.Prompt.History(memoryPrompt) : "",
 	});
 
 	const newSummarizeIndex = messages.length;
@@ -125,34 +124,45 @@ export async function summarizeSession(session: ChatSession): Promise<{
 }
 
 export async function contextSummarize(
-	message: ChatMessage[] | MultiAgentChatMessage[] | RequestMessage[],
-	historysummary: string,
+	recentMessages: ChatMessage[] | MultiAgentChatMessage[],
+	historySummary: string,
 ): Promise<string> {
-	const summaryMessages: RequestMessage[] = [
+	const systemMessages: RequestMessage[] = [
 		{
 			role: "system",
-			content: "这是我们之前讨论的要点摘要，请仔细阅读：" + historysummary,
-		},
-		{
-			role: "system",
-			content:
-				"请基于刚才的对话内容和提供的摘要，精炼出一个新的总结，用于指导后续的对话。总结应简洁明了，控制在500字以内。如果现有信息不足以形成一个全面的总结，请输出'当前无足够信息提供记忆上下文'。",
+			content: `请基于以下信息创建一个新的总结：
+
+1. 历史总结：
+${historySummary}
+
+2. 最近的对话内容：
+[接下来会提供最近的对话内容]
+
+请遵循以下指南：
+1. 综合历史总结和最近的对话，创建一个新的、更新的总结。
+2. 总结应该简洁明了，控制在300字以内。
+3. 突出重要的新信息、关键点和任何显著的话题转变。
+4. 保持总结的连贯性和上下文的完整性。
+
+
+请提供新的总结：`,
 		},
 	];
 
-	const newmessage = message
-		.reverse()
-		.map((msg) => ({
-			role: msg.role,
-			content: getMessageTextContent(msg),
-		}))
-		.concat(
-			summaryMessages.map((msg) => ({
-				role: msg.role,
-				content: typeof msg.content === "string" ? msg.content : "",
-			})),
-		);
+	const recentMessageContents = recentMessages
+		.slice(-10) // 只取最近的10条消息
+		.map((msg) => {
+			const content = getMessageTextContent(msg);
+			const agentName = "agentName" in msg ? msg.agentName : null;
 
-	const summary = await strictLLMResult(newmessage);
+			return {
+				role: msg.role,
+				content: agentName ? `${agentName}说：${content}` : content,
+			};
+		});
+
+	const allMessages = [...systemMessages, ...recentMessageContents];
+
+	const summary = await strictLLMResult(allMessages);
 	return summary;
 }

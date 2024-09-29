@@ -5,6 +5,12 @@
 	justify-content: center;
 	text-align: center;
 	position: relative;
+
+	@media screen and (max-width: 768px) {
+		max-height: 80vh; // 设置最大高度为视口高度
+		overflow-y: auto; // 允许垂直滚动
+		padding: 20px 0; // 添加一些垂直内边距
+	}
 }
 
 .banner {
@@ -71,13 +77,12 @@
 	}
 
 	@media screen and (max-width: 768px) {
-		// flex-direction: column;
-		align-items: flex-start;
-		justify-content: space-around;
+		flex-direction: column;
+		align-items: center;
 
 		.description-item {
-			width: 100%;
-			margin-bottom: 10px;
+			width: 90%;
+			margin-bottom: 20px;
 		}
 	}
 }
@@ -89,15 +94,30 @@
 
 @media screen and (max-width: 768px) {
 	.title,
-	.subtitle,
-	.description-title,
-	.description-content {
-		// font-size scale
-		transform: scale(0.8);
-		margin: 0;
+	.subtitle {
+		font-size: 20px;
+		transform: none;
+		margin-bottom: 10px;
 	}
+
+	.description-title {
+		font-size: 16px;
+		transform: none;
+	}
+
+	.description-content {
+		font-size: 14px;
+		transform: none;
+	}
+
+	.buttons {
+		flex-direction: column;
+		align-items: center;
+	}
+
 	.button {
-		display: flex;
+		width: 80%;
+		margin-bottom: 10px;
 	}
 }
 
@@ -149,6 +169,20 @@
 				color: #1890ff;
 				font-size: 1.2rem;
 			}
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		flex-direction: column;
+
+		.update-image-container {
+			margin-right: 0;
+			margin-bottom: 20px;
+		}
+
+		.update-list {
+			height: auto;
+			max-height: 300px;
 		}
 	}
 }

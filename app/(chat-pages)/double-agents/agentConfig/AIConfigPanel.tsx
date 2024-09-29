@@ -183,7 +183,11 @@ const AIConfigPanel: React.FC = () => {
 						title="AI配置"
 						onClose={handleAgentUpdate}
 						footer={null}
-						actions={[<Button onClick={handleAgentUpdate}>保存并关闭</Button>]}
+						actions={[
+							<Button key="save-and-close" onClick={handleAgentUpdate}>
+								保存并关闭
+							</Button>,
+						]}
 					>
 						<AgentConfigCard
 							mask={currentAgent}
@@ -197,6 +201,7 @@ const AIConfigPanel: React.FC = () => {
 			)}
 			{showAgentList && (
 				<AntdModal
+					key={currentAgent.id}
 					open={showAgentList}
 					onCancel={handleModalClick}
 					footer={null}

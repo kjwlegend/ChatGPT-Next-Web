@@ -77,6 +77,7 @@ const EmptyIntro = memo(() => {
 	);
 });
 
+EmptyIntro.displayName = "EmptyIntro";
 const AuthPrompt = memo(() => (
 	<div className={styles["welcome-container"]}>
 		<div className={styles["logo"]}>
@@ -104,6 +105,8 @@ const AuthPrompt = memo(() => (
 	</div>
 ));
 
+AuthPrompt.displayName = "AuthPrompt";
+
 const MainScreen = memo(() => {
 	const isAuth = useAuthStore((state) => state.isAuthenticated);
 	const conversations = useMultipleAgentStore((state) => state.conversations);
@@ -112,6 +115,8 @@ const MainScreen = memo(() => {
 	if (conversations.length >= 1) return <ChatArea />;
 	return <EmptyIntro />;
 });
+
+MainScreen.displayName = "MainScreen";
 
 const DoulbeAgentLayout = memo(() => {
 	return (
@@ -132,6 +137,8 @@ const DoulbeAgentLayout = memo(() => {
 		</MultiAgentChatProvider>
 	);
 });
+
+DoulbeAgentLayout.displayName = "DoulbeAgentLayout";
 
 const useHasHydrated = () => {
 	const [hasHydrated, setHasHydrated] = useState<boolean>(false);

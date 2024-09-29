@@ -37,6 +37,11 @@ const nextConfig = {
         port: '8000',
         pathname: '/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'xiaoguangai.oss-cn-shanghai.aliyuncs.com',
+        pathname: '/**',
+      },
     ],
   },
   reactStrictMode: false,

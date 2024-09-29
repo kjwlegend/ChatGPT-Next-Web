@@ -221,6 +221,8 @@ const MainScreen: React.FC<{
 	},
 );
 
+MainScreen.displayName = "MainScreen";
+
 const WelcomeContainer: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => (
@@ -237,6 +239,8 @@ const WelcomeContainer: React.FC<{ children: React.ReactNode }> = ({
 		{children}
 	</div>
 );
+
+WelcomeContainer.displayName = "WelcomeContainer";
 
 const App = () => {
 	return (

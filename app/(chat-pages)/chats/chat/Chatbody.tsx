@@ -181,7 +181,7 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 			);
 
 		return contextMessage;
-	}, [context, isLoading, messages, session.lastUpdateTime]);
+	}, [context, isLoading, messages, ]);
 
 	const [msgRenderIndex, _setMsgRenderIndex] = useState(() =>
 		Math.max(

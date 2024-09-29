@@ -25,7 +25,58 @@ export function ChatItem(props: {
 	narrow?: boolean;
 	mask: Mask;
 }) {
-	if (props.narrow) return;
+	const [isSliding, setIsSliding] = useState(false);
+	const [slideDistance, setSlideDistance] = useState(0);
+	const touchStartX = useRef(0);
+
+	const resetSlide = useCallback(() => {
+		setIsSliding(false);
+		setSlideDistance(0);
+	}, []);
+
+	const handleTouchStart = (e: React.TouchEvent) => {
+		touchStartX.current = e.touches[0].clientX;
+	};
+
+	const handleTouchMove = (e: React.TouchEvent) => {
+		const currentX = e.touches[0].clientX;
+		const diff = touchStartX.current - currentX;
+		if (diff > 0) {
+			setIsSliding(true);
+			setSlideDistance(Math.min(diff, 80)); // 最大滑动距离为80px
+		} else if (diff < 0 && isSliding) {
+			// 允许向右滑动来恢复原始状态
+			setSlideDistance(Math.max(0, slideDistance + diff));
+		}
+	};
+
+	const handleTouchEnd = () => {
+		if (slideDistance < 40) {
+			resetSlide();
+		}
+	};
+
+	useEffect(() => {
+		// 当用户点击其他地方时，恢复原始状态
+		const handleClickOutside = (e: MouseEvent) => {
+			if (
+				isSliding &&
+				e.target &&
+				!(e.target as Element).closest(`.${styles["chat-item"]}`)
+			) {
+				resetSlide();
+			}
+		};
+
+		document.addEventListener("click", handleClickOutside);
+
+		return () => {
+			document.removeEventListener("click", handleClickOutside);
+		};
+	}, [isSliding, resetSlide]);
+
+	if (props.narrow) return null;
+
 	return (
 		<div
 			className={`${styles["chat-item"]} ${
@@ -33,6 +84,13 @@ export function ChatItem(props: {
 			}`}
 			onClick={props.onClick}
 			title={`${props.title}\n${Locale.ChatItem.ChatItemCount(props.count)}`}
+			onTouchStart={handleTouchStart}
+			onTouchMove={handleTouchMove}
+			onTouchEnd={handleTouchEnd}
+			style={{
+				transform: `translateX(-${slideDistance}px)`,
+				transition: "transform 0.3s ease",
+			}}
 		>
 			<>
 				<div className={styles["chat-item-title"]}>
@@ -70,6 +128,29 @@ export function ChatItem(props: {
 					}}
 				>
 					<EditIcon />
+				</div>
+			)}
+
+			{isSliding && (
+				<div
+					className={styles["chat-item-delete-mobile"]}
+					style={{
+						position: "absolute",
+						right: 0,
+						top: 0,
+						bottom: 0,
+						width: `${slideDistance}px`,
+						backgroundColor: "darkred",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+					onClick={(e) => {
+						e.stopPropagation();
+						props.onDelete && props.onDelete();
+					}}
+				>
+					<DeleteIcon />
 				</div>
 			)}
 		</div>

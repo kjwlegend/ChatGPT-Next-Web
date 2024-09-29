@@ -5,6 +5,7 @@ import styles from "./welcome.module.scss";
 import Image from "next/image";
 import { useAuthStore } from "../store/auth";
 import { getDailyCheckIn } from "../services/api/user";
+import { oss_base } from "../constant";
 
 const ModalPopup = () => {
 	const [visible, setVisible] = useState(true);
@@ -77,45 +78,42 @@ const ModalPopup = () => {
 
 				<div className={styles.description}>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>每日签到奖励</p>
+						<p className={styles["description-title"]}>每日对话额度升级</p>
 						<p className={styles["description-content"]}>
-							每日签到可获得高级模型5次，基础模型200次的使用额度。
+							每天免费使用基础模型200次。释放您的创意潜能。
 						</p>
 					</div>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>对话质量升级</p>
+						<p className={styles["description-title"]}>对话质量全面升级</p>
 						<p className={styles["description-content"]}>
-							集合先进大模型,并加入了大量定制化微调,专业提示词工程师研究.
+							顶级模型 + 专业提示词，带来精准、流畅、富有洞察力的对话。
 						</p>
 					</div>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>工作流+双AI</p>
+						<p className={styles["description-title"]}>多Agent协作模式</p>
 						<p className={styles["description-content"]}>
-							可支持无限制工作流定制, 集成双AI特色训练.
+							AI智能体团队协作，为复杂任务提供全方位解决方案。
+						</p>
+					</div>
+					<div className={styles["description-item"]}>
+						<p className={styles["description-title"]}>无限制工作流定制</p>
+						<p className={styles["description-content"]}>
+							自由组合AI助手，灵活应对各种专业领域和复杂场景。
 						</p>
 					</div>
 				</div>
 				<div className={styles["update-content"]}>
 					<div className={styles["update-image-container"]}>
 						<Image
-							src="/assets/android-chrome-512x512.png"
+							src={`${oss_base}/public/latest_customer_qr.png!webp90`}
 							alt="更新图片"
 							width={200}
 							height={200}
 							className={styles["update-image"]}
 						/>
 						<p className={styles["update-title"]}>
-							进群将获取每日免费额度上限提高
+							进群可升级成黄金会员,获取1000次免费对话额度!
 						</p>
-					</div>
-					<div className={styles["update-text-container"]}>
-						0908更新日志:
-						<ul className={styles["update-list"]}>
-							<li>新增每日签到功能，普通模型大幅度免费</li>
-							<li>优化对话模型，提升回答质量</li>
-							<li>增加更多工作流模板，提高使用效率</li>
-							<li>优化新界面细节, 加快对话速度</li>
-						</ul>
 					</div>
 				</div>
 

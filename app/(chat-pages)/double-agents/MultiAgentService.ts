@@ -18,6 +18,7 @@ import { getMessageTextContent } from "@/app/utils";
 import { sendChatMessage } from "@/app/services/chatService";
 import { AttachImages } from "../chats/chat/inputpanel/components/AttachImages";
 import { AttachFiles } from "../chats/chat/inputpanel/components/AttachFiles";
+import { estimateTokenLength } from "@/app/utils/chat/token";
 
 export async function startConversation(
 	conversationId: string,
@@ -87,8 +88,10 @@ export async function sendNextAgentMessage(
 		);
 	}
 
+	const userDirection = session.userAdditionInput;
+
 	const historySummary =
-		round > 1 ? await MultiAgentStore.summarizeSession(conversationId) : "";
+		(await MultiAgentStore.summarizeSession(conversationId)) ?? "";
 
 	const template = ConversationChatTemplate(
 		selectedAgent,
@@ -96,17 +99,16 @@ export async function sendNextAgentMessage(
 		session.topic,
 		historySummary,
 		historyMessages.map((m) => `${m.agentName}: ${m.content}`).join("\n"),
+		userDirection,
 	);
 
 	concatMessage = [template];
 
-	if (round === 1) {
-		const userMessage = createMultiAgentChatMessage({
-			role: "user",
-			content: mContent,
-		});
-		concatMessage.push(userMessage);
-	}
+	const userMessage = createMultiAgentChatMessage({
+		role: "user",
+		content: mContent,
+	});
+	concatMessage.push(userMessage);
 
 	const messageTemplate = createMultiAgentChatMessage({
 		role: "assistant",
@@ -131,6 +133,11 @@ export async function sendNextAgentMessage(
 		},
 		onFinish: async (message: string) => {
 			botMessage.content = message;
+			const Messagetoken = estimateTokenLength(message);
+			const summaryToken = estimateTokenLength(
+				MultiAgentStore.getHistory(conversationId).join("\n"),
+			);
+			botMessage.token_counts_total = Messagetoken + summaryToken;
 			await MultiAgentStore.finalizeBotMessage(conversationId, botMessage);
 			// 结束后继续发送
 			sendNextAgentMessage(conversationId, message);

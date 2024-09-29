@@ -25,7 +25,7 @@ const QuestionInputComponent = () => {
 
 	const { user_balance, id } = UserStore.user;
 
-	const { tarot_balance } = user_balance;
+	const { basic_tarot_balance } = user_balance;
 
 	const nickname = UserStore.user.nickname;
 	const { setStage, questions, setQuestions, stage } = TarotStore;
@@ -89,7 +89,7 @@ const QuestionInputComponent = () => {
 			return;
 		}
 		// if no question, show error text
-		if (tarot_balance === 0) {
+		if (basic_tarot_balance === 0) {
 			setErrorText("您的提问次数不足");
 			return;
 		}
@@ -222,7 +222,7 @@ const QuestionInputComponent = () => {
 						} ${animationClass} ${styles.hide}`}
 					>
 						{/* 展示剩余提问机会次数, 每天一次, 并提示可升级会员获得3次提问 */}
-						您今日还有 {tarot_balance} 次提问机会.
+						您今日还有 {basic_tarot_balance} 次提问机会.
 					</div>
 					<button
 						className={`${styles.tarotButtonPrimary} ${

@@ -70,27 +70,16 @@ export const ChatProvider = ({
 	children: React.ReactNode;
 	storeType: string;
 }) => {
-	let store;
-	if (storeType === "workflow") {
-		store = useWorkflowStore();
-	} else if (storeType === "chatstore") {
-		store = useChatStore();
-	}
+	// Call both store hooks unconditionally
+	const workflowStore = useWorkflowStore();
+	const chatStore = useChatStore();
 
-	if (!store) {
-		console.log("no store");
-		return null;
-	}
-
-	// 分离 session 数据
-
-	// 独立管理 session 的其他属性
-	const [session, setSession] = useState(_session);
-
-	// 独立管理 messages
+	// Use state for all variables, initialized with default values
+	const [store, setStore] = useState<any>(null);
+	const [session, setSession] = useState<ChatSession | workflowChatSession>(
+		_session,
+	);
 	const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-
-	// 其他状态
 	const [hitBottom, setHitBottom] = useState(true);
 	const [autoScroll, setAutoScroll] = useState(true);
 	const [showPromptModal, setShowPromptModal] = useState(false);
@@ -99,16 +88,30 @@ export const ChatProvider = ({
 		"chat" | "workflow" | "multiagent"
 	>("chat");
 
-	// const messages = session.messages || [];
-	const messages = store.getMessages(session.id) || [];
-	console.log("chatcontext refresh", session);
-
-	const currentSessionId = session.id;
+	// Set the correct store based on storeType
+	useEffect(() => {
+		if (storeType === "workflow") {
+			setStore(workflowStore);
+		} else if (storeType === "chatstore") {
+			setStore(chatStore);
+		}
+	}, [storeType, workflowStore, chatStore]);
 
 	useEffect(() => {
 		console.log("chatcontext, props changed");
 		setSession(_session);
 	}, [_session]);
+
+	// If there's no store, render nothing
+	if (!store) {
+		console.log("no store");
+		return null;
+	}
+
+	const messages = store.getMessages(session.id) || [];
+	console.log("chatcontext refresh", session);
+
+	const currentSessionId = session.id;
 
 	return (
 		<ChatActionContext.Provider

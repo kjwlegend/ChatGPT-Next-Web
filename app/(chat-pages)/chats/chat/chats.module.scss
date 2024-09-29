@@ -277,6 +277,10 @@
 	padding-bottom: 40px;
 	position: relative;
 	overscroll-behavior: none;
+
+	@media screen and (max-width: 768px) {
+		padding: 10px;
+	}
 }
 
 .play {
@@ -483,14 +487,23 @@
 	position: relative;
 	transition: all ease 0.3s;
 
+	@media screen and (max-width: 768px) {
+		padding: 8px;
+		font-size: 13px;
+		margin-top: 8px;
+		width: 90%;
+	}
+
 	.mj-action-button {
 		font-size: 12px;
 		width: 68px;
 		margin: 5px 10px;
 
 		@media screen and (max-width: 768px) {
-			width: 50px;
-			margin: 5px 5px;
+			width: 45px;
+			margin: 3px;
+			font-size: 11px;
+			padding: 4px 8px;
 		}
 
 		&:hover {

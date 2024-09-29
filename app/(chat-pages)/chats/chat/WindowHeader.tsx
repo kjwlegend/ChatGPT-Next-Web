@@ -43,7 +43,7 @@ import { message, Switch } from "antd";
 
 import { SessionConfigModal } from "./modals/SessionConfigModal";
 
-import MultiAgent, { MultiAgentChatSession } from "@/app/store/multiagents";
+import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { LLMModelSwitch } from "./LLModelSwitch";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import {
@@ -200,7 +200,7 @@ function WindowHeaderTitle({
 // window actions
 
 //  将按钮部分抽离出来
-function ReturnButton() {
+export function ReturnButton() {
 	const navigate = useNavigate();
 
 	return (
@@ -383,3 +383,5 @@ export const WindowHeader = React.memo(
 		);
 	},
 );
+
+WindowHeader.displayName = "WindowHeader";

@@ -5,6 +5,7 @@ require("@/app/polyfill");
 import { useState, useEffect } from "react";
 import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 import styles from "./home.module.scss";
+import sidebarStyles from "./sidebar/sidebar.module.scss";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import BotIcon from "@/app/icons/bot.svg";
 
@@ -219,7 +220,7 @@ function Screen() {
 		>
 			<>
 				<SideBar
-					className={isHome ? styles["sidebar-show"] : ""}
+					className={isHome ? sidebarStyles["sidebar-show"] : ""}
 					chatSessions={sessionlist}
 					loadMoreSessions={loadMoreSessions}
 					onAddClick={handleAddClick}
