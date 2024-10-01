@@ -33,7 +33,7 @@ function getCookie(name: string): string | null {
 	// 如果 parts 的长度大于 1，说明找到了指定的 cookie
 	if (parts.length > 1) {
 		// 返回 cookie 的值，并去除可能存在的前后空格
-		return parts.pop().split(";")[0].trim() || null;
+		return parts.pop()?.split(";")[0].trim() || null;
 	}
 	return null; // 如果没有找到，返回 null
 }

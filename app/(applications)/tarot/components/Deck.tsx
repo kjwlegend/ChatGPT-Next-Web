@@ -42,7 +42,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 
 			// 使用 i 和 index 生成伪随机数，确保每个 i 的随机序列是相同的
 			const seed = (i + 1) * (index + 1);
-			const random = Math.sin(seed) * 10000;
+			const random = Math.sin(seed) * 10000 * Date.now();
 			//  Y坐标范围是 -30 到 30
 			const randomY = (random - Math.floor(random)) * 60 - 100;
 			return randomY;
@@ -60,7 +60,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 			}
 
 			// 使用 i 和 index 生成伪随机数，确保每个 i 的随机序列是相同的
-			const seed = (i + 1) * (index + 1);
+			const seed = (i + 1) * (index + 1) * Date.now();
 			const random = Math.sin(seed) * 10000;
 			//  X坐标范围是 -150 到 150
 			const randomX = (random - Math.floor(random)) * 300 - 150;
@@ -79,7 +79,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 			}
 
 			// 使用 i 和 index 生成伪随机数，确保每个 i 的随机序列是相同的
-			const seed = (i + 1) * (index + 1);
+			const seed = (i + 1) * (index + 1) * Date.now();
 			const random = Math.sin(seed) * 10000;
 			const randomRotate = (random - Math.floor(random)) * 360;
 			return randomRotate;
@@ -96,7 +96,7 @@ const ShuffleAnimationComponent: React.FC<ShuffleAnimationComponentProps> = ({
 			zIndex: generateRandomInt(0, i),
 			// zIndex: i % 2 == 1 ? i : i - 1,
 			transition: {
-				duration: 3.5,
+				duration: 3,
 				repeat: 3,
 				repeatType: "reverse", // 确保 repeatType 是 'loop' | 'reverse' | 'mirror' | undefined 中的一个
 				ease: "easeInOut",

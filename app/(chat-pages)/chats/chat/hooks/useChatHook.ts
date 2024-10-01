@@ -111,7 +111,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 			},
 			lastSummarizeIndex: 0,
 			clearContextIndex: undefined,
-			mask: sessionData.mask ?? createEmptyMask(),
+			mask: sessionData.custom_agent_data ?? createEmptyMask(),
 			responseStatus: undefined,
 			isworkflow: false,
 			mjConfig: sessionData.mjConfig,

@@ -1,24 +1,9 @@
-"use client";
+"use server"; // 服务器组件
+
 import React from "react";
-import {
-	Card,
-	Carousel,
-	Layout,
-	Row,
-	Col,
-	Collapse,
-	Button,
-	Divider,
-	Tabs,
-	Timeline,
-} from "antd";
-import type { CollapseProps } from "antd";
-import { useEffect, useRef } from "react";
+import { Layout, Timeline } from "antd";
 import styles from "./updates.module.scss";
-import { Helmet } from "react-helmet";
-import { SEOHeader } from "@/app/components/seo-header";
-import { children } from "cheerio/lib/api/traversing";
-const { Content } = Layout;
+import FadeInEffect from "./FadeInEffect"; // 引入客户端组件
 
 const items = [
 	{
@@ -131,8 +116,8 @@ const items = [
 				<ul>
 					<li>
 						我们加入了第2个超级角色, 小佩, 小佩是你的职业导师,
-						她同样拥有极其复杂的提示词工程, 能够根据你所申请的职位,
-						提供简历修改, 简历制作, 面试准备, 面试问答等多种能力.
+						她同样拥有极其复杂的提示词工, 能够根据你所申的职位, 提供简历修改,
+						简历制作, 面试准备, 面试问答等多种能力.
 					</li>
 					<li>
 						小佩，作为一位求职相关的面试官，她拥有丰富的经验和敏锐的洞察力。她总是面带微笑，给人温暖而亲切的感觉。她善于倾听，并以友善和专业的方式与求职者交流。
@@ -335,7 +320,7 @@ const items = [
 	{
 		label: "2023-11-15",
 		children:
-			" 发布 v1.0.0 版本: 增加知识库功能, 小光AI 迄今完成了大部分核心功能的开发, 正式进入1.0版本接下来就会对所有的核心功能进行全部的优化重做和重构, 达到全新的体验级别",
+			" 发布 v1.0.0 版本: 增加知识库功能, 小光AI 迄今完成了大部分核心功能的开发, 正式进入1.0版本接下来就会对所有的核心功能进行全部的优化和重构, 达到全新的体验级别",
 		color: "red",
 		className: "fade-in-element",
 	},
@@ -517,7 +502,7 @@ const items = [
 						&quot;色彩是心灵的语言&quot;
 					</li>
 					<li>开通了图床CDN 服务, 现在下载图片更迅速了!</li>
-					<li>大幅度的代码重构改进</li>
+					<li>大幅度的代码构改进</li>
 					<li>绘图现在能够快速的进行尺寸的选择</li>
 				</ul>
 			</>
@@ -868,39 +853,58 @@ const items = [
 			</>
 		),
 	},
+	{
+		label: "2024-10-01",
+		color: "red",
+		children: (
+			<>
+				发布 V3.0.0 版本, 小光说:
+				<ul>
+					<li>重大更新：系统全面重构，带来多项革新性变化</li>
+					<li>
+						对话次数升级：
+						<ul>
+							<li>
+								免费用户：从原本的总计200次对话额度，升级为每日签到后可获得200次对话机会（普通模型）
+							</li>
+							<li>会员用户：每天可享有1000次对话额度（普通模型）</li>
+						</ul>
+					</li>
+					<li>
+						AI模式升级：原双AI模式现已进化为无限制AI模式，突破对话限制，激发更多创意可能
+					</li>
+					<li>工作流功能全面优化：提供更流畅、更智能的任务处理体验</li>
+					<li>全新助手模式：为用户提供更精准、更贴心的智能辅助</li>
+					<li>单体对话窗口优化：带来更直观、更高效的交互体验</li>
+					<li>
+						功能重构预告：
+						<ul>
+							<li>AI绘画功能：正在进行全面重做，即将带来更强大的创作体验</li>
+							<li>
+								知识库管理：正在优化中，未来将为用户提供更便捷的知识管理方式
+							</li>
+							<li>
+								提示词管理：正在重新设计，旨在提供更智能、更个性化的提示服务
+							</li>
+						</ul>
+					</li>
+					<li>
+						注意：由于系统进行了大规模重构，部分功能可能暂时无法使用或与之前的版本有所不同。
+						我们正在努力完善所有功能，感谢您的理解和支持！
+					</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
-	useEffect(() => {
-		const timelineItems = document.querySelectorAll(".fade-in-element");
-
-		const observer = new IntersectionObserver((entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					entry.target.classList.add("fade-in-animation");
-				} else {
-					entry.target.classList.remove("fade-in-animation");
-				}
-			});
-		});
-
-		timelineItems.forEach((item) => {
-			observer.observe(item);
-		});
-
-		return () => {
-			timelineItems.forEach((item) => {
-				observer.unobserve(item);
-			});
-		};
-	}, []);
-
 	return (
-		<>
-			<div className={styles["home-page"]}>
-				<Timeline mode="left" items={items} pending="On my road.." />
-			</div>
-		</>
+		<Layout className={styles["home-page"]}>
+			<FadeInEffect /> {/* 使用淡入效果组件 */}
+			<Timeline mode="left" items={items} pending="On my road.." reverse />
+		</Layout>
 	);
 };
 

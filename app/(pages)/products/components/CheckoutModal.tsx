@@ -47,7 +47,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 	};
 
 	const handleConfirmUpgrade = async () => {
-		if (product.membershipType === "free") {
+		if (product.price === 0) {
 			messageApi.open({
 				key: "status",
 				type: "error",

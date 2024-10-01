@@ -29,7 +29,9 @@
 		"**/*.tsx",
 		".next/types/**/*.ts",
 		"app/calcTextareaHeight.ts",
-		"app/(chat-pages)/double-agents/useMultipleAgentsHook.ts"
+		"app/(chat-pages)/double-agents/useMultipleAgentsHook.ts",
+		"**/*.test.ts",
+		"**/*.test.tsx"
 	],
 	"exclude": ["node_modules"]
 }

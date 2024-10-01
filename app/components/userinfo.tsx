@@ -124,6 +124,19 @@ export default function UserInfo() {
 	const isLogin = !!id && id != 0;
 	const [visible, setVisible] = useState(false);
 
+	const mappingMembershipLevel = (level: string) => {
+		switch (level) {
+			case "free":
+				return "免费会员";
+			case "gold_membership":
+				return "黄金会员";
+			case "diamond_membership":
+				return "钻石会员";
+			default:
+				return "未知会员";
+		}
+	};
+
 	const handleButtonClick = () => {
 		setVisible(true);
 	};
@@ -149,7 +162,7 @@ export default function UserInfo() {
 								{user.nickname || "神秘人"}
 							</span>
 							<span className={styles["user-type"]}>
-								{user?.membership_level ? user?.membership_level : "免费会员"}
+								{mappingMembershipLevel(user?.membership_level)}
 							</span>
 						</div>
 						<div className={styles["user-actions"]}>

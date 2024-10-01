@@ -1,5 +1,6 @@
 import { Protocol } from "@aws-sdk/client-s3"
 import webpack from "webpack"
+import withBundleAnalyzer from '@next/bundle-analyzer'
 
 const mode = process.env.BUILD_MODE ?? "standalone"
 console.log("[Next] build mode", mode)
@@ -113,4 +114,12 @@ if (mode !== "export") {
   }
 }
 
-export default nextConfig
+// 集成 bundle-analyzer
+const withBundleAnalyzerWrapper = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+// 应用 bundle-analyzer 包装器
+const finalConfig = withBundleAnalyzerWrapper(nextConfig)
+
+export default finalConfig

@@ -38,17 +38,7 @@ interface Prompt {
 	[key: string]: any;
 }
 
-export async function getPromptCategory() {
-	return request({
-		url: `/gpt/get-prompt-categories/`,
-		method: "get",
-	})
-		.then((res) => res.data)
-		.catch((err) => {
-			// console.log(err);
-			return err.response.data;
-		});
-}
+
 
 export async function getPrompt(data: pageParams) {
 	return request({
@@ -95,14 +85,3 @@ export async function deletePrompt(id: string) {
 		});
 }
 // get prompthotness
-export async function getPromptHotness() {
-	return request({
-		url: `/gpt/prompt-hotness/`,
-		method: "get",
-	})
-		.then((res) => res.data)
-		.catch((err) => {
-			// console.log(err);
-			return err.response.data;
-		});
-}

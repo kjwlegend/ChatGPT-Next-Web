@@ -54,15 +54,6 @@ export default function AuthPage() {
 		);
 	}
 
-	const onChange = (key: string) => {
-		console.log(key);
-		setActiveTab(key);
-	};
-
-	const onRegisterSuccess = () => {
-		setActiveTab("2");
-	};
-
 	const items: TabsProps["items"] = [
 		// {
 		//   key: "1",
@@ -73,13 +64,11 @@ export default function AuthPage() {
 			key: "2",
 			label: `账户登录`,
 			children: <Login />,
-			disabled: false,
 		},
 		{
 			key: "3",
 			label: `账号注册`,
-			children: <Register onRegisterSuccess={onRegisterSuccess} />,
-			disabled: false,
+			children: <Register onRegisterSuccess={() => setActiveTab("2")} />,
 		},
 	];
 
@@ -94,7 +83,7 @@ export default function AuthPage() {
 					<Tabs
 						activeKey={activeTab}
 						items={items}
-						onChange={onChange}
+						onChange={setActiveTab}
 						size="large"
 						tabBarGutter={50}
 						centered={true}

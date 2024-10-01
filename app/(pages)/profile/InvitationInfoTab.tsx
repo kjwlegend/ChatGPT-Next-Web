@@ -1,27 +1,16 @@
 "use client";
 import React from "react";
-import { useState, useEffect } from "react";
 import { useUserStore } from "../../store/user";
+import { Col, Row, Statistic, Divider, Typography, QRCode } from "antd";
 import styles from "./profile.module.scss";
-
-import { Col, Divider, Row, Statistic } from "antd";
-import { Typography } from "antd";
-import { QRCode } from "antd";
-import { useRouter } from "next/router";
 
 const { Paragraph } = Typography;
 
-const InvitePage = () => {
+const InvitationInfoTab = () => {
 	const { user } = useUserStore();
-	const { invite_code, invite_count } = user;
-	const { virtual_currency } = user;
-
-	useEffect(() => {
-		// 在这里可以根据需要加载邀请人数和邀请点数的数据
-	}, []);
+	const { invite_code, invite_count, virtual_currency } = user;
 
 	const baseUrl = new URL(window.location.href).origin;
-
 	const inviteLink = `${baseUrl}/auth?i=${invite_code}`;
 
 	return (
@@ -34,11 +23,7 @@ const InvitePage = () => {
 					<Statistic title="小光币" value={virtual_currency} />
 				</Col>
 				<Col xs={12} sm={8}>
-					<Statistic
-						title="专属id"
-						value={invite_code || ""}
-						groupSeparator=""
-					/>
+					<Statistic title="专属id" value={invite_code || ""} />
 				</Col>
 			</Row>
 			<Divider />
@@ -49,32 +34,21 @@ const InvitePage = () => {
 						<Paragraph className={styles["link"]} copyable>
 							{inviteLink}
 						</Paragraph>
-						<p>
-							{" "}
-							或者将 <span style={{ color: "red" }}>?i=您的专属id</span>{" "}
-							添加到小光同学的任意网址后面
-						</p>
 					</Col>
 					<Col xs={24} sm={10}>
 						<p className={styles["label-title"]}>方法2 - 使用专属二维码:</p>
-						<QRCode
-							errorLevel="H"
-							value={inviteLink}
-							icon="https://xiaoguang.fun/bot.png"
-						/>
+						<QRCode errorLevel="H" value={inviteLink} />
 					</Col>
 				</Row>
 				<Divider />
-
 				<p className={styles["label-title"]}>规则说明:</p>
 				<p>
 					每一位通过您的链接注册小光，双方都会获得10小光币,
-					邀请点数可以用来兑换未来的小光会员服务。包括GPT-4.0 接口,
-					文案批量自动化生成, 以及更多高级功能。
+					邀请点数可以用来兑换未来的小光会员服务。
 				</p>
 			</div>
 		</div>
 	);
 };
 
-export default InvitePage;
+export default InvitationInfoTab;

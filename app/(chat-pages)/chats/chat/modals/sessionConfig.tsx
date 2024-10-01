@@ -6,7 +6,6 @@ import styles from "../chats.module.scss";
 
 import { SessionConfigModal } from "./SessionConfigModal";
 
-import MultiAgent, { MultiAgentChatSession } from "@/app/store/multiagents";
 import { sessionConfig } from "@/app/types/";
 
 export const SessionModal = (props: {

@@ -15,7 +15,7 @@ const UsageInfo: React.FC<UsageInfoProps> = ({ user }) => {
 	const renderUsageItem = (type: string, subtype: string, total: number) => {
 		const balance =
 			user.user_balance[
-				`${subtype.toLowerCase()}_${type.toLowerCase()}_balance`
+				`${subtype.toLowerCase()}_${type.toLowerCase()}_balance` as keyof User["user_balance"]
 			];
 		const percentage = (balance / total) * 100;
 

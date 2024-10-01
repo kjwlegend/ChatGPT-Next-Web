@@ -1,35 +1,46 @@
 "use client";
-import React from "react";
+import React, { Suspense, lazy } from "react"; // 使用 lazy 和 Suspense
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/auth";
 import LogoutButton from "../../components/logout";
-import PersonalInfoTab from "./PersonalInfoTab";
-import SecurityInfoTab from "./SecurityInfoTab";
-import MembershipTab from "./MembershipTab";
-
-// import AccountInfoTab from "./AccountInfoTab";
-import InvitationInfoTab from "./InvitationInfoTab";
 import styles from "./profile.module.scss";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { useUserStore } from "../../store";
 
+// 动态导入组件
+const PersonalInfoTab = lazy(() => import("./PersonalInfoTab"));
+const SecurityInfoTab = lazy(() => import("./SecurityInfoTab"));
+const InvitationInfoTab = lazy(() => import("./InvitationInfoTab"));
+
 const items: TabsProps["items"] = [
 	{
 		key: "1",
 		label: "个人信息",
-		children: <PersonalInfoTab />,
+		children: (
+			<Suspense fallback={<div>Loading...</div>}>
+				<PersonalInfoTab />
+			</Suspense>
+		),
 	},
 
 	{
 		key: "3",
 		label: "密码信息",
-		children: <SecurityInfoTab />,
+		children: (
+			<Suspense fallback={<div>Loading...</div>}>
+				<SecurityInfoTab />
+			</Suspense>
+		),
 	},
 	{
 		key: "4",
 		label: "邀请信息",
-		children: <InvitationInfoTab />,
+		children: (
+			<Suspense fallback={<div>Loading...</div>}>
+				<InvitationInfoTab />
+			</Suspense>
+		),
 	},
 ];
 

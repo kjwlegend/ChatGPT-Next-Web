@@ -1,14 +1,9 @@
 import { CN_MASKS } from "./cn";
 import { EN_MASKS } from "./en";
-import { getPromptHotness, getPromptCategory, getPrompt } from "./service";
-import { MaskCategory } from "../constant";
-import { Console } from "console";
 
 import { BuiltinMask } from "../types/mask";
 import { featureMask } from "./featureMask_cn";
 import { LightMask } from "../types/mask";
-import fs from "fs/promises";
-import path from "path";
 
 export const BUILTIN_MASK_ID = 100000;
 export const SERVER_MASKS = {} as Record<string, BuiltinMask>;
@@ -30,46 +25,6 @@ const BUILTIN_MASK_STORE = {
 	},
 };
 
-async function fetchPromptCategory() {
-	try {
-		const response = await getPromptCategory();
-		const categoryData = response.data;
-
-		categoryData.forEach((item: any) => {
-			const category = {
-				key: item.category_key,
-				value: item.category_name,
-				scene: item.category_scene,
-				tags: item.category_tags,
-			};
-			const existingCategory = MaskCategory.find((c) => c.key === item.key);
-			if (existingCategory) {
-				existingCategory.value = item.value;
-			} else {
-				MaskCategory.push(category);
-			}
-		});
-	} catch (error) {
-		console.error("Failed to fetch prompt category:", error);
-	}
-}
-
-function setupBuiltins() {
-	const allMasks: LightMask[] = [...featureMask, ...CN_MASKS, ...EN_MASKS];
-	// console.log(allMasks);
-	// allMasks.forEach((mask) => {
-	// 	BUILTIN_MASK_STORE.add(mask);
-	// 	//  add to servermask
-	// 	// console.log(mask);
-	// });
-}
-
-async function initializeMasks(): Promise<void> {
-	setupBuiltins();
-	// ...其他可能的初始化函数
-	await fetchPromptCategory();
-}
-initializeMasks();
 const allMasks: LightMask[] = [...CN_MASKS];
 
 const BUILTIN_MASKS = Object.values(allMasks);

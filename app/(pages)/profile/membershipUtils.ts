@@ -1,6 +1,6 @@
 import { SketchOutlined, CrownOutlined, UserOutlined } from "@ant-design/icons";
 
-export type MembershipLevel = "free" | "gold" | "diamond";
+export type MembershipLevel = "free" | "gold_membership" | "diamond_membership";
 
 export interface MembershipReward {
 	type: string;
@@ -17,6 +17,7 @@ export interface MembershipInfo {
 }
 
 export const MEMBERSHIP_INFO: Record<MembershipLevel, MembershipInfo> = {
+	//TODO :
 	free: {
 		icon: UserOutlined,
 		displayName: "免费会员",
@@ -28,7 +29,7 @@ export const MEMBERSHIP_INFO: Record<MembershipLevel, MembershipInfo> = {
 			{ type: "tarot", subtype: "Basic", total: 1 },
 		],
 	},
-	gold: {
+	gold_membership: {
 		icon: CrownOutlined,
 		displayName: "黄金会员",
 		product_key: "gold_membership",
@@ -39,7 +40,7 @@ export const MEMBERSHIP_INFO: Record<MembershipLevel, MembershipInfo> = {
 			{ type: "tarot", subtype: "Basic", total: 5 },
 		],
 	},
-	diamond: {
+	diamond_membership: {
 		icon: SketchOutlined,
 		displayName: "钻石会员",
 		product_key: "diamond_membership",

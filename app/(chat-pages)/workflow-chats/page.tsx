@@ -10,6 +10,9 @@ import React, {
 	useContext,
 	Suspense,
 } from "react";
+
+import dynamic from "next/dynamic";
+
 import { ChatMessage, ChatSession, Mask, sessionConfig } from "@/app/types/";
 
 import { HashRouter } from "react-router-dom";
@@ -43,8 +46,6 @@ import {
 	Flex,
 } from "antd";
 
-import { _Chat } from "@/app/(chat-pages)/chats/chat/main";
-
 import { workflowChatSession } from "@/app/types/";
 import { useAuthStore } from "../../store/auth";
 import { WorkflowSidebar } from "./sidebar";
@@ -62,6 +63,11 @@ import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hook
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
+
+// 将_chat改为dynamic
+const _Chat = dynamic(async () => (await import("../chats/chat/main"))._Chat, {
+	ssr: false,
+});
 
 const useHasHydrated = (): boolean => {
 	const [hasHydrated, setHasHydrated] = useState<boolean>(false);
@@ -104,15 +110,6 @@ const SimpleWorkflow: React.FC = () => {
 		);
 		setCurrentSessions(sessions.sort((a, b) => a.order - b.order));
 	}, [selectedId, workflowSessions]);
-
-	if (!useHasHydrated()) {
-		return (
-			<>
-				<LoadingIcon />
-				<p>Loading..</p>
-			</>
-		);
-	}
 
 	return (
 		<Layout className="tight-container">
@@ -243,6 +240,12 @@ const WelcomeContainer: React.FC<{ children: React.ReactNode }> = ({
 WelcomeContainer.displayName = "WelcomeContainer";
 
 const App = () => {
+	const hasHydrated = useHasHydrated();
+
+	if (!hasHydrated) {
+		return null; // 或者返回一个加载指示器
+	}
+
 	return (
 		<WorkflowProvider>
 			<HashRouter>

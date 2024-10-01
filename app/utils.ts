@@ -205,15 +205,15 @@ export function getMessageTextContent(message: RequestMessage) {
 	return "";
 }
 
-export function getMessageImages(message: ChatMessage): string[] {
-	// console.log("get image function", message);
-	// console.log("get image function - image url", message.image_url);
-
-	//  if message.image_url 不为[] 则直接返回 message.image_url
-	//  return message.image_url
-
-	if (message.image_url?.length > 0) {
-		return message.image_url ?? [];
+export function getMessageImages(
+	message: ChatMessage | RequestMessage,
+): string[] {
+	if (
+		"image_url" in message &&
+		message.image_url &&
+		message.image_url.length > 0
+	) {
+		return message.image_url;
 	}
 
 	if (typeof message.content === "string") {
@@ -222,7 +222,7 @@ export function getMessageImages(message: ChatMessage): string[] {
 
 	const urls: string[] = [];
 	for (const c of message.content) {
-		if (c.type === "image_url") {
+		if (c.type === "image_url" && "image_url" in c) {
 			urls.push(c.image_url?.url ?? "");
 		}
 	}

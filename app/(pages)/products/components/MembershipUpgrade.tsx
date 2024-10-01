@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../products.module.scss";
 import { useUserStore } from "@/app/store/user";
-import useAuth from "@/app/hooks/useAuth";
 import { membership_level } from "@/app/api/backend/user";
 import { Switch, message } from "antd";
 import CardComponent from "./CardComponent";

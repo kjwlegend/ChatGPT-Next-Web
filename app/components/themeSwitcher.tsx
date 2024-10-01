@@ -24,9 +24,6 @@ import {
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { TopMenuItems } from "./menu-items";
 
-import DrawerMenu from "./drawer-menu";
-import LoginButton from "./userinfo";
-import UserInfo from "./userinfo";
 enum Theme {
 	Auto = "auto",
 	Dark = "dark",
@@ -36,7 +33,6 @@ const items: any = TopMenuItems;
 
 const { Header } = Layout;
 import Locale from "@/app/locales";
-import { ChatAction } from "../chats/chat/Inputpanel";
 import LightIcon from "@/app/icons/light.svg";
 import DarkIcon from "@/app/icons/dark.svg";
 import AutoIcon from "@/app/icons/auto.svg";

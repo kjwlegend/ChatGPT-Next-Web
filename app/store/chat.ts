@@ -98,6 +98,8 @@ function getSummarizeModel(currentModel: string) {
 	return currentModel.startsWith("gpt") ? SUMMARIZE_MODEL : currentModel;
 }
 
+const ONE_DAY = 24 * 60 * 60 * 1000; // 一天的毫秒数
+
 interface ChatStore {
 	sessions: ChatSession[];
 	currentSessionIndex: number;
@@ -123,6 +125,7 @@ interface ChatStore {
 	) => void;
 	resetSession: () => void;
 	getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
+	clearOldSessions: () => void;
 	clearAllData: () => void;
 }
 
@@ -163,6 +166,7 @@ export const useChatStore = createPersistStore(
 					return;
 				}
 				console.log("selectSession: ", index);
+				get().clearOldSessions();
 				set({
 					currentSessionIndex: index,
 					currentSessionId: get().sessions[index].id,
@@ -706,6 +710,7 @@ export const useChatStore = createPersistStore(
 				const sessions = get().sessions;
 				const index = get().currentSessionIndex;
 				updater(sessions[index]);
+				get().clearOldSessions();
 				set(() => ({ sessions }));
 			},
 			updateSession(
@@ -758,6 +763,15 @@ export const useChatStore = createPersistStore(
 			clearChatData() {
 				localStorage.removeItem(StoreKey.Chat);
 				location.reload();
+			},
+			clearOldSessions: () => {
+				const now = Date.now();
+				set((state) => ({
+					sessions: state.sessions.filter((session) => {
+						const lastUpdateTime = new Date(session.lastUpdateTime).getTime();
+						return now - lastUpdateTime <= 15 * ONE_DAY;
+					}),
+				}));
 			},
 
 			clearAllData() {

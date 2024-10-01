@@ -320,15 +320,17 @@ export const WorkflowProvider = ({
 		//  上述步骤完成了 workflowgroup 的创建, 接下来要更新 workflowsession
 		//  首先判断当前的session 是否存在, 如果存在则更新, 如果不存在则创建
 
-		newData.map((group) => {
+		newData.map((group: any) => {
 			const currentWorkflowgroupId = group.id;
 			const chatsessions = group.chat_groups;
 
-			chatsessions.map((session) => {
+			chatsessions.map((session: any) => {
 				const currentSessionId = session.id;
 				const currentSession = useWorkflowStore
 					.getState()
-					.workflowSessions.find((session) => session.id === currentSessionId);
+					.workflowSessions.find(
+						(session: any) => session.id === currentSessionId,
+					);
 				if (currentSession) {
 					const agentPrompts = {
 						contexts: session.prompts,

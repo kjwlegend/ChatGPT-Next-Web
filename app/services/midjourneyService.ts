@@ -19,7 +19,6 @@ import {
 	imagine,
 	FetchRes,
 } from "../api/midjourney/tasksubmit";
-import { oss } from "../constant";
 
 import { createPaintings, updatePaintings } from "../api/backend/paintings";
 import { createChat } from "../api/backend/chat";

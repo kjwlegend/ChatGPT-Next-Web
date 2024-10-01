@@ -583,7 +583,7 @@ export function AgentConfigCard(props: {
 		});
 	};
 
-	const handleContextUpdate = (updater) => {
+	const handleContextUpdate = (updater: any) => {
 		const context = localMask.context.slice();
 		updater(context);
 		setLocalMask((prevMask) => ({ ...prevMask, context }));
