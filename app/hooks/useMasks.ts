@@ -1,10 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-import {
-	getPromptHotness,
-	getPromptCategory,
-	getPrompt,
-} from "../masks/service";
 import { BuiltinMask, Mask, Tags } from "../types/mask";
 import { useMaskStore } from "../store/mask";
 import { getAgents, getTags } from "../services/api/agents";
