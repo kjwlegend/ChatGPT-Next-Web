@@ -124,11 +124,24 @@ export const handleError = (error: any) => {
 	return error.response ? error.response.data : { error: "Network Error" };
 };
 
+const buildUrl = (appurl: string, endpoint: string, id?: string | number) => {
+	// Remove leading slash from endpoint if present
+	const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+	// Remove trailing slash from endpoint if present
+	const trimmedEndpoint = cleanEndpoint.endsWith("/")
+		? cleanEndpoint.slice(0, -1)
+		: cleanEndpoint;
+
+	const base = `/${appurl}/${trimmedEndpoint}`;
+	const idPart = id ? `/${encodeURIComponent(id)}` : "";
+
+	// Ensure the URL ends with a slash
+	return `${base}${idPart}/`;
+};
+
 export const api = (appurl: string, endpoint: string) => {
 	return async (params?: any, id?: string | number) => {
-		const url = id
-			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}/`
-			: `/${appurl}${endpoint}/`;
+		const url = buildUrl(appurl, endpoint, id);
 		try {
 			const response = await request.post(url, params);
 			return response.data;
@@ -140,9 +153,7 @@ export const api = (appurl: string, endpoint: string) => {
 
 export const apiGet = (appurl: string, endpoint: string) => {
 	return async (params?: any, id?: string | number) => {
-		const url = id
-			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}/`
-			: `/${appurl}${endpoint}/`;
+		const url = buildUrl(appurl, endpoint, id);
 		try {
 			const response = await request.get(url, { params });
 			return response.data;
@@ -154,9 +165,7 @@ export const apiGet = (appurl: string, endpoint: string) => {
 
 export const apiPut = (appurl: string, endpoint: string) => {
 	return async (params: any, id?: string | number) => {
-		const url = id
-			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}/`
-			: `/${appurl}${endpoint}/`;
+		const url = buildUrl(appurl, endpoint, id);
 		try {
 			const response = await request.put(url, params);
 			return response.data;
