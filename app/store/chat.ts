@@ -98,7 +98,7 @@ function getSummarizeModel(currentModel: string) {
 	return currentModel.startsWith("gpt") ? SUMMARIZE_MODEL : currentModel;
 }
 
-const FIFTEEN_DAYS = 15 * 24 * 60 * 60 * 1000; // 15
+const FIFTEEN_DAYS = 55 * 24 * 60 * 60 * 1000; // 15
 
 interface ChatStore {
 	sessions: ChatSession[];
@@ -166,11 +166,12 @@ export const useChatStore = createPersistStore(
 					return;
 				}
 				console.log("selectSession: ", index);
-				get().cleanOldMessages();
 				set({
 					currentSessionIndex: index,
 					currentSessionId: get().sessions[index].id,
 				});
+
+				get().cleanOldMessages();
 			},
 			selectSessionById(id: string) {
 				const index = get().sessions.findIndex((session) => session.id === id);
@@ -765,14 +766,22 @@ export const useChatStore = createPersistStore(
 			},
 			cleanOldMessages: () => {
 				const now = Date.now();
+				const currentSessionId = get().currentSession().id;
 				set((state) => ({
-					sessions: state.sessions.map((session) => ({
-						...session,
-						messages: session.messages.filter((message) => {
-							const messageTime = new Date(message.date).getTime();
-							return now - messageTime <= FIFTEEN_DAYS;
-						}),
-					})),
+					sessions: state.sessions.map((session) => {
+						// 如果是当前会话，不做清理
+						if (session.id === currentSessionId) {
+							return session;
+						}
+						// 对其他会话进行清理
+						return {
+							...session,
+							messages: session.messages.filter((message) => {
+								const messageTime = new Date(message.date).getTime();
+								return now - messageTime <= FIFTEEN_DAYS;
+							}),
+						};
+					}),
 				}));
 			},
 

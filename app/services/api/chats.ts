@@ -51,7 +51,7 @@ export const createChatSession = api(appnamespace, "/user/chatsessions/");
 export const getChatSession = apiGet(appnamespace, "/user/chatsessions/");
 export const getChatSessionChats = apiGet(
 	appnamespace,
-	"/user/chatsessions/{:id}/chats",
+	"/user/chatsessions/:id/chats",
 );
 export const updateChatSession = apiPut(
 	appnamespace,

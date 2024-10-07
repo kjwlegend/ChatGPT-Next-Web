@@ -127,16 +127,16 @@ export const handleError = (error: any) => {
 const buildUrl = (appurl: string, endpoint: string, id?: string | number) => {
 	// Remove leading slash from endpoint if present
 	const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
-	// Remove trailing slash from endpoint if present
-	const trimmedEndpoint = cleanEndpoint.endsWith("/")
-		? cleanEndpoint.slice(0, -1)
-		: cleanEndpoint;
 
-	const base = `/${appurl}/${trimmedEndpoint}`;
-	const idPart = id ? `/${encodeURIComponent(id)}` : "";
+	let url = `/${appurl}/${cleanEndpoint}`;
+
+	// Replace :id with the actual id if provided
+	if (id !== undefined) {
+		url = url.replace(/:id/, id.toString());
+	}
 
 	// Ensure the URL ends with a slash
-	return `${base}${idPart}/`;
+	return url.endsWith("/") ? url : `${url}/`;
 };
 
 export const api = (appurl: string, endpoint: string) => {
