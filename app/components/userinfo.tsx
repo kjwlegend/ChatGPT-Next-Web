@@ -128,9 +128,9 @@ export default function UserInfo() {
 		switch (level) {
 			case "free":
 				return "免费会员";
-			case "gold_membership":
+			case "gold_member":
 				return "黄金会员";
-			case "diamond_membership":
+			case "diamond_member":
 				return "钻石会员";
 			default:
 				return "未知会员";

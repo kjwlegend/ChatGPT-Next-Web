@@ -13,7 +13,7 @@ export const AppMapping: AppMappingType = {
 	default: "",
 };
 
-const baseURL = process.env.NEXT_PUBLIC_SERVER_URL + "/xiaoguang/";
+const baseURL = process.env.NEXT_PUBLIC_SERVER_URL + "/api/xiaoguang/";
 
 if (!baseURL) {
 	throw new Error(
@@ -127,8 +127,8 @@ export const handleError = (error: any) => {
 export const api = (appurl: string, endpoint: string) => {
 	return async (params?: any, id?: string | number) => {
 		const url = id
-			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
-			: `/${appurl}${endpoint}`;
+			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}/`
+			: `/${appurl}${endpoint}/`;
 		try {
 			const response = await request.post(url, params);
 			return response.data;
@@ -141,8 +141,8 @@ export const api = (appurl: string, endpoint: string) => {
 export const apiGet = (appurl: string, endpoint: string) => {
 	return async (params?: any, id?: string | number) => {
 		const url = id
-			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
-			: `/${appurl}${endpoint}`;
+			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}/`
+			: `/${appurl}${endpoint}/`;
 		try {
 			const response = await request.get(url, { params });
 			return response.data;
@@ -155,8 +155,8 @@ export const apiGet = (appurl: string, endpoint: string) => {
 export const apiPut = (appurl: string, endpoint: string) => {
 	return async (params: any, id?: string | number) => {
 		const url = id
-			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}`
-			: `/${appurl}${endpoint}`;
+			? `/${appurl}${endpoint.replace(new RegExp(`{?\\:id}?`, "g"), encodeURIComponent(id))}/`
+			: `/${appurl}${endpoint}/`;
 		try {
 			const response = await request.put(url, params);
 			return response.data;

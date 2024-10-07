@@ -98,7 +98,7 @@ function getSummarizeModel(currentModel: string) {
 	return currentModel.startsWith("gpt") ? SUMMARIZE_MODEL : currentModel;
 }
 
-const ONE_DAY = 24 * 60 * 60 * 1000; // 一天的毫秒数
+const FIFTEEN_DAYS = 15 * 24 * 60 * 60 * 1000; // 15
 
 interface ChatStore {
 	sessions: ChatSession[];
@@ -166,7 +166,7 @@ export const useChatStore = createPersistStore(
 					return;
 				}
 				console.log("selectSession: ", index);
-				get().clearOldSessions();
+				get().cleanOldMessages();
 				set({
 					currentSessionIndex: index,
 					currentSessionId: get().sessions[index].id,
@@ -710,7 +710,6 @@ export const useChatStore = createPersistStore(
 				const sessions = get().sessions;
 				const index = get().currentSessionIndex;
 				updater(sessions[index]);
-				get().clearOldSessions();
 				set(() => ({ sessions }));
 			},
 			updateSession(
@@ -764,13 +763,16 @@ export const useChatStore = createPersistStore(
 				localStorage.removeItem(StoreKey.Chat);
 				location.reload();
 			},
-			clearOldSessions: () => {
+			cleanOldMessages: () => {
 				const now = Date.now();
 				set((state) => ({
-					sessions: state.sessions.filter((session) => {
-						const lastUpdateTime = new Date(session.lastUpdateTime).getTime();
-						return now - lastUpdateTime <= 15 * ONE_DAY;
-					}),
+					sessions: state.sessions.map((session) => ({
+						...session,
+						messages: session.messages.filter((message) => {
+							const messageTime = new Date(message.date).getTime();
+							return now - messageTime <= FIFTEEN_DAYS;
+						}),
+					})),
 				}));
 			},
 
@@ -852,7 +854,7 @@ export const useChatStore = createPersistStore(
 				});
 			}
 			if (version < 3.5) {
-				//准备更新内容
+				//set new state to default
 			}
 
 			return newState as any;
