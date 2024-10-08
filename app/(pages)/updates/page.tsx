@@ -898,7 +898,7 @@ const items = [
 		className: "fade-in-element",
 	},
 	{
-		label: "2024-10-15",
+		label: "2024-10-08",
 		color: "green",
 		children: (
 			<>
@@ -908,6 +908,20 @@ const items = [
 					<li>优化了登出时对cookie的更新机制</li>
 					<li>修复了sidebar在新增对话时没有自动选中最新建立的对话的bug</li>
 					<li>修复了插件状态没有更新的bug</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
+	{
+		label: "2024-10-09",
+		color: "green",
+		children: (
+			<>
+				发布 V3.0.2 版本, 小光说:
+				<ul>
+					<li>清理了调试代码，优化系统性能</li>
+					<li>修复了缓存相关问题，提升用户体验</li>
 				</ul>
 			</>
 		),
