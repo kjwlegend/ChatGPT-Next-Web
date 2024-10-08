@@ -24,7 +24,7 @@ export default function Login() {
 	const userStore = useUserStore();
 	const chatStore = useChatStore();
 
-	console.log("path", from, path, param);
+	// console.log("path", from, path, param);
 
 	const [user, setUser] = useState<User | null>(null);
 
@@ -75,7 +75,7 @@ export default function Login() {
 			}, 1000);
 		} catch (error: any) {
 			// 失败提示
-			console.log("Received values of error: ", error);
+			// console.log("Received values of error: ", error);
 			messageApi.destroy("loading");
 			messageApi.open({
 				type: "error",

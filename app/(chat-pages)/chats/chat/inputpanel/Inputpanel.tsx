@@ -205,7 +205,6 @@ export function Inputpanel(props: {
 		const currentInput = userInput; // 保存当前输入
 		setUserInput(""); // 立即清空输入框
 		await doSubmit(currentInput);
-		console.log("input area debug", currentInput);
 		setAttachImages([]);
 		setAttachFiles([]);
 		if (!isMobileScreen) inputRef.current?.focus();

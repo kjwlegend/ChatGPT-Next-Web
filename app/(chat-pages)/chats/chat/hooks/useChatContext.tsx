@@ -109,7 +109,7 @@ export const ChatProvider = ({
 	}
 
 	const messages = store.getMessages(session.id) || [];
-	console.log("chatcontext refresh", session);
+	// console.log("chatcontext refresh", session);
 
 	const currentSessionId = session.id;
 

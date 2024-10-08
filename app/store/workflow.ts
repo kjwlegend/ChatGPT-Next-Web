@@ -76,7 +76,7 @@ export const useWorkflowStore = create<State>()(
 			workflowGroupIndex: {},
 			selectedId: "",
 			setSelectedId: (groupId) => {
-				console.log("workflow setselectedid", groupId);
+				// console.log("workflow setselectedid", groupId);
 				set({ selectedId: groupId });
 			},
 			workflowSessions: [],
@@ -326,7 +326,7 @@ export const useWorkflowStore = create<State>()(
 					const currentSession = state.workflowSessions[sessionIndex];
 					const updatedSession = { ...currentSession, ...updates };
 
-					console.log("debug update workflow session", updates, updatedSession);
+					// console.log("debug update workflow session", updates, updatedSession);
 
 					state.workflowSessions[sessionIndex] = updatedSession;
 
@@ -360,12 +360,12 @@ export const useWorkflowStore = create<State>()(
 						return state;
 					}
 
-					console.log(
-						"sourceIndex",
-						sourceIndex,
-						"destinationIndex",
-						destinationIndex,
-					);
+					// console.log(
+					// 	"sourceIndex",
+					// 	sourceIndex,
+					// 	"destinationIndex",
+					// 	destinationIndex,
+					// );
 
 					// 移动 session
 					const newSessionIds = [...sessionIds];
@@ -458,8 +458,6 @@ export const useWorkflowStore = create<State>()(
 				attachFiles: FileInfo[] | undefined,
 				session: workflowChatSession,
 			) => {
-				console.log("workflow submit debug", session);
-
 				const sessionId = session.id;
 				const sessionModel = session.mask.modelConfig.model;
 				const modelConfig = session.mask.modelConfig;
@@ -483,8 +481,6 @@ export const useWorkflowStore = create<State>()(
 					contentType: "workflowchatgroup",
 				};
 
-				console.log("workflow submit debug , before try");
-
 				try {
 					const createChatData = {
 						...commonChatData,
@@ -495,15 +491,11 @@ export const useWorkflowStore = create<State>()(
 						sender_name: nickname,
 						totalTokenCount: total_token_count,
 					};
-					console.log("workflow submit debug, before api", createChatData);
 
 					const { chat_id, id } =
 						await createChatDataAndFetchId(createChatData);
 
-					console.log("workflow submit debug, after api");
-
 					const userContent = content;
-					console.log("[User Input] after template: ", userContent);
 
 					let mContent: string | MultimodalContent[] = userContent;
 
@@ -576,7 +568,6 @@ export const useWorkflowStore = create<State>()(
 						toolInput: string,
 					) => {
 						// 这里可以进行 tool 更新的逻辑
-						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
 					};
 
 					const onFinishCallback = async (message: string) => {
@@ -616,7 +607,6 @@ export const useWorkflowStore = create<State>()(
 							const nextSession = get().getNextSession(sessionId);
 							// 如果存在 next session , 则调用自身onuserinput, 将 botMessage 发送出去
 							if (nextSession) {
-								console.log("next session", nextSession);
 								get().onUserInput(
 									message,
 									attachImages,
@@ -662,12 +652,6 @@ export const useWorkflowStore = create<State>()(
 				if (!existingSession) return;
 
 				const updateSession = existingSession.messages.concat(message);
-				console.log(
-					"debug onNewmessage",
-					existingSession,
-					updateSession,
-					message,
-				);
 
 				set(() => ({
 					workflowSessions: get().workflowSessions.map((session) =>

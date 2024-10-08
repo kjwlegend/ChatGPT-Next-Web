@@ -38,7 +38,7 @@ export const ConversationActionsProvider: React.FC<{
 
 	const startNewConversation = useCallback(
 		async (topic?: string) => {
-			console.log("multipleagents debug:, topic: ", topic);
+			// console.log("multipleagents debug:, topic: ", topic);
 			const hideLoading = messageApi.open({
 				content: "对话创建中",
 				type: "loading",
@@ -81,7 +81,7 @@ export const ConversationActionsProvider: React.FC<{
 
 	const addAgent = useCallback(
 		async (mask: Mask) => {
-			console.log("addAgenttoConversationHandler");
+			// console.log("addAgenttoConversationHandler");
 			const hideLoading = messageApi.open({
 				content: "智能体创建中",
 				type: "loading",
@@ -92,10 +92,10 @@ export const ConversationActionsProvider: React.FC<{
 				const store = useMultipleAgentStore.getState();
 				const currentConversationId = store.currentConversationId;
 
-				console.log(
-					"multipleagents debug: addAgentToConversationHandler",
-					currentConversationId,
-				);
+				// console.log(
+				// 	"multipleagents debug: addAgentToConversationHandler",
+				// 	currentConversationId,
+				// );
 
 				// 添加代理到当前会话
 				store.addAgent(currentConversationId, mask);
@@ -115,7 +115,7 @@ export const ConversationActionsProvider: React.FC<{
 					currentConversationId,
 				);
 
-				console.log("multipleagents debug: updateSession completed");
+				// console.log("multipleagents debug: updateSession completed");
 
 				hideLoading();
 				messageApi.success("智能体创建成功");

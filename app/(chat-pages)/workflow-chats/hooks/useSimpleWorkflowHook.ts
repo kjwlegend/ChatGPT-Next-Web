@@ -78,7 +78,6 @@ export const useSimpleWorkflowService = () => {
 	}, []);
 	const handleChatItemClick = useCallback(
 		async (id: string) => {
-			console.log("aaaa");
 			try {
 				fetchWorkflowChatSessionChatsHandler(id);
 			} catch (error) {

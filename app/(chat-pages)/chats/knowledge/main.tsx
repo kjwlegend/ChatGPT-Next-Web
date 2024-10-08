@@ -137,7 +137,7 @@ const Knowledge: React.FC = () => {
 
 		const res = await getDocs(data);
 		try {
-			console.log(res);
+			// console.log(res);
 			const newData = transformData(res.data);
 			setOriginalData(newData); // 更新原始数据状态
 			setDisplayData(newData.slice(0, pageSize)); // 更新当前页面显示的数据

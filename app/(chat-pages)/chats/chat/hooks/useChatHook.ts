@@ -57,7 +57,7 @@ export const useChatService = () => {
 	const handleChatItemClick = useCallback(async (id: string) => {
 		const param = { limit: 60 };
 		try {
-			console.log("get chatSession list", id);
+			// console.log("get chatSession list", id);
 			const res = await getChatSessionChats(param, id); // 获取聊天记录
 			const chats = res.data;
 			UpdateChatMessages(id, chats);

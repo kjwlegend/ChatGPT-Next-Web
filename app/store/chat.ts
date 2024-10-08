@@ -165,7 +165,7 @@ export const useChatStore = createPersistStore(
 					console.error("Invalid session index:", index);
 					return;
 				}
-				console.log("selectSession: ", index);
+				// console.log("selectSession: ", index);
 				set({
 					currentSessionIndex: index,
 					currentSessionId: get().sessions[index].id,
@@ -551,7 +551,7 @@ export const useChatStore = createPersistStore(
 						toolInput: string,
 					) => {
 						// 这里可以进行 tool 更新的逻辑
-						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
+						// console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
 						get().updateCurrentSession((session) => {
 							session.messages = session.messages.concat();
 							session.lastUpdateTime = Date.now();
@@ -601,7 +601,7 @@ export const useChatStore = createPersistStore(
 							onFinishCallback,
 						),
 					);
-					console.log("click send: ", sendMessages, session.responseStatus);
+					// console.log("click send: ", sendMessages, session.responseStatus);
 				} catch (error: any) {
 					// const botError = "API 请求失败, 请重新登录后重试";
 					const botError = error.message as string;
@@ -726,7 +726,7 @@ export const useChatStore = createPersistStore(
 							if (session.id === sessionId) {
 								// 直接应用 updater 回调函数
 								updater(session);
-								console.log("sesison update", session);
+								// console.log("sesison update", session);
 
 								if (sync) {
 									const data: CreateChatSessionData = {
@@ -735,7 +735,7 @@ export const useChatStore = createPersistStore(
 										user: userId,
 									};
 									updateChatSession(data, sessionId);
-									console.log("store 同步触发");
+									// console.log("store 同步触发");
 								}
 							}
 							return session;

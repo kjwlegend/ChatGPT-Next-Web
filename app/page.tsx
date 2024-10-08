@@ -19,7 +19,7 @@ export default function App() {
 
 	useEffect(() => {
 		// 在这里可以使用inviteCode进行相应的处理
-		console.log("inviteCode", inviteCode);
+		// console.log("inviteCode", inviteCode);
 
 		inviteCodeStore.setInviteCode(inviteCode);
 	}, [inviteCode]);

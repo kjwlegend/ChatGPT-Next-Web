@@ -65,7 +65,7 @@ export function WorkflowModalConfig(props: {
 	const [workflowDescription, setWorkflowDescription] = useState(description);
 
 	const agentlist = workflowSessions || [];
-	console.log("agentlist", agentlist);
+	// console.log("agentlist", agentlist);
 
 	const handleSave = async () => {
 		await updateWorkflowSessionInfo(workflow.id, {

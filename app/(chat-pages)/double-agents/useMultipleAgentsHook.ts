@@ -36,7 +36,7 @@ export const useMultipleAgentsChatHook = () => {
 			const res = await getMultiAgentSession(param);
 			fetchNewConversations(res.data);
 			const newsessions = conversations;
-			console.log("loadmore sessions", newsessions);
+			// console.log("loadmore sessions", newsessions);
 			return { data: newsessions, is_next: res.is_next };
 		} catch {
 			throw new Error("登录已过期");
@@ -52,7 +52,6 @@ export const useMultipleAgentsChatHook = () => {
 	}, [conversations, loadMoreSessions, startNewConversation]);
 
 	const handleAddClick = () => {
-		console.log("click");
 		startNewConversation();
 	};
 
@@ -60,11 +59,7 @@ export const useMultipleAgentsChatHook = () => {
 		const param = { limit: 60 };
 
 		setCurrentConversationId(id);
-		try {
-			console.log("multipleagents debug:, id", id);
-		} catch (error) {
-			console.log("get chatSession list error", error);
-		}
+
 		const res = await getMultiAgentSessionChats(param, id);
 		// 更新消息
 		fetchNewMessages(id, res.data);

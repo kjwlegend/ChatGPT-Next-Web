@@ -103,7 +103,7 @@ const AIConfigPanel: React.FC = () => {
 			{ custom_agents_data: aiConfigs },
 			conversationId,
 		);
-		console.log("multipleagents debug: handleAgentUpdate", res);
+		// console.log("multipleagents debug: handleAgentUpdate", res);
 	};
 
 	if (!aiConfigs) {

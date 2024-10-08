@@ -104,7 +104,7 @@ export const WorkflowProvider = ({
 	} = useWorkflowStore();
 
 	const [messageApi, contextHolder] = message.useMessage();
-	console.log("workflowcontext refresh", workflowSessions);
+	// console.log("workflowcontext refresh", workflowSessions);
 
 	const userid = useUserStore.getState().user.id;
 	const maskStore = useMaskStore();
@@ -142,7 +142,7 @@ export const WorkflowProvider = ({
 				user: userid,
 				session_topic: WORKFLOW_DEFAULT_TITLE,
 			});
-			console.log(res, "workflow");
+			// console.log(res, "workflow");
 			if (res.id) {
 				addWorkflowGroup(res.id, WORKFLOW_DEFAULT_TITLE);
 				messageApi.destroy();
@@ -193,9 +193,7 @@ export const WorkflowProvider = ({
 					agent: agent.id,
 					workflow_session: groupId ?? selectedId,
 				};
-				console.log(apidata, "apidata");
 				const mask = maskStore.get(agent.id);
-				console.log(mask, "mask");
 				const res = await createWorkflowSessionChatGroup(
 					apidata,
 					groupId ?? selectedId,
@@ -220,15 +218,12 @@ export const WorkflowProvider = ({
 			try {
 				moveSession(groupId, sourceIndex, destinationIndex);
 				const newSessions = useWorkflowStore.getState().workflowSessions;
-				console.log(workflowSessions, "workflowSessions");
 				const updatedSessions = newSessions
 					.filter((session) => session.workflow_group_id === groupId)
 					.map((session) => ({
 						id: session.id,
 						order: session.order,
 					}));
-
-				console.log(updatedSessions, "updatedSessions");
 
 				const res = await updateWorkflowSessionChatGroupOrder(
 					{
@@ -315,7 +310,6 @@ export const WorkflowProvider = ({
 			content: "工作流组更新中",
 			type: "loading",
 		});
-		console.log("newdata", newData);
 		fetchNewWorkflowGroup(newData);
 		//  上述步骤完成了 workflowgroup 的创建, 接下来要更新 workflowsession
 		//  首先判断当前的session 是否存在, 如果存在则更新, 如果不存在则创建

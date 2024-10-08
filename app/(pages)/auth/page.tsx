@@ -29,7 +29,7 @@ export default function AuthPage() {
 	const [show, setShow] = useState(false);
 
 	const inviteCode = query.get("i");
-	console.log("inviteCode", inviteCode);
+	// console.log("inviteCode", inviteCode);
 
 	useEffect(() => {
 		// 在这里可以使用inviteCode进行相应的处理

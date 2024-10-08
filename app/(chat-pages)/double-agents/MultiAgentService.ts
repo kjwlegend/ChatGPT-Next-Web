@@ -53,12 +53,12 @@ export async function sendNextAgentMessage(
 	messageContent: string,
 	attachImages: string[] = [],
 ) {
-	console.log(
-		"sendNextAgentMessage",
-		conversationId,
-		messageContent,
-		attachImages,
-	);
+	// console.log(
+	// 	"sendNextAgentMessage",
+	// 	conversationId,
+	// 	messageContent,
+	// 	attachImages,
+	// );
 	const MultiAgentStore = useMultipleAgentStore.getState();
 	const session = MultiAgentStore.conversations.find(
 		(m) => m.id === conversationId,
@@ -141,7 +141,7 @@ export async function sendNextAgentMessage(
 			await MultiAgentStore.finalizeBotMessage(conversationId, botMessage);
 			// 结束后继续发送
 			sendNextAgentMessage(conversationId, message);
-			console.log("sendNextAgentMessage", conversationId, message);
+			// console.log("sendNextAgentMessage", conversationId, message);
 		},
 		onError: (error: Error) => {
 			const isAborted = error.message.includes("aborted");

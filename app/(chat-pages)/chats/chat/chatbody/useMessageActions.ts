@@ -133,8 +133,8 @@ export const useMessageActions = (
 				(m) => m.id !== messageId,
 			);
 
-			console.log("message click delete", messageId);
-			console.log("updatedMessages", updatedMessages);
+			// console.log("message click delete", messageId);
+			// console.log("updatedMessages", updatedMessages);
 
 			sessionConfigUpdate(updateType, {
 				groupId: workflowGroupId,

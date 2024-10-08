@@ -368,7 +368,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 		set({ conversations: sortedConversations });
 
-		console.log("sortedConversations", sortedConversations);
+		// console.log("sortedConversations", sortedConversations);
 		return sortedConversations;
 	},
 	clearConversation: (conversationId: string) =>
@@ -384,7 +384,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				}
 				return conversation;
 			});
-			console.log("updatedConversations", updatedConversations);
+			// console.log("updatedConversations", updatedConversations);
 			return {
 				conversations: updatedConversations,
 			};
@@ -436,14 +436,14 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		newMessageId?: string,
 	) =>
 		set((state) => {
-			console.log(
-				"updateSingleMessage",
-				conversationId,
-				messageId,
-				newMessageContent.content,
-				toolsMessage,
-				newMessageId,
-			);
+			// console.log(
+			// 	"updateSingleMessage",
+			// 	conversationId,
+			// 	messageId,
+			// 	newMessageContent.content,
+			// 	toolsMessage,
+			// 	newMessageId,
+			// );
 			const updatedConversations = state.conversations.map((session) => {
 				if (session.id === conversationId) {
 					const messageIndex = session.messages.findIndex(
@@ -601,7 +601,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		const nextAgentIndex = decideNextAgent(sessionId);
 		const selectedAgent = session.aiConfigs[nextAgentIndex];
 
-		console.log("double agent", nextAgentIndex, selectedAgent);
+		// console.log("double agent", nextAgentIndex, selectedAgent);
 
 		if (!selectedAgent) throw new Error("No agent available for response");
 
@@ -739,7 +739,6 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		const total_token_count = 0; // recentMessagesTokenCount + contentTokenCount;
 
 		const userModel = "userMessage";
-		console.log(sessionId, "sessionid debug");
 		const createChatData = {
 			user: userid,
 			sessionId: sessionId,
@@ -782,7 +781,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 		});
 
 		const newMessages = userMessage;
-		console.log("newMessages", newMessages);
+		// console.log("newMessages", newMessages);
 
 		get().updateMessages(sessionId, newMessages);
 
@@ -856,7 +855,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 
 		// 获取会话的摘要
 		const summary = await contextSummarize(historyMessages, session.memory);
-		console.log("memory in store", summary);
+		// console.log("memory in store", summary);
 
 		// 更新会话的摘要
 		set((state) => {

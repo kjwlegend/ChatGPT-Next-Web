@@ -166,7 +166,7 @@ const App = () => {
 	const hasHydrated = useHasHydrated();
 
 	useEffect(() => {
-		console.log("[Config] got config from build time", getClientConfig());
+		// console.log("[Config] got config from build time", getClientConfig());
 		useAccessStore.getState().fetch();
 	}, []);
 

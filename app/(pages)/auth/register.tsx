@@ -57,7 +57,7 @@ const useRegisterForm = (onRegisterSuccess: () => void) => {
 		try {
 			setIsSubmitting(true);
 			const result = await register(values);
-			console.log(result);
+			// console.log(result);
 
 			if (result.id != -1) {
 				antdMessage.success("注册成功,请登录", 3);

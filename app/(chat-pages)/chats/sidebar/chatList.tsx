@@ -23,7 +23,7 @@ const ChatList = ({
 }: ChatListProps) => {
 	const chatlist = chatSessions;
 	const { currentSessionId } = useChatStore();
-	console.log("debug: currentSessionId", currentSessionId);
+	// console.log("debug: currentSessionId", currentSessionId);
 
 	const [selectedChatId, setSelectedChatId] = useState<string | null>(
 		currentSessionId,
@@ -34,7 +34,7 @@ const ChatList = ({
 	}, [currentSessionId]);
 
 	const handleChatItemClick = (id: string) => {
-		console.log("debug: handleChatItemClick", id);
+		// console.log("debug: handleChatItemClick", id);
 		setSelectedChatId(id); // 更新选中的聊天项
 		onChatItemClick(id); // 调用外部的点击处理函数
 	};
