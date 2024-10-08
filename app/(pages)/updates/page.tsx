@@ -897,6 +897,22 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-10-15",
+		color: "green",
+		children: (
+			<>
+				发布 V3.0.1 版本, 小光说:
+				<ul>
+					<li>修复了获取服务器自定义智能体数据导致会话错误的bug</li>
+					<li>优化了登出时对cookie的更新机制</li>
+					<li>修复了sidebar在新增对话时没有自动选中最新建立的对话的bug</li>
+					<li>修复了插件状态没有更新的bug</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

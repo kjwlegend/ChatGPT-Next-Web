@@ -3,6 +3,8 @@ import styles from "../home.module.scss";
 import { useRef, useEffect, useState, useCallback, memo } from "react";
 
 import { ChatItem } from "./chatItem";
+import { useChatSetting } from "../chat/hooks/useChatContext";
+import { useChatStore } from "@/app/store";
 
 interface ChatListProps {
 	narrow?: boolean;
@@ -20,9 +22,16 @@ const ChatList = ({
 	onChatItemEdit,
 }: ChatListProps) => {
 	const chatlist = chatSessions;
-	console.log("debug: chatlist", chatlist);
+	const { currentSessionId } = useChatStore();
+	console.log("debug: currentSessionId", currentSessionId);
 
-	const [selectedChatId, setSelectedChatId] = useState<string | null>(null); // 管理选中的聊天项
+	const [selectedChatId, setSelectedChatId] = useState<string | null>(
+		currentSessionId,
+	); // 管理选中的聊天项
+
+	useEffect(() => {
+		setSelectedChatId(currentSessionId);
+	}, [currentSessionId]);
 
 	const handleChatItemClick = (id: string) => {
 		console.log("debug: handleChatItemClick", id);

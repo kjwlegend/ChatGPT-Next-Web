@@ -45,7 +45,7 @@ export function LLMModelSwitch(
 	const { selectedId, updateWorkflowSession } = useWorkflowStore();
 	const session = props.session || chatStore.currentSession();
 	const sessionId = session.id;
-	const model = session.mask.modelConfig.model;
+	const model = session.mask.modelConfig.model ?? "gpt-4o-mini";
 	const availableModels = config.models;
 	const [modelType, setModelType] = useState<"基础" | "高级">("基础");
 	const [cost, setCost] = useState(1);

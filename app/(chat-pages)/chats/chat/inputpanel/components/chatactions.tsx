@@ -283,46 +283,33 @@ export const ChatActions = memo(
 			e.target.value = null;
 		};
 
-		function switchUsePlugins() {
-			// based on session.mask.plugins to decide if use plugins
+		const pluginStore = usePluginStore();
+		const [sessionPlugins, setSessionPlugins] = useState(
+			session?.mask?.plugins || [],
+		);
 
-			if (session.mask.plugins && session.mask.plugins?.length > 0) {
-				chatStore.updateSession(
-					session.id,
-					() => {
-						session.mask.usePlugins = true;
-					},
-					false,
-				);
-			} else {
-				chatStore.updateSession(
-					session.id,
-					() => {
-						session.mask.usePlugins = false;
-					},
-					false,
-				);
-			}
-		}
+		useEffect(() => {
+			setSessionPlugins(session?.mask?.plugins || []);
+		}, [session?.mask?.plugins]);
 
-		const availablePlugins = usePluginStore()
-			.getAll()
-			.filter((p) => getLang() === p.lang);
+		const availablePlugins = useMemo(() => {
+			return pluginStore.getAll().filter((p) => getLang() === p.lang);
+		}, [pluginStore]);
 
-		if (!session.mask.plugins) {
-			session.mask.plugins = [];
-		}
+		const items: MenuProps["items"] = useMemo(() => {
+			if (!session?.mask) return [];
 
-		const items: MenuProps["items"] = availablePlugins.map((p) => {
-			return {
+			return availablePlugins.map((p) => ({
 				key: p.name,
 				label: (
 					<Checkbox
-						value={(session.mask.plugins ?? []).includes(p.toolName ?? p.name)}
+						value={sessionPlugins.includes(p.toolName ?? p.name)}
 						onChange={(e) => {
+							if (!session?.mask) return;
+
 							const updatedPlugins = e.target.checked
-								? [...(session.mask.plugins ?? []), p.toolName ?? p.name]
-								: (session.mask.plugins ?? []).filter(
+								? [...sessionPlugins, p.toolName ?? p.name]
+								: sessionPlugins.filter(
 										(name) => name !== (p.toolName ?? p.name),
 									);
 
@@ -337,6 +324,7 @@ export const ChatActions = memo(
 								},
 							});
 
+							setSessionPlugins(updatedPlugins);
 							switchUsePlugins();
 						}}
 						onClick={(e) => {
@@ -346,17 +334,28 @@ export const ChatActions = memo(
 						{p.name}
 					</Checkbox>
 				),
-			};
-		});
+			}));
+		}, [
+			availablePlugins,
+			sessionPlugins,
+			session?.mask,
+			sessionId,
+			workflowGroupId,
+			updateType,
+		]);
 
-		// switch themes
-		const theme = config.theme;
-		function nextTheme() {
-			const themes = [Theme.Auto, Theme.Light, Theme.Dark];
-			const themeIndex = themes.indexOf(theme);
-			const nextIndex = (themeIndex + 1) % themes.length;
-			const nextTheme = themes[nextIndex];
-			config.update((config) => (config.theme = nextTheme));
+		function switchUsePlugins() {
+			if (!session?.id) return;
+
+			chatStore.updateSession(
+				session.id,
+				(updatedSession) => {
+					if (updatedSession.mask) {
+						updatedSession.mask.usePlugins = sessionPlugins.length > 0;
+					}
+				},
+				false,
+			);
 		}
 
 		// stop all responses
@@ -486,12 +485,12 @@ export const ChatActions = memo(
 						<ChatAction
 							onClick={switchUsePlugins}
 							text={
-								session.mask.plugins.length > 0
+								sessionPlugins.length > 0
 									? Locale.Chat.InputActions.DisablePlugins
 									: Locale.Chat.InputActions.EnablePlugins
 							}
 							icon={
-								session.mask.plugins.length > 0 ? (
+								sessionPlugins.length > 0 ? (
 									<ThunderboltTwoTone
 										style={{
 											fontSize: "15px",

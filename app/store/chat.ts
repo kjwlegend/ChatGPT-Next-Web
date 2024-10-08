@@ -278,7 +278,7 @@ export const useChatStore = createPersistStore(
 						sessions: [session, ...state.sessions],
 					}));
 
-					get().selectSession(res.id);
+					get().selectSessionById(session.id);
 				} catch (error) {
 					console.error("Error creating chat session:", error);
 				}

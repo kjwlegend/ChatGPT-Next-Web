@@ -13,7 +13,7 @@ export const AppMapping: AppMappingType = {
 	default: "",
 };
 
-const baseURL = process.env.NEXT_PUBLIC_SERVER_URL + "/api/xiaoguang/";
+const baseURL = process.env.NEXT_PUBLIC_SERVER_URL + "/xiaoguang/";
 
 if (!baseURL) {
 	throw new Error(

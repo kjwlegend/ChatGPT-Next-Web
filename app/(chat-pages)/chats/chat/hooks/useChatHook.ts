@@ -99,7 +99,6 @@ export function updateChatSessions(newSessionsData: any[]) {
 			(s) => s.id === sessionData.id,
 		);
 		const exists = existingSessionIndex !== -1;
-
 		const newSession: ChatSession = {
 			id: sessionData.id,
 			session_id: sessionData.session_id,
@@ -111,7 +110,15 @@ export function updateChatSessions(newSessionsData: any[]) {
 			},
 			lastSummarizeIndex: 0,
 			clearContextIndex: undefined,
-			mask: sessionData.custom_agent_data ?? createEmptyMask(),
+			mask:
+				{
+					...sessionData.custom_agent_data,
+					context: sessionData.custom_agent_data?.prompts_data ?? [],
+					intro: sessionData.custom_agent_data?.chat_intro ?? "",
+					name: sessionData.custom_agent_data?.agent_name ?? "",
+					img: sessionData.custom_agent_data?.image ?? "",
+					hideContext: sessionData.custom_agent_data?.hideContext ?? false,
+				} ?? createEmptyMask(),
 			responseStatus: undefined,
 			isworkflow: false,
 			mjConfig: sessionData.mjConfig,
