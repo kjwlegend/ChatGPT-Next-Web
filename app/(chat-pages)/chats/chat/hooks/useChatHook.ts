@@ -117,7 +117,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 					intro: sessionData.custom_agent_data?.chat_intro ?? "",
 					name: sessionData.custom_agent_data?.agent_name ?? "",
 					img: sessionData.custom_agent_data?.image ?? "",
-					hideContext: sessionData.custom_agent_data?.hideContext ?? false,
+					hideContext: sessionData.custom_agent_data?.hideContext ?? true,
 				} ?? createEmptyMask(),
 			responseStatus: undefined,
 			isworkflow: false,
