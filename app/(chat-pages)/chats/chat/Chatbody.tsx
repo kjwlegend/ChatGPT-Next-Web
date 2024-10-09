@@ -53,8 +53,14 @@ import { CHAT_PAGE_SIZE } from "@/app/constant";
 import styles from "./chats.module.scss";
 import { handleChatCallbacks } from "@/app/services/chatService";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
-import { useMessages, useSessions } from "./hooks/useChatContext";
+import {
+	useChatSetting,
+	useMessages,
+	useSessions,
+} from "./hooks/useChatContext";
 import { last } from "cheerio/lib/api/traversing";
+import { useChatService } from "./hooks/useChatHook";
+import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";
 
 type RenderMessage = ChatMessage & { preview?: boolean };
 
@@ -106,7 +112,7 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 	const [messageApi, contextHolder] = message.useMessage();
 
 	// const [messages, setMessages] = useState<RenderMessage[]>(messages);
-	const [isLoading, setIsLoading] = useState(false);
+	const [messageLoading, setMessageLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -166,7 +172,7 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 		const contextMessage = context
 			.concat(sortedMessages as RenderMessage[])
 			.concat(
-				isLoading
+				messageLoading
 					? [
 							{
 								...createMessage({
@@ -181,7 +187,7 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 			);
 
 		return contextMessage;
-	}, [context, isLoading, messages, ]);
+	}, [context, messageLoading, messages]);
 
 	const [msgRenderIndex, _setMsgRenderIndex] = useState(() =>
 		Math.max(
@@ -259,6 +265,7 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 	};
 
 	//  get all messages from chatstore
+	const { isLoading } = useGlobalLoading();
 	return (
 		<div
 			className={styles["chat-body"]}
@@ -270,11 +277,18 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 				// setAutoScroll(false);
 			}}
 		>
-			<MemoMessageList
-				messages={messagesfinal}
-				isLoading={isLoading}
-				hasNextPage={hasNextPage}
-			/>
+			{isLoading ? (
+				<div className={styles["loading-indicator"]}>
+					<LoadingIcon />
+					<span>加载中...</span>
+				</div>
+			) : (
+				<MemoMessageList
+					messages={messagesfinal}
+					isLoading={messageLoading}
+					hasNextPage={hasNextPage}
+				/>
+			)}
 		</div>
 	);
 }

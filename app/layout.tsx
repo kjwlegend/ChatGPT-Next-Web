@@ -16,7 +16,7 @@ import { useAppConfig } from "./store";
 import { SEOHeader } from "./components/seo-header";
 
 import { type Metadata, type Viewport } from "next";
-
+import { GlobalLoadingProvider } from "./contexts/GlobalLoadingContext";
 // export const metadata: Metadata = {
 // 	title: "小光AI",
 // 	description:
@@ -212,11 +212,13 @@ export default function RootLayout({
 							isMobile,
 						}}
 					>
-						<ConfigProvider theme={theme}>
-							<Header />
-							{children}
-							<Footer />
-						</ConfigProvider>
+						<GlobalLoadingProvider>
+							<ConfigProvider theme={theme}>
+								<Header />
+								{children}
+								<Footer />
+							</ConfigProvider>
+						</GlobalLoadingProvider>
 					</AppGeneralContext.Provider>
 				</section>
 			</body>

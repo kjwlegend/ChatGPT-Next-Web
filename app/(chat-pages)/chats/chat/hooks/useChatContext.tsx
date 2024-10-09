@@ -61,6 +61,11 @@ const defaultChatContextValue: ChatContextValue = {
 
 export const ChatSettingContext = React.createContext(defaultChatContextValue);
 
+interface LoadingContextType {
+	isLoading: boolean;
+	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export const ChatProvider = ({
 	_session,
 	children,
@@ -87,6 +92,7 @@ export const ChatProvider = ({
 	const [submitType, setSubmitType] = useState<
 		"chat" | "workflow" | "multiagent"
 	>("chat");
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Set the correct store based on storeType
 	useEffect(() => {

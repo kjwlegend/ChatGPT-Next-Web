@@ -181,7 +181,8 @@ function WindowHeaderTitle({
 					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
 				</div>
 				<div className="window-header-sub-title">
-					智能体: {session?.mask.name} | id: {session?.id}
+					智能体: {session?.mask.name} | id:{" "}
+					{session?.mask.id || session?.mask.agent_id}
 				</div>
 			</div>
 			{isEditingMessage && (

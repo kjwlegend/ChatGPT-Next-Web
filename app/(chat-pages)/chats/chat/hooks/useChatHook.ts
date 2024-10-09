@@ -3,16 +3,21 @@ import { useAccessStore, useAppConfig, useChatStore } from "../../../../store";
 
 import { Path } from "../../../../constant";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import { createEmptyMask } from "../../../../store/mask";
 import { DEFAULT_TOPIC } from "../../../../store";
+import { useChatSetting } from "./useChatContext";
+import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";
+
 export const useChatService = () => {
 	const chatStore = useChatStore();
 	const sessionlist = chatStore.sessions;
 	const navigate = useNavigate();
 	const config = useAppConfig();
+
+	const { isLoading, setIsLoading } = useGlobalLoading();
 
 	const [chatSessions, setChatSessions] = useState<any[]>(sessionlist);
 
@@ -54,19 +59,27 @@ export const useChatService = () => {
 		}
 	}, []);
 
-	const handleChatItemClick = useCallback(async (id: string) => {
-		const param = { limit: 60 };
-		try {
-			// console.log("get chatSession list", id);
-			const res = await getChatSessionChats(param, id); // 获取聊天记录
-			const chats = res.data;
-			UpdateChatMessages(id, chats);
-		} catch (error) {
-			console.log("get chatSession list error", error);
-		}
-		chatStore.selectSessionById(id);
-		navigate(Path.Chat);
-	}, []);
+	const handleChatItemClick = useCallback(
+		async (id: string) => {
+			console.log("handleChatItemClick started, setting isLoading to true");
+			setIsLoading(true);
+			const param = { limit: 60 };
+			try {
+				console.log("Fetching chat session chats...");
+				const res = await getChatSessionChats(param, id);
+				const chats = res.data;
+				UpdateChatMessages(id, chats);
+				chatStore.selectSessionById(id);
+				navigate(Path.Chat);
+			} catch (error) {
+				console.log("get chatSession list error", error);
+			} finally {
+				console.log("Setting isLoading to false");
+				setIsLoading(false);
+			}
+		},
+		[chatStore, navigate, setIsLoading],
+	);
 
 	const handleChatItemDelete = useCallback(
 		async (id: number) => {
@@ -83,6 +96,7 @@ export const useChatService = () => {
 
 	return {
 		chatSessions,
+		isLoading,
 		loadMoreSessions,
 		handleAddClick,
 		handleChatItemClick,

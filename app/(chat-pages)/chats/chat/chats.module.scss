@@ -898,3 +898,27 @@
 		}
 	}
 }
+
+// 全局样式, 后期会移到全局样式文件中
+.loading-indicator {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	font-size: 1.2em;
+	color: #888;
+
+	svg {
+		margin-right: 10px;
+		animation: spin 1s linear infinite;
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
