@@ -927,6 +927,21 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-10-10",
+		color: "green",
+		children: (
+			<>
+				发布 V3.0.3 版本, 小光说:
+				<ul>
+					<li>优化了对话窗口的加载效果，显著减少卡顿现象</li>
+					<li>修复了对话标题中智能体ID显示的问题</li>
+					<li>整体提升了用户交互体验和系统响应速度</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
