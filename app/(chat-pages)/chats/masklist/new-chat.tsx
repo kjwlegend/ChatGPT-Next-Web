@@ -75,7 +75,7 @@ function FeatureMaskItem(mask: Mask, startChat: (mask?: Mask) => void) {
 					<Image
 						width={90}
 						height={180}
-						src={mask?.img || ""}
+						src={"/" + mask?.img || ""}
 						alt={mask?.name || ""}
 					/>
 				</div>

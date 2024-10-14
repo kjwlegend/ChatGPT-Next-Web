@@ -10,7 +10,7 @@ import EyeIcon from "@/app/icons/eye.svg";
 import CopyIcon from "@/app/icons/copy.svg";
 import DragIcon from "@/app/icons/drag.svg";
 import styles from "./mask.module.scss";
-
+import { Avatar } from "@/app/components/avatar";
 import Locale, { AllLangs, ALL_LANG_OPTIONS, Lang } from "@/app/locales";
 import {
 	Input,
@@ -24,7 +24,6 @@ import {
 import { Card, Tag } from "antd";
 import { IconButton } from "@/app/components/button";
 import { BotAvatar } from "@/app/components/emoji";
-import { Avatar } from "antd";
 import { DEFAULT_MASK_AVATAR, useMaskStore } from "@/app/store/mask";
 import { Mask, ChatMessage } from "@/app/types/";
 import {
@@ -36,14 +35,6 @@ import {
 } from "@/app/store";
 
 const { Meta } = Card;
-
-export function MaskAvatar(props: { mask: Mask }) {
-	return props.mask.avatar !== DEFAULT_MASK_AVATAR ? (
-		<BotAvatar mask={props.mask} />
-	) : (
-		<BotAvatar mask={props.mask} />
-	);
-}
 
 type MaskComponentProps = {
 	mask: Mask;
@@ -77,7 +68,8 @@ const MaskComponent: React.FC<MaskComponentProps> = ({
 			<Card
 				title={
 					<div className={styles["mask-header"]}>
-						{<MaskAvatar mask={mask} />} {mask.name}{" "}
+						<Avatar avatar={mask.avatar} nickname={mask.name} size={40} />
+						{mask.name}
 						{mask.version ? mask.version : ""}
 					</div>
 				}

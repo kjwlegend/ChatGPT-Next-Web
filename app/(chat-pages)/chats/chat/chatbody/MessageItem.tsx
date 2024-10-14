@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/navigation";
 
-import { Avatar as UserAvatar, message as messagepop } from "antd";
+import { message as messagepop } from "antd";
 import { Loading3QuartersOutlined, ToolOutlined } from "@ant-design/icons";
 
 // 全局状态管理和上下文
@@ -18,17 +18,6 @@ import { useAppConfig } from "@/app/store";
 import { useChatStore, useUserStore } from "@/app/store";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 import dynamic from "next/dynamic";
-
-// UI组件和图标
-import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "@/app/components/ui-lib";
 
 import {
 	EditIcon,
@@ -49,7 +38,6 @@ import MjActions from "../midjourney";
 import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy } from "@/app/utils";
 import { ChatAction } from "../inputpanel/components/chatactions";
-import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";
 import { Avatar } from "@/app/components/avatar";
 
 // 常量
@@ -140,9 +128,24 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 			<Avatar
 				avatar={userStore.user.avatar}
 				nickname={userStore.user.nickname}
+				size={38}
 			/>
 		);
 	}, [userStore.user.avatar, userStore.user.nickname]);
+
+	// 渲染agent 头像
+	/**
+	 * @description: 渲染agent头像
+	 */
+	const RenderedAgentAvatar = useMemo(() => {
+		return (
+			<Avatar
+				avatar={session.mask.avatar}
+				nickname={session.mask.name}
+				size={38}
+			/>
+		);
+	}, [session.mask.avatar, session.mask.name]);
 
 	/**
 	 * @description: 渲染消息操作按钮
@@ -208,7 +211,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 				<div className={styles["chat-message-container"]}>
 					<div className={styles["chat-message-header"]}>
 						<div className={styles["chat-message-avatar"]}>
-							{isUser ? RenderedUserAvatar : <MaskAvatar mask={session.mask} />}
+							{isUser ? RenderedUserAvatar : RenderedAgentAvatar}
 						</div>
 					</div>
 

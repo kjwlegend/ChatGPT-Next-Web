@@ -28,13 +28,13 @@ export const Avatar: React.FC<AvatarProps> = ({ avatar, nickname, size }) => {
 		// }
 
 		// 为默认头像生成随机背景色
-		const randomColor = "rgb(80 59 187)"; //getRandomColor();
+		const randomColor = "#d5d5d5"; //getRandomColor();
 
 		return (
 			<AntdAvatar
 				style={{ backgroundColor: randomColor }}
 				size={size}
-				src={`${oss_base}${avatar}`}
+				src={`${oss_base}/${avatar}!avatar`}
 			>
 				{nickname}
 			</AntdAvatar>
