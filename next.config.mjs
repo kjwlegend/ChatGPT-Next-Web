@@ -2,6 +2,8 @@ import { Protocol } from "@aws-sdk/client-s3"
 import webpack from "webpack"
 import withBundleAnalyzer from '@next/bundle-analyzer'
 
+import 'newrelic' // 在最顶部添加
+
 const mode = process.env.BUILD_MODE ?? "standalone"
 console.log("[Next] build mode", mode)
 
