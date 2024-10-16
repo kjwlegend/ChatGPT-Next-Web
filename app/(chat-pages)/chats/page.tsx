@@ -38,7 +38,6 @@ import { log } from "console";
 import { useAuthStore } from "@/app/store/auth";
 import { message } from "antd";
 import { SEOHeader } from "@/app/components/seo-header";
-// import { NewChat } from "./new-chat";
 import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
 import { PaginationData } from "@/app/services/api/chats";
 import ChatList from "./sidebar/chatList";
@@ -68,7 +67,7 @@ const Chat = dynamic(async () => (await import("./chat/main")).Chat, {
 });
 
 const NewChat = dynamic(
-	async () => (await import("./masklist/new-chat")).NewChat,
+	async () => (await import("./new-chat/NewChat")).NewChat,
 	{
 		loading: () => <Loading noLogo />,
 	},
@@ -77,12 +76,9 @@ const NewChat = dynamic(
 const Knowledge = dynamic(async () => await import("./knowledge/main"), {
 	loading: () => <Loading noLogo />,
 });
-const MaskPage = dynamic(
-	async () => (await import("./masklist/mask")).MaskPage,
-	{
-		loading: () => <Loading noLogo />,
-	},
-);
+const MaskPage = dynamic(async () => await import("./masklist/index"), {
+	loading: () => <Loading noLogo />,
+});
 
 const Paitings = dynamic(
 	async () => (await import("./paintings/main")).default,

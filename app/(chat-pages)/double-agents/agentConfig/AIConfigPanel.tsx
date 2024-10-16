@@ -21,7 +21,7 @@ import { usePluginStore } from "@/app/store/plugin";
 
 import { getLang, getISOLang } from "@/app/locales";
 import { IconButton } from "@/app/components/button";
-import { MaskPage } from "../../chats/masklist/mask";
+import MaskPage from "../../chats/masklist/index";
 import { useMultipleAgentsChatHook } from "@/app/(chat-pages)/double-agents/useMultipleAgentsHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import React, { useState, useMemo, useEffect } from "react";

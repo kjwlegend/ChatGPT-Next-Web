@@ -1,0 +1,199 @@
+// 合并 mask.module.scss 和 new-chat.module.scss 的内容到这里
+@import "@/app/styles/animation.scss";
+.mask-page {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	.mask-page-body {
+		padding: 20px;
+		overflow-y: auto;
+	}
+	:global .ant-segmented {
+		margin: 20px;
+
+		@media screen and (max-width: 768px) {
+			margin: 5px;
+		}
+	}
+}
+// ============= 顶部切换segment =============
+
+.builtin {
+	margin-right: 5px;
+}
+
+.mask-category {
+	margin: 10px;
+	font-size: 14px;
+	top: 0;
+	z-index: 2;
+
+	:global .ant-tag {
+		margin: 5px;
+		font-size: 14px;
+	}
+}
+
+.mask-filter {
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 20px;
+	animation: slide-in ease 0.3s;
+	height: 40px;
+
+	display: flex;
+
+	.search-bar {
+		flex-grow: 1;
+		max-width: 100%;
+		min-width: 0;
+		transition: cubic-bezier(1, 0, 0, 1) 0.3s;
+		outline: none;
+
+		&:focus-visible {
+			border: 1px solid #777;
+		}
+	}
+
+	.mask-filter-lang {
+		height: 100%;
+		margin-left: 10px;
+	}
+
+	.mask-create {
+		height: 100%;
+		margin-left: 10px;
+		box-sizing: border-box;
+		min-width: 80px;
+	}
+}
+.mask-list {
+	justify-content: space-around;
+	row-gap: 10px;
+	align-items: stretch;
+	display: flex;
+	flex-wrap: wrap;
+
+	font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", "Helvetica",
+		"Arial", sans-serif, "Noto Sans", "SF Pro SC", "SF Pro Text", "SF Pro Icons";
+
+	.cardFooter {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		border-top: 1px solid var(--bar-color);
+	}
+	.author {
+		color: #777;
+		font-size: 12px;
+	}
+	.mask-item {
+		padding: 10px;
+		margin: 10px;
+		width: calc(33% - 20px);
+
+		// border: var(--border-in-default);
+		animation: slide-in ease 0.3s;
+		padding-bottom: 1px;
+		background-color: rgb(243 243 243 / 46%);
+
+		&:hover {
+			box-shadow:
+				0 2px 1px -1px rgb(65 88 146 / 16%),
+				0 4px 6px 0 rgb(115 74 127 / 29%),
+				0 1px 8px 1px rgb(67 49 49 / 9%);
+		}
+
+		.mask-header {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			column-gap: 1rem;
+			font-size: 0.85rem;
+			font-weight: 600;
+			letter-spacing: 2px;
+			color: var(--black);
+		}
+
+		:global .ant-card-actions > li {
+			text-align: center;
+			margin: 0;
+			button {
+				margin: auto;
+			}
+		}
+
+		:global .ant-card-meta-description {
+			height: 100%;
+			color: var(--light-gray);
+			text-overflow: ellipsis; /* 显示省略号 */
+			display: -webkit-box; /* 将元素设置为弹性盒子 */
+			-webkit-box-orient: vertical; /* 设置弹性盒子的排列方向为垂直方向 */
+			-webkit-line-clamp: 3; /* 设置文本显示的最大行数为3行 */
+		}
+		// 屏幕大于 1500
+		@media (min-width: 1500px) {
+			width: calc(25% - 20px);
+		}
+
+		// 屏幕小于 1024
+		@media (max-width: 1024px) {
+			width: calc(50% - 20px);
+		}
+
+		// 屏幕小于 768
+		@media (max-width: 768px) {
+			width: calc(100% - 20px);
+
+			:global .ant-card-meta-description {
+				height: 100%;
+				text-overflow: ellipsis; /* 显示省略号 */
+				// white-space: nowrap; /* 防止文字换行 */
+			}
+		}
+		.tags {
+			margin: 10px 0;
+			display: flex;
+			flex-direction: row;
+		}
+		.label {
+			background: rgb(255, 255, 255);
+			border: 1px solid rgb(238 238 238);
+			padding: 4px 5px;
+			margin-top: 5px;
+			font-size: 10px;
+			color: rgb(66, 66, 66);
+			border-radius: 5px;
+
+			&:not(:last-child) {
+				margin-right: 8px;
+			}
+		}
+		&.develop {
+			background-color: aquamarine;
+		}
+	}
+
+	.actions {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		margin-top: 5px;
+	}
+}
+.hotness {
+	color: var(--light-gray);
+	background-color: unset;
+	.button-icon {
+		width: 12px;
+	}
+	svg {
+		// margin-right: 5px;
+
+		path {
+			fill: var(--light-gray);
+		}
+	}
+}
