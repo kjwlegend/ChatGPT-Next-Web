@@ -6,6 +6,7 @@ interface AvatarProps {
 	avatar?: string | null;
 	nickname?: string;
 	size?: any;
+	className?: string;
 }
 
 // 生成随机颜色的函数
@@ -18,7 +19,12 @@ const getRandomColor = () => {
 	return color;
 };
 
-export const Avatar: React.FC<AvatarProps> = ({ avatar, nickname, size }) => {
+export const Avatar: React.FC<AvatarProps> = ({
+	avatar,
+	nickname,
+	size,
+	className,
+}) => {
 	const RenderedAvatar = useMemo(() => {
 		// if (avatar) {
 		// 	if (avatar.startsWith("a-")) {
@@ -41,5 +47,5 @@ export const Avatar: React.FC<AvatarProps> = ({ avatar, nickname, size }) => {
 		);
 	}, [avatar, nickname, size]);
 
-	return <div className="no-dark">{RenderedAvatar}</div>;
+	return <div className={className}>{RenderedAvatar}</div>;
 };

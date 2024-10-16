@@ -94,7 +94,9 @@ function useToggleSideBar() {
 					MAX_SIDEBAR_WIDTH,
 					config.sidebarWidth ?? DEFAULT_SIDEBAR_WIDTH,
 				);
-		const sideBarWidth = isMobileScreen ? "100vw" : `${barWidth}px`;
+		// const sideBarWidth = isMobileScreen ? "100vw" : `${barWidth}px`;
+		const sideBarWidth = `${barWidth}px`;
+
 		document.documentElement.style.setProperty("--sidebar-width", sideBarWidth);
 	}, [config.sidebarWidth, isMobileScreen, shouldNarrow]);
 

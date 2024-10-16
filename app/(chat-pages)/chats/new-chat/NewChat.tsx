@@ -12,6 +12,7 @@ import { useNewChat } from "./hooks/useNewChat";
 import FeatureMaskItem from "./components/FeatureMaskItem";
 import OtherMaskItem from "./components/OtherMaskItem";
 import SearchBar from "./components/SearchBar";
+import { PlusCircleOutlined, RobotOutlined } from "@ant-design/icons";
 
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -44,6 +45,10 @@ export function NewChat() {
 
 	const tags = Object.values(maskStore.tags).map((tag) => tag.tag_name);
 
+	const totalMasks = React.useMemo(() => {
+		return Object.keys(maskStore.masks).length;
+	}, [maskStore.masks]);
+
 	useCommand({
 		mask: (id) => {
 			try {
@@ -63,14 +68,17 @@ export function NewChat() {
 					<h2 className={styles["section-title"]}>快速操作</h2>
 					<div className={styles["button-group"]}>
 						<Button
-							className={styles["full-width-button"]}
+							className={`${styles["full-width-button"]} ${styles["start-chat-button"]}`}
 							onClick={() => startChat()}
+							icon={<PlusCircleOutlined />}
 						>
 							直接开始
 						</Button>
 						<Button
-							className={styles["full-width-button"]}
+							className={`${styles["full-width-button"]} ${styles["create-agent-button"]}`}
 							onClick={() => navigate("/create-agent")}
+							icon={<RobotOutlined />}
+							disabled={true}
 						>
 							创建自定义智能体
 						</Button>
@@ -123,11 +131,13 @@ export function NewChat() {
 
 			<Card className={styles["all-agents"]}>
 				<div className={styles.header}>
-					<h2 className={styles["section-title"]}>所有智能体</h2>
+					<h2 className={styles["section-title"]}>
+						还有{totalMasks * 2}+智能体等你发现
+					</h2>
 					<Button onClick={() => navigate(Path.Masks)}>查看全部</Button>
 				</div>
 				<div className={styles["agents-grid"]}>
-					{otherMasks.slice(0, 6).map((mask) => (
+					{otherMasks.slice(0, 5).map((mask) => (
 						<div key={mask.id} className={styles["agent-item"]}>
 							<Avatar src={mask.avatar} size={64} />
 							<h3>{mask.name}</h3>

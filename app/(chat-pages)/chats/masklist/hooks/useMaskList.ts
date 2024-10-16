@@ -17,6 +17,8 @@ export const useMaskList = () => {
 	const [searchText, setSearchText] = useState("");
 	const [segmentValue, setSegmentValue] = useState<string | number>("public");
 	const [author, setAuthor] = useState<string | undefined>(undefined);
+	const [initialSearchTerm, setInitialSearchTerm] = useState("");
+	const [initialSelectedTag, setInitialSelectedTag] = useState("");
 
 	const loadMore = useCallback(async () => {
 		if (isNext) {
@@ -55,6 +57,20 @@ export const useMaskList = () => {
 		setFilterMasks(maskStore.sort("hotness", data));
 	}, [filterLang, selectedTags, searchText, author, maskStore]);
 
+	useEffect(() => {
+		if (initialSearchTerm) {
+			setSearchText(initialSearchTerm);
+			onSearch(initialSearchTerm);
+		}
+	}, [initialSearchTerm]);
+
+	useEffect(() => {
+		if (initialSelectedTag) {
+			setSelectedTags([initialSelectedTag]);
+			handleTagsChange([initialSelectedTag]);
+		}
+	}, [initialSelectedTag]);
+
 	return {
 		masks,
 		filterMasks,
@@ -63,5 +79,8 @@ export const useMaskList = () => {
 		handleTagsChange,
 		onSearch,
 		segmentValue,
+		setInitialSearchTerm,
+		setInitialSelectedTag,
+		selectedTags,
 	};
 };

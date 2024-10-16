@@ -42,16 +42,109 @@
 			0 1px 2px 0 rgba(0, 0, 0, 0.06);
 		padding: 0.5rem;
 
+		transition: all 0.3s ease;
+
+		&:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 15px 30px rgba(48, 33, 33, 0.2);
+		}
+
 		@media (max-width: 768px) {
 			padding: 0.5rem;
 		}
 	}
 
 	.quick-actions {
-		flex: 0 0 25%;
+		background: var(--linear-set1);
+		border-radius: 15px;
+		// box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+		padding: 20px;
+		transition: all 0.3s ease;
 
-		@media (max-width: 1024px) {
+		&:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 15px 30px rgba(48, 33, 33, 0.2);
+		}
+
+		.section-title {
+			color: var(--black);
+			font-size: 1.5rem;
+			margin-bottom: 20px;
+			text-align: center;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		.button-group {
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.full-width-button {
+			height: 50px;
+			font-size: 1rem;
+			border-radius: 15px;
+			border: none;
+			transition: all 0.5s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			svg {
+				margin-right: 10px;
+				font-size: 1.2rem;
+			}
+
+			&.start-chat-button {
+				background-color: var(--primary);
+				color: var(--white);
+				border: 1px solid var(--border-color-active);
+
+				&:hover {
+					background-color: var(--second);
+					color: var(--primary);
+				}
+			}
+
+			&.create-agent-button {
+				background-color: var(--primary);
+				color: white;
+
+				&:hover {
+					background-color: var(--second);
+					color: var(--primary);
+				}
+
+				&:disabled {
+					background-color: var(--gray);
+					color: var(--light-gray);
+					cursor: not-allowed;
+				}
+			}
+		}
+	}
+
+	.mask-item {
+		text-align: center;
+		.avatar {
+			margin-bottom: 1.5rem;
+		}
+		.description {
 			flex: 1;
+
+			h3 {
+				margin-bottom: 8px;
+			}
+
+			p {
+				font-size: 14px;
+				margin-bottom: 4px;
+				color: rgba(0, 0, 0, 0.6);
+			}
+		}
+
+		.ant-btn {
+			margin-top: 8px;
 		}
 	}
 
@@ -94,10 +187,6 @@
 		width: 100%;
 		max-width: 100%; // 添加这行
 		overflow: hidden; // 添加这行
-
-		@media (max-width: 768px) {
-			height: 250px;
-		}
 
 		:global(.swiper-slide) {
 			height: 100%;

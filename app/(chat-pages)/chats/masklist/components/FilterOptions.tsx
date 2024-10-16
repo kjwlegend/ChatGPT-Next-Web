@@ -5,16 +5,17 @@ import { Tags } from "@/app/types/mask";
 
 interface FilterOptionsProps {
   handleTagsChange: (selectedTags: string[]) => void;
+  selectedTags: string[];
 }
 
-const FilterOptions: React.FC<FilterOptionsProps> = ({ handleTagsChange }) => {
+const FilterOptions: React.FC<FilterOptionsProps> = ({ handleTagsChange, selectedTags }) => {
   const maskStore = useMaskStore();
   const tags: Tags[] = Object.values(maskStore.tags);
   const tagsData = tags.map((tag: Tags) => tag.tag_name);
 
   return (
     <div className="flex-container">
-      <MultipleTag tagsData={tagsData} onTagsChange={handleTagsChange} />
+      <MultipleTag tagsData={tagsData} onTagsChange={handleTagsChange} selectedTags={selectedTags} />
     </div>
   );
 };
