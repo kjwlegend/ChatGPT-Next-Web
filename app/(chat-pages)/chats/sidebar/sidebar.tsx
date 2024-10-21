@@ -259,12 +259,11 @@ function MobileSideBar({
 					<DrawerMenu />
 					<div className={styles["logo-container"]}>
 						<Image
-							src="/bot.png"
+							src="/logo.png"
 							alt="xiaoguang AI LOGO"
-							width={30}
-							height={30}
+							width={106}
+							height={35}
 						/>
-						<span className={styles["logo-text"]}>小光AI</span>
 					</div>
 				</div>
 			</div>

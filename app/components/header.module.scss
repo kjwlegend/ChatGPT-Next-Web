@@ -20,20 +20,17 @@
 }
 
 .logo {
-	margin-left: 15px;
-	height: inherit;
 	display: flex;
+	height: inherit;
 	flex-direction: row;
-	position: relative;
 
-	.logo-img {
-		height: inherit;
-		margin-right: 20px;
-
-		img {
-			height: 100%;
-		}
+	a {
+		display: flex;
+		position: relative;
+		justify-content: center;
+		align-items: center;
 	}
+
 	.logo-text {
 		font-size: 1.2rem;
 		font-weight: 600;

@@ -39,8 +39,8 @@ const DrawerMenu = () => {
 		if (item) {
 			router.push(item.url);
 		} else {
-			const subItem = items.find(
-				(item: any) => item.children?.some((child: any) => child.key === e.key),
+			const subItem = items.find((item: any) =>
+				item.children?.some((child: any) => child.key === e.key),
 			);
 			if (subItem) {
 				const subItemChild = subItem.children?.find(
@@ -65,15 +65,15 @@ const DrawerMenu = () => {
 				<div className={styles.logo}>
 					<Image
 						className={styles["logo-image"]}
-						src="/logo-2.png"
-						width={50}
-						height={64}
+						src="/logo.png"
+						width={106}
+						height={35}
 						alt="Logo"
 					/>
-					<div className={styles["logo-text"]}>
+					{/* <div className={styles["logo-text"]}>
 						<p className={styles["headline"]}>小光AI</p>
 						<p className={styles["subline"] + " desktop-only"}>xiaoguang.fun</p>
-					</div>
+					</div> */}
 				</div>
 				<Menu
 					mode="inline"

@@ -103,16 +103,16 @@ export default function MainNav() {
 					<div className={styles.logo}>
 						<Link href="/chats">
 							<Image
-								src={"/logo-2.png"}
+								src={"/logo.png"}
 								alt="logo"
-								fill={true}
+								width={106}
+								height={35}
 								objectFit="contain"
-								style={{ left: -50 }}
 							/>
-
+							{/* 
 							<div className={styles["logo-text"]}>
 								<p className={styles["headline"]}>小光AI</p>
-							</div>
+							</div> */}
 						</Link>
 					</div>
 				</Header>
@@ -122,19 +122,22 @@ export default function MainNav() {
 					style={{ display: !showHeader ? "none" : "" }}
 				>
 					<div className={styles.logo}>
-						<Image
-							src={"/logo-2.png"}
-							alt="logo"
-							fill={true}
-							objectFit="contain"
-							style={{ left: -80 }}
-						/>
 						<Link href="/">
-							<div className={styles["logo-text"]}>
+							<Image
+								src={"/logo.png"}
+								alt="logo"
+								// fill={true}
+								objectFit="contain"
+								width={137}
+								height={45}
+								// style={{ left: -80 }}
+							/>
+						</Link>
+
+						{/* <div className={styles["logo-text"]}>
 								<p className={styles["headline"]}>小光AI 3.0</p>
 								<p className={styles["subline"]}>XiaoGuang</p>
-							</div>
-						</Link>
+							</div> */}
 					</div>
 
 					<div className={styles["ant-menu"]}>

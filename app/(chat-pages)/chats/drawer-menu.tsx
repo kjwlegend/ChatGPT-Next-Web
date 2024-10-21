@@ -64,9 +64,9 @@ const DrawerMenu = () => {
 				<div className={styles.logo}>
 					<Image
 						className={styles["logo-image"]}
-						src="/logo-2.png"
-						width={50}
-						height={64}
+						src="/logo.png"
+						width={137}
+						height={45}
 						alt="Logo"
 					/>
 					<div className={styles["logo-text"]}>

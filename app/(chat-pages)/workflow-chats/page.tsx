@@ -227,7 +227,7 @@ const WelcomeContainer: React.FC<{ children: React.ReactNode }> = ({
 		<div className={styles["logo"]}>
 			<Image
 				className={styles["logo-image"]}
-				src="/logo-2.png"
+				src="/logo.png"
 				alt="Logo"
 				width={200}
 				height={253}
