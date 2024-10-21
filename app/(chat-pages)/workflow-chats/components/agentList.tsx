@@ -47,7 +47,7 @@ import {
 } from "@hello-pangea/dnd";
 import { workflowChatSession } from "@/app/types/";
 import { useSimpleWorkflowService } from "../hooks/useSimpleWorkflowHook";
-import { MaskPage } from "../../chats/masklist/mask";
+import MaskPage from "../../chats/masklist/index";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 
 export function ChatItemShort(props: {

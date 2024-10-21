@@ -51,7 +51,6 @@ import {
 	useChatSetting,
 	useSessions,
 } from "./hooks/useChatContext";
-import MaskModal from "../masklist/MaskModal";
 import { SessionModal } from "./modals/sessionConfig";
 import { sessionConfig } from "@/app/types/";
 import { useWorkflowStore } from "@/app/store/workflow";

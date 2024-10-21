@@ -54,10 +54,8 @@ import Image from "next/image";
 
 import Router, { useRouter } from "next/navigation";
 import AgentList from "./components/agentList";
-import MaskList from "../chats/masklist/MaskList";
 import { useMasks } from "@/app/hooks/useMasks";
 
-import { MaskPage } from "../chats/masklist/mask";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";
 const { Header, Content, Footer, Sider } = Layout;
