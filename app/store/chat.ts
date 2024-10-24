@@ -235,8 +235,6 @@ export const useChatStore = createPersistStore(
 				const userId = useUserStore.getState().user.id;
 				const globalModelConfig = config.modelConfig;
 
-				// 使用类型守卫来检查 'id' 属性是否存在
-				const defaultMaskId = "2";
 				const selectedMask: any = mask ?? DEFAULT_MASK;
 
 				// 如果 selectedMask 没有 'id' 属性，我们提供一个默认值
@@ -265,7 +263,7 @@ export const useChatStore = createPersistStore(
 
 					session.mask = {
 						...selectedMask,
-						id: defaultMaskId ?? selectedMask.id,
+						id: selectedMask.id || "1",
 						modelConfig: {
 							...globalModelConfig,
 							...selectedMask.modelConfig,
@@ -574,6 +572,7 @@ export const useChatStore = createPersistStore(
 							sender_id: session.mask.id,
 							totalTokenCount: tokenCount,
 						};
+						console.log("[createBotChatData] ", createBotChatData);
 
 						const { chat_id, id } =
 							await createChatDataAndFetchId(createBotChatData);
