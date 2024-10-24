@@ -225,10 +225,10 @@ const WelcomeContainer: React.FC<{ children: React.ReactNode }> = ({
 		<div className={styles["logo"]}>
 			<Image
 				className={styles["logo-image"]}
-				src="/logo.png"
+				src="/ai-full.png"
 				alt="Logo"
-				width={200}
-				height={253}
+				width={120}
+				height={245}
 			/>
 		</div>
 		{children}

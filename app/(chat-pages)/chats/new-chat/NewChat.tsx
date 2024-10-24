@@ -1,7 +1,7 @@
 import React from "react";
 import { Path } from "@/app/constant";
 import styles from "./styles/NewChat.module.scss";
-import { Button, Card, Avatar } from "antd";
+import { Button, Card, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useMaskStore } from "@/app/store/mask";
 import { Mask } from "@/app/types/mask";
@@ -17,6 +17,7 @@ import { PlusCircleOutlined, RobotOutlined } from "@ant-design/icons";
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import { Avatar } from "@/app/components/avatar";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -86,7 +87,10 @@ export function NewChat() {
 				</Card>
 
 				<Card className={styles["recommended-agents"]}>
-					<h2 className={styles["section-title"]}>推荐智能体</h2>
+					<Flex justify="space-between">
+						<h2 className={styles["section-title"]}>推荐智能体</h2>
+						<Button onClick={() => navigate(Path.Masks)}>查看全部</Button>
+					</Flex>
 					<Swiper
 						className={styles["feature-carousel"]}
 						modules={[Navigation, Pagination]}
@@ -139,7 +143,7 @@ export function NewChat() {
 				<div className={styles["agents-grid"]}>
 					{otherMasks.slice(0, 5).map((mask) => (
 						<div key={mask.id} className={styles["agent-item"]}>
-							<Avatar src={mask.avatar} size={64} />
+							<Avatar avatar={mask.avatar} size={64} />
 							<h3>{mask.name}</h3>
 							<p>{mask.description}</p>
 							<Button onClick={() => startChat(mask)}>开始聊天</Button>

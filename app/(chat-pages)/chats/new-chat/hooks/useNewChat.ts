@@ -21,8 +21,13 @@ export const useNewChat = () => {
 				const featureMasks = featureMaskGroup(data);
 				const otherMasks = data.filter((mask) => !mask.featureMask);
 				const tags = await fetchTagsCallback(1, 100);
+
+				// Randomly select 15 masks from otherMasks
+				const shuffledOtherMasks = otherMasks.sort(() => 0.5 - Math.random());
+				const selectedOtherMasks = shuffledOtherMasks.slice(0, 15);
+
 				setFeatureGroup(featureMasks);
-				setOtherMasks(otherMasks);
+				setOtherMasks(selectedOtherMasks);
 				setTags(tags.data.map((tag) => tag.tag_name));
 				maskStore.updatestate({ total });
 			} catch (error) {

@@ -975,6 +975,33 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-10-24",
+		color: "blue",
+		children: (
+			<>
+				发布 V3.1.2 版本, 小光说:
+				<ul>
+					<li>修复了智能体搜索页的bug</li>
+					<li>新增了40个智能体</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
+	{
+		label: "2024-10-25",
+		color: "blue",
+		children: (
+			<>
+				发布 V3.1.3 版本, 小光说:
+				<ul>
+					<li>新增20个角色扮演类型智能体</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
