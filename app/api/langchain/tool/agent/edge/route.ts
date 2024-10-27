@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentApi, RequestBody, ResponseBody } from "../agentapi";
 import { auth } from "@/app/api/auth";
-import { EdgeTool } from "../../../../langchain-tools/edge_tools";
+import { EdgeTool } from "@/app/api/langchain/agents/edgeAgent";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 

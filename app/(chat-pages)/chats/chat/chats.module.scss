@@ -540,8 +540,15 @@
 .chat-message-item-file {
 	text-decoration: none;
 	color: #aaa;
+	border: 1px solid rgba(0, 0, 0, 0.1); // 添加边框
+	border-radius: 5px; // 添加圆角
+	padding: 5px; // 添加内边距
+	transition: background-color 0.3s; // 添加过渡效果
+	background-color: #fff;
+	&:hover {
+		background-color: rgba(222, 222, 222, 0.5); // 悬停时背景色变化
+	}
 }
-
 .chat-message-item-image {
 	width: 100%;
 	margin-top: 10px;
@@ -648,8 +655,8 @@
 
 .attach-file {
 	cursor: default;
-	width: 64px;
-	height: 64px;
+	width: 140px;
+	height: 34px;
 	border: rgba($color: #888, $alpha: 0.2) 1px solid;
 	border-radius: 5px;
 	margin-right: 10px;
@@ -660,27 +667,38 @@
 	position: relative;
 	justify-content: center;
 	align-items: center;
+	flex-direction: row; // 垂直排列图标和文本
+
+	.attach-file-icon {
+		font-size: 14px; // 图标大小
+	}
 
 	.attach-file-info {
 		top: 5px;
-		width: 100%;
-		position: absolute;
+		width: inherit;
 		font-size: 12px;
 		font-weight: bolder;
 		text-align: center;
 		word-wrap: break-word;
 		word-break: break-all;
-		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
+		line-clamp: 1;
+		-webkit-line-clamp: 1;
 		line-height: 1.5;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;
 	}
 
+	.attach-file-status {
+		bottom: 5px; // 状态图标位置
+		font-size: 16px; // 状态图标大小
+	}
+
 	.attach-file-mask {
 		width: 100%;
 		height: 100%;
+		position: absolute;
 		opacity: 0;
 		transition: all ease 0.2s;
 		z-index: 999;
@@ -702,7 +720,6 @@
 		background-color: var(--white);
 	}
 }
-
 .attach-images {
 	position: absolute;
 	left: 30px;

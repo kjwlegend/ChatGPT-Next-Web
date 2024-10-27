@@ -21,17 +21,42 @@ export default class AliOSS {
 		folderName?: string,
 	): Promise<void> {
 		const ossClient = getossClient();
-		let objectKey = fileName;
-		if (folderName) {
-			objectKey = `${folderName}/${fileName}`;
-		}
+		const objectKey = folderName ? `${folderName}/${fileName}` : fileName;
 
 		try {
 			const result = await ossClient.put(objectKey, data);
 			console.log(`File uploaded successfully to ${objectKey}`);
-			console.log(result);
+			console.log(`Uploading to ${objectKey} with data length: ${data.length}`);
+			// console.log(result);
 		} catch (e) {
 			console.error(`Error uploading file to ${objectKey}:`, e);
+			throw e;
+		}
+	}
+
+	// Get file from OSS
+	static async get(fileName: string): Promise<OSS.GetObjectResult | null> {
+		const ossClient = getossClient();
+
+		try {
+			const result = await ossClient.get(fileName);
+			console.log(`File retrieved successfully: ${fileName}`);
+			return result;
+		} catch (e) {
+			console.error(`Error retrieving file ${fileName}:`, e);
+			return null;
+		}
+	}
+
+	// Delete file from OSS
+	static async delete(fileName: string): Promise<void> {
+		const ossClient = getossClient();
+
+		try {
+			await ossClient.delete(fileName);
+			console.log(`File deleted successfully: ${fileName}`);
+		} catch (e) {
+			console.error(`Error deleting file ${fileName}:`, e);
 			throw e;
 		}
 	}

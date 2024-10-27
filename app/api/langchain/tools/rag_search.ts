@@ -1,14 +1,13 @@
 import { Tool } from "@langchain/core/tools";
 import { CallbackManagerForToolRun } from "@langchain/core/callbacks/manager";
-import { BaseLanguageModel } from "langchain/dist/base_language";
+import { BaseLanguageModel } from "@langchain/core/language_models/base";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { Embeddings } from "langchain/dist/embeddings/base.js";
+import { Embeddings } from "@langchain/core/embeddings";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
-import { Pinecone } from "@pinecone-database/pinecone";
-import { PineconeStore } from "@langchain/pinecone";
+
 import { getServerSideConfig } from "@/app/config/server";
-import { QdrantVectorStore } from "@langchain/community/vectorstores/qdrant";
+import { MyScaleStore } from "@langchain/community/vectorstores/myscale";
 
 export class RAGSearch extends Tool {
 	static lc_name() {
@@ -39,38 +38,32 @@ export class RAGSearch extends Tool {
 		const serverConfig = getServerSideConfig();
 		if (!serverConfig.isEnableRAG)
 			throw new Error("env ENABLE_RAG not configured");
-		// const pinecone = new Pinecone();
-		// const pineconeIndex = pinecone.Index(serverConfig.pineconeIndex!);
-		// const vectorStore = await PineconeStore.fromExistingIndex(this.embeddings, {
-		//   pineconeIndex,
-		// });
-		const vectorStore = await QdrantVectorStore.fromExistingCollection(
-			this.embeddings,
-			{
-				url: process.env.QDRANT_URL,
-				apiKey: process.env.QDRANT_API_KEY,
-				collectionName: this.sessionId,
-			},
-		);
+
+		const vectorStore = await MyScaleStore.fromExistingIndex(this.embeddings, {
+			host: process.env.MYSCALE_HOST || "",
+			port: process.env.MYSCALE_PORT || "",
+			username: process.env.MYSCALE_USERNAME || "",
+			password: process.env.MYSCALE_PASSWORD || "",
+			database: process.env.MYSCALE_DATABASE || "default",
+			table: "vector_table",
+		});
 
 		let context;
-		const returnCunt = serverConfig.ragReturnCount
+		const returnCount = serverConfig.ragReturnCount
 			? parseInt(serverConfig.ragReturnCount, 10)
 			: 4;
-		console.log("[rag-search]", { inputs, returnCunt });
-		// const results = await vectorStore.similaritySearch(inputs, returnCunt, {
-		//   sessionId: this.sessionId,
-		// });
-		const results = await vectorStore.similaritySearch(inputs, returnCunt);
+		console.log("[rag-search]", {
+			inputs,
+			returnCount,
+			sessionId: this.sessionId,
+		});
+
+		const results = await vectorStore.similaritySearch(inputs, returnCount, {
+			whereStr: `metadata.sessionId = ${this.sessionId}`,
+		});
 		context = formatDocumentsAsString(results);
 		console.log("[rag-search]", { context });
 		return context;
-		// const input = `Text:${context}\n\nQuestion:${inputs}\n\nI need you to answer the question based on the text.`;
-
-		// console.log("[rag-search]", input);
-
-		// const chain = RunnableSequence.from([this.model, new StringOutputParser()]);
-		// return chain.invoke(input, runManager?.getChild());
 	}
 
 	name = "rag-search";

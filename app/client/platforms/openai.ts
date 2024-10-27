@@ -41,6 +41,7 @@ import {
 } from "@/app/utils";
 
 import { auth } from "@/app/api/auth";
+import { userInfo } from "os";
 export interface OpenAIListModelResponse {
 	object: string;
 	data: Array<{
@@ -409,6 +410,7 @@ export class ChatGPTApi implements LLMApi {
 			const requestPayload = {
 				sessionId: options.chatSessionId,
 				fileInfos: options.fileInfos,
+				userinfo: options.userinfo,
 				baseUrl: baseUrl,
 			};
 			console.log("[Request] rag store payload: ", requestPayload);

@@ -36,7 +36,7 @@ import dynamic from "next/dynamic";
 import NextImage from "next/image";
 
 import { toBlob, toPng } from "html-to-image";
-import { DEFAULT_MASK_AVATAR } from "@/app/store/mask";
+import { DEFAULT_MASK_AVATAR } from "@/app/store/mask/utils";
 
 import { prettyObject } from "@/app/utils/format";
 import { EXPORT_MESSAGE_CLASS_NAME, ModelProvider } from "@/app/constant";
@@ -283,7 +283,7 @@ export function RenderExport(props: {
 			return {
 				id: i.toString(),
 				role: role as any,
-				content: role === "user" ? v.textContent ?? "" : v.innerHTML,
+				content: role === "user" ? (v.textContent ?? "") : v.innerHTML,
 				date: "",
 			};
 		});

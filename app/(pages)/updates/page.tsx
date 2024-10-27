@@ -1002,6 +1002,22 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-10-28",
+		color: "blue",
+		children: (
+			<>
+				发布 V3.1.4 版本, 小光说:
+				<ul>
+					<li>优化了插件体系架构，为未来功能扩展奠定基础</li>
+					<li>重新开放文件对话功能，支持更多文件格式和更智能的文档分析</li>
+					<li>优化了图片对话功能，提升了图像识别和描述的准确性</li>
+					<li>整体性能得到提升，用户体验更加流畅</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

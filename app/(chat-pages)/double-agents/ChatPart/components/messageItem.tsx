@@ -7,7 +7,7 @@ import { useAppConfig, useUserStore } from "@/app/store";
 import { getMessageImages } from "@/app/utils";
 
 import { Avatar } from "@/app/components/avatar";
-import { useMaskStore } from "@/app/store/mask";
+import { useMaskStore } from "@/app/store/mask/index";
 
 interface AgentMessageItemProps {
 	message: MultiAgentChatMessage;

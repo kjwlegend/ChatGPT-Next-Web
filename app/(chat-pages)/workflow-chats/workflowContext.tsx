@@ -28,7 +28,7 @@ import {
 	updateWorkflowSessionChatGroupOrder,
 	getWorkflowSessionChats,
 } from "@/app/services/api/chats";
-import { useMaskStore } from "@/app/store/mask";
+import { useMaskStore } from "@/app/store/mask/index";
 
 export const WORKFLOW_DEFAULT_TITLE = "未定义工作流";
 
@@ -193,7 +193,7 @@ export const WorkflowProvider = ({
 					agent: agent.id,
 					workflow_session: groupId ?? selectedId,
 				};
-				const mask = maskStore.get(agent.id);
+				const mask = maskStore.selectMaskById(agent.id);
 				const res = await createWorkflowSessionChatGroup(
 					apidata,
 					groupId ?? selectedId,

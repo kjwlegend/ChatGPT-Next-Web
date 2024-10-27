@@ -98,4 +98,14 @@ export const CN_PLUGINS: BuiltinPlugin[] = [
 		enable: false,
 		onlyNodeRuntime: false,
 	},
+	{
+		name: "RAG搜索",
+		toolName: "rag-search",
+		lang: "cn",
+		description:
+			"RAG搜索是一个工具，可以从你上传的文档或者公共文档中搜索知识。当原始模型不足以回答问题时使用。",
+		builtin: true,
+		createdAt: 1703846656000,
+		enable: false,
+	},
 ];

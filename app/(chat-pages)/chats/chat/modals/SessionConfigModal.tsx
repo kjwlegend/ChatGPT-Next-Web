@@ -62,8 +62,7 @@ import {
 	MaskConfig,
 } from "@/app/(chat-pages)/chats/components/mask-modal";
 
-import { useMaskStore } from "@/app/store/mask";
-import { ChatMessage, ChatSession } from "@/app/types/chat";
+import { useMaskStore } from "@/app/store/mask/index";
 import { useSessions } from "../hooks/useChatContext";
 import { useWorkflowStore } from "@/app/store/workflow";
 

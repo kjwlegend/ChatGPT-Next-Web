@@ -3,7 +3,7 @@ import { trimTopic } from "../utils";
 import Locale, { getLang } from "../locales";
 import { showToast } from "../components/ui-lib";
 import { ModelConfig, ModelType, useAppConfig } from "./config";
-import { createEmptyMask } from "./mask";
+import { createEmptyMask } from "./mask/utils";
 import { StoreKey, SUMMARIZE_MODEL } from "../constant";
 
 import { estimateTokenLength } from "../utils/chat/token";
@@ -458,7 +458,7 @@ export const useChatStore = createPersistStore(
 						...commonChatData,
 						content: content, // 使用用户输入作为 message 参数
 						attachImages: attachImages,
-						recentMessages: recentMessages,
+						recentMessages: recentMessages as ChatMessage[],
 						chat_role: "user",
 						sender_name: userStore.user.nickname,
 						totalTokenCount: total_token_count,
@@ -485,6 +485,14 @@ export const useChatStore = createPersistStore(
 								image_url: { url },
 							})),
 						);
+					}
+					if (attachFiles && attachFiles.length > 0) {
+						mContent += ` [${attachFiles[0].originalFilename}](${attachFiles[0].filePath})`;
+
+						// 将chatsession.mask.usePlugins 设置为true
+						// 将chatsession.mask.plugins 添加 rag-search
+						session.mask.usePlugins = true;
+						session.mask.plugins = [...session.mask.plugins, "rag-search"];
 					}
 
 					userMessage = createMessage({
@@ -513,6 +521,9 @@ export const useChatStore = createPersistStore(
 						sessionId,
 						(session: ChatSession) => {
 							const savedUserMessage = { ...userMessage, content: mContent };
+							session.attachFiles = (session.attachFiles || []).concat(
+								attachFiles || [],
+							);
 							session.messages = session.messages.concat([
 								savedUserMessage,
 								botMessage,
@@ -589,6 +600,7 @@ export const useChatStore = createPersistStore(
 					// 调用发送消息函数
 					const agent = session.mask;
 					sendChatMessage(
+						sessionId,
 						agent,
 						sendMessages,
 						handleChatCallbacks(

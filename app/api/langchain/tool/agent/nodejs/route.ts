@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AgentApi, RequestBody, ResponseBody } from "../agentapi";
 import { auth } from "@/app/api/auth";
-import { NodeJSTool } from "@/app/api/langchain-tools/nodejs_tools";
+import { NodeJSTool } from "@/app/api/langchain/agents/nodeAgent";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 

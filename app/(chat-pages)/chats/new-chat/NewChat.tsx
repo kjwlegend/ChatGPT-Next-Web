@@ -3,7 +3,7 @@ import { Path } from "@/app/constant";
 import styles from "./styles/NewChat.module.scss";
 import { Button, Card, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
-import { useMaskStore } from "@/app/store/mask";
+import { useMaskStore } from "@/app/store/mask/index";
 import { Mask } from "@/app/types/mask";
 import { useUserStore, useChatStore } from "@/app/store";
 import { useCommand } from "@/app/command";
@@ -53,7 +53,7 @@ export function NewChat() {
 	useCommand({
 		mask: (id) => {
 			try {
-				const mask = maskStore.get(id) ?? BUILTIN_MASK_STORE.get(id);
+				const mask = maskStore.selectMaskById(id) ?? BUILTIN_MASK_STORE.get(id);
 				startChat(mask ?? undefined);
 			} catch {
 				console.error("[New Chat] failed to create chat from mask id=", id);

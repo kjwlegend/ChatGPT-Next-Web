@@ -12,7 +12,6 @@ import { Stages } from "../store/tarot";
 import { TarotSpread } from "../types/TarotSpread";
 import { random } from "nanoid";
 import { useMobileScreen } from "@/app/hooks/useMobileScreen";
-import { is } from "cheerio/lib/api/traversing";
 
 interface ShuffleAnimationComponentProps {
 	onShuffleComplete?: () => void;

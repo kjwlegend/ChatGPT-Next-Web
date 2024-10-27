@@ -43,6 +43,7 @@ import {
 	PlayCircleOutlined,
 	DeleteOutlined,
 	HeartTwoTone,
+	UploadOutlined,
 } from "@ant-design/icons";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
@@ -86,15 +87,6 @@ import { IconButton } from "@/app/components/button";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 
 import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "@/app/components/ui-lib";
-import {
 	CHAT_PAGE_SIZE,
 	LAST_INPUT_KEY,
 	MAX_RENDER_MSG_COUNT,
@@ -104,14 +96,7 @@ import {
 	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 
-import { Radio, Switch } from "antd";
-import { useMaskStore } from "@/app/store/mask";
-import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
-import Image from "next/image";
-
-import { createChat, CreateChatData } from "@/app/api/backend/chat";
-import useAuth from "@/app/hooks/useAuth";
-import { message } from "antd";
+import { Button, List, message, Upload } from "antd";
 
 import {
 	useSubmitHandler,
@@ -153,6 +138,17 @@ import {
 } from "@/app/(chat-pages)/double-agents/multiAgentContext";
 let voicetext: string[] = [];
 
+import { UploadFile } from "antd/es/upload/interface"; // 导入 UploadFile 类型
+
+// 定义一个类型转换函数
+const convertToUploadFile = (file: FileInfo): UploadFile<File> => ({
+	uid: file.originalFilename, // 使用文件名作为 uid
+	name: file.originalFilename,
+	status: file.status,
+	size: file.size,
+	// 其他属性可以根据需要添加
+});
+
 export function Inputpanel(props: {
 	index?: number;
 	isworkflow: boolean;
@@ -163,6 +159,7 @@ export function Inputpanel(props: {
 	const multiAgentStore = useMultipleAgentStore.getState();
 	const { conversation, conversationId } = useCurrentConversation();
 	const sessions = useSessions(); // Call this hook unconditionally
+	const { user } = useUserStore.getState();
 
 	// Then use the result conditionally
 	const session = submitType === "multi-agent" ? conversation : sessions;
@@ -278,14 +275,35 @@ export function Inputpanel(props: {
 		}
 	}, [setAttachImages]);
 
-	const handleUploadFile = useCallback(async () => {
+	const handleUploadFile = useCallback(async (file: File) => {
+		setUploading(true);
 		try {
-			await uploadFile(setAttachFiles);
+			console.log("handleUploadFile", file);
+			const newFile = await uploadFile(file, session as ChatSession, user);
+			setAttachFiles((prevFiles) => [...prevFiles, newFile]); // 追加新文件
 		} catch (error) {
-			console.error("上传文件失败:", error);
-			// showToast(Locale.Chat.UploadFileFailed); // 假设showToast是一个显示提示信息的函数
+			message.error("上传文件失败");
+		} finally {
+			setUploading(false);
 		}
-	}, [setAttachFiles]);
+	}, []);
+
+	const customRequest = async ({
+		file,
+		onSuccess,
+		onError,
+	}: {
+		file: File;
+		onSuccess: (file: File) => void;
+		onError: (error: any) => void;
+	}) => {
+		try {
+			await handleUploadFile(file); // 调用上传逻辑
+			onSuccess(file); // 调用成功回调
+		} catch (error) {
+			onError(error); // 调用错误回调
+		}
+	};
 
 	const handleSpeechRecognition = useCallback(async (): Promise<void> => {
 		try {
@@ -305,31 +323,37 @@ export function Inputpanel(props: {
 		setShowPromptModal(true);
 	}, []);
 
+	const handleRemove = (file: UploadFile<File>) => {
+		setAttachFiles((prevFiles) =>
+			prevFiles.filter((f) => f.originalFilename !== file.name),
+		);
+		message.success(`${file.name} 已被删除`);
+	};
+
 	return (
 		<div className={styles["chat-input-panel"]}>
 			{contextHolder}
-
-			{submitType === "multi-agent" ? (
-				<SimpleChatActions
-					uploadImage={handleUploadImage}
-					uploadFile={handleUploadFile}
-					uploading={uploading}
-				/>
-			) : (
-				<ChatActions
-					uploadImage={handleUploadImage}
-					uploadFile={handleUploadFile}
-					setAttachImages={setAttachImages}
-					setAttachFiles={setAttachFiles}
-					setUploading={setUploading}
-					showPromptModal={handleShowPromptModal}
-					hitBottom={hitBottom}
-					uploading={uploading}
-					session={session as sessionConfig}
-					index={props.index}
-					workflow={isworkflow}
-				/>
-			)}
+			<div>
+				{submitType === "multi-agent" ? (
+					<SimpleChatActions
+						uploadImage={handleUploadImage}
+						uploading={uploading}
+					/>
+				) : (
+					<ChatActions
+						uploadImage={handleUploadImage}
+						setAttachImages={setAttachImages}
+						setAttachFiles={setAttachFiles}
+						setUploading={setUploading}
+						showPromptModal={handleShowPromptModal}
+						hitBottom={hitBottom}
+						uploading={uploading}
+						session={session as sessionConfig}
+						index={props.index}
+						workflow={isworkflow}
+					/>
+				)}
+			</div>
 			<label
 				className={`${styles["chat-input-panel-inner"]} ${
 					attachImages.length != 0 || attachFiles.length != 0
@@ -353,13 +377,22 @@ export function Inputpanel(props: {
 						minHeight: textareaMinHeight,
 					}}
 				/>
+				<Upload
+					customRequest={customRequest}
+					showUploadList={{
+						showPreviewIcon: true,
+						showRemoveIcon: true,
+						showDownloadIcon: true,
+					}}
+					maxCount={3}
+					accept=".doc,.docx,.md,.pdf,.txt,.ppt,.pptx,.xls,.xlsx,.csv,.json,.xml"
+					onRemove={handleRemove} // 添加 onRemove 回调
+				>
+					<Button icon={<UploadOutlined />}>文档对话</Button>
+				</Upload>
 				<AttachImages
 					attachImages={attachImages}
 					setAttachImages={setAttachImages}
-				/>
-				<AttachFiles
-					attachFiles={attachFiles}
-					setAttachFiles={setAttachFiles}
 				/>
 
 				<IconButton

@@ -8,20 +8,16 @@ import { AgentExecutor, AgentStep } from "langchain/agents";
 import { ACCESS_CODE_PREFIX, ServiceProvider } from "@/app/constant";
 
 // import * as langchainTools from "@langchain/core/tools";
-import * as langchainTools from "@/app/api/langchain-tools/langchian-tool-index";
-import { DuckDuckGo } from "@/app/api/langchain-tools/duckduckgo_search";
-import { HttpGetTool } from "@/app/api/langchain-tools/http_get";
+import * as langchainTools from "@/app/api/langchain/tools";
+import { DuckDuckGo } from "@/app/api/langchain/tools/duckduckgo_search";
+import { HttpGetTool } from "@/app/api/langchain/tools/http_get";
 import {
 	DynamicTool,
 	Tool,
 	StructuredToolInterface,
 } from "@langchain/core/tools";
 import { convertToOpenAITool } from "@langchain/core/utils/function_calling";
-import {
-	AllSearch,
-	BaiduSearch,
-	GoogleSearch,
-} from "@/app/api/langchain-tools/all_search";
+
 import { useAccessStore } from "@/app/store";
 
 import { formatToOpenAIToolMessages } from "langchain/agents/format_scratchpad/openai_tools";
@@ -45,7 +41,12 @@ import {
 } from "@langchain/core/messages";
 
 import { MultimodalContent } from "@/app/client/api";
-import { GoogleCustomSearch } from "@/app/api/langchain-tools/langchian-tool-index";
+import {
+	AllSearch,
+	BaiduSearch,
+	GoogleSearch,
+	GoogleCustomSearch,
+} from "@/app/api/langchain/tools";
 
 export interface RequestMessage {
 	role: string;
@@ -346,7 +347,7 @@ export class AgentApi {
 							? pastMessages.push(new HumanMessage(message.content))
 							: pastMessages.push(
 									new HumanMessage({ content: message.content }),
-							  );
+								);
 					if (
 						message.role === "assistant" &&
 						typeof message.content === "string"

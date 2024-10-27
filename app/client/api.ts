@@ -98,6 +98,7 @@ export interface AgentChatOptions {
 export interface CreateRAGStoreOptions {
 	chatSessionId: string;
 	fileInfos: FileInfo[];
+	userinfo: string;
 	onError?: (err: Error) => void;
 	onController?: (controller: AbortController) => void;
 }

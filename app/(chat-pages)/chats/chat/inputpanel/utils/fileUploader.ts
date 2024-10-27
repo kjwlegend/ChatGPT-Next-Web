@@ -51,6 +51,7 @@ import { compressImage } from "@/app/utils/chat/chat";
 import { ClientApi } from "@/app/client/api";
 
 import { createFromIconfontCN } from "@ant-design/icons";
+import { User } from "@/app/store";
 
 type FileProcessFunction<T> = (file: File) => Promise<T>;
 type UploadCallback<T> = (files: T[]) => void;
@@ -91,9 +92,11 @@ export const uploadImage = async (
 	setAttachImages: (images: string[]) => void,
 ) => {
 	const attachImages: string[] = [];
+	const api = new ClientApi(); // 创建 API 实例
 
-	const processImage = (file: File): Promise<string> => {
-		return compressImage(file, 256 * 1024);
+	const processImage = async (file: File): Promise<string> => {
+		const uploadedFileInfo = await api.file.upload(file, "chat-upload"); // 上传文件
+		return uploadedFileInfo.filePath; // 返回上传后的文件路径
 	};
 
 	uploadFiles<string>(
@@ -110,26 +113,39 @@ export const uploadImage = async (
 };
 
 export const uploadFile = async (
-	setAttachFiles: (files: FileInfo[]) => void,
-) => {
-	const attachFiles: FileInfo[] = [];
-
-	const processFile = (file: File): Promise<FileInfo> => {
-		const api = new ClientApi();
-		return api.file.upload(file);
+	file: File,
+	session: ChatSession,
+	userinfo: User,
+): Promise<FileInfo> => {
+	console.log("uploadFile", file);
+	const api = new ClientApi();
+	let fileInfo: FileInfo = {
+		originalFilename: file.name,
+		fileName: "",
+		filePath: "",
+		size: file.size,
+		status: "uploading", // 设置为上传中
 	};
 
-	uploadFiles<FileInfo>(
-		".pdf,.txt,.md,.json,.csv,.docx,.srt,.mp3",
-		processFile,
-		(files) => {
-			attachFiles.push(...files);
-			if (attachFiles.length > 5) {
-				attachFiles.splice(5, attachFiles.length - 5);
-			}
-			setAttachFiles(attachFiles);
-		},
-	);
+	// 上传文件
+	fileInfo = await api.file.upload(file, "RAG");
+	fileInfo.status = "uploading"; // 上传完成，设置为转码中
+
+	let partial;
+	try {
+		partial = await api.llm.createRAGStore({
+			chatSessionId: session.id,
+			fileInfos: [fileInfo],
+			userinfo: userinfo.username,
+		});
+		fileInfo.partial = partial;
+		fileInfo.status = "done"; // 转码成功
+	} catch (error) {
+		console.error("转码失败:", error);
+		fileInfo.status = "error"; // 转码失败
+	}
+
+	return fileInfo;
 };
 
 interface HandlePasteOptions {
@@ -151,6 +167,7 @@ export const handlePasteEvent = async (
 	} = options;
 
 	const items = (event.clipboardData || (window as any).clipboardData).items;
+	const api = new ClientApi(); // 创建 API 实例
 	for (const item of items) {
 		if (item.kind === "file" && item.type.startsWith("image/")) {
 			event.preventDefault();
@@ -161,9 +178,10 @@ export const handlePasteEvent = async (
 					...(await new Promise<string[]>((res, rej) => {
 						setUploading(true);
 						const imagesData: string[] = [];
-						compressImage(file, 256 * 1024)
-							.then((dataUrl) => {
-								imagesData.push(dataUrl);
+						api.file
+							.upload(file, "chat-upload") // 上传文件
+							.then((uploadedFileInfo) => {
+								imagesData.push(uploadedFileInfo.filePath); // 添加上传后的文件路径
 								setUploading(false);
 								res(imagesData);
 							})

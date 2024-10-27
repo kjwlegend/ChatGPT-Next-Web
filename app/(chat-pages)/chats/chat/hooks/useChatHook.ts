@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, use } from "react";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { createEmptyMask } from "../../../../store/mask";
+import { createEmptyMask } from "../../../../store/mask/utils";
 import { DEFAULT_TOPIC } from "../../../../store";
 import { useChatSetting } from "./useChatContext";
 import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";

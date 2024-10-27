@@ -1,4 +1,5 @@
 import { RequestMessage } from "../client/api";
+import { FileInfo } from "../client/platforms/utils";
 import { ModelType } from "../store";
 import { Mask } from "./mask";
 
@@ -56,6 +57,9 @@ export interface ChatSession {
 	isDoubleAgent?: boolean;
 	created_at?: string;
 	updated_at?: string;
+
+	attachFiles?: FileInfo[];
+
 	[key: string]: any;
 }
 

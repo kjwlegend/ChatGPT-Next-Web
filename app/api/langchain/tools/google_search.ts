@@ -2,7 +2,7 @@ import { decode } from "html-entities";
 import { convert as htmlToText } from "html-to-text";
 import { Tool } from "@langchain/core/tools";
 import * as cheerio from "cheerio";
-import { getRandomUserAgent } from "./ua_tools";
+import { getRandomUserAgent } from "../utils/ua_tools";
 
 interface SearchResults {
 	/** The web results of the search. */
@@ -31,7 +31,7 @@ async function search(
 	const headers = new Headers();
 	headers.append("User-Agent", getRandomUserAgent());
 	const resp = await fetch(
-		`https://www.baidu.com/s?f=8&ie=utf-8&rn=${maxResults}&wd=${encodeURIComponent(
+		`https://proxy.xiaoguang.fun/search?nfpr=1&num=${maxResults}&pws=0&q=${encodeURIComponent(
 			input,
 		)}`,
 		{
@@ -39,13 +39,13 @@ async function search(
 		},
 	);
 	const respCheerio = cheerio.load(await resp.text());
-	respCheerio("div.c-container.new-pmd").each((i, elem) => {
+	respCheerio("div.g").each((i, elem) => {
 		const item = cheerio.load(elem);
 		const linkElement = item("a");
 		const url = (linkElement.attr("href") ?? "").trim();
 		if (url !== "" && url !== "#") {
-			const title = decode(linkElement.text());
-			const description = item.text().replace(title, "").trim();
+			const title = decode(item("h3").text());
+			const description = item(`div[data-sncf~="1"]`).text().trim();
 			results.results.push({
 				url,
 				title,
@@ -56,8 +56,8 @@ async function search(
 	return results;
 }
 
-export class BaiduSearch extends Tool {
-	name = "baidu_search";
+export class GoogleSearch extends Tool {
+	name = "google_search";
 	maxResults = 6;
 
 	/** @ignore */

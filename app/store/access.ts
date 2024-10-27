@@ -49,7 +49,7 @@ const DEFAULT_ACCESS_STATE = {
 	disableGPT4: false,
 	disableFastLink: false,
 	customModels: "",
-	isEnableRAG: false,
+	isEnableRAG: true,
 	defaultModel: "",
 
 	// tts config
@@ -74,7 +74,6 @@ export const useAccessStore = createPersistStore(
 
 		enableRAG() {
 			this.fetch();
-
 			return get().isEnableRAG;
 		},
 

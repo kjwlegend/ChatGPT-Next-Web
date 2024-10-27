@@ -101,4 +101,14 @@ export const EN_PLUGINS: BuiltinPlugin[] = [
 		enable: false,
 		onlyNodeRuntime: false,
 	},
+	{
+		name: "RAGSearch",
+		toolName: "rag-search",
+		lang: "en",
+		description:
+			"RAGSearch is a tool that can search for knowledge from the knowledge base. It is used when the origin model is not enough to answer the question.",
+		builtin: true,
+		createdAt: 1703846656000,
+		enable: false,
+	},
 ];

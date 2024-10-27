@@ -1,6 +1,6 @@
 import { ChatSession, ChatMessage } from "@/app/types/chat";
 import { createMessage } from "@/app/store";
-import { fillTemplateWith } from "@/app/chains/base";
+import { fillTemplateWith, ragSearchTemplate } from "@/app/chains/base";
 import Locale, { getLang } from "@/app/locales";
 import { estimateTokenLength } from "@/app/utils/chat/token";
 import { getMessageTextContent } from "@/app/utils";
@@ -31,6 +31,16 @@ export function getMessagesWithMemory(
 			content: fillTemplateWith("", injectSetting),
 		}),
 	];
+
+	let ragPrompt;
+	if (session.attachFiles && session.attachFiles.length > 0) {
+		const ragTemplate = ragSearchTemplate(session.attachFiles);
+		ragPrompt = createMessage({
+			role: "system",
+			content: ragTemplate,
+			date: "",
+		});
+	}
 	const MemoryPrompt = {
 		role: "system",
 		content:
@@ -83,6 +93,7 @@ export function getMessagesWithMemory(
 	// concat all messages
 	const recentMessages = [
 		...systemPrompts,
+		...(ragPrompt ? [ragPrompt] : []),
 		...longTermMemoryPrompts,
 		...contextPrompts,
 		...reversedRecentMessages.reverse(),

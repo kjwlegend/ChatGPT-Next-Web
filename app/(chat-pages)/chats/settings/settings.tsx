@@ -70,7 +70,6 @@ import { useSyncStore } from "@/app/store/sync";
 import { useAuthStore } from "@/app/store/auth";
 import { nanoid } from "nanoid";
 import { PluginConfigList } from "./plugin-config";
-import { useMaskStore } from "@/app/store/mask";
 import { ProviderType } from "@/app/utils/cloud";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
@@ -464,98 +463,6 @@ function SyncConfigModal(props: { onClose?: () => void }) {
 				)}
 			</Modal>
 		</div>
-	);
-}
-
-function SyncItems() {
-	const syncStore = useSyncStore();
-	const chatStore = useChatStore();
-	const promptStore = usePromptStore();
-	const maskStore = useMaskStore();
-	const couldSync = useMemo(() => {
-		return syncStore.coundSync();
-	}, [syncStore]);
-
-	const [showSyncConfigModal, setShowSyncConfigModal] = useState(false);
-
-	const stateOverview = useMemo(() => {
-		const sessions = chatStore.sessions;
-		const messageCount = sessions.reduce((p, c) => p + c.messages.length, 0);
-
-		return {
-			chat: sessions.length,
-			message: messageCount,
-			prompt: Object.keys(promptStore.prompts).length,
-			mask: Object.keys(maskStore.masks).length,
-		};
-	}, [chatStore.sessions, maskStore.masks, promptStore.prompts]);
-
-	return (
-		<>
-			<List>
-				<ListItem
-					title={Locale.Settings.Sync.CloudState}
-					subTitle={
-						syncStore.lastProvider
-							? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
-									syncStore.lastProvider
-								}]`
-							: Locale.Settings.Sync.NotSyncYet
-					}
-				>
-					<div style={{ display: "flex" }}>
-						<IconButton
-							icon={<ConfigIcon />}
-							text={Locale.UI.Config}
-							onClick={() => {
-								setShowSyncConfigModal(true);
-							}}
-						/>
-						{couldSync && (
-							<IconButton
-								icon={<ResetIcon />}
-								text={Locale.UI.Sync}
-								onClick={async () => {
-									try {
-										await syncStore.sync();
-										showToast(Locale.Settings.Sync.Success);
-									} catch (e) {
-										showToast(Locale.Settings.Sync.Fail);
-										console.error("[Sync]", e);
-									}
-								}}
-							/>
-						)}
-					</div>
-				</ListItem>
-
-				<ListItem
-					title={Locale.Settings.Sync.LocalState}
-					subTitle={Locale.Settings.Sync.Overview(stateOverview)}
-				>
-					<div style={{ display: "flex" }}>
-						<IconButton
-							icon={<UploadIcon />}
-							text={Locale.UI.Export}
-							onClick={() => {
-								syncStore.export();
-							}}
-						/>
-						<IconButton
-							icon={<DownloadIcon />}
-							text={Locale.UI.Import}
-							onClick={() => {
-								syncStore.import();
-							}}
-						/>
-					</div>
-				</ListItem>
-			</List>
-
-			{showSyncConfigModal && (
-				<SyncConfigModal onClose={() => setShowSyncConfigModal(false)} />
-			)}
-		</>
 	);
 }
 

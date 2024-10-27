@@ -58,8 +58,6 @@ import {
 	useMessages,
 	useSessions,
 } from "./hooks/useChatContext";
-import { last } from "cheerio/lib/api/traversing";
-import { useChatService } from "./hooks/useChatHook";
 import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";
 
 type RenderMessage = ChatMessage & { preview?: boolean };

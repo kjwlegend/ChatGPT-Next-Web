@@ -1,17 +1,18 @@
-import { BaseLanguageModel } from "langchain/dist/base_language";
-import { PDFBrowser } from "@/app/api/langchain-tools/pdf_browser";
-import { Embeddings } from "langchain/dist/embeddings/base.js";
-import { ArxivAPIWrapper } from "@/app/api/langchain-tools/arxiv";
-import { DallEAPINodeWrapper } from "@/app/api/langchain-tools/dalle_image_generator_node";
-import { StableDiffusionNodeWrapper } from "@/app/api/langchain-tools/stable_diffusion_image_generator_node";
-import { Calculator } from "langchain/tools/calculator";
+import { BaseLanguageModel } from "@langchain/core/language_models/base";
+import { PDFBrowser } from "@/app/api/langchain/tools/pdf_browser";
+import { ArxivAPIWrapper } from "@/app/api/langchain/tools/arxiv";
+import { DallEAPINodeWrapper } from "@/app/api/langchain/tools/dalle_image_generator_node";
+import { StableDiffusionNodeWrapper } from "@/app/api/langchain/tools/stable_diffusion_image_generator_node";
+
+import { Calculator } from "@langchain/community/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
-import { WolframAlphaTool } from "@/app/api/langchain-tools/wolframalpha";
-import { BilibiliVideoInfoTool } from "./bilibili_vid_info";
-import { BilibiliVideoSearchTool } from "./bilibili_vid_search";
-import { BilibiliMusicRecognitionTool } from "./bilibili_music_recognition";
-import { RAGSearch } from "./rag_search";
-import { BilibiliVideoConclusionTool } from "./bilibili_vid_conclusion";
+import { Embeddings } from "@langchain/core/embeddings";
+import { WolframAlphaTool } from "@/app/api/langchain/tools/wolframalpha";
+import { BilibiliVideoInfoTool } from "@/app/api/langchain/tools/bilibili_vid_info";
+import { BilibiliVideoSearchTool } from "@/app/api/langchain/tools/bilibili_vid_search";
+import { BilibiliVideoConclusionTool } from "@/app/api/langchain/tools/bilibili_vid_conclusion";
+import { BilibiliMusicRecognitionTool } from "@/app/api/langchain/tools/bilibili_music_recognition";
+import { RAGSearch } from "../tools/rag_search";
 
 export class NodeJSTool {
 	private apiKey: string | undefined;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMaskStore } from "@/app/store/mask";
+import { useMaskStore } from "@/app/store/mask/index";
 import { useMasks } from "@/app/hooks/useMasks";
 import { useAuthStore } from "@/app/store/auth";
 import { Mask } from "@/app/types/mask";
@@ -29,7 +29,7 @@ export const useNewChat = () => {
 				setFeatureGroup(featureMasks);
 				setOtherMasks(selectedOtherMasks);
 				setTags(tags.data.map((tag) => tag.tag_name));
-				maskStore.updatestate({ total });
+				maskStore.updateState({ total });
 			} catch (error) {
 				console.error("Error fetching prompts:", error);
 			}

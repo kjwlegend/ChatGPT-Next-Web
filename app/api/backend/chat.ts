@@ -1,8 +1,6 @@
 import request from "@/app/utils/request";
-import { User } from "../../store/user";
-import { ModelType } from "../../store/config";
+
 import { ChatMessage, MJMessage, MjConfig, Mask } from "@/app/types/index";
-import { data } from "cheerio/lib/api/attributes";
 
 export interface CreateChatSessionData {
 	user: number;

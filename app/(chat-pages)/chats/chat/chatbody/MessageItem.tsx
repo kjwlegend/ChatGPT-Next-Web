@@ -11,7 +11,13 @@ import React, {
 import { useRouter } from "next/navigation";
 
 import { message as messagepop } from "antd";
-import { Loading3QuartersOutlined, ToolOutlined } from "@ant-design/icons";
+import {
+	FileExcelFilled,
+	FileFilled,
+	FilePdfFilled,
+	Loading3QuartersOutlined,
+	ToolOutlined,
+} from "@ant-design/icons";
 
 // 全局状态管理和上下文
 import { useAppConfig } from "@/app/store";
@@ -64,6 +70,24 @@ const Markdown = dynamic(
 		loading: () => <LoadingIcon />,
 	},
 );
+
+const getFileIcon = (filePath: string) => {
+	const extension = filePath.split(".").pop()?.toLowerCase();
+	switch (extension) {
+		case "pdf":
+			return <FilePdfFilled />; // 假设有一个 PdfIcon 组件
+		case "doc":
+		case "docx":
+		case "md":
+		case "txt":
+			return <FileFilled />; // 假设有一个 DocIcon 组件
+		case "xls":
+		case "xlsx":
+			return <FileExcelFilled />; // 假设有一个 ExcelIcon 组件
+		default:
+			return <FileFilled />; // 默认文件图标
+	}
+};
 
 const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	const [userInput, setUserInput] = useState("");
@@ -278,7 +302,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 
 						{/* 文件信息展示 */}
 						{message.fileInfos && message.fileInfos.length > 0 && (
-							<nav
+							<div
 								className={styles["chat-message-item-files"]}
 								style={
 									{
@@ -287,20 +311,19 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 								}
 							>
 								{message.fileInfos.map((fileInfo, index) => {
+									// 根据文件类型选择图标
+
+									const fileIcon = getFileIcon(fileInfo.fileName); // 假设有一个函数来获取图标
+
 									return (
-										<a
-											key={index}
-											href={fileInfo.filePath}
-											className={styles["chat-message-item-file"]}
-											target="_blank"
-										>
+										<p key={index} className={styles["chat-message-item-file"]}>
+											{fileIcon} {/* 显示文件图标 */}
 											{fileInfo.originalFilename}
-										</a>
+										</p>
 									);
 								})}
-							</nav>
+							</div>
 						)}
-
 						{/* 单张图片展示 */}
 						{getMessageImages(message).length == 1 && (
 							<img

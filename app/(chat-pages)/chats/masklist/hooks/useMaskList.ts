@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useMaskStore } from "@/app/store/mask";
+import { useMaskStore } from "@/app/store/mask/index";
 import { useMasks } from "@/app/hooks/useMasks";
 import { Mask } from "@/app/types/mask";
 import { useAuthStore } from "@/app/store/auth";
@@ -27,7 +27,7 @@ export const useMaskList = () => {
 				setIsNext(result.is_next);
 			}
 			if (result.total !== undefined) {
-				maskStore.updatestate({ total: result.total });
+				maskStore.updateState({ total: result.total });
 			}
 			setPage((prevPage) => prevPage + 1);
 		}
@@ -53,8 +53,8 @@ export const useMaskList = () => {
 			author: author,
 		};
 
-		const data = maskStore.filter(newFilterOptions);
-		setFilterMasks(maskStore.sort("hotness", data));
+		const data = maskStore.selectFilteredMasks(newFilterOptions);
+		setFilterMasks(maskStore.selectSortedMasks("hotness", data));
 	}, [filterLang, selectedTags, searchText, author, maskStore]);
 
 	useEffect(() => {

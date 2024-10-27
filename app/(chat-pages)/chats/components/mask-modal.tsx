@@ -9,7 +9,6 @@ import { Button } from "antd";
 import { genPrompt } from "@/app/chains/promptgen";
 
 import { ChatMessage, ChatSession, Mask, sessionConfig } from "@/app/types/";
-import { DEFAULT_MASK_AVATAR, useMaskStore } from "@/app/store/mask";
 import {
 	createMessage,
 	ModelConfig,

@@ -176,6 +176,7 @@ export function handleChatCallbacks(
 }
 // 然后创建一个统一的发送消息函数
 export function sendChatMessage(
+	sessionId: string,
 	agent: Mask,
 	sendMessages: ChatMessage[] | RequestMessage[],
 	callbacks: {
@@ -195,6 +196,7 @@ export function sendChatMessage(
 	const modelConfig = agent.modelConfig;
 
 	const chatOptions = {
+		sessionId: sessionId,
 		messages: sendMessages,
 		config: { ...modelConfig, stream: stream ?? true },
 		...callbacks,
@@ -204,9 +206,10 @@ export function sendChatMessage(
 	const useToolAgent = agent.plugins?.length! > 0 && allPlugins.length > 0;
 
 	if (useToolAgent) {
-		console.log("[ToolAgent] start");
+		console.log("[ToolAgent] start", sessionId);
 		const pluginToolNames = agent.plugins;
 		api.llm.toolAgentChat({
+			chatSessionId: sessionId,
 			messages: sendMessages,
 			config: { ...modelConfig, stream: stream ?? true },
 			agentConfig: {

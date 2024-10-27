@@ -3,6 +3,7 @@ import { auth } from "../../auth";
 import S3FileStorage from "../../../utils/s3_file_storage";
 import { ModelProvider } from "@/app/constant";
 import AliOSS from "@/app/utils/alioss";
+import { oss_base } from "@/app/constant";
 
 async function handle(req: NextRequest) {
 	if (req.method === "OPTIONS") {
@@ -17,28 +18,31 @@ async function handle(req: NextRequest) {
 	}
 	try {
 		const formData = await req.formData();
-		const image = formData.get("file") as File;
+		const file = formData.get("file") as File; // 处理任意类型的文件
 		const folderName = formData.get("folderName") as string | undefined;
-
-		const imageReader = image.stream().getReader();
-		const imageData: number[] = [];
+		console.log(formData);
+		const fileReader = file.stream().getReader();
+		const fileData: number[] = [];
 
 		while (true) {
-			const { done, value } = await imageReader.read();
+			const { done, value } = await fileReader.read();
 			if (done) break;
-			imageData.push(...value);
+			fileData.push(...value);
 		}
 
-		const buffer = Buffer.from(imageData);
+		const buffer = Buffer.from(fileData);
+		const fileName = `${Date.now()}_${file.name}`; // 使用原文件名
 
-		var fileName = `${Date.now()}.png`;
 		console.log("fileName: ", fileName);
-
-		await AliOSS.put(fileName, buffer, folderName);
+		await AliOSS.put(fileName, buffer, folderName); // 上传文件
 
 		return NextResponse.json(
 			{
-				fileName: `/${folderName}/${fileName}`,
+				originalFilename: file.name,
+				size: file.size,
+				fileName: `${folderName}/${fileName}`,
+				filePath: `${oss_base}/${folderName}/${fileName}`,
+				status: "done",
 			},
 			{
 				status: 200,

@@ -2,7 +2,7 @@ import { decode } from "html-entities";
 import { convert as htmlToText } from "html-to-text";
 import { Tool } from "@langchain/core/tools";
 import * as cheerio from "cheerio";
-import { getRandomUserAgent } from "./ua_tools";
+import { getRandomUserAgent } from "../utils/ua_tools";
 
 interface SearchResults {
 	/** The web results of the search. */

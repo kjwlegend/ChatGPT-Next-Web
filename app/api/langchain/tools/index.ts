@@ -23,3 +23,10 @@ export {
 	SearchApi,
 	type SearchApiParameters,
 } from "@langchain/community/tools/searchapi";
+
+export {
+	AllSearch,
+	BaiduSearch,
+	GoogleSearch,
+} from "@/app/api/langchain/tools/all_search";
+export { RAGSearch } from "@/app/api/langchain/tools/rag_search";

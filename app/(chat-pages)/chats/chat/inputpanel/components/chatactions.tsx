@@ -85,30 +85,6 @@ import { IconButton } from "@/app/components/button";
 import styles from "../../chats.module.scss";
 
 import {
-	List,
-	ListItem,
-	Modal,
-	Selector,
-	showConfirm,
-	showPrompt,
-	showToast,
-} from "@/app/components/ui-lib";
-import {
-	CHAT_PAGE_SIZE,
-	LAST_INPUT_KEY,
-	MAX_RENDER_MSG_COUNT,
-	Path,
-	REQUEST_TIMEOUT_MS,
-	UNFINISHED_INPUT,
-	LAST_INPUT_IMAGE_KEY,
-} from "@/app/constant";
-
-import { Radio, Switch } from "antd";
-import { useMaskStore } from "@/app/store/mask";
-import { ChatCommandPrefix, useChatCommand, useCommand } from "@/app/command";
-import Image from "next/image";
-
-import {
 	startSpeechToText,
 	convertTextToSpeech,
 } from "@/app/utils/voicetotext";
@@ -242,7 +218,6 @@ export const ChatActions = memo(
 	(props: {
 		uploadImage: () => void;
 		setAttachImages: (images: string[]) => void;
-		uploadFile: () => void;
 		setAttachFiles: (files: FileInfo[]) => void;
 		setUploading: (uploading: boolean) => void;
 		showPromptModal: () => void;
@@ -264,6 +239,7 @@ export const ChatActions = memo(
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			[],
 		);
+		console.log("isEnableRAG", isEnableRAG);
 
 		const updateType = props.workflow ? "workflow" : "chat";
 		const workflowGroupId = props.workflow ? session.workflow_group_id : null;
@@ -303,7 +279,7 @@ export const ChatActions = memo(
 				key: p.name,
 				label: (
 					<Checkbox
-						value={sessionPlugins.includes(p.toolName ?? p.name)}
+						checked={sessionPlugins.includes(p.toolName ?? p.name)}
 						onChange={(e) => {
 							if (!session?.mask) return;
 
@@ -378,10 +354,9 @@ export const ChatActions = memo(
 				setShowUploadImage(show);
 			}
 
-			const showFile = isEnableRAG && isSupportRAGModel(currentModel);
-			if (showFile !== showUploadFile) {
-				setShowUploadFile(showFile);
-			}
+			const showFile = isEnableRAG;
+
+			setShowUploadFile(showFile);
 
 			// Only update parent component state when currentModel changes and show is false
 			if (!show) {
@@ -473,14 +448,6 @@ export const ChatActions = memo(
 						/>
 					)}
 
-					{showUploadFile && (
-						<ChatAction
-							onClick={props.uploadFile}
-							text={Locale.Chat.InputActions.UploadFile}
-							icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
-						/>
-					)}
-
 					{config.pluginConfig.enable && (
 						<ChatAction
 							onClick={switchUsePlugins}
@@ -560,11 +527,7 @@ ChatActions.displayName = "ChatActions";
 
 // 简化版 ChatActions，只保留上传图片和文件功能
 const SimpleChatActionsComponent = memo(
-	(props: {
-		uploadImage: () => void;
-		uploadFile: () => void;
-		uploading: boolean;
-	}) => {
+	(props: { uploadImage: () => void; uploading: boolean }) => {
 		const [showUploadImage, setShowUploadImage] = useState(false);
 		const [showUploadFile, setShowUploadFile] = useState(false);
 		const config = useAppConfig();
@@ -584,13 +547,6 @@ const SimpleChatActionsComponent = memo(
 							onClick={props.uploadImage}
 							text={Locale.Chat.InputActions.UploadImage}
 							icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
-						/>
-					)}
-					{showUploadFile && (
-						<ChatAction
-							onClick={props.uploadFile}
-							text={Locale.Chat.InputActions.UploadFile}
-							icon={props.uploading ? <LoadingButtonIcon /> : <UploadIcon />}
 						/>
 					)}
 				</div>

@@ -1,6 +1,6 @@
 import { StructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
-import S3FileStorage from "../../utils/s3_file_storage";
+import S3FileStorage from "../../../utils/s3_file_storage";
 import AliOSS from "@/app/utils/alioss";
 import { oss_base } from "@/app/constant";
 

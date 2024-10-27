@@ -9,9 +9,6 @@ import React, {
 } from "react";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
-import { HashRouter } from "react-router-dom";
-import { useChatStore, useUserStore } from "@/app/store";
-
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import {
@@ -19,8 +16,6 @@ import {
 	useWorkflowSessions,
 	WorkflowProvider,
 } from "../workflowContext";
-
-import { useMaskStore } from "@/app/store/mask";
 
 import styles from "../workflow-chats.module.scss";
 import styles2 from "@/app/(chat-pages)/chats/home.module.scss";
