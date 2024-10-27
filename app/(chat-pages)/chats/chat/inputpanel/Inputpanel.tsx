@@ -288,23 +288,15 @@ export function Inputpanel(props: {
 		}
 	}, []);
 
-	const customRequest = async ({
-		file,
-		onSuccess,
-		onError,
-	}: {
-		file: File;
-		onSuccess: (file: File) => void;
-		onError: (error: any) => void;
-	}) => {
+	const customRequest = async (options: any) => {
+		const file = options.file as File; // 将 file 转换为 File 类型
 		try {
 			await handleUploadFile(file); // 调用上传逻辑
-			onSuccess(file); // 调用成功回调
+			options.onSuccess(file); // 调用成功回调
 		} catch (error) {
-			onError(error); // 调用错误回调
+			options.onError(error); // 调用错误回调
 		}
 	};
-
 	const handleSpeechRecognition = useCallback(async (): Promise<void> => {
 		try {
 			const text = await startSpeechToText();

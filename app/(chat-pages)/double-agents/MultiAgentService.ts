@@ -116,7 +116,7 @@ export async function sendNextAgentMessage(
 		streaming: true,
 	});
 
-	await sendChatMessage(selectedAgent, concatMessage, {
+	await sendChatMessage(session.id, selectedAgent, concatMessage, {
 		onUpdate: (message: string) => {
 			botMessage.content = message;
 			MultiAgentStore.updateBotMessage(conversationId, botMessage);

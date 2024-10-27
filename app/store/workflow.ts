@@ -623,6 +623,7 @@ export const useWorkflowStore = create<State>()(
 					};
 					// 调用发送消息函数
 					sendChatMessage(
+						sessionId,
 						agent,
 						sendMessages,
 						handleChatCallbacks(
