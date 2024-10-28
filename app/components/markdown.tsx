@@ -116,7 +116,7 @@ function escapeDollarNumber(text: string) {
 	return escapedText;
 }
 
-function _MarkDownContent(props: { content: string; imageBase64?: string }) {
+function MarkdownWrapper(props: { content: string; imageBase64?: string }) {
 	const escapedContent = useMemo(
 		() => escapeDollarNumber(props.content),
 		[props.content],
@@ -126,19 +126,21 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 		<div style={{ fontSize: "inherit" }}>
 			{/* {props.imageBase64 && <img src={props.imageBase64} alt="" />} */}
 			<ReactMarkdown
-				remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
-				rehypePlugins={[
-					RehypeKatex,
+				remarkPlugins={[RemarkMath as any, RemarkGfm, RemarkBreaks]}
+				rehypePlugins={
 					[
-						RehypeHighlight,
-						{
-							detect: false,
-							ignoreMissing: true,
-						},
-					],
-				]}
+						RehypeKatex,
+						[
+							RehypeHighlight,
+							{
+								detect: false,
+								ignoreMissing: true,
+							},
+						],
+					] as any
+				}
 				components={{
-					pre: PreCode,
+					pre: PreCode as any,
 					p: (pProps) => <p {...pProps} dir="auto" />,
 					a: (aProps) => {
 						const href = aProps.href || "";
@@ -154,7 +156,7 @@ function _MarkDownContent(props: { content: string; imageBase64?: string }) {
 	);
 }
 
-export const MarkdownContent = React.memo(_MarkDownContent);
+export const MarkdownContent = React.memo(MarkdownWrapper);
 
 export function Markdown(
 	props: {

@@ -15,8 +15,8 @@ import { prettyObject } from "../utils/format";
 import { ModelConfig } from "../store";
 import { CreateChatData, createChat } from "./api/chats";
 import useAuth from "../hooks/useAuth";
-
 import { Store } from "antd/es/form/interface";
+
 
 export const createChatDataAndFetchId = async (options: {
 	user: number;
@@ -73,7 +73,7 @@ export const createChatDataAndFetchId = async (options: {
 };
 export const submitChatMessage = async (
 	createChatData: CreateChatData,
-	chatStore: Store,
+	chatStore: Store
 ) => {
 	// console.log("createChatData trigger");
 

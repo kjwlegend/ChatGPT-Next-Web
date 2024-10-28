@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/api/auth";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "@/app/constant";
-import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
-import { EPubLoader } from "@langchain/community/document_loaders/fs/epub";
 import {
 	JSONLoader,
 	JSONLinesLoader,

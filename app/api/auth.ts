@@ -7,8 +7,10 @@ import { useAuthStore } from "../store/auth";
 import { use } from "react";
 import { useUserStore } from "../store";
 import { server_url } from "../constant";
+
 function getIP(req: NextRequest) {
-	let ip = req.ip ?? req.headers.get("x-real-ip");
+	// Use x-forwarded-for header as the source of the IP address
+	let ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip");
 	const forwardedFor = req.headers.get("x-forwarded-for");
 
 	if (!ip && forwardedFor) {

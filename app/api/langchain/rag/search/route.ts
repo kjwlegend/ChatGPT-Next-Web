@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/api/auth";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "@/app/constant";
-import { OpenAIEmbeddings } from "@langchain/openai";
 import { getServerSideConfig } from "@/app/config/server";
 
 import { LangchainConfig } from "@/app/api/langchain/config";

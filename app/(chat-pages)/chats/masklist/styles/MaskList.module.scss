@@ -1,5 +1,5 @@
 // 合并 mask.module.scss 和 new-chat.module.scss 的内容到这里
-@import "@/app/styles/animation.scss";
+@use "@/app/styles/animation.scss";
 .mask-page {
 	height: 100%;
 	display: flex;

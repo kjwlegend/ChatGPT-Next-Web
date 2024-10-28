@@ -67,7 +67,6 @@ import { InputRange } from "@/app/components/input-range";
 import { useNavigate } from "react-router-dom";
 import { BotAvatar } from "@/app/components/emoji";
 import { getClientConfig } from "@/app/config/client";
-import { useSyncStore } from "@/app/store/sync";
 import { useAuthStore } from "@/app/store/auth";
 import { getPaintings } from "@/app/api/backend/paintings";
 import { Tabs, Switch } from "antd";

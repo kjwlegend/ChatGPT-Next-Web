@@ -337,24 +337,28 @@ export class AgentApi {
 
 			const pastMessages = new Array();
 
-			reqBody.messages
-				.slice(0, reqBody.messages.length - 1)
-				.forEach((message) => {
-					if (message.role === "system" && typeof message.content === "string")
-						pastMessages.push(new SystemMessage(message.content));
-					if (message.role === "user")
-						typeof message.content === "string"
-							? pastMessages.push(new HumanMessage(message.content))
-							: pastMessages.push(
-									new HumanMessage({ content: message.content }),
-								);
-					if (
-						message.role === "assistant" &&
-						typeof message.content === "string"
-					)
-						pastMessages.push(new AIMessage(message.content));
-				});
-
+			if (reqBody.messages.length > 0) {
+				reqBody.messages
+					.slice(0, reqBody.messages.length - 1)
+					.forEach((message) => {
+						if (
+							message.role === "system" &&
+							typeof message.content === "string"
+						)
+							pastMessages.push(new SystemMessage(message.content));
+						if (message.role === "user")
+							typeof message.content === "string"
+								? pastMessages.push(new HumanMessage(message.content))
+								: pastMessages.push(
+										new HumanMessage({ content: message.content }),
+									);
+						if (
+							message.role === "assistant" &&
+							typeof message.content === "string"
+						)
+							pastMessages.push(new AIMessage(message.content));
+					});
+			}
 			let llm = new ChatOpenAI(
 				{
 					modelName: reqBody.model,
@@ -422,7 +426,11 @@ export class AgentApi {
 				agent: runnableAgent,
 				tools,
 			});
-			const lastMessageContent = reqBody.messages.slice(-1)[0].content;
+
+			let lastMessageContent: any;
+			if (reqBody.messages.length > 0) {
+				lastMessageContent = reqBody.messages.slice(-1)[0].content;
+			}
 			const lastHumanMessage =
 				typeof lastMessageContent === "string"
 					? new HumanMessage(lastMessageContent)

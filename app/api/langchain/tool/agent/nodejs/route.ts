@@ -4,6 +4,7 @@ import { auth } from "@/app/api/auth";
 import { NodeJSTool } from "@/app/api/langchain/agents/nodeAgent";
 import { ModelProvider } from "@/app/constant";
 import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { LangchainConfig } from "../../../config";
 
 async function handle(req: NextRequest) {
 	if (req.method === "OPTIONS") {
@@ -27,8 +28,8 @@ async function handle(req: NextRequest) {
 		const authToken = req.headers.get("Authorization") ?? "";
 		const token = authToken.trim().replaceAll("Bearer ", "").trim();
 
-		const apiKey = await agentApi.getOpenAIApiKey(token);
-		const baseUrl = await agentApi.getOpenAIBaseUrl(reqBody.baseUrl);
+		const apiKey = LangchainConfig.getOpenAIApiKey(token);
+		const baseUrl = LangchainConfig.getOpenAIBaseUrl(reqBody.baseUrl);
 
 		const model = new OpenAI(
 			{

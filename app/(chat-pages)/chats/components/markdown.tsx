@@ -134,14 +134,14 @@ function escapeBrackets(text: string) {
 	);
 }
 
-function _MarkDownContent(props: { content: string }) {
+function MarkdownWrapper(props: { content: string }) {
 	const escapedContent = useMemo(() => {
 		return escapeBrackets(escapeDollarNumber(props.content));
 	}, [props.content]);
 
 	return (
 		<ReactMarkdown
-			remarkPlugins={[RemarkMath, RemarkGfm, RemarkBreaks]}
+			remarkPlugins={[RemarkMath as any, RemarkGfm, RemarkBreaks]}
 			rehypePlugins={[
 				RehypeKatex,
 				[
@@ -150,16 +150,22 @@ function _MarkDownContent(props: { content: string }) {
 						detect: false,
 						ignoreMissing: true,
 					},
-				],
+				] as any,
 			]}
 			components={{
-				pre: PreCode,
+				pre: PreCode as any,
 				p: (pProps) => <p {...pProps} dir="auto" />,
 				a: (aProps) => {
 					const href = aProps.href || "";
 					const isInternal = /^\/#/i.test(href);
 					const target = isInternal ? "_self" : (aProps.target ?? "_blank");
-					return <a {...aProps} target={target} />;
+					return (
+						<a
+							{...aProps}
+							target={target}
+							rel={isInternal ? undefined : "noopener noreferrer"}
+						/>
+					); // 添加 rel 属性以提高安全性
 				},
 			}}
 		>
@@ -168,7 +174,7 @@ function _MarkDownContent(props: { content: string }) {
 	);
 }
 
-export const MarkdownContent = React.memo(_MarkDownContent);
+export const MarkdownContent = React.memo(MarkdownWrapper);
 
 export function Markdown(
 	props: {
