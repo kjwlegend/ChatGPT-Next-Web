@@ -1,4 +1,4 @@
-"use server"; // 服务器组件
+"use client"; // 服务器组件
 
 import React from "react";
 import { Layout, Timeline } from "antd";

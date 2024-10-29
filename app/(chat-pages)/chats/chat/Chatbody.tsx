@@ -27,18 +27,7 @@ import {
 	PlayIcon,
 } from "@/app/icons"; // 假设的图标资源
 
-import {
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	useAppConfig,
-	DEFAULT_TOPIC,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
-
-import { useMobileScreen } from "@/app/hooks/useMobileScreen";
+import { useChatStore, BOT_HELLO, createMessage } from "@/app/store";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 

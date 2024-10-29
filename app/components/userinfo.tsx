@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import LogoutButton from "./logout";
 import { useUserStore } from "../store/user";

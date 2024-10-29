@@ -1,6 +1,6 @@
-@import "./animation.scss";
-@import "./window.scss";
-@import "./fonts.scss";
+@use "./animation.scss";
+@use "./window.scss";
+@use "./fonts.scss";
 
 @keyframes fade-in {
 	from {

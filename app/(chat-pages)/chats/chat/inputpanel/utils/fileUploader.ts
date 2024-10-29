@@ -1,41 +1,7 @@
-"use client";
 import { useDebouncedCallback } from "use-debounce";
-import React, {
-	useState,
-	useRef,
-	useEffect,
-	useMemo,
-	Fragment,
-	useContext,
-	use,
-	useCallback,
-} from "react";
-import { getISOLang, getLang } from "@/app/locales";
-import { useRouter } from "next/navigation";
-
-import SendWhiteIcon from "@/app/icons/send-white.svg";
-import CopyIcon from "@/app/icons/copy.svg";
-import PromptIcon from "@/app/icons/prompt.svg";
-import ResetIcon from "@/app/icons/reload.svg";
-import BreakIcon from "@/app/icons/break.svg";
-import SettingsIcon from "@/app/icons/chat-settings.svg";
-import LightIcon from "@/app/icons/light.svg";
-import DarkIcon from "@/app/icons/dark.svg";
-import AutoIcon from "@/app/icons/auto.svg";
-import BottomIcon from "@/app/icons/bottom.svg";
-import StopIcon from "@/app/icons/pause.svg";
-import RobotIcon from "@/app/icons/robot.svg";
-import Record from "@/app/icons/record.svg";
-import UploadIcon from "@/app/icons/upload.svg";
-import CloseIcon from "@/app/icons/close.svg";
-import DeleteIcon from "@/app/icons/clear.svg";
-
-import LoadingIcon from "@/app/icons/three-dots.svg";
-import LoadingButtonIcon from "@/app/icons/loading.svg";
-import ImageIcon from "@/app/icons/image.svg";
+import React from "react";
 
 import { oss_base } from "@/app/constant";
-import CheckmarkIcon from "@/app/icons/checkmark.svg";
 import { FileInfo } from "@/app/client/platforms/utils";
 
 import {
@@ -56,7 +22,7 @@ import { User } from "@/app/store";
 type FileProcessFunction<T> = (file: File) => Promise<T>;
 type UploadCallback<T> = (files: T[]) => void;
 
-async function uploadFiles<T>(
+function uploadFiles<T>(
 	acceptTypes: string,
 	processFile: FileProcessFunction<T>,
 	callback: UploadCallback<T>,
@@ -88,9 +54,7 @@ async function uploadFiles<T>(
 
 // 文件路径: src/components/YourComponent.tsx
 
-export const uploadImage = async (
-	setAttachImages: (images: string[]) => void,
-) => {
+export const uploadImage = (setAttachImages: (images: string[]) => void) => {
 	const attachImages: string[] = [];
 	const api = new ClientApi(); // 创建 API 实例
 

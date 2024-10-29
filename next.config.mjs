@@ -1,8 +1,6 @@
-import { Protocol } from "@aws-sdk/client-s3"
 import webpack from "webpack"
 import withBundleAnalyzer from '@next/bundle-analyzer'
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin'
-
 import crypto from 'crypto-browserify' // 使用 import 语法
 import stream from 'stream-browserify' // 使用 import 语法
 import http from 'stream-http' // 使用 import 语法
@@ -32,12 +30,12 @@ const nextConfig = {
 
     config.resolve.fallback = {
       child_process: false,
-      // crypto: ['crypto-browserify'], // 使用字符串数组
-      // stream: ['stream-browserify'],   // 使用字符串数组
-      // http: ['stream-http'],            // 使用字符串数组
-      // https: ['https-browserify'],      // 使用字符串数组
-      // zlib: ['browserify-zlib'], // 添加 zlib 的 fallback
-      // os: ['os-browserify'], // 添加 os 的 fallback
+      crypto: ['crypto-browserify'], // 使用字符串数组
+      stream: ['stream-browserify'],   // 使用字符串数组
+      http: ['stream-http'],            // 使用字符串数组
+      https: ['https-browserify'],      // 使用字符串数组
+      zlib: ['browserify-zlib'], // 添加 zlib 的 fallback
+      os: ['os-browserify'], // 添加 os 的 fallback
     }
 
     // config.plugins.push(new NodePolyfillPlugin())

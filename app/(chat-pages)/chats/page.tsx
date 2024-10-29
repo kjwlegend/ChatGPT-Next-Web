@@ -1,7 +1,5 @@
 "use client";
-
 require("@/app/polyfill");
-
 import { useState, useEffect } from "react";
 import ErrorBoundary from "antd/es/alert/ErrorBoundary";
 import styles from "./home.module.scss";
@@ -22,13 +20,9 @@ import {
 	Routes,
 	Route,
 	useLocation,
-	NavigationType,
-	useNavigate,
 } from "react-router-dom";
-import { useRouter } from "next/navigation";
 import { SideBar } from "./sidebar/sidebar";
 import { useAppConfig } from "@/app/store/config";
-import AuthPage from "@/app/(pages)/auth/page";
 import { getClientConfig } from "@/app/config/client";
 import { api } from "@/app/client/api";
 import { useAccessStore, useChatStore } from "@/app/store";
@@ -38,8 +32,7 @@ import { log } from "console";
 import { useAuthStore } from "@/app/store/auth";
 import { message } from "antd";
 import { SEOHeader } from "@/app/components/seo-header";
-import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
-import { PaginationData } from "@/app/services/api/chats";
+
 import ChatList from "./sidebar/chatList";
 
 import { useChatService } from "@/app/(chat-pages)/chats/chat/hooks/useChatHook";
@@ -167,9 +160,7 @@ function Screen() {
 	const { logoutHook } = useAuth();
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
-	const router = useRouter();
 
-	const navigate = useNavigate();
 	const {
 		loadMoreSessions,
 		handleAddClick,
@@ -256,7 +247,7 @@ function useLoadData() {
 	}, []);
 }
 
-export default function Home() {
+const Home = () => {
 	useSwitchTheme();
 	useLoadData();
 	useHtmlLang();
@@ -280,4 +271,6 @@ export default function Home() {
 			{contextHolder}
 		</Router>
 	);
-}
+};
+
+export default Home;

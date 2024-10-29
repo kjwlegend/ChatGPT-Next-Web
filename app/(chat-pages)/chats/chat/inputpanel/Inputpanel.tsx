@@ -10,29 +10,14 @@ import React, {
 	use,
 	useCallback,
 } from "react";
+import dynamic from "next/dynamic";
+
 import { getISOLang, getLang } from "@/app/locales";
-import { useRouter } from "next/navigation";
 
 import SendWhiteIcon from "@/app/icons/send-white.svg";
 import CopyIcon from "@/app/icons/copy.svg";
-import PromptIcon from "@/app/icons/prompt.svg";
-import ResetIcon from "@/app/icons/reload.svg";
-import BreakIcon from "@/app/icons/break.svg";
-import SettingsIcon from "@/app/icons/chat-settings.svg";
-import LightIcon from "@/app/icons/light.svg";
-import DarkIcon from "@/app/icons/dark.svg";
-import AutoIcon from "@/app/icons/auto.svg";
-import BottomIcon from "@/app/icons/bottom.svg";
-import StopIcon from "@/app/icons/pause.svg";
-import RobotIcon from "@/app/icons/robot.svg";
-import Record from "@/app/icons/record.svg";
-import UploadIcon from "@/app/icons/upload.svg";
-import CloseIcon from "@/app/icons/close.svg";
-import DeleteIcon from "@/app/icons/clear.svg";
 
-import LoadingIcon from "@/app/icons/three-dots.svg";
-import LoadingButtonIcon from "@/app/icons/loading.svg";
-import ImageIcon from "@/app/icons/image.svg";
+import Record from "@/app/icons/record.svg";
 
 import { oss_base } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
@@ -48,17 +33,7 @@ import {
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
+import { useAppConfig, ModelType, useUserStore } from "@/app/store";
 
 import {
 	MULTI_AGENT_DEFAULT_TOPIC,
@@ -70,16 +45,8 @@ import {
 	autoGrowTextArea,
 	getMessageTextContent,
 	getMessageImages,
-	isVisionModel,
-	isFirefox,
-	isSupportRAGModel,
 } from "@/app/utils";
 
-import { useMobileScreen } from "@/app/hooks/useMobileScreen";
-
-import { api } from "@/app/client/api";
-
-import { ChatControllerPool } from "@/app/client/controller";
 import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
@@ -118,11 +85,12 @@ import { ChatActions, SimpleChatActions } from "./components/chatactions";
 import { DeleteImageButton, DeleteFileButton } from "./components/chatactions";
 import { AttachImages } from "./components/AttachImages";
 
-import {
-	handlePasteEvent,
-	uploadFile,
-	uploadImage,
-} from "./utils/fileUploader";
+const { handlePasteEvent, uploadFile, uploadImage } = dynamic(
+	() => import("./utils/fileUploader") as any,
+	{
+		ssr: false,
+	},
+) as any;
 import { AttachFiles } from "./components/AttachFiles";
 import { useDoSubmit } from "./hooks/useDoSubmit";
 import { AppGeneralContext } from "@/app/contexts/AppContext";

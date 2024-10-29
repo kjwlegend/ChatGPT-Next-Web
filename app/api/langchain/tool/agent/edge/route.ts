@@ -24,50 +24,50 @@ async function handle(req: NextRequest) {
 		const controller = new AbortController();
 		const agentApi = new AgentApi(encoder, transformStream, writer, controller);
 
-		const reqBody: RequestBody = await req.json();
-		const authToken = req.headers.get("Authorization") ?? "";
-		const token = authToken.trim().replaceAll("Bearer ", "").trim();
+		// const reqBody: RequestBody = await req.json();
+		// const authToken = req.headers.get("Authorization") ?? "";
+		// const token = authToken.trim().replaceAll("Bearer ", "").trim();
 
-		const apiKey = LangchainConfig.getOpenAIApiKey(token);
-		const baseUrl = LangchainConfig.getOpenAIBaseUrl(reqBody.baseUrl);
+		// const apiKey = LangchainConfig.getOpenAIApiKey(token);
+		// const baseUrl = LangchainConfig.getOpenAIBaseUrl(reqBody.baseUrl);
 
-		const model = new OpenAI(
-			{
-				temperature: 0,
-				modelName: reqBody.model,
-				openAIApiKey: apiKey,
-			},
-			{ basePath: baseUrl },
-		);
-		const embeddings = new OpenAIEmbeddings(
-			{
-				openAIApiKey: apiKey,
-			},
-			{ basePath: baseUrl },
-		);
+		// const model = new OpenAI(
+		// 	{
+		// 		temperature: 0,
+		// 		modelName: reqBody.model,
+		// 		openAIApiKey: apiKey,
+		// 	},
+		// 	{ basePath: baseUrl },
+		// );
+		// const embeddings = new OpenAIEmbeddings(
+		// 	{
+		// 		openAIApiKey: apiKey,
+		// 	},
+		// 	{ basePath: baseUrl },
+		// );
 
-		var dalleCallback = async (data: string) => {
-			var response = new ResponseBody();
-			response.message = data;
-			await writer.ready;
-			await writer.write(
-				encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
-			);
-			controller.abort({
-				reason: "dall-e tool abort",
-			});
-		};
+		// var dalleCallback = async (data: string) => {
+		// 	var response = new ResponseBody();
+		// 	response.message = data;
+		// 	await writer.ready;
+		// 	await writer.write(
+		// 		encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
+		// 	);
+		// 	controller.abort({
+		// 		reason: "dall-e tool abort",
+		// 	});
+		// };
 
-		var edgeTool = new EdgeTool(
-			apiKey,
-			baseUrl,
-			model,
-			embeddings,
-			dalleCallback,
-		);
-		var edgeTools = await edgeTool.getCustomTools();
-		var tools = [...edgeTools];
-		return await agentApi.getApiHandler(req, reqBody, tools);
+		// var edgeTool = new EdgeTool(
+		// 	apiKey,
+		// 	baseUrl,
+		// 	model,
+		// 	embeddings,
+		// 	dalleCallback,
+		// );
+		// var edgeTools = await edgeTool.getCustomTools();
+		// var tools = [...edgeTools];
+		// return await agentApi.getApiHandler(req, reqBody, tools);
 	} catch (e) {
 		return new Response(JSON.stringify({ error: (e as any).message }), {
 			status: 500,
