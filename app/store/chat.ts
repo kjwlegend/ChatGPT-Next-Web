@@ -572,7 +572,11 @@ export const useChatStore = createPersistStore(
 
 						// 其他需要在 onFinish 时执行的逻辑
 						const tokenCount = estimateTokenLength(message);
-
+						botMessage.content = message;
+						get().updateCurrentSession((session) => {
+							session.messages = session.messages.concat();
+							// console.log("onUpdateCallback", session.messages);
+						});
 						const createBotChatData = {
 							...commonChatData,
 							content: message,
@@ -583,7 +587,7 @@ export const useChatStore = createPersistStore(
 							sender_id: session.mask.id,
 							totalTokenCount: tokenCount,
 						};
-						console.log("[createBotChatData] ", createBotChatData);
+						// console.log("[createBotChatData] ", createBotChatData);
 
 						const { chat_id, id } =
 							await createChatDataAndFetchId(createBotChatData);
@@ -594,6 +598,7 @@ export const useChatStore = createPersistStore(
 							botMessage.isFinished = true;
 							botMessage.isTransfered = false;
 							botMessage.token_counts_total = tokenCount;
+							// 使用 setTimeout 使 onNewMessage 不会阻塞 onFinishCallback
 							get().onNewMessage(botMessage);
 						}
 					};
