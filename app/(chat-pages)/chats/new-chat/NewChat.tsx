@@ -1,7 +1,7 @@
 import React from "react";
 import { Path } from "@/app/constant";
 import styles from "./styles/NewChat.module.scss";
-import { Button, Card, Flex } from "antd";
+import { Button, Card, Flex, Skeleton } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useMaskStore } from "@/app/store/mask/index";
 import { Mask } from "@/app/types/mask";
@@ -28,6 +28,14 @@ export function NewChat() {
 	const chatStore = useChatStore();
 	const maskStore = useMaskStore();
 	const userStore = useUserStore();
+
+	const [loading, setLoading] = React.useState(true);
+
+	React.useEffect(() => {
+		if (featureGroup.length > 0) {
+			setLoading(false);
+		}
+	}, [featureGroup]);
 
 	const startChat = (mask?: Mask) => {
 		setTimeout(() => {
@@ -91,37 +99,43 @@ export function NewChat() {
 						<h2 className={styles["section-title"]}>推荐智能体</h2>
 						<Button onClick={() => navigate(Path.Masks)}>查看全部</Button>
 					</Flex>
-					<Swiper
-						className={styles["feature-carousel"]}
-						modules={[Navigation, Pagination]}
-						spaceBetween={10}
-						slidesPerView={3.5}
-						pagination={{ clickable: true }}
-						breakpoints={{
-							320: {
-								slidesPerView: 1.5,
-								spaceBetween: 20,
-							},
-							480: {
-								slidesPerView: 2,
-								spaceBetween: 20,
-							},
-							640: {
-								slidesPerView: 2.5,
-								spaceBetween: 30,
-							},
-							768: {
-								slidesPerView: 3,
-								spaceBetween: 30,
-							},
-						}}
-					>
-						{featureGroup.map((mask) => (
-							<SwiperSlide key={mask.id} className={styles["carousel-item"]}>
-								<FeatureMaskItem mask={mask} startChat={startChat} />
-							</SwiperSlide>
-						))}
-					</Swiper>
+					{loading ? (
+						<Skeleton active paragraph={{ rows: 3 }} />
+					) : (
+						<Swiper
+							className={styles["feature-carousel"]}
+							modules={[Navigation, Pagination]}
+							spaceBetween={10}
+							slidesPerView={3.5}
+							pagination={{ clickable: true }}
+							breakpoints={{
+								320: {
+									slidesPerView: 1.5,
+									spaceBetween: 20,
+								},
+								480: {
+									slidesPerView: 2,
+									spaceBetween: 20,
+								},
+								640: {
+									slidesPerView: 2.5,
+									spaceBetween: 30,
+								},
+								768: {
+									slidesPerView: 3,
+									spaceBetween: 30,
+								},
+							}}
+						>
+							{featureGroup.map((mask) => (
+								<SwiperSlide key={mask.id} className={styles["carousel-item"]}>
+									<Skeleton loading={loading} active avatar>
+										<FeatureMaskItem mask={mask} startChat={startChat} />
+									</Skeleton>
+								</SwiperSlide>
+							))}
+						</Swiper>
+					)}
 				</Card>
 			</div>
 
