@@ -1,44 +1,71 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import { ReactFlowProvider } from '@xyflow/react';
-import { MindMap } from './components/MindMap';
-import { MarkdownPreview } from './components/MarkdownPreview';
-import { MindMapData } from './types';
-import styles from './styles/layout.module.scss';
+import { ReactFlowProvider } from "@xyflow/react";
+import { useState } from "react";
+import { MindMap } from "./components/MindMap";
+import { DebugPanel } from "./components/DebugPanel";
+import { MindMapData } from "./types";
+import styles from "./layout.module.scss";
 
-const DEFAULT_DATA: MindMapData = {
-  nodes: [
-    {
-      id: 'root',
-      content: '思维导图',
-      children: [],
-      position: { x: 0, y: 0 },
-    }
-  ],
-  edges: []
+const initialData: MindMapData = {
+	nodes: [
+		{
+			id: "1",
+			type: "mindmap",
+			data: {
+				id: "1",
+				label: "思维导图",
+			},
+			position: { x: 250, y: 200 },
+		},
+		{
+			id: "2",
+			type: "mindmap",
+			data: {
+				id: "2",
+				label: "子节点 1",
+			},
+			position: { x: 450, y: 100 },
+		},
+		{
+			id: "3",
+			type: "mindmap",
+			data: {
+				id: "3",
+				label: "子节点 2",
+			},
+			position: { x: 450, y: 300 },
+		},
+	],
+	edges: [
+		{ id: "e1-2", source: "1", target: "2" },
+		{ id: "e1-3", source: "1", target: "3" },
+	],
 };
 
 export default function MindMapPage() {
-  const [mindMapData, setMindMapData] = useState<MindMapData>(DEFAULT_DATA);
+	const [mindMapData, setMindMapData] = useState<MindMapData>(initialData);
+	const [aiLogs, setAiLogs] = useState<string[]>([]);
 
-  const handleMindMapChange = (newData: MindMapData) => {
-    setMindMapData(newData);
-  };
+	// AI 日志处理函数
+	const handleAILog = (log: string) => {
+		setAiLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${log}`]);
+	};
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.leftPanel}>
-        <MarkdownPreview data={mindMapData} />
-      </div>
-      <div className={styles.rightPanel}>
-        <ReactFlowProvider>
-          <MindMap 
-            data={mindMapData}
-            onChange={handleMindMapChange}
-          />
-        </ReactFlowProvider>
-      </div>
-    </div>
-  );
+	return (
+		<div className={styles.container}>
+			<div className={styles.debugPanel}>
+				<DebugPanel data={mindMapData} aiLogs={aiLogs} />
+			</div>
+			<div className={styles.flowContainer}>
+				<ReactFlowProvider>
+					<MindMap 
+						data={mindMapData} 
+						onChange={setMindMapData} 
+						onAILog={handleAILog}
+					/>
+				</ReactFlowProvider>
+			</div>
+		</div>
+	);
 }

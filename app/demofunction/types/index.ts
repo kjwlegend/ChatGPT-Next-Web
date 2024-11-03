@@ -1,29 +1,30 @@
-import { Node as ReactFlowNode, Edge as ReactFlowEdge } from '@xyflow/react';
+import { Node as ReactFlowNode, Edge as ReactFlowEdge } from "@xyflow/react";
 
-// 节点数据类型
+// 思维导图节点数据
 export interface MindMapNodeData {
-  content: string;
+	id: string;
+	label: string;
 }
 
-// ReactFlow 节点和边的类型
+// 扩展 ReactFlow 的节点和边类型
 export type Node = ReactFlowNode<MindMapNodeData>;
 export type Edge = ReactFlowEdge;
 
-// 思维导图数据类型
+// 思维导图数据结构
 export interface MindMapData {
-  nodes: Node[];
-  edges: Edge[];
+	nodes: Node[];
+	edges: Edge[];
 }
 
-// 默认数据
-export const DEFAULT_NODE_DATA: MindMapData = {
-  nodes: [
-    {
-      id: 'root',
-      type: 'mindmap',
-      data: { content: '思维导图' },
-      position: { x: 0, y: 0 },
-    }
-  ],
-  edges: []
-};
+// 操作历史记录
+export interface HistoryState {
+	past: MindMapData[];
+	present: MindMapData;
+	future: MindMapData[];
+}
+
+// 节点选择类型
+export interface NodeSelection {
+	nodes: Node[];
+	edges: Edge[];
+}

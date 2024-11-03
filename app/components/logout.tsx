@@ -10,23 +10,24 @@ interface LogoutButtonProps {
 }
 
 const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
-	const { logout } = useAuthStore();
-	const router = useRouter();
 	const auth = useAuth();
-	const chatStore = useChatStore();
 
-	const handleLogout = async () => {
-		auth.logoutHook();
-		// router.push("/about");
-		// chatStore.clearChatData();
-		// router.push("/chats");
-		// location.reload();
+	const handleLogout = async (e: React.MouseEvent) => {
+		console.log("点击事件", e);
+		e.stopPropagation();
+		try {
+			console.log("开始登出");
+			await auth.logoutHook();
+			console.log("登出成功");
+		} catch (error) {
+			console.error("登出失败", error);
+		}
 	};
 
 	if (isButton) {
 		return (
 			// <div>
-			<Button onClick={handleLogout} className={styles["logout"]}>
+			<Button onClick={(e) => handleLogout(e)} className={styles["logout"]}>
 				注销登出
 			</Button>
 			// </div>
@@ -34,7 +35,7 @@ const LogoutButton = ({ isButton = true }: LogoutButtonProps) => {
 	}
 
 	return (
-		<div onClick={handleLogout} style={{ cursor: "pointer" }}>
+		<div onClick={(e) => handleLogout(e)} style={{ cursor: "pointer" }}>
 			登出
 		</div>
 	);

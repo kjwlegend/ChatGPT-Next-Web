@@ -1,71 +1,94 @@
 "use client";
 
-import { useCallback } from "react";
 import {
 	ReactFlow,
 	Background,
 	Controls,
-	Connection,
-	useNodesState,
-	useEdgesState,
-	addEdge,
-	NodeTypes,
-	Panel,
+	NodeProps,
+	SelectionMode,
 } from "@xyflow/react";
-import { MindMapNode } from "./MindMapNode";
-import { MindMapData, Node, Edge } from "../../types";
-import styles from "./styles.module.scss";
+import { MindMapNode } from "../Nodes/MindMapNode";
+import { MindMapData, MindMapNodeData } from "../../types";
+import { useMindMapLogic } from "../../hooks/useMindMapLogic";
+import { DataControls } from "../DataControls";
+import { AIControls } from "../AIControls";
 import "@xyflow/react/dist/style.css";
+import styles from "./styles.module.scss";
 
-const nodeTypes: NodeTypes = {
-	mindmap: MindMapNode,
-};
-
-interface Props {
+interface MindMapProps {
 	data: MindMapData;
 	onChange: (data: MindMapData) => void;
+	onAILog?: (log: string) => void;
 }
 
-export const MindMap = ({ data, onChange }: Props) => {
-	const [nodes, setNodes, onNodesChange] = useNodesState(data.nodes);
-	const [edges, setEdges, onEdgesChange] = useEdgesState(data.edges);
+export const MindMap = ({ data, onChange, onAILog }: MindMapProps) => {
+	const {
+		nodes,
+		edges,
+		editingNodeId,
+		selectedNodes,
+		onNodesChange,
+		onEdgesChange,
+		onConnectStart,
+		onConnectEnd,
+		onConnect,
+		onSelectionChange,
+		handleNodeLabelChange,
+		handleStartEditing,
+		handleStopEditing,
+		handleAddChild,
+		handleDeleteNodes,
+		handleDataImport,
+	} = useMindMapLogic(data, onChange);
 
-	const onConnect = useCallback(
-		(params: Connection) => {
-			setEdges((eds) => addEdge(params, eds));
-		},
-		[setEdges],
+	// 节点包装器
+	const MindMapNodeWrapper = (props: NodeProps<MindMapNodeData>) => (
+		<MindMapNode
+			{...props}
+			isEditing={props.id === editingNodeId}
+			onStartEditing={handleStartEditing}
+			onStopEditing={handleStopEditing}
+			onLabelChange={handleNodeLabelChange}
+			onAddChild={handleAddChild}
+			onDelete={(nodeId) => handleDeleteNodes([nodeId])}
+		/>
 	);
 
-	// 添加测试节点的函数
-	const addTestNode = useCallback(() => {
-		const newNode: Node = {
-			id: `node-${Date.now()}`,
-			type: "mindmap",
-			data: { content: "新节点" },
-			position: { x: Math.random() * 500, y: Math.random() * 500 },
-		};
-
-		setNodes((nds) => [...nds, newNode]);
-	}, [setNodes]);
+	const nodeTypes = {
+		mindmap: MindMapNodeWrapper,
+	};
 
 	return (
-		<div className={styles.mindMapContainer}>
+		<div className={styles.mindMapWrapper}>
+			<DataControls data={{ nodes, edges }} onDataImport={handleDataImport} />
+			<AIControls
+				data={{ nodes, edges }}
+				selectedNodes={selectedNodes}
+				onUpdate={onChange}
+				onLog={onAILog}
+			/>
+
 			<ReactFlow
 				nodes={nodes}
 				edges={edges}
 				onNodesChange={onNodesChange}
 				onEdgesChange={onEdgesChange}
+				onConnectStart={onConnectStart}
+				onConnectEnd={onConnectEnd}
 				onConnect={onConnect}
+				onSelectionChange={onSelectionChange}
 				nodeTypes={nodeTypes}
 				fitView
+				nodesDraggable
+				elementsSelectable
+				selectionMode={SelectionMode.Partial}
+				selectionOnDrag
+				selectNodesOnDrag
+				connectOnClick={false}
 				proOptions={{ hideAttribution: true }}
 			>
 				<Background />
 				<Controls />
-				<Panel position="top-right">
-					<button onClick={addTestNode}>添加测试节点</button>
-				</Panel>
 			</ReactFlow>
 		</div>
 	);

@@ -57,14 +57,7 @@ export const ConfigMemu = () => {
 			label: <Link href="/profile#4">邀请得礼</Link>,
 			key: "5",
 		},
-		{
-			key: "7",
-			label: (
-				<Button onClick={handleButtonClick}>
-					<LightningIcon style={{ marginRight: "4px" }} /> 领福利
-				</Button>
-			),
-		},
+
 		{
 			key: "setting",
 			label: (
@@ -72,13 +65,6 @@ export const ConfigMemu = () => {
 					<IconButton icon={<SettingsIcon />} text="系统设置" />
 				</RouterLink>
 			),
-		},
-		{
-			type: "divider",
-		},
-		{
-			label: <LogoutButton isButton={false} />,
-			key: "6",
 		},
 	];
 
@@ -175,6 +161,7 @@ export default function UserInfo() {
 						<p>基础对话余额：{user_balance.basic_chat_balance}</p>
 						<p>高级对话余额：{user_balance.pro_chat_balance}</p>
 					</div>
+					<LogoutButton />
 				</div>
 			) : (
 				<>
