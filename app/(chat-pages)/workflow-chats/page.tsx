@@ -58,6 +58,8 @@ import { useMasks } from "@/app/hooks/useMasks";
 
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";
+import { PresetMarket } from "@/components/preset-market";
+import { TooltipProvider } from "@/components/ui/tooltip";
 const { Header, Content, Footer, Sider } = Layout;
 
 export type RenderPompt = Pick<Prompt, "title" | "content">;
@@ -197,22 +199,7 @@ const MainScreen: React.FC<{
 			);
 		}
 
-		return (
-			<WelcomeContainer>
-				<div className={styles["title"]}>
-					您还没有建立对话, 点击{" "}
-					<Button
-						type="dashed"
-						className={styles["plus"]}
-						icon={<PlusCircleOutlined />}
-						onClick={addWorkflowGroup}
-					>
-						新建对话
-					</Button>
-					按钮开始
-				</div>
-			</WelcomeContainer>
-		);
+		return <PresetMarket />;
 	},
 );
 
@@ -248,7 +235,9 @@ const App = () => {
 		<WorkflowProvider>
 			<HashRouter>
 				<Suspense fallback={<div>loading..</div>}>
-					<SimpleWorkflow />
+					<TooltipProvider>
+						<SimpleWorkflow />
+					</TooltipProvider>
 				</Suspense>
 			</HashRouter>
 		</WorkflowProvider>

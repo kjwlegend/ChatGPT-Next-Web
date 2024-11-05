@@ -6,7 +6,7 @@ import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";
 import { useAppConfig, useUserStore } from "@/app/store";
 import { getMessageImages } from "@/app/utils";
 
-import { Avatar } from "@/app/components/avatar";
+import Avatar from "@/app/components/avatar";
 import { useMaskStore } from "@/app/store/mask/index";
 
 interface AgentMessageItemProps {

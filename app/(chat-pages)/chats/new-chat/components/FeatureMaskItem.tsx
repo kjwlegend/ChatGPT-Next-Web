@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Mask } from "@/app/types/mask";
 import styles from "../styles/NewChat.module.scss";
 import Meta from "antd/es/card/Meta";
-import { Avatar } from "@/app/components/avatar";
+import Avatar from "@/app/components/avatar";
 
 interface FeatureMaskItemProps {
 	mask: Mask;
@@ -25,8 +25,7 @@ const FeatureMaskItem: React.FC<FeatureMaskItemProps> = ({
 	>
 		<Avatar
 			avatar={"/" + mask?.img || ""}
-			size={120}
-			className={styles["avatar"]}
+			className={"w-24 h-24 mx-auto mb-2"}
 		/>
 		<Meta description={mask.description} />
 	</Card>

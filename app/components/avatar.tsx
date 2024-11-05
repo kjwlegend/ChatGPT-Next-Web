@@ -1,4 +1,4 @@
-import { Avatar as AntdAvatar } from "antd";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import React, { useMemo } from "react";
 import { oss_base } from "../constant";
 
@@ -9,43 +9,24 @@ interface AvatarProps {
 	className?: string;
 }
 
-// 生成随机颜色的函数
-const getRandomColor = () => {
-	const letters = "0123456789ABCDEF";
-	let color = "#";
-	for (let i = 0; i < 6; i++) {
-		color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
-};
-
-export const Avatar: React.FC<AvatarProps> = ({
+const AvatarComponent: React.FC<AvatarProps> = ({
 	avatar,
 	nickname,
 	size,
 	className,
 }) => {
 	const RenderedAvatar = useMemo(() => {
-		// if (avatar) {
-		// 	if (avatar.startsWith("a-")) {
-		// 		return <AntdAvatar src={`/avatars/${avatar}.png`} size={size} />;
-		// 	}
-		// 	return <AntdAvatar size={size} src={`${oss_base}${avatar}`} />;
-		// }
-
-		// 为默认头像生成随机背景色
 		const randomColor = "#d5d5d5"; //getRandomColor();
 
 		return (
-			<AntdAvatar
-				style={{ backgroundColor: randomColor }}
-				size={size}
-				src={`${oss_base}/${avatar}!avatar`}
-			>
-				{nickname}
-			</AntdAvatar>
+			<Avatar className={className}>
+				<AvatarImage src={`${oss_base}/${avatar}!avatar`} />
+				<AvatarFallback>{nickname?.slice(0, 1)}</AvatarFallback>
+			</Avatar>
 		);
 	}, [avatar, nickname, size]);
 
 	return <div className={className}>{RenderedAvatar}</div>;
 };
+
+export default AvatarComponent;

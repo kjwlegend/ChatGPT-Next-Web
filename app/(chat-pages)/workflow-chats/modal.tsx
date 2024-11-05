@@ -44,7 +44,7 @@ import { useMaskStore } from "../../store/mask";
 import { useWorkflowGroupActions } from "./workflowContext";
 
 import { List, Input, Form, Row, Col } from "antd";
-import { Avatar } from "@/app//components/avatar";
+import Avatar from "@/app/components/avatar";
 
 import { CopyOutlined } from "@ant-design/icons";
 import { workflowChatSession, WorkflowGroup } from "@/app/types/workflow";

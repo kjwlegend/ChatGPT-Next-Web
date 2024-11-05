@@ -6,16 +6,8 @@ import Link from "next/link";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Path } from "../constant";
 
-import {
-	Layout,
-	Menu,
-	Button,
-	Form,
-	Input,
-	Avatar,
-	Space,
-	Dropdown,
-} from "antd";
+import { Layout, Menu, Button, Form, Input, Space, Dropdown } from "antd";
+import AvatarComponent from "./avatar";
 import type { MenuProps } from "antd";
 import styles from "./userinfo.module.scss";
 import { IconButton } from "./button";
@@ -141,9 +133,10 @@ export default function UserInfo() {
 			{isLogin ? (
 				<div className={styles["user-info"]}>
 					<div className={styles["user-profile"]}>
-						<Avatar src={`${oss_base}/${user?.avatar}`} size="large">
-							{user.nickname || "神秘人"}{" "}
-						</Avatar>
+						<AvatarComponent
+							avatar={`${oss_base}/${user?.avatar}`}
+							nickname={user.nickname || "神秘人"}
+						/>
 						<div className={styles["user-name-type"]}>
 							<span className={styles["user-nickname"]}>
 								{user.nickname || "神秘人"}

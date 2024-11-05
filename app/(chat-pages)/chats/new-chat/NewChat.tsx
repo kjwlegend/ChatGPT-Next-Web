@@ -17,7 +17,7 @@ import { PlusCircleOutlined, RobotOutlined } from "@ant-design/icons";
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import { Avatar } from "@/app/components/avatar";
+import Avatar from "@/app/components/avatar";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -157,7 +157,7 @@ export function NewChat() {
 				<div className={styles["agents-grid"]}>
 					{otherMasks.slice(0, 5).map((mask) => (
 						<div key={mask.id} className={styles["agent-item"]}>
-							<Avatar avatar={mask.avatar} size={64} />
+							<Avatar avatar={mask.avatar} className={"w-12 h-12 mb-2"} />
 							<h3>{mask.name}</h3>
 							<p>{mask.description}</p>
 							<Button onClick={() => startChat(mask)}>开始聊天</Button>

@@ -7,6 +7,8 @@ import { useAuthStore } from "../store/auth";
 import { getDailyCheckIn } from "../services/api/user";
 import { oss_base } from "../constant";
 
+import { Button as ShadButton } from "@/components/ui/button";
+
 const ModalPopup = () => {
 	const [visible, setVisible] = useState(true);
 	const [checkedIn, setCheckedIn] = useState(false);
@@ -78,7 +80,7 @@ const ModalPopup = () => {
 
 				<div className={styles.description}>
 					<div className={styles["description-item"]}>
-						<p className={styles["description-title"]}>每日对话额度升级</p>
+						<p className={`${styles["description-title"]}`}>每日对话额度升级</p>
 						<p className={styles["description-content"]}>
 							每天免费使用基础模型200次。释放您的创意潜能。
 						</p>

@@ -44,7 +44,7 @@ import MjActions from "../midjourney";
 import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy } from "@/app/utils";
 import { ChatAction } from "../inputpanel/components/chatactions";
-import { Avatar } from "@/app/components/avatar";
+import Avatar from "@/app/components/avatar";
 
 // 常量
 import Locale from "@/app/locales";
@@ -152,7 +152,6 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 			<Avatar
 				avatar={userStore.user.avatar}
 				nickname={userStore.user.nickname}
-				size={38}
 			/>
 		);
 	}, [userStore.user.avatar, userStore.user.nickname]);
@@ -162,13 +161,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	 * @description: 渲染agent头像
 	 */
 	const RenderedAgentAvatar = useMemo(() => {
-		return (
-			<Avatar
-				avatar={session.mask.avatar}
-				nickname={session.mask.name}
-				size={38}
-			/>
-		);
+		return <Avatar avatar={session.mask.avatar} nickname={session.mask.name} />;
 	}, [session.mask.avatar, session.mask.name]);
 
 	/**

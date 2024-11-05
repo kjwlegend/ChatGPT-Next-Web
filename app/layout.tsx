@@ -5,6 +5,8 @@ import "./styles/globals.scss";
 import "./styles/markdown.scss";
 import "./styles/highlight.scss";
 import "./styles/layout.scss";
+import "./styles/theme.scss";
+import "./styles/window.scss";
 import { getClientConfig } from "./config/client";
 import Header from "./components/header";
 import Footer from "./components/footer";

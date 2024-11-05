@@ -31,7 +31,7 @@ import {
 	MessageSelector,
 	useMessageSelector,
 } from "@/app/components/message-selector";
-import { Avatar } from "../../components/avatar";
+import Avatar from "../../components/avatar";
 import dynamic from "next/dynamic";
 import NextImage from "next/image";
 

@@ -9,7 +9,7 @@ import { useChatStore } from "@/app/store";
 
 import Locale from "@/app/locales";
 
-import { Avatar } from "@/app/components/avatar";
+import Avatar from "@/app/components/avatar";
 import { Mask } from "@/app/types/";
 
 export function ChatItem(props: {
