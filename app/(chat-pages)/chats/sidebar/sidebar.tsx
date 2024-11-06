@@ -135,6 +135,8 @@ interface SideBarToggleProps extends SideBarProps {
 }
 
 import { memo } from "react";
+import Logo from "@/app/components/logo";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const DesktopSideBar = ({
 	className,
@@ -258,14 +260,7 @@ function MobileSideBar({
 			<div className={styles["sidebar-header-bar"]}>
 				<div className={styles["header-content"]}>
 					<DrawerMenu />
-					<div className={styles["logo-container"]}>
-						<Image
-							src="/logo.png"
-							alt="xiaoguang AI LOGO"
-							width={106}
-							height={35}
-						/>
-					</div>
+					<Logo />
 				</div>
 			</div>
 

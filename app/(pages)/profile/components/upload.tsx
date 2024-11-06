@@ -33,7 +33,7 @@ const App: React.FC<AppProps> = ({ avatar, onImgListChange }) => {
 					uid: "-1",
 					name: "image.png",
 					status: "done",
-					url: oss_base + avatar,
+					url: oss_base + "/" + avatar,
 				},
 			]);
 		}

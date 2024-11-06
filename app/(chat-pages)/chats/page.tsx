@@ -38,6 +38,7 @@ import ChatList from "./sidebar/chatList";
 import { useChatService } from "@/app/(chat-pages)/chats/chat/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import { useCheckCookieExpiration } from "@/app/hooks/useExpireCheck";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (

@@ -7,6 +7,7 @@ import { TopMenuItems } from "./menu-items";
 import type { MenuProps } from "antd";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import Logo from "./logo";
 
 const items = TopMenuItems;
 
@@ -62,19 +63,7 @@ const DrawerMenu = () => {
 				className={styles.icons}
 			/>
 			<Drawer placement="left" onClose={onClose} open={visible}>
-				<div className={styles.logo}>
-					<Image
-						className={styles["logo-image"]}
-						src="/logo.png"
-						width={106}
-						height={35}
-						alt="Logo"
-					/>
-					{/* <div className={styles["logo-text"]}>
-						<p className={styles["headline"]}>小光AI</p>
-						<p className={styles["subline"] + " desktop-only"}>xiaoguang.fun</p>
-					</div> */}
-				</div>
+				<Logo />
 				<Menu
 					mode="inline"
 					items={items}

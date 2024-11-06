@@ -19,6 +19,7 @@ import { getISOLang } from "@/app/locales";
 import { useAccessStore } from "@/app/store";
 
 import dynamic from "next/dynamic";
+import Logo from "@/app/components/logo";
 
 const MultiAgentSideBar = dynamic(
 	async () => (await import("./components/sidebar")).MultiAgentSideBar,
@@ -80,15 +81,7 @@ const EmptyIntro = memo(() => {
 EmptyIntro.displayName = "EmptyIntro";
 const AuthPrompt = memo(() => (
 	<div className={styles["welcome-container"]}>
-		<div className={styles["logo"]}>
-			<Image
-				className={styles["logo-image"]}
-				src="/logo.png"
-				alt="Logo"
-				width={200}
-				height={253}
-			/>
-		</div>
+		<Logo />
 		<div className={styles["title"]}>您还未登录, 请登录后开启该功能</div>
 		<div className={styles["actions"]}>
 			<Button

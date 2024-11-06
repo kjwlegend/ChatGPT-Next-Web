@@ -37,6 +37,7 @@ const items: any = TopMenuItems;
 const { Header } = Layout;
 
 import { ThemeSwitcher } from "./themeSwitcher";
+import Logo from "./logo";
 interface Props {
 	displayMobileVersion: boolean;
 }
@@ -100,45 +101,14 @@ export default function MainNav() {
 			{isMobileScreen ? (
 				<Header className={styles.header}>
 					<DrawerMenu />
-					<div className={styles.logo}>
-						<Link href="/chats">
-							<Image
-								src={"/logo.png"}
-								alt="logo"
-								width={106}
-								height={35}
-								objectFit="contain"
-							/>
-							{/* 
-							<div className={styles["logo-text"]}>
-								<p className={styles["headline"]}>小光AI</p>
-							</div> */}
-						</Link>
-					</div>
+					<Logo />
 				</Header>
 			) : (
 				<Header
 					className={styles.header}
 					style={{ display: !showHeader ? "none" : "" }}
 				>
-					<div className={styles.logo}>
-						<Link href="/">
-							<Image
-								src={"/logo.png"}
-								alt="logo"
-								// fill={true}
-								objectFit="contain"
-								width={137}
-								height={45}
-								// style={{ left: -80 }}
-							/>
-						</Link>
-
-						{/* <div className={styles["logo-text"]}>
-								<p className={styles["headline"]}>小光AI 3.0</p>
-								<p className={styles["subline"]}>XiaoGuang</p>
-							</div> */}
-					</div>
+					<Logo />
 
 					<div className={styles["ant-menu"]}>
 						<Menu
