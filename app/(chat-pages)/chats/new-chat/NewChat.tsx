@@ -21,6 +21,7 @@ import Avatar from "@/app/components/avatar";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { PlayCircle } from "lucide-react";
 
 export function NewChat() {
 	const navigate = useNavigate();
@@ -77,10 +78,11 @@ export function NewChat() {
 					<h2 className={styles["section-title"]}>快速操作</h2>
 					<div className={styles["button-group"]}>
 						<Button
-							className={`${styles["full-width-button"]} ${styles["start-chat-button"]}`}
+							className={`${styles["full-width-button"]} ${styles["start-chat-button"]} bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white`}
 							onClick={() => startChat()}
-							icon={<PlusCircleOutlined />}
+							// variant="solid"
 						>
+							<PlayCircle className="mr-2 h-5 w-5" />
 							直接开始
 						</Button>
 						<Button

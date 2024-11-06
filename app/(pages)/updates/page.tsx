@@ -1018,6 +1018,22 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+
+	{
+		label: "2024-11-07",
+		color: "blue",
+		children: (
+			<>
+				发布 V3.1.5 版本, 小光说:
+				<ul>
+					<li>更新了小光AI的全新Logo设计</li>
+					<li>开始进行全面的UI/UX界面重构计划</li>
+					<li>优化整体界面交互体验</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
