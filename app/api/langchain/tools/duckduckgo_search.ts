@@ -315,13 +315,13 @@ async function search(
 					tjsexp: "b",
 					related: "b",
 					msnexp: "a",
-			  }
+				}
 			: {
 					nadse: "b",
 					eclsexp: "b",
 					tjsexp: "b",
 					// cdrexp: 'b'
-			  }),
+				}),
 	};
 
 	const response = await fetch(
@@ -508,7 +508,7 @@ function sanityCheck(options: SearchOptions) {
 }
 
 export class DuckDuckGo extends Tool {
-	name = "duckduckgo_search";
+	name = "web-search";
 	maxResults = 4;
 
 	/** @ignore */
@@ -525,7 +525,7 @@ export class DuckDuckGo extends Tool {
 			.slice(0, this.maxResults)
 			.map(({ title, description, url }) => htmlToText(description))
 			.join("\n\n");
-
+		console.log("results", results);
 		return results;
 	}
 

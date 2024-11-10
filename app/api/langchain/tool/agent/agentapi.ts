@@ -40,12 +40,7 @@ import {
 } from "@langchain/core/messages";
 
 import { MultimodalContent } from "@/app/client/api";
-import {
-	AllSearch,
-	BaiduSearch,
-	GoogleSearch,
-	GoogleCustomSearch,
-} from "@/app/api/langchain/tools";
+import { GoogleCustomSearch } from "@/app/api/langchain/tools";
 
 export interface RequestMessage {
 	role: string;
@@ -70,11 +65,45 @@ export interface RequestBody {
 	useTools: (undefined | string)[];
 }
 
+// 首先定义一些类型
+export interface Reference {
+	title?: string;
+	url: string;
+	snippet?: string;
+}
+
+export interface DocumentMeta {
+	id?: string;
+	title?: string;
+	source?: string;
+	score?: number;
+	metadata?: Record<string, any>;
+}
+
+export interface CodeBlock {
+	language?: string;
+	code: string;
+	filename?: string;
+}
+
 export class ResponseBody {
 	isSuccess: boolean = true;
-	message!: string;
 	isToolMessage: boolean = false;
+	type: "text" | "tool" | "reference" | "document" | "code" = "text";
+	message: string = "";
+
+	// 工具相关
 	toolName?: string;
+	toolInput?: any;
+
+	// 引用相关
+	references?: Reference[];
+
+	// RAG 相关
+	documents?: DocumentMeta[];
+
+	// 代码相关
+	codeBlocks?: CodeBlock[];
 }
 
 export interface ToolInput {
@@ -163,22 +192,62 @@ export class AgentApi {
 			},
 			async handleAgentAction(action) {
 				try {
-					// console.log("[handleAgentAction]", { action });
+					console.log("[handleAgentAction]", { action });
 					if (!reqBody.returnIntermediateSteps) return;
-					var response = new ResponseBody();
-					response.isToolMessage = true;
-					response.message = JSON.stringify(action.toolInput);
+
+					const response = new ResponseBody();
+					response.type = "tool";
 					response.toolName = action.tool;
+					response.isToolMessage = true;
+					console.log("toolInput", action.toolInput);
+
+					// 根据不同的工具类型，设置不同的响应格式
+					switch (action.tool) {
+						case "web-browser":
+							response.type = "reference";
+							response.message = `浏览 ${
+								typeof action.toolInput === "string"
+									? action.toolInput
+									: action.toolInput.input
+							} `;
+							// URL 会在 toolEnd 时添加完整的引用信息
+							break;
+
+						case "web-search":
+							response.type = "reference";
+							response.message = ` ${
+								typeof action.toolInput === "string"
+									? action.toolInput
+									: action.toolInput.input
+							} `;
+							// URL 会在 toolEnd 时添加完整的引用信息
+							break;
+
+						case "vector-store":
+						case "retrieval-qa":
+							response.type = "document";
+							response.message = `搜索相关文档...`;
+							// 文档信息会在 toolEnd 时添加
+							break;
+
+						case "code-generator":
+							response.type = "code";
+							response.message = `生成代码...`;
+							break;
+
+						default:
+							response.message = JSON.stringify(action.toolInput);
+					}
+
 					await writer.ready;
 					await writer.write(
 						encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
 					);
 				} catch (ex) {
 					console.error("[handleAgentAction]", ex);
-					var response = new ResponseBody();
+					const response = new ResponseBody();
 					response.isSuccess = false;
 					response.message = (ex as Error).message;
-					await writer.ready;
 					await writer.write(
 						encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
 					);
@@ -188,14 +257,50 @@ export class AgentApi {
 			async handleToolStart(tool, input) {
 				// console.log("[handleToolStart]", { tool, input });
 			},
-			async handleToolEnd(output, runId, parentRunId, tags) {
-				// console.log("[handleToolEnd]", { output, runId, parentRunId, tags });
+			async handleToolEnd(output: string, runId: string, parentRunId?: string) {
+				try {
+					console.log("[handleToolEnd]", output);
+					// 尝试解析输出为 JSON
+					try {
+						const parsedOutput = JSON.parse(output);
+						const response = new ResponseBody();
+						if (parsedOutput.references) {
+							response.type = "reference";
+							response.references = parsedOutput.references;
+							response.isToolMessage = true;
+							// response.message = parsedOutput.content;
+						} else if (parsedOutput.documents) {
+							response.type = "document";
+							response.isToolMessage = true;
+							response.documents = parsedOutput.documents;
+							response.message = parsedOutput.content;
+						}
+						// 写入结构化响应
+						await writer.ready;
+						await writer.write(
+							encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
+						);
+					} catch (e) {
+						// 如果不是 JSON，则作为普通文本处理
+						const response = new ResponseBody();
+						response.type = "text";
+						response.message = output;
+						await writer.write(
+							encoder.encode(`data: ${JSON.stringify(response)}\n\n`),
+						);
+					}
+					return output;
+				} catch (error) {
+					console.error("[handleToolEnd] Error:", error);
+					return output;
+				}
 			},
 			async handleAgentEnd(action, runId, parentRunId, tags) {
 				if (controller.signal.aborted) {
 					return;
 				}
-				console.log("[handleAgentEnd]");
+				console.log("[handleAgentEnd]", action);
+
 				await writer.ready;
 				await writer.close();
 			},
@@ -261,51 +366,10 @@ export class AgentApi {
 
 			var handler = await this.getHandler(reqBody);
 
-			let searchTool: Tool = new DuckDuckGo();
-			if (process.env.CHOOSE_SEARCH_ENGINE) {
-				switch (process.env.CHOOSE_SEARCH_ENGINE) {
-					case "google":
-						searchTool = new GoogleSearch();
-						break;
-					case "baidu":
-						searchTool = new BaiduSearch();
-						break;
-					case "all":
-						searchTool = new AllSearch();
-						break;
-				}
-			}
-			if (process.env.BING_SEARCH_API_KEY) {
-				let bingSearchTool = new langchainTools["BingSerpAPI"](
-					process.env.BING_SEARCH_API_KEY,
-				);
-				searchTool = new DynamicTool({
-					name: "bing_search",
-					description: bingSearchTool.description,
-					func: async (input: string) => bingSearchTool.call(input),
-				});
-			}
-			if (process.env.SERPAPI_API_KEY) {
-				let serpAPITool = new langchainTools["SerpAPI"](
-					process.env.SERPAPI_API_KEY,
-				);
-				searchTool = new DynamicTool({
-					name: "google_search",
-					description: serpAPITool.description,
-					func: async (input: string) => serpAPITool.call(input),
-				});
-			}
-			if (process.env.GOOGLE_CSE_ID && process.env.GOOGLE_SEARCH_API_KEY) {
-				let googleCustomSearchTool = new GoogleCustomSearch({
-					apiKey: process.env.GOOGLE_SEARCH_API_KEY,
-					googleCSEId: process.env.GOOGLE_CSE_ID,
-				});
-				searchTool = new DynamicTool({
-					name: "google_custom_search",
-					description: googleCustomSearchTool.description,
-					func: async (input: string) => googleCustomSearchTool.call(input),
-				});
-			}
+			let searchTool: Tool = new GoogleCustomSearch({
+				apiKey: process.env.GOOGLE_SEARCH_API_KEY,
+				googleCSEId: process.env.GOOGLE_CSE_ID,
+			});
 
 			const tools = [];
 

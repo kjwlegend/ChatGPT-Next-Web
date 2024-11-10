@@ -63,6 +63,16 @@ import { getMessageImages, getMessageTextContent } from "@/app/utils";
 import IconTooltipButton from "@/app/components/iconButton";
 import { useMessages, useSessions } from "../hooks/useChatContext";
 import { useMessageActions } from "./useMessageActions";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import {
+	ExternalLink,
+	ChevronDown,
+	ChevronUp,
+	Code,
+	Search,
+	Database,
+} from "lucide-react";
 
 const Markdown = dynamic(
 	async () => (await import("@/app/components/markdown")).Markdown,
@@ -217,6 +227,124 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 		);
 	}, [showActions, isUser, message.streaming, message.isError]);
 
+	// 工具图标映射
+	const ToolIcon = ({
+		toolName,
+		className,
+	}: {
+		toolName: string;
+		className?: string;
+	}) => {
+		const defaultClassName = "h-4 w-4";
+		const finalClassName = className || defaultClassName;
+
+		switch (toolName) {
+			case "web-search":
+			case "google-search":
+			case "搜索引擎":
+				return <Search className={finalClassName} />;
+			case "code-generator":
+				return <Code className={finalClassName} />;
+			case "vector-store":
+				return <Database className={finalClassName} />;
+			default:
+				return <ToolOutlined className={finalClassName} />;
+		}
+	};
+
+	// 工具消息组件
+	const ToolMessage = ({ tool }: { tool: any }) => {
+		const [isExpanded, setIsExpanded] = useState(false);
+		const [showFullTitle, setShowFullTitle] = useState<Record<number, boolean>>(
+			{},
+		);
+
+		const toggleTitleExpand = (index: number) => {
+			setShowFullTitle((prev) => ({
+				...prev,
+				[index]: !prev[index],
+			}));
+		};
+
+		return (
+			<Card className="my-2 border border-secondary/10 bg-gradient-to-b from-secondary/5 to-secondary/10 p-2 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md">
+				{/* 工具标题栏 */}
+				<div className="mb-1 flex items-center justify-between">
+					<div className="flex items-center gap-3">
+						<div className="rounded-lg bg-primary/10 p-1">
+							<ToolIcon
+								toolName={tool.toolName}
+								className="h-3 w-3 text-primary/80"
+							/>
+						</div>
+						<div className="flex flex-row items-center gap-1">
+							<span className="text-sm font-medium text-secondary-foreground">
+								{tool.toolName}
+							</span>
+							<span className="text-xs text-muted-foreground">
+								{tool.toolInput}
+							</span>
+						</div>
+					</div>
+					<button
+						onClick={() => setIsExpanded(!isExpanded)}
+						className="rounded-full p-1.5 transition-all duration-200 hover:scale-105 hover:bg-secondary/20 active:scale-95"
+					>
+						{isExpanded ? (
+							<ChevronUp className="h-4 w-4 text-muted-foreground" />
+						) : (
+							<ChevronDown className="h-4 w-4 text-muted-foreground" />
+						)}
+					</button>
+				</div>
+
+				{/* 展开的引用内容 */}
+				{isExpanded && tool.references && tool.references.length > 0 && (
+					<div className="mt-2 space-y-1">
+						{tool.references.map((ref: any, index: number) => (
+							<div
+								key={index}
+								className="group relative rounded-lg border border-secondary/10 bg-background/50 p-2 transition-all duration-200 hover:bg-secondary/5 hover:shadow-sm"
+							>
+								<div className="flex items-center gap-3">
+									<Badge
+										variant="outline"
+										className="shrink-0 bg-primary/5 text-xs font-normal"
+									>
+										{index + 1}
+									</Badge>
+									<div className="min-w-0 flex-1">
+										{" "}
+										{/* 防止长标题溢出 */}
+										{ref.title && (
+											<div
+												className={`${
+													!showFullTitle[index] ? "line-clamp-1" : ""
+												} cursor-pointer text-xs font-medium transition-colors hover:text-primary`}
+												onClick={() => toggleTitleExpand(index)}
+											>
+												{ref.title}
+											</div>
+										)}
+										<a
+											href={ref.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="mt-1 inline-flex w-full items-center gap-1.5 truncate text-xs text-muted-foreground transition-colors hover:text-primary group-hover:underline"
+										>
+											<ExternalLink className="h-3 w-3" />
+											<span className="truncate">{ref.url}</span>
+										</a>
+									</div>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+			</Card>
+		);
+	};
+
 	return (
 		<Fragment key={message.id}>
 			{/* 消息容器 */}
@@ -254,27 +382,9 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 						{isUser && !message && <Loading3QuartersOutlined spin={true} />}
 
 						{message.toolMessages && message.toolMessages.length > 0 && (
-							<div className={styles["chat-tool-message-container"]}>
-								<span>
-									{" "}
-									<ToolOutlined style={{ marginRight: 5 }} />
-									插件调用
-								</span>
+							<div className="mb-2 space-y-3">
 								{message.toolMessages.map((tool, index) => (
-									<div
-										className={styles["chat-message-tools-status"]}
-										key={index}
-									>
-										<div className={styles["chat-message-tools-name"]}>
-											<CheckmarkIcon
-												className={styles["chat-message-checkmark"]}
-											/>
-											{tool.toolName}:
-											<code className={styles["chat-message-tools-details"]}>
-												{tool.toolInput}
-											</code>
-										</div>
-									</div>
+									<ToolMessage key={index} tool={tool} />
 								))}
 							</div>
 						)}
@@ -295,24 +405,25 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 
 						{/* 文件信息展示 */}
 						{message.fileInfos && message.fileInfos.length > 0 && (
-							<div
-								className={styles["chat-message-item-files"]}
-								style={
-									{
-										"--file-count": message.fileInfos.length,
-									} as React.CSSProperties
-								}
-							>
+							<div className="mt-3 space-y-1.5">
 								{message.fileInfos.map((fileInfo, index) => {
-									// 根据文件类型选择图标
-
-									const fileIcon = getFileIcon(fileInfo.fileName); // 假设有一个函数来获取图标
+									const fileIcon = getFileIcon(fileInfo.fileName);
 
 									return (
-										<p key={index} className={styles["chat-message-item-file"]}>
-											{fileIcon} {/* 显示文件图标 */}
-											{fileInfo.originalFilename}
-										</p>
+										<div
+											key={index}
+											className="group flex items-center gap-2 rounded-md border border-secondary/5 bg-gradient-to-r from-secondary/5 to-primary/5 p-1.5 text-xs text-muted-foreground"
+										>
+											<div className="flex h-5 w-5 items-center justify-center rounded bg-secondary/10">
+												{fileIcon}
+											</div>
+
+											<div className="min-w-0 flex-1">
+												<div className="truncate font-medium">
+													{fileInfo.originalFilename}
+												</div>
+											</div>
+										</div>
 									);
 								})}
 							</div>
@@ -388,22 +499,5 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 		</Fragment>
 	);
 };
-
-const compareRerender = (
-	prevProps: MessageItemProps,
-	nextProps: MessageItemProps,
-) => {
-	const previousMessagesConntent = prevProps.message.content;
-	const nextMessagesConntent = nextProps.message.content;
-	const compareMessage =
-		prevProps.message.content === nextProps.message.content &&
-		prevProps.message.date === nextProps.message.date &&
-		prevProps.message.id === nextProps.message.id &&
-		prevProps.message.role === nextProps.message.role &&
-		prevProps.message.lastUpdateTime === nextProps.message.lastUpdateTime;
-
-	return compareMessage;
-};
-// export default memo(MessageItem, compareRerender);
 
 export default MessageItem;

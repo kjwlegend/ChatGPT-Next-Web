@@ -10,15 +10,28 @@ import React, {
 	use,
 	useCallback,
 } from "react";
-import dynamic from "next/dynamic";
 
-import { getISOLang, getLang } from "@/app/locales";
-
-import SendWhiteIcon from "@/app/icons/send-white.svg";
-import CopyIcon from "@/app/icons/copy.svg";
-
-import Record from "@/app/icons/record.svg";
-
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+	Globe,
+	Image,
+	Mic,
+	Network,
+	Paperclip,
+	Send,
+	Settings,
+	Sparkles,
+	Upload as UploadIcon,
+	X,
+} from "lucide-react";
 import { oss_base } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 import { FileInfo } from "@/app/client/platforms/utils";
@@ -63,7 +76,7 @@ import {
 	LAST_INPUT_IMAGE_KEY,
 } from "@/app/constant";
 
-import { Button, List, message, Upload } from "antd";
+import { List, message, Upload } from "antd";
 
 import {
 	useSubmitHandler,
@@ -85,12 +98,11 @@ import { ChatActions, SimpleChatActions } from "./components/chatactions";
 import { DeleteImageButton, DeleteFileButton } from "./components/chatactions";
 import { AttachImages } from "./components/AttachImages";
 
-const { handlePasteEvent, uploadFile, uploadImage } = dynamic(
-	() => import("./utils/fileUploader") as any,
-	{
-		ssr: false,
-	},
-) as any;
+import {
+	handlePasteEvent,
+	uploadFile,
+	uploadImage,
+} from "./utils/fileUploader";
 import { AttachFiles } from "./components/AttachFiles";
 import { useDoSubmit } from "./hooks/useDoSubmit";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
@@ -107,7 +119,8 @@ import {
 let voicetext: string[] = [];
 
 import { UploadFile } from "antd/es/upload/interface"; // 导入 UploadFile 类型
-
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 // 定义一个类型转换函数
 const convertToUploadFile = (file: FileInfo): UploadFile<File> => ({
 	uid: file.originalFilename, // 使用文件名作为 uid
@@ -291,8 +304,10 @@ export function Inputpanel(props: {
 	};
 
 	return (
-		<div className={styles["chat-input-panel"]}>
+		<div className="flex flex-col gap-2 p-2">
 			{contextHolder}
+
+			{/* 工具栏 */}
 			<div>
 				{submitType === "multi-agent" ? (
 					<SimpleChatActions
@@ -314,62 +329,119 @@ export function Inputpanel(props: {
 					/>
 				)}
 			</div>
-			<label
-				className={`${styles["chat-input-panel-inner"]} ${
-					attachImages.length != 0 || attachFiles.length != 0
-						? styles["chat-input-panel-inner-attach"]
-						: ""
-				}`}
-				htmlFor="chat-input"
-			>
-				<textarea
-					ref={inputRef}
-					className={styles["chat-input"]}
-					placeholder={Locale.Chat.Input(submitKey)}
-					onInput={(e) => onInput(e.currentTarget.value)}
-					value={userInput}
-					onKeyDown={onInputKeyDown}
-					onPaste={handlePaste}
-					rows={inputRows}
-					autoFocus={autoFocus}
-					style={{
-						fontSize: config.fontSize,
-						minHeight: textareaMinHeight,
-					}}
-				/>
-				<Upload
-					customRequest={customRequest}
-					showUploadList={{
-						showPreviewIcon: true,
-						showRemoveIcon: true,
-						showDownloadIcon: true,
-					}}
-					maxCount={3}
-					accept=".doc,.docx,.md,.pdf,.txt,.ppt,.pptx,.xls,.xlsx,.csv,.json,.xml"
-					onRemove={handleRemove} // 添加 onRemove 回调
-				>
-					<Button icon={<UploadOutlined />}>文档对话</Button>
-				</Upload>
-				<AttachImages
-					attachImages={attachImages}
-					setAttachImages={setAttachImages}
-				/>
 
-				<IconButton
-					icon={<SendWhiteIcon />}
-					text=""
-					className={styles["chat-input-send"]}
-					type="primary"
-					onClick={() => handleSubmit()}
-				/>
-				<IconButton
-					icon={<Record />}
-					text=""
-					className={styles["chat-input-voice"]}
-					type="primary"
-					onClick={() => handleSpeechRecognition()}
-				/>
-			</label>
+			{/* 输入区域 */}
+			<TooltipProvider>
+				<div className="relative">
+					<Textarea
+						ref={inputRef}
+						placeholder={Locale.Chat.Input(submitKey)}
+						value={userInput}
+						onChange={(e) => onInput(e.target.value)}
+						onKeyDown={onInputKeyDown}
+						onPaste={handlePaste}
+						rows={inputRows}
+						className={cn(
+							"min-h-[100px] resize-none pr-24",
+							attachImages.length > 0 && "pb-20",
+						)}
+						style={{
+							fontSize: config.fontSize,
+						}}
+					/>
+
+					{/* 附件预览区域 */}
+					<div className="absolute -bottom-6 left-0 w-full space-y-2">
+						<Upload
+							customRequest={customRequest}
+							maxCount={3}
+							accept=".doc,.docx,.md,.pdf,.txt,.ppt,.pptx,.xls,.xlsx,.csv,.json,.xml"
+							onRemove={handleRemove}
+							className="w-full"
+						>
+							{/* {attachFiles.length > 0 && (
+								<div className="flex flex-wrap gap-2">
+									{attachFiles.map((file, index) => (
+										<Badge key={index} variant="secondary">
+											{file.originalFilename}
+											<X
+												className="ml-1 h-3 w-3 cursor-pointer"
+												onClick={(e) => {
+													e.stopPropagation();
+													handleRemove(convertToUploadFile(file));
+												}}
+											/>
+										</Badge>
+									))}
+								</div>
+							)} */}
+						</Upload>
+
+						<AttachImages
+							attachImages={attachImages}
+							setAttachImages={setAttachImages}
+						/>
+					</div>
+
+					{/* 操作按钮 */}
+					<div className="absolute bottom-2 right-2 flex items-center gap-1">
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-8 w-8"
+									onClick={() =>
+										document
+											.querySelector<HTMLInputElement>('input[type="file"]')
+											?.click()
+									}
+								>
+									<Paperclip className="h-4 w-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>上传文档</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-8 w-8"
+									onClick={handleUploadImage}
+								>
+									<Image className="h-4 w-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>上传图片</TooltipContent>
+						</Tooltip>
+
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-8 w-8"
+									onClick={handleSpeechRecognition}
+								>
+									<Mic className="h-4 w-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>语音输入</TooltipContent>
+						</Tooltip>
+
+						<Button
+							size="icon"
+							className="h-8 w-8"
+							onClick={handleSubmit}
+							disabled={isLoading}
+						>
+							<Send className="h-4 w-4" />
+						</Button>
+					</div>
+				</div>
+			</TooltipProvider>
 		</div>
 	);
 }

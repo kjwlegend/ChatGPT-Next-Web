@@ -92,6 +92,7 @@ export const uploadFile = async (
 	};
 
 	// 上传文件
+	console.log("uploadingFile", file);
 	fileInfo = await api.file.upload(file, "RAG");
 	fileInfo.status = "uploading"; // 上传完成，设置为转码中
 

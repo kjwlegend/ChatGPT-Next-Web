@@ -18,6 +18,11 @@ import { GeminiProApi } from "./platforms/google";
 import { ClaudeApi } from "./platforms/anthropic";
 
 import { FileApi, FileInfo } from "./platforms/utils";
+import {
+	CodeBlock,
+	DocumentMeta,
+	Reference,
+} from "../api/langchain/tool/agent/agentapi";
 
 export const ROLES = ["system", "user", "assistant"] as const;
 export type MessageRole = (typeof ROLES)[number];
@@ -88,7 +93,14 @@ export interface AgentChatOptions {
 	messages: RequestMessage[];
 	config: LLMConfig;
 	agentConfig: LLMAgentConfig;
-	onToolUpdate?: (toolName: string, toolInput: string) => void;
+	onToolUpdate?: (
+		toolName: string,
+		toolInput: string,
+		type?: string,
+		references?: Reference[],
+		documents?: DocumentMeta[],
+		codeBlocks?: CodeBlock[],
+	) => void;
 	onUpdate?: (message: string, chunk: string) => void;
 	onFinish: (message: string) => void;
 	onError?: (err: Error) => void;

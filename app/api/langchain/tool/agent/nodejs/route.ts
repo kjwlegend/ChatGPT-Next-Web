@@ -42,6 +42,7 @@ async function handle(req: NextRequest) {
 		const embeddings = new OpenAIEmbeddings(
 			{
 				openAIApiKey: apiKey,
+				modelName: "text-embedding-3-small",
 			},
 			{ basePath: baseUrl },
 		);

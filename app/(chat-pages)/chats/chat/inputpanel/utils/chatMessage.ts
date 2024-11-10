@@ -6,8 +6,11 @@ import { estimateTokenLength } from "@/app/utils/chat/token";
 import { getMessageTextContent } from "@/app/utils";
 import { workflowChatSession } from "@/app/types/";
 import { MultiAgentChatSession } from "@/app/store/multiagents";
+import { FileInfo } from "@/app/client/platforms/utils";
 export function getMessagesWithMemory(
 	session: ChatSession | workflowChatSession,
+	tools?: string[],
+	files?: FileInfo[],
 ) {
 	// 定义一个session
 
@@ -28,19 +31,19 @@ export function getMessagesWithMemory(
 	const systemPrompts = [
 		createMessage({
 			role: "system",
-			content: fillTemplateWith("", injectSetting),
+			content: fillTemplateWith("", injectSetting, tools, files),
 		}),
 	];
 
-	let ragPrompt;
-	if (session.attachFiles && session.attachFiles.length > 0) {
-		const ragTemplate = ragSearchTemplate(session.attachFiles);
-		ragPrompt = createMessage({
-			role: "system",
-			content: ragTemplate,
-			date: "",
-		});
-	}
+	// let ragPrompt;
+	// if (session.attachFiles && session.attachFiles.length > 0) {
+	// 	const ragTemplate = ragSearchTemplate(session.attachFiles);
+	// 	ragPrompt = createMessage({
+	// 		role: "system",
+	// 		content: ragTemplate,
+	// 		date: "",
+	// 	});
+	// }
 	const MemoryPrompt = {
 		role: "system",
 		content:
@@ -93,7 +96,6 @@ export function getMessagesWithMemory(
 	// concat all messages
 	const recentMessages = [
 		...systemPrompts,
-		...(ragPrompt ? [ragPrompt] : []),
 		...longTermMemoryPrompts,
 		...contextPrompts,
 		...reversedRecentMessages.reverse(),

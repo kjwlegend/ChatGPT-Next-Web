@@ -10,14 +10,9 @@ import ClearIcon from "@/app/icons/clear.svg";
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import EditIcon from "@/app/icons/edit.svg";
 import EyeIcon from "@/app/icons/eye.svg";
-import DownloadIcon from "@/app/icons/download.svg";
-import UploadIcon from "@/app/icons/upload.svg";
-import ConfigIcon from "@/app/icons/config.svg";
-import ConfirmIcon from "@/app/icons/confirm.svg";
 
-import ConnectionIcon from "@/app/icons/connection.svg";
-import CloudSuccessIcon from "@/app/icons/cloud-success.svg";
-import CloudFailIcon from "@/app/icons/cloud-fail.svg";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 import {
 	Input,
@@ -49,7 +44,6 @@ import Locale, {
 	getLang,
 } from "@/app/locales";
 import { copyToClipboard } from "@/app/utils";
-import Link from "next/link";
 import {
 	Azure,
 	OPENAI_BASE_URL,
@@ -69,6 +63,7 @@ import { getClientConfig } from "@/app/config/client";
 import { useAuthStore } from "@/app/store/auth";
 import { nanoid } from "nanoid";
 import { PluginConfigList } from "./plugin-config";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
 	const promptStore = usePromptStore();
@@ -363,53 +358,6 @@ export function Settings() {
 			</div>
 			<div className={styles["settings"]}>
 				<List>
-					{/* <ListItem title={Locale.Settings.Avatar}>
-						<Popover
-							onClose={() => setShowEmojiPicker(false)}
-							content={
-								<AvatarPicker
-									onEmojiClick={(avatar: string) => {
-										updateConfig((config) => (config.avatar = avatar));
-										setShowEmojiPicker(false);
-									}}
-								/>
-							}
-							open={showEmojiPicker}
-						>
-							<div
-								className={styles.avatar}
-								onClick={() => setShowEmojiPicker(true)}
-							>
-								<Avatar avatar={config.avatar} />
-							</div>
-						</Popover>
-					</ListItem> */}
-
-					{/* <ListItem
-            title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
-            subTitle={
-              checkingUpdate
-                ? Locale.Settings.Update.IsChecking
-                : hasNewVersion
-                ? Locale.Settings.Update.FoundUpdate(remoteId ?? "ERROR")
-                : Locale.Settings.Update.IsLatest
-            }
-          >
-            {checkingUpdate ? (
-              <LoadingIcon />
-            ) : hasNewVersion ? (
-              <Link href={updateUrl} target="_blank" className="link">
-                {Locale.Settings.Update.GoToUpdate}
-              </Link>
-            ) : (
-              <IconButton
-                icon={<ResetIcon></ResetIcon>}
-                text={Locale.Settings.Update.CheckUpdate}
-                onClick={() => checkUpdate(true)}
-              />
-            )}
-          </ListItem> */}
-
 					<ListItem title={Locale.Settings.SendKey}>
 						<Select
 							value={config.submitKey}
@@ -464,106 +412,75 @@ export function Settings() {
 						title={Locale.Settings.FontSize.Title}
 						subTitle={Locale.Settings.FontSize.SubTitle}
 					>
-						<InputRange
-							title={`${config.fontSize ?? 14}px`}
-							value={config.fontSize}
-							min="12"
-							max="40"
-							step="1"
-							onChange={(e) =>
-								updateConfig(
-									(config) =>
-										(config.fontSize = Number.parseInt(e.currentTarget.value)),
-								)
-							}
-						></InputRange>
+						<div className="flex w-[200px] flex-col gap-2">
+							<Label>{`${config.fontSize ?? 14}px`}</Label>
+							<Slider
+								value={[config.fontSize ?? 14]}
+								min={10}
+								max={21}
+								step={1}
+								onValueChange={(value) =>
+									updateConfig((config) => (config.fontSize = value[0]))
+								}
+							/>
+						</div>
 					</ListItem>
 
 					<ListItem
 						title={Locale.Settings.AutoGenerateTitle.Title}
 						subTitle={Locale.Settings.AutoGenerateTitle.SubTitle}
 					>
-						<input
-							type="checkbox"
+						<Checkbox
 							checked={config.enableAutoGenerateTitle}
-							onChange={(e) =>
+							onCheckedChange={(checked: boolean) =>
 								updateConfig(
-									(config) =>
-										(config.enableAutoGenerateTitle = e.currentTarget.checked),
+									(config) => (config.enableAutoGenerateTitle = checked),
 								)
 							}
-						></input>
-					</ListItem>
-
-					<ListItem
-						title={Locale.Settings.SendPreviewBubble.Title}
-						subTitle={Locale.Settings.SendPreviewBubble.SubTitle}
-					>
-						<input
-							type="checkbox"
-							checked={config.sendPreviewBubble}
-							onChange={(e) =>
-								updateConfig(
-									(config) =>
-										(config.sendPreviewBubble = e.currentTarget.checked),
-								)
-							}
-						></input>
+						/>
 					</ListItem>
 				</List>
-
 				{/* <SyncItems /> */}
-
 				<List>
 					<ListItem
 						title={Locale.Settings.Mask.Splash.Title}
 						subTitle={Locale.Settings.Mask.Splash.SubTitle}
 					>
-						<input
-							type="checkbox"
+						<Checkbox
 							checked={!config.dontShowMaskSplashScreen}
-							onChange={(e) =>
+							onCheckedChange={(checked: boolean) =>
 								updateConfig(
-									(config) =>
-										(config.dontShowMaskSplashScreen =
-											!e.currentTarget.checked),
+									(config) => (config.dontShowMaskSplashScreen = !checked),
 								)
 							}
-						></input>
+						></Checkbox>
 					</ListItem>
 
 					<ListItem
 						title={Locale.Settings.Mask.Builtin.Title}
 						subTitle={Locale.Settings.Mask.Builtin.SubTitle}
 					>
-						<input
-							type="checkbox"
+						<Checkbox
 							checked={config.hideBuiltinMasks}
-							onChange={(e) =>
-								updateConfig(
-									(config) =>
-										(config.hideBuiltinMasks = e.currentTarget.checked),
-								)
-							}
-						></input>
+							onCheckedChange={(checked: boolean) => {
+								updateConfig((config) => (config.hideBuiltinMasks = checked));
+								console.log("checked", config.hideBuiltinMasks);
+							}}
+						></Checkbox>
 					</ListItem>
 				</List>
-
+				``
 				<List>
 					<ListItem
 						title={Locale.Settings.Prompt.Disable.Title}
 						subTitle={Locale.Settings.Prompt.Disable.SubTitle}
 					>
-						<input
-							type="checkbox"
+						<Checkbox
 							checked={config.disablePromptHint}
-							onChange={(e) =>
-								updateConfig(
-									(config) =>
-										(config.disablePromptHint = e.currentTarget.checked),
-								)
+							onCheckedChange={(checked: boolean) =>
+								updateConfig((config) => (config.disablePromptHint = checked))
 							}
-						></input>
+						></Checkbox>
 					</ListItem>
 
 					<ListItem
@@ -580,115 +497,9 @@ export function Settings() {
 						/>
 					</ListItem>
 				</List>
-
-				{/* <List>
-          {showAccessCode ? (
-            <ListItem
-              title={Locale.Settings.Access.AccessCode.Title}
-              subTitle={Locale.Settings.Access.AccessCode.SubTitle}
-            >
-              <PasswordInput
-                value={accessStore.accessCode}
-                type="text"
-                placeholder={Locale.Settings.Access.AccessCode.Placeholder}
-                onChange={(e) => {
-                  accessStore.update(
-                    (access) => (access.accessCode = e.currentTarget.value),
-                  );
-                }}
-              />
-            </ListItem>
-          )}
-
-          {!accessStore.hideUserApiKey && (
-            <>
-              <ListItem
-                title={Locale.Settings.Endpoint.Title}
-                subTitle={Locale.Settings.Endpoint.SubTitle}
-              >
-                <input
-                  type="text"
-                  value={accessStore.openaiUrl}
-                  placeholder="https://api.openai.com/"
-                  onChange={(e) =>
-                    accessStore.updateOpenAiUrl(e.currentTarget.value)
-                  }
-                ></input>
-              </ListItem>
-              <ListItem
-                title={Locale.Settings.Token.Title}
-                subTitle={Locale.Settings.Token.SubTitle}
-              >
-                <PasswordInput
-                  value={accessStore.token}
-                  type="text"
-                  placeholder={Locale.Settings.Token.Placeholder}
-                  onChange={(e) => {
-                    accessStore.updateToken(e.currentTarget.value);
-                  }}
-                />
-              </ListItem>
-            </>
-          ) : null}
-
-          {!shouldHideBalanceQuery &&!clientConfig?.isApp  ? (
-            <ListItem
-              title={Locale.Settings.Usage.Title}
-              subTitle={
-                showUsage
-                  ? loadingUsage
-                    ? Locale.Settings.Usage.IsChecking
-                    : Locale.Settings.Usage.SubTitle(
-                        usage?.used ?? "[?]",
-                        usage?.subscription ?? "[?]",
-                      )
-                  : Locale.Settings.Usage.NoAccess
-              }
-            >
-              {!showUsage || loadingUsage ? (
-                <div />
-              ) : (
-                <IconButton
-                  icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage(true)}
-                />
-              )}
-            </ListItem>
-          ) : null}
-
-          <ListItem
-            title={Locale.Settings.Access.CustomModel.Title}
-            subTitle={Locale.Settings.Access.CustomModel.SubTitle}
-          >
-            <input
-              type="text"
-              value={config.customModels}
-              placeholder="model1,model2,model3"
-              onChange={(e) =>
-                config.update(
-                  (config) => (config.customModels = e.currentTarget.value),
-                )
-              }
-            ></input>
-          </ListItem>
-        </List> */}
-
-				{/* <List>
-					<ModelConfigList
-						modelConfig={config.modelConfig}
-						updateConfig={(updater) => {
-							const modelConfig = { ...config.modelConfig };
-							updater(modelConfig);
-							config.update((config) => (config.modelConfig = modelConfig));
-						}}
-					/>
-				</List> */}
-
 				{shouldShowPromptModal && (
 					<UserPromptModal onClose={() => setShowPromptModal(false)} />
 				)}
-
 				<List>
 					<PluginConfigList
 						pluginConfig={config.pluginConfig}
@@ -699,7 +510,6 @@ export function Settings() {
 						}}
 					/>
 				</List>
-
 				<DangerItems />
 			</div>
 		</ErrorBoundary>

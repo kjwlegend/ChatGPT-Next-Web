@@ -560,15 +560,29 @@ export class ChatGPTApi implements LLMApi {
 							return finish();
 						}
 						try {
-							if (response && !response.isToolMessage) {
+							if (!response) {
+								throw new Error("Empty response");
+							}
+
+							if (response.isToolMessage) {
+								console.log("Tool response:", response);
+								options.onToolUpdate?.(
+									response.toolName!,
+									response.message,
+									response.type,
+									response.references,
+									response.documents,
+									response.codeBlocks,
+								);
+							} else {
 								responseText += response.message;
 								options.onUpdate?.(responseText, response.message);
-							} else {
-								console.log("tool name", response);
-								options.onToolUpdate?.(response.toolName!, response.message);
 							}
 						} catch (e) {
-							console.error("[Request] parse error", response, msg);
+							console.error("[Request] Error processing response:", e, {
+								response,
+								msg,
+							});
 						}
 					},
 					onclose() {

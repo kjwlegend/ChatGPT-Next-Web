@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 
 import { DeleteIcon } from "@/app/icons";
 
-import styles from "../home.module.scss";
+import styles from "./sidebar.module.scss";
 
 import { EditIcon } from "@/app/icons";
 import { useChatStore } from "@/app/store";

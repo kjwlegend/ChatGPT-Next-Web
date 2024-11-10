@@ -1,3 +1,8 @@
+import {
+	CodeBlock,
+	DocumentMeta,
+	Reference,
+} from "../api/langchain/tool/agent/agentapi";
 import { RequestMessage } from "../client/api";
 import { FileInfo } from "../client/platforms/utils";
 import { ModelType } from "../store";
@@ -22,8 +27,13 @@ export type ChatMessage = RequestMessage & {
 };
 
 export interface ChatToolMessage {
-	toolName: string;
+	toolName?: string;
 	toolInput?: string;
+	references?: Reference[];
+	content?: string;
+	toolOutput?: string;
+	documents?: DocumentMeta[];
+	codeBlocks?: CodeBlock[];
 }
 
 export type MjConfig = {

@@ -13,6 +13,7 @@ import { BilibiliVideoSearchTool } from "@/app/api/langchain/tools/bilibili_vid_
 import { BilibiliVideoConclusionTool } from "@/app/api/langchain/tools/bilibili_vid_conclusion";
 import { BilibiliMusicRecognitionTool } from "@/app/api/langchain/tools/bilibili_music_recognition";
 import { RAGSearch } from "../tools/rag_search";
+import { WebBrowserTool } from "../tools/web_browser";
 
 export class NodeJSTool {
 	private apiKey: string | undefined;
@@ -42,7 +43,7 @@ export class NodeJSTool {
 	}
 
 	async getCustomTools(): Promise<any[]> {
-		const webBrowserTool = new WebBrowser({
+		const webBrowserTool = new WebBrowserTool({
 			model: this.model,
 			embeddings: this.embeddings,
 		});

@@ -48,6 +48,8 @@ import { MultimodalContent } from "../client/api";
 import { Tracing } from "trace_events";
 import { getMessagesWithMemory } from "../(chat-pages)/chats/chat/inputpanel/utils/chatMessage";
 import { getMessages } from "@fortaine/fetch-event-source/lib/cjs/parse";
+import { CodeBlock, DocumentMeta } from "../api/langchain/tool/agent/agentapi";
+import { Reference } from "../api/langchain/tool/agent/agentapi";
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
@@ -236,6 +238,7 @@ export const useChatStore = createPersistStore(
 				const globalModelConfig = config.modelConfig;
 
 				const selectedMask: any = mask ?? DEFAULT_MASK;
+				selectedMask.plugins = selectedMask.plugins ?? [];
 
 				// 如果 selectedMask 没有 'id' 属性，我们提供一个默认值
 
@@ -435,9 +438,12 @@ export const useChatStore = createPersistStore(
 				const modelConfig = session.mask.modelConfig;
 				const userStore = useUserStore.getState();
 
+				const tools = session.mask.plugins;
+				const files = session.attachFiles;
+
 				// 获取最近的消息
 				const { recentMessages, recentMessagesTokenCount } =
-					getMessagesWithMemory(session);
+					getMessagesWithMemory(session, tools, files);
 
 				const contentTokenCount = estimateTokenLength(content);
 				const total_token_count = recentMessagesTokenCount + contentTokenCount;
@@ -558,9 +564,13 @@ export const useChatStore = createPersistStore(
 					const onToolUpdateCallback = (
 						toolName: string,
 						toolInput: string,
+						type?: string,
+						references?: Reference[],
+						documents?: DocumentMeta[],
+						codeBlocks?: CodeBlock[],
 					) => {
 						// 这里可以进行 tool 更新的逻辑
-						// console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
+						console.log(`Tool updated: ${toolName}, Input: ${toolInput}`);
 						get().updateCurrentSession((session) => {
 							session.messages = session.messages.concat();
 							session.lastUpdateTime = Date.now();
@@ -778,7 +788,6 @@ export const useChatStore = createPersistStore(
 			},
 			clearChatData() {
 				localStorage.removeItem(StoreKey.Chat);
-				location.reload();
 			},
 			cleanOldMessages: () => {
 				const now = Date.now();
@@ -803,7 +812,6 @@ export const useChatStore = createPersistStore(
 
 			clearAllData() {
 				localStorage.clear();
-				location.reload();
 			},
 		};
 
@@ -811,7 +819,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.6,
+		version: 3.7,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(
@@ -878,8 +886,12 @@ export const useChatStore = createPersistStore(
 					s.mask.modelConfig.enableUserInfos = true;
 				});
 			}
-			if (version < 3.5) {
+			if (version < 3.7) {
 				//set new state to default
+				// add plugins attribute to mask
+				newState.sessions.forEach((s) => {
+					s.mask.plugins = ["web-search"];
+				});
 			}
 
 			return newState as any;

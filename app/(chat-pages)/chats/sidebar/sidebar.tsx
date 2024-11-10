@@ -40,7 +40,6 @@ import {
 } from "@/app/constant";
 
 import { useMobileScreen } from "@/app/hooks/useMobileScreen";
-import dynamic from "next/dynamic";
 import { showConfirm, showToast } from "@/app/components/ui-lib";
 import { useAuthStore } from "@/app/store/auth";
 

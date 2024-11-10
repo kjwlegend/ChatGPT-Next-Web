@@ -2,6 +2,7 @@ import { PluginConfig } from "@/app/store";
 
 import Locale from "@/app/locales";
 import { ListItem } from "@/app/components/ui-lib";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function PluginConfigList(props: {
 	pluginConfig: PluginConfig;
@@ -13,15 +14,12 @@ export function PluginConfigList(props: {
 				title={Locale.Settings.Plugin.Enable.Title}
 				subTitle={Locale.Settings.Plugin.Enable.SubTitle}
 			>
-				<input
-					type="checkbox"
+				<Checkbox
 					checked={props.pluginConfig.enable}
-					onChange={(e) =>
-						props.updateConfig(
-							(config) => (config.enable = e.currentTarget.checked),
-						)
+					onCheckedChange={(checked: boolean) =>
+						props.updateConfig((config) => (config.enable = checked))
 					}
-				></input>
+				></Checkbox>
 			</ListItem>
 			<ListItem
 				title={Locale.Settings.Plugin.MaxIteration.Title}
@@ -44,16 +42,14 @@ export function PluginConfigList(props: {
 				title={Locale.Settings.Plugin.ReturnIntermediateStep.Title}
 				subTitle={Locale.Settings.Plugin.ReturnIntermediateStep.SubTitle}
 			>
-				<input
-					type="checkbox"
+				<Checkbox
 					checked={props.pluginConfig.returnIntermediateSteps}
-					onChange={(e) =>
+					onCheckedChange={(checked: boolean) =>
 						props.updateConfig(
-							(config) =>
-								(config.returnIntermediateSteps = e.currentTarget.checked),
+							(config) => (config.returnIntermediateSteps = checked),
 						)
 					}
-				></input>
+				></Checkbox>
 			</ListItem>
 		</>
 	);

@@ -1034,6 +1034,37 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-11-09",
+		color: "blue",
+		children: (
+			<>
+				发布 V3.1.6 版本, 小光说:
+				<ul>
+					<li>重构搜索功能，提供更精准的搜索体验</li>
+					<li>优化页面浏览器功能和性能</li>
+					<li>更新全新小光AI Logo设计</li>
+					<li>启动长期UI界面优化计划</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
+	{
+		label: "2024-11-10",
+		color: "blue",
+		children: (
+			<>
+				发布 V3.1.7 版本, 小光说:
+				<ul>
+					<li>完成输入区域UI的初步改进</li>
+					<li>优化对话交互体验</li>
+					<li>提升整体对话流畅度</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

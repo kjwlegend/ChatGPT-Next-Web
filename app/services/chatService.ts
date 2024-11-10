@@ -16,7 +16,9 @@ import { ModelConfig } from "../store";
 import { CreateChatData, createChat } from "./api/chats";
 import useAuth from "../hooks/useAuth";
 import { Store } from "antd/es/form/interface";
-
+import { DocumentMeta } from "../api/langchain/tool/agent/agentapi";
+import { Reference } from "../api/langchain/tool/agent/agentapi";
+import { CodeBlock } from "../api/langchain/tool/agent/agentapi";
 
 export const createChatDataAndFetchId = async (options: {
 	user: number;
@@ -73,7 +75,7 @@ export const createChatDataAndFetchId = async (options: {
 };
 export const submitChatMessage = async (
 	createChatData: CreateChatData,
-	chatStore: Store
+	chatStore: Store,
 ) => {
 	// console.log("createChatData trigger");
 
@@ -128,16 +130,47 @@ export function handleChatCallbacks(
 				onUpdateCallback(message);
 			}
 		},
-		onToolUpdate: (toolName: string, toolInput: string) => {
+		onToolUpdate: (
+			toolName: string,
+			toolInput: string,
+			type?: string,
+			references?: Reference[],
+			documents?: DocumentMeta[],
+			codeBlocks?: CodeBlock[],
+		) => {
 			botMessage.streaming = true;
-			const tool = allPlugins.find((m) => m.toolName === toolName);
-			const name = tool?.name;
-			if (name && toolInput) {
-				botMessage.toolMessages!.push({
-					toolName: name,
-					toolInput,
-				});
+
+			// 如果有工具名和输入，创建新的工具消息
+			if (toolName && toolInput) {
+				const tool = allPlugins.find((m) => m.toolName === toolName);
+				const name = tool?.name;
+
+				// Create new tool message
+				const newToolMessage = {
+					toolName: name || toolName,
+					toolInput: toolInput,
+					references: [], // 初始化空数组
+					documents: [], // 初始化空数组
+					codeBlocks: [], // 初始化空数组
+				};
+
+				// 添加新的工具消息
+				botMessage.toolMessages!.push(newToolMessage);
 			}
+
+			// 如果有引用信息，更新最后一条工具消息
+			if (references || documents || codeBlocks) {
+				const lastToolMessage =
+					botMessage.toolMessages![botMessage.toolMessages!.length - 1];
+				if (lastToolMessage) {
+					// 更新对应的引用信息
+					if (references) lastToolMessage.references = references;
+					if (documents) lastToolMessage.documents = documents;
+					if (codeBlocks) lastToolMessage.codeBlocks = codeBlocks;
+				}
+			}
+
+			// Call callback if provided
 			if (onToolUpdateCallback) {
 				onToolUpdateCallback(toolName, toolInput);
 			}

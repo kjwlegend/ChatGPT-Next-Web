@@ -86,6 +86,28 @@ import { createFromIconfontCN } from "@ant-design/icons";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import { sessionConfig } from "@/app/types/";
 import { sessionConfigUpdate } from "../../../utils/chatUtils";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+	TooltipProvider,
+} from "@/components/ui/tooltip";
+import {
+	Globe,
+	Image,
+	Mic,
+	Network,
+	Paperclip,
+	Send,
+	Settings,
+	Sparkles,
+	Upload,
+} from "lucide-react";
+
 export const IconFont = createFromIconfontCN({
 	scriptUrl: "//at.alicdn.com/t/c/font_4149808_awi8njsz19j.js",
 });
@@ -217,30 +239,47 @@ export const ChatActions = memo(
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			[],
 		);
-		console.log("isEnableRAG", isEnableRAG);
 
 		const updateType = props.workflow ? "workflow" : "chat";
 		const workflowGroupId = props.workflow ? session.workflow_group_id : null;
 
 		const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-		const usePlugins = session.mask.usePlugins;
+		const usePlugins = session.mask.plugins;
 
+		// 判断plugins是否包含web-search
+		const webSearchEnabled =
+			session.mask.plugins?.includes("web-search") ?? false;
+
+		console.log("plugins", usePlugins, "webSearchEnabled", webSearchEnabled);
+		const [isWebSearchEnabled, setIsWebSearchEnabled] =
+			useState(webSearchEnabled);
 		const [showModelSelector, setShowModelSelector] = useState(false);
 		const [showUploadImage, setShowUploadImage] = useState(false);
 		const [showUploadFile, setShowUploadFile] = useState(false);
-
-		const onImageSelected = async (e: any) => {
-			const file = e.target.files[0];
-			const fileName = await api.file.upload(file, "upload");
-			props.setAttachImages([`${oss_base}${fileName}!uploadthumbnail`]);
-			e.target.value = null;
-		};
 
 		const pluginStore = usePluginStore();
 		const [sessionPlugins, setSessionPlugins] = useState(
 			session?.mask?.plugins || [],
 		);
+
+		const handleWebSearchEnabled = () => {
+			setIsWebSearchEnabled(!isWebSearchEnabled);
+			sessionConfigUpdate(updateType, {
+				sessionId: sessionId,
+				groupId: workflowGroupId,
+				updates: {
+					mask: {
+						...session.mask,
+						plugins: isWebSearchEnabled
+							? session.mask.plugins.filter(
+									(p) => p !== "web-search" && p !== "web-browser",
+								)
+							: [...session.mask.plugins, "web-search", "web-browser"],
+					},
+				},
+			});
+		};
 
 		useEffect(() => {
 			setSessionPlugins(session?.mask?.plugins || []);
@@ -418,13 +457,6 @@ export const ChatActions = memo(
 							hidetext={props.workflow ? true : false}
 						/>
 					)}
-					{showUploadImage && (
-						<ChatAction
-							onClick={props.uploadImage}
-							text={Locale.Chat.InputActions.UploadImage}
-							icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
-						/>
-					)}
 
 					{config.pluginConfig.enable && (
 						<ChatAction
@@ -454,6 +486,15 @@ export const ChatActions = memo(
 						/>
 					)}
 
+					<ChatAction
+						icon={
+							<Globe
+								className={`h-4 w-4 transition-colors duration-200 ${isWebSearchEnabled ? "text-blue-500" : ""}`}
+							/>
+						}
+						onClick={handleWebSearchEnabled}
+						text={isWebSearchEnabled ? "关闭联网" : "开启联网"}
+					/>
 					<ChatAction
 						icon={
 							enableRelatedQuestions ? (
@@ -487,13 +528,8 @@ export const ChatActions = memo(
 						text={enableUserInfo ? "个性化" : "通用"}
 					/>
 				</div>
-				<div>
-					<div>
-						{/* 展示用户余额 */}
-						<span className={styles["chat-balance"]}>
-							对话余额: {basic_chat_balance}
-						</span>
-					</div>
+				<div className="ml-auto flex items-center gap-1">
+					{/* placeholder */}
 				</div>
 			</div>
 		);
