@@ -1052,7 +1052,7 @@ const items = [
 	},
 	{
 		label: "2024-11-10",
-		color: "blue",
+		color: "green",
 		children: (
 			<>
 				发布 V3.1.7 版本, 小光说:
@@ -1060,6 +1060,20 @@ const items = [
 					<li>完成输入区域UI的初步改进</li>
 					<li>优化对话交互体验</li>
 					<li>提升整体对话流畅度</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
+	{
+		label: "2024-11-11",
+		color: "green",
+		children: (
+			<>
+				发布 V3.1.8 版本, 小光说:
+				<ul>
+					<li>接入字节豆包32k大模型，支持超长对话上下文</li>
+					<li>优化对话框标题栏设计与交互</li>
 				</ul>
 			</>
 		),

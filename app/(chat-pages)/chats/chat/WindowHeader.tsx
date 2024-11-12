@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Maximize2, Pencil } from "lucide-react";
 import { getISOLang, getLang } from "@/app/locales";
 
 import BrainIcon from "@/app/icons/brain.svg";
@@ -172,17 +175,25 @@ function WindowHeaderTitle({
 
 	return (
 		<>
-			<div className={`window-header-title ${styles["chat-body-title"]}`}>
-				<div
-					className={`window-header-main-title ${styles["chat-body-main-title"]}`}
-					onClickCapture={() => setIsEditingMessage(true)}
-				>
+			<div className="flex items-center gap-3">
+				<h1 className="text-base font-semibold">
 					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
-				</div>
-				<div className="window-header-sub-title">
-					智能体: {session?.mask.name} | id:{" "}
-					{session?.mask.id || session?.mask.agent_id}
-				</div>
+				</h1>
+				<Button
+					variant="ghost"
+					size="icon"
+					className="h-6 w-6"
+					onClick={() => setIsEditingMessage(true)}
+				>
+					<Pencil className="h-3 w-3" />
+					<span className="sr-only">Edit title</span>
+				</Button>
+				<Badge variant="secondary" className="px-1 py-0 text-xs">
+					智能体: {session?.mask.name}
+				</Badge>
+				<span className="text-xs text-muted-foreground">
+					id: {session?.mask.id || session?.mask.agent_id}
+				</span>
 			</div>
 			{isEditingMessage && (
 				<EditMessageModal
@@ -256,18 +267,16 @@ function WindowActions(props: {
 }) {
 	const session = props.session;
 	const index = props.index ?? 0;
-
 	const config = useAppConfig();
-	const [showExport, setShowExport] = useState(false);
 
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
-	// const clientConfig = useMemo(() => getClientConfig(), []);
-	// const showMaxIcon =
-	// 	!isMobileScreen && !clientConfig?.isApp && !props.isworkflow;
-
 	const showMaxIcon = !isMobileScreen && !props.isworkflow;
 
-	const [isEditingMessage, setIsEditingMessage] = useState(false);
+	const toggleMaximize = () => {
+		config.update((config) => {
+			config.showHeader = !config.showHeader;
+		});
+	};
 
 	const AutoFlowSwitchButton = () => (
 		<div className="window-action-button">
@@ -275,63 +284,25 @@ function WindowActions(props: {
 		</div>
 	);
 
-	const RenameButton = () => (
-		<div className="window-action-button">
-			<IconButton
-				icon={<RenameIcon />}
-				bordered
-				onClick={() => setIsEditingMessage(true)}
-			/>
-		</div>
-	);
-
-	const ExportButton = () => (
-		<div className="window-action-button">
-			<IconButton
-				icon={<ExportIcon />}
-				bordered
-				title={Locale.Chat.Actions.Export}
-				onClick={() => {
-					setShowExport(true);
-				}}
-			/>
-		</div>
-	);
-
 	const MaxMinButton = () => (
-		<div className="window-action-button">
-			<IconButton
-				icon={config.tightBorder ? <MinIcon /> : <MaxIcon />}
-				bordered
-				onClick={() => {
-					config.update((config) => {
-						config.showHeader = !config.showHeader;
-					});
-				}}
-			/>
-		</div>
+		<Button
+			variant="ghost"
+			size="icon"
+			className="h-7 w-7"
+			onClick={toggleMaximize}
+		>
+			<Maximize2 className="h-3 w-3" />
+			<span className="sr-only">Fullscreen</span>
+		</Button>
 	);
 
 	return (
 		<>
-			<div className="window-actions">
+			<div className="window-actions flex items-center gap-2">
+				<LLMModelSwitch session={session} isworkflow={props.isworkflow} />
 				{!isMobileScreen && props.isworkflow && <AutoFlowSwitchButton />}
-				{!isMobileScreen && !props.isworkflow && <RenameButton />}
-				{/* {!props.isworkflow && <ExportButton />} */}
 				{showMaxIcon && <MaxMinButton />}
 			</div>
-			{showExport && (
-				<ExportMessageModal onClose={() => setShowExport(false)} />
-			)}
-			{isEditingMessage && (
-				<EditMessageModal
-					onClose={() => {
-						setIsEditingMessage(false);
-					}}
-					isworkflow={props.isworkflow}
-					session={session}
-				/>
-			)}
 		</>
 	);
 }
@@ -359,27 +330,24 @@ export const WindowHeader = React.memo(
 		);
 
 		return (
-			<div className="window-header" data-tauri-drag-region>
-				{isMobileScreen && !isworkflow && <ReturnButton />}
+			<>
+				<div
+					className="window-header flex items-center justify-between"
+					data-tauri-drag-region
+				>
+					{isMobileScreen && !isworkflow && <ReturnButton />}
 
-				<WindowHeaderTitle {...commonProps} />
+					<WindowHeaderTitle {...commonProps} />
 
-				<LLMModelSwitch {...commonProps} />
+					<WindowActions {...commonProps} />
+				</div>
 
-				<WindowActions {...commonProps} />
-
-				<PromptToast
-					showToast={!hitBottom}
-					showModal={showPromptModal}
-					setShowModal={setShowPromptModal}
-					{...commonProps}
-				/>
 				<SessionModal
 					showModal={showPromptModal}
 					setShowModal={setShowPromptModal}
 					{...commonProps}
 				/>
-			</div>
+			</>
 		);
 	},
 );

@@ -120,7 +120,7 @@ export interface LLMUsage {
 	total: number;
 }
 
-interface Model {
+export interface Model {
 	key: string;
 	name: string;
 	available: boolean;

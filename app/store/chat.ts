@@ -819,7 +819,7 @@ export const useChatStore = createPersistStore(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.7,
+		version: 3.8,
 		migrate(persistedState, version) {
 			const state = persistedState as any;
 			const newState = JSON.parse(

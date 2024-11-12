@@ -132,12 +132,12 @@ export const KnowledgeCutOffDate: Record<string, string> = {
 
 export const DEFAULT_MODELS = [
 	{
-		provider: "Openai",
+		provider: "小光Lora模型",
 		models: [
 			{
 				key: "Mini",
 				name: "gpt-4o-mini",
-				displayName: "小光基础(1积分/次)",
+				displayName: "小光基础",
 				available: true,
 				proModel: false,
 				supportFunctionCall: true,
@@ -145,7 +145,7 @@ export const DEFAULT_MODELS = [
 			{
 				key: "Pro",
 				name: "gpt-4o",
-				displayName: "小光Pro-(5积分/次)",
+				displayName: "小光Pro",
 				available: true,
 				proModel: true,
 				supportFunctionCall: true,
@@ -156,20 +156,25 @@ export const DEFAULT_MODELS = [
 		provider: "Deepseek",
 		models: [
 			{
-				key: "通用",
+				key: "Pro",
 				name: "deepseek-chat",
-				displayName: "Deepseek模型(1积分/次)",
-				available: true,
-				proModel: true,
-				supportFunctionCall: true,
-			},
-			{
-				key: "编程",
-				name: "deepseek-code",
-				displayName: "Deepseek编程(1积分/次)",
+				displayName: "Deepseek模型-v2.5",
 				available: true,
 				proModel: false,
-				supportFunctionCall: false,
+				supportFunctionCall: true,
+			},
+		],
+	},
+	{
+		provider: "字节豆包大模型",
+		models: [
+			{
+				key: "Pro",
+				name: "doubao-pro-32k",
+				displayName: "豆包Pro-32k",
+				available: true,
+				proModel: false,
+				supportFunctionCall: true,
 			},
 		],
 	},
@@ -198,7 +203,7 @@ export const server_url = "https://admin.xiaoguang.fun";
 
 // export const server_url = "http://localhost:8000";
 
-export const version = "3.1.7";
+export const version = "3.1.8";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;
