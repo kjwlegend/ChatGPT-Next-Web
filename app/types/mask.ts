@@ -21,7 +21,7 @@ export type Mask = {
 	author?: string;
 	prompt_type?: string;
 	topic?: string;
-	avatar?: string;
+	avatar: string;
 	image?: string;
 	featureMask?: boolean;
 	zodiac?: string;

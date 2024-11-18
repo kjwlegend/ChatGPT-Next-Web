@@ -183,14 +183,14 @@ export const MJPanel = ({ open }: { open: boolean }) => {
 		console.log("modelConfig", modelConfig);
 		console.log("seed", seed);
 
-		chatStore.updateSession(session.id, () => {
-			session.mjConfig.size = sizeConfig;
-			session.mjConfig.stylize = stylizeConfig;
-			session.mjConfig.model = modelConfig;
-			if (seed) {
-				session.mjConfig.seed = seed;
-			}
-		});
+		// chatStore.updateSession(session.id, () => {
+		// 	session.mjConfig.size = sizeConfig;
+		// 	session.mjConfig.stylize = stylizeConfig;
+		// 	session.mjConfig.model = modelConfig;
+		// 	if (seed) {
+		// 		session.mjConfig.seed = seed;
+		// 	}
+		// });
 	};
 
 	return (
