@@ -39,6 +39,8 @@ import { useChatService } from "@/app/(chat-pages)/chats/chat/hooks/useChatHook"
 import { useAgentActions } from "@/app/hooks/useAgentActions";
 import { useCheckCookieExpiration } from "@/app/hooks/useExpireCheck";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { refreshToken } from "@/app/services/api/user";
+import { useTokenRefresh } from "@/app/hooks/useTokenRefresh";
 
 function Loading(props: { noLogo?: boolean }) {
 	return (
@@ -161,6 +163,7 @@ function Screen() {
 	const { logoutHook } = useAuth();
 	const authStore = useAuthStore();
 	const isAuthenticated = authStore.isAuthenticated;
+	useTokenRefresh();
 
 	const {
 		loadMoreSessions,
@@ -176,25 +179,6 @@ function Screen() {
 	useEffect(() => {
 		loadAsyncGoogleFont();
 	}, []);
-
-	useEffect(() => {
-		if (!isAuthenticated) return;
-
-		const cookie = document.cookie;
-		const expires = cookie
-			.split(";")
-			.find((c) => c.trim().startsWith("expires="))
-			?.split("=")[1];
-		if (!expires) return;
-
-		const expiresTimeStamp = Date.parse(expires);
-		const currentTimeStamp = Date.now();
-
-		if (expiresTimeStamp < currentTimeStamp) {
-			logoutHook();
-			message.error("会话已过期，请重新登录");
-		}
-	}, [isAuthenticated, logoutHook]);
 
 	return (
 		<div

@@ -9,6 +9,7 @@ import Footer from "./components/footer";
 import Head from "next/head";
 import Home from "./(chat-pages)/chats/page";
 import AuthPage from "./(pages)/auth/page";
+import { Toaster } from "@/components/ui/toaster";
 const serverConfig = getServerSideConfig();
 
 export default function App() {

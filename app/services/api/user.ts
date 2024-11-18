@@ -24,3 +24,6 @@ export const getBalanceHistory = apiGet(
 
 // 新增daily-check-in/ 接口
 export const getDailyCheckIn = api(appnamespace, "/daily-check-in/");
+
+// token refresh
+export const refreshToken = api(appnamespace, "/token/refresh/");

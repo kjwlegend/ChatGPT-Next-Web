@@ -20,6 +20,7 @@ export interface AuthState {
 	logout: () => Promise<void>;
 	getAccessToken: () => string | null;
 	getRefreshToken: () => string | null;
+	updateToken: (token: string) => void;
 	updateUserInfo: (id: string | number) => Promise<void | Error>;
 }
 
@@ -93,6 +94,9 @@ export const useAuthStore = create<AuthState>()(
 			},
 			getRefreshToken: () => {
 				return get().refreshToken;
+			},
+			updateToken: (token: string) => {
+				set({ accessToken: token });
 			},
 			updateUserInfo: async (id: string | number) => {
 				try {

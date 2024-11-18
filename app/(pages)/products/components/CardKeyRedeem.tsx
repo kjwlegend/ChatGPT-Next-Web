@@ -1,15 +1,28 @@
 import React, { useState } from "react";
-import { Input, Button, message } from "antd";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { redeemCardKey } from "@/app/services/api/orders";
-import styles from "../products.module.scss";
 
-const CardKeyRedeem: React.FC = () => {
+const CardKeyRedeem = () => {
 	const [cardKey, setCardKey] = useState("");
 	const [loading, setLoading] = useState(false);
+	const { toast } = useToast();
 
 	const handleRedeem = async () => {
 		if (!cardKey) {
-			message.error("请输入卡密");
+			toast({
+				title: "错误",
+				description: "请输入卡密",
+				variant: "destructive",
+			});
 			return;
 		}
 
@@ -17,32 +30,50 @@ const CardKeyRedeem: React.FC = () => {
 		try {
 			const response = await redeemCardKey({ card_key: cardKey });
 			if (response.code === 200) {
-				message.success("卡密兑换成功");
+				toast({
+					title: "成功",
+					description: "卡密兑换成功",
+				});
 				setCardKey("");
 			} else {
-				message.error(response.message || "卡密兑换失败");
+				toast({
+					title: "错误",
+					description: response.message || "卡密兑换失败",
+					variant: "destructive",
+				});
 			}
 		} catch (error) {
-			message.error("卡密兑换失败,请稍后再试");
+			toast({
+				title: "错误",
+				description: "卡密兑换失败,请稍后再试",
+				variant: "destructive",
+			});
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<div className={styles.cardKeyRedeem}>
-			<h2>卡密兑换</h2>
-			<div className={styles.redeemInput}>
-				<Input
-					placeholder="请输入卡密"
-					value={cardKey}
-					onChange={(e) => setCardKey(e.target.value)}
-				/>
-				<Button type="primary" onClick={handleRedeem} loading={loading}>
-					兑换
-				</Button>
-			</div>
-		</div>
+		<section className="mx-auto max-w-md">
+			<Card>
+				<CardHeader>
+					<CardTitle>卡密兑换</CardTitle>
+					<CardDescription>请输入您的兑换码</CardDescription>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<div className="flex gap-2">
+						<Input
+							placeholder="请输入卡密"
+							value={cardKey}
+							onChange={(e) => setCardKey(e.target.value)}
+						/>
+						<Button onClick={handleRedeem} disabled={loading}>
+							{loading ? "兑换中..." : "兑换"}
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
+		</section>
 	);
 };
 

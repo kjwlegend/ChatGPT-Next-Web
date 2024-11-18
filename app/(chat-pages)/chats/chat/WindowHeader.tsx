@@ -176,18 +176,22 @@ function WindowHeaderTitle({
 	return (
 		<>
 			<div className="flex items-center gap-3">
-				<h1 className="text-base font-semibold">
-					{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
-				</h1>
-				<Button
-					variant="ghost"
-					size="icon"
-					className="h-6 w-6"
-					onClick={() => setIsEditingMessage(true)}
-				>
-					<Pencil className="h-3 w-3" />
-					<span className="sr-only">Edit title</span>
-				</Button>
+				{!isworkflow && (
+					<>
+						<h1 className="text-base font-semibold">
+							{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
+						</h1>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="h-6 w-6"
+							onClick={() => setIsEditingMessage(true)}
+						>
+							<Pencil className="h-3 w-3" />
+							<span className="sr-only">Edit title</span>
+						</Button>
+					</>
+				)}
 				<Badge variant="secondary" className="px-1 py-0 text-xs">
 					智能体: {session?.mask.name}
 				</Badge>

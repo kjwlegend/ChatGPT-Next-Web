@@ -1079,6 +1079,29 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-11-19",
+		color: "green",
+		children: (
+			<>
+				发布 V3.1.9 版本, 小光说:
+				<ul>
+					<li>修复商城商品相关问题</li>
+					<li>优化多AI对话区域UI设计与样式</li>
+					<li>
+						工作流模式新增功能:
+						<ul>
+							<li>工作流市场预告</li>
+							<li>新增工作流使用视频介绍</li>
+							<li>优化工作流智能体展示</li>
+						</ul>
+					</li>
+					<li>修复登录状态持续时间的问题</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

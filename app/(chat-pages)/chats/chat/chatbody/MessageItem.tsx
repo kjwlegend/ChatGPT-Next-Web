@@ -171,8 +171,8 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	 * @description: 渲染agent头像
 	 */
 	const RenderedAgentAvatar = useMemo(() => {
-		return <Avatar avatar={session.mask.avatar} nickname={session.mask.name} />;
-	}, [session.mask.avatar, session.mask.name]);
+		return <Avatar avatar={session.mask.image} nickname={session.mask.name} />;
+	}, [session.mask.image, session.mask.name]);
 
 	/**
 	 * @description: 渲染消息操作按钮

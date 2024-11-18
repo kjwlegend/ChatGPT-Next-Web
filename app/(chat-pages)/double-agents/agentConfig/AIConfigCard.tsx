@@ -3,7 +3,7 @@
 import React, { forwardRef, useState } from "react";
 import {
 	Card,
-	Button,
+	// Button,
 	Slider,
 	Tooltip,
 	Dropdown,
@@ -23,6 +23,21 @@ import {
 	DeleteOutlined,
 	SwapOutlined,
 } from "@ant-design/icons";
+import { Button } from "@/components/ui/button";
+
+import {
+	GripIcon,
+	MoreVerticalIcon,
+	PencilIcon,
+	TrashIcon,
+} from "lucide-react";
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { DownOutlined } from "@ant-design/icons";
 import { DEFAULT_MODELS } from "@/app/constant";
 import {
@@ -44,6 +59,7 @@ import { usePluginStore } from "@/app/store/plugin";
 import { getLang } from "@/app/locales";
 import Avatar from "@/app/components/avatar";
 import { useConversationActions } from "../multiAgentContext";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 
 interface AgentCardProps {
 	name: string;
@@ -73,6 +89,17 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 		},
 		ref,
 	) => {
+		const statusColors = {
+			active: "bg-green-500",
+			idle: "bg-gray-500",
+			thinking: "bg-yellow-500",
+		};
+
+		const randomStatus =
+			Object.keys(statusColors)[
+				Math.floor(Math.random() * Object.keys(statusColors).length)
+			];
+
 		return (
 			<div
 				className={styles.agentCard}
@@ -80,37 +107,39 @@ const AgentCard = forwardRef<HTMLDivElement, AgentCardProps>(
 				{...draggableProps}
 				{...dragHandleProps}
 			>
-				<div className={styles.cardContent}>
-					<div className={styles.avatarSection}>
-						<Avatar size={50} avatar={avatar} nickname={name} />
+				<div className="flex items-center space-x-2 rounded-lg border bg-background p-2">
+					<div className="cursor-move" {...dragHandleProps}>
+						<GripIcon className="h-5 w-5 text-muted-foreground" />
 					</div>
-					<div>
-						<h3>
-							<Badge
-								count={agentIndex + 1}
-								showZero
-								color="cyan"
-								size="small"
-								style={{
-									marginRight: 8,
-								}}
-							></Badge>
-							{name}
-						</h3>
-						<div>{modelTag}</div>
+					<Avatar size={50} avatar={avatar} nickname={name} />
+					<div className="flex-1">
+						<Tooltip title={description}>
+							<div className="font-medium">{name}</div>
+						</Tooltip>
+						<div className="text-sm text-muted-foreground">{modelTag}</div>
 					</div>
-
-					<div className={styles.actionSection}>
-						<Button icon={<EditOutlined />} onClick={onEdit}></Button>
-						<Button
-							icon={<DeleteOutlined />}
-							onClick={onDelete}
-							danger
-						></Button>
-					</div>
-				</div>
-				<div className={styles.infoSection}>
-					<p>{description}</p>
+					<div
+						className={`h-2 w-2 rounded-full ${statusColors[randomStatus as keyof typeof statusColors]}`}
+					/>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" size="icon">
+								<MoreVerticalIcon className="h-4 w-4" />
+								<span className="sr-only">打开菜单</span>
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onSelect={onEdit}>
+								<PencilIcon className="mr-2 h-4 w-4" />
+								<span>编辑</span>
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem onSelect={onDelete} className="text-red-600">
+								<TrashIcon className="mr-2 h-4 w-4" />
+								<span>删除</span>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</div>
 		);
@@ -207,11 +236,32 @@ const AIConfigCard: React.FC<AIConfigCardProps> = ({
 					avatar={agent.avatar}
 					agentIndex={index}
 					modelTag={
-						<Dropdown overlay={modelMenu} trigger={["click"]}>
-							<Button>
-								{currentModel} <DownOutlined />
-							</Button>
-						</Dropdown>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant="ghost"
+									size="sm"
+									className="border-1 h-8 border-transparent bg-transparent text-sm font-normal hover:border-border"
+								>
+									{currentModel}
+									<ChevronDownIcon className="ml-2 h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-[200px]">
+								{DEFAULT_MODELS.flatMap((provider) =>
+									provider.models
+										.filter((model) => model.available)
+										.map((model) => (
+											<DropdownMenuItem
+												key={model.name}
+												onClick={() => handleModelChange(model.name)}
+											>
+												{model.displayName}
+											</DropdownMenuItem>
+										)),
+								)}
+							</DropdownMenuContent>
+						</DropdownMenu>
 					}
 					description={agent.description}
 					onEdit={() => agentEditClick(agent)}

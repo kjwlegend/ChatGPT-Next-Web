@@ -157,6 +157,7 @@ const darkTheme: ThemeConfig = {
 import Head from "next/head";
 import { useMobileScreen } from "./hooks/useMobileScreen";
 import { AppGeneralContext } from "./contexts/AppContext";
+import { Toaster } from "@/components/ui/toaster";
 export default function RootLayout({
 	children,
 }: {
@@ -219,6 +220,7 @@ export default function RootLayout({
 								<Header />
 								{children}
 								<Footer />
+								<Toaster />
 							</ConfigProvider>
 						</GlobalLoadingProvider>
 					</AppGeneralContext.Provider>

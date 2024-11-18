@@ -46,7 +46,7 @@ export const PRODUCT_INFO: Record<ProductKey, ProductInfo> = {
 		quantity: 15,
 	},
 	basic_tarot_quota: {
-		product_key: "basic_tarot_quota",
+		product_key: "tarot_quota",
 		name: "塔罗占卜次数",
 		description: "补充塔罗占卜次数",
 		price: 1.0,

@@ -1,59 +1,152 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import styles from "../products.module.scss";
+
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Check, Star, Zap, Sparkles } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { useUserStore } from "@/app/store/user";
-import { membership_level } from "@/app/api/backend/user";
-import { Switch, message } from "antd";
-import CardComponent from "./CardComponent";
 import CheckoutModal from "./CheckoutModal";
 
 const MembershipUpgrade = () => {
 	const { user } = useUserStore();
-
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [selectedMembershipType, setSelectedMembershipType] =
-		useState<membership_level>("free");
 	const [isYearly, setIsYearly] = useState(false);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [selectedMembershipType, setSelectedMembershipType] = useState("");
 	const [productKey, setProductKey] = useState("");
 
-	const currentPackage = (packageType: string) => {
-		return user.membership_level === packageType;
-	};
+	const tiers = [
+		{
+			name: "免费会员",
+			price: "0",
+			icon: <Zap className="h-5 w-5" />,
+			features: [
+				{ name: "基础对话", limit: "200次/每日" },
+				{ name: "高级对话", limit: "5次/每日" },
+				{ name: "模罗占卜", limit: "1次/每日" },
+			],
+			color: "bg-gradient-to-br from-gray-50 to-gray-100",
+			buttonVariant: "outline" as const,
+			productKey: "free_member",
+		},
+		{
+			name: "黄金会员",
+			price: isYearly ? "180" : "20",
+			icon: <Star className="h-5 w-5 text-yellow-500" />,
+			features: [
+				{ name: "基础对话", limit: "1000次/每日" },
+				{ name: "高级对话", limit: "30次/每日" },
+				{ name: "模罗占卜", limit: "5次/每日" },
+			],
+			color: "bg-gradient-to-br from-yellow-50 to-yellow-100",
+			buttonVariant: "secondary" as const,
+			popular: true,
+			productKey: "gold_member",
+		},
+		{
+			name: "钻石会员",
+			price: isYearly ? "450" : "50",
+			icon: <Sparkles className="h-5 w-5 text-purple-500" />,
+			features: [
+				{ name: "基础对话", limit: "无限" },
+				{ name: "高级对话", limit: "100次/每日" },
+				{ name: "模罗占卜", limit: "10次/每日" },
+			],
+			color: "bg-gradient-to-br from-purple-50 to-purple-100",
+			buttonVariant: "default" as const,
+			productKey: "diamond_member",
+		},
+	];
 
-	const handleUpgrade = (memberType: membership_level) => {
-		setIsModalVisible(true);
+	const handleUpgrade = (memberType: string, productKey: string) => {
 		setSelectedMembershipType(memberType);
-	};
-
-	const getPrice = (membershipType: membership_level, isYearly: boolean) => {
-		const monthlyPrice = {
-			free: 0,
-			gold: 20,
-			diamond: 50,
-		}[membershipType];
-
-		if (isYearly) {
-			const yearlyPrice = monthlyPrice * 12;
-			const discountedPrice = Math.floor(yearlyPrice * 0.9);
-			return { original: yearlyPrice, discounted: discountedPrice };
-		}
-
-		return { original: monthlyPrice, discounted: monthlyPrice };
-	};
-
-	const formatPrice = (price: number, isYearly: boolean) => {
-		return `￥${price}${isYearly ? "/年" : "/月"}`;
+		setProductKey(productKey);
+		setIsModalVisible(true);
 	};
 
 	return (
-		<div className={styles.membershipUpgrade}>
+		<section className="space-y-8">
+			<div className="space-y-4 text-center">
+				<h1 className="text-3xl font-bold">会员购买</h1>
+				<div className="flex items-center justify-center gap-2">
+					<span className={!isYearly ? "font-bold" : "text-muted-foreground"}>
+						月付
+					</span>
+					<Switch checked={isYearly} onCheckedChange={setIsYearly} />
+					<span className={isYearly ? "font-bold" : "text-muted-foreground"}>
+						年付 (9折)
+					</span>
+				</div>
+			</div>
+
+			<div className="grid gap-8 md:grid-cols-3">
+				{tiers.map((tier, index) => (
+					<motion.div
+						key={tier.name}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: index * 0.1 }}
+						className="relative"
+					>
+						<Card className={`relative h-full overflow-hidden ${tier.color}`}>
+							{tier.popular && (
+								<div className="absolute right-0 top-0 bg-yellow-500 px-3 py-1 text-sm text-white">
+									最受欢迎
+								</div>
+							)}
+							<CardHeader>
+								<div className="flex items-center gap-2">
+									{tier.icon}
+									<CardTitle>{tier.name}</CardTitle>
+								</div>
+								<CardDescription>
+									<span className="text-3xl font-bold">¥{tier.price}</span>/
+									{isYearly ? "年" : "月"}
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								{tier.features.map((feature) => (
+									<div key={feature.name} className="flex items-center gap-2">
+										<Check className="h-4 w-4 text-green-500" />
+										<span>{feature.name}</span>
+										<span className="text-sm text-muted-foreground">
+											{feature.limit}
+										</span>
+									</div>
+								))}
+							</CardContent>
+							<CardFooter>
+								<Button
+									className="w-full"
+									variant={tier.buttonVariant}
+									onClick={() => handleUpgrade(tier.name, tier.productKey)}
+									disabled={user.membership_level === tier.productKey}
+								>
+									{user.membership_level === tier.productKey ? "当前" : "升级"}
+								</Button>
+							</CardFooter>
+						</Card>
+					</motion.div>
+				))}
+			</div>
+
 			<CheckoutModal
 				isVisible={isModalVisible}
 				onClose={() => setIsModalVisible(false)}
 				product={{
 					productKey: productKey,
-					name: selectedMembershipType === "gold" ? "黄金会员" : "钻石会员",
-					price: getPrice(selectedMembershipType, isYearly).discounted,
+					name: selectedMembershipType,
+					price: Number(
+						tiers.find((t) => t.productKey === productKey)?.price || 0,
+					),
 					description: `${isYearly ? "年费" : "月费"}会员升级`,
 					productType: "membership",
 				}}
@@ -61,84 +154,7 @@ const MembershipUpgrade = () => {
 				user={user}
 				isYearly={isYearly}
 			/>
-			<h2>会员购买</h2>
-
-			<div className={styles.switchContainer}>
-				<span>月付</span>
-				<Switch
-					checked={isYearly}
-					onChange={(checked) => setIsYearly(checked)}
-				/>
-				<span>年付（9折）</span>
-			</div>
-
-			<div className={styles.cardcontainer}>
-				<CardComponent
-					title="免费会员"
-					price="免费"
-					data={[
-						{ description: "基础对话", value: "200次/每日" },
-						{ description: "高级对话", value: "5次/每日" },
-						{ description: "塔罗占卜", value: "1次/每日" },
-					]}
-					isCurrentPackage={currentPackage("free")}
-					onUpgrade={() => {
-						setProductKey("free_membership"); // 假设免费会员的 product_id 为 1
-						handleUpgrade("free");
-					}}
-				/>
-				<CardComponent
-					title="黄金会员"
-					price={
-						isYearly ? (
-							<>
-								<span className={styles.originalPrice}>
-									{formatPrice(getPrice("gold", true).original, true)}
-								</span>{" "}
-								{formatPrice(getPrice("gold", true).discounted, true)}
-							</>
-						) : (
-							formatPrice(getPrice("gold", false).original, false)
-						)
-					}
-					data={[
-						{ description: "基础对话", value: "1000次/每日" },
-						{ description: "高级对话", value: "30次/每日" },
-						{ description: "塔罗占卜", value: "5次/每日" },
-					]}
-					isCurrentPackage={currentPackage("gold")}
-					onUpgrade={() => {
-						setProductKey("gold_membership"); // 假设黄金会员的 product_id 为 2
-						handleUpgrade("gold");
-					}}
-				/>
-				<CardComponent
-					title="钻石会员"
-					price={
-						isYearly ? (
-							<>
-								<span className={styles.originalPrice}>
-									{formatPrice(getPrice("diamond", true).original, true)}
-								</span>{" "}
-								{formatPrice(getPrice("diamond", true).discounted, true)}
-							</>
-						) : (
-							formatPrice(getPrice("diamond", false).original, false)
-						)
-					}
-					data={[
-						{ description: "基础对话", value: "无限" },
-						{ description: "高级对话", value: "100次/每日" },
-						{ description: "塔罗占卜", value: "10次/每日" },
-					]}
-					isCurrentPackage={currentPackage("diamond")}
-					onUpgrade={() => {
-						setProductKey("diamond_membership"); // 假设钻石会员的 product_id 为 3
-						handleUpgrade("diamond");
-					}}
-				/>
-			</div>
-		</div>
+		</section>
 	);
 };
 

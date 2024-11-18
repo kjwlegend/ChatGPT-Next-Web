@@ -27,7 +27,7 @@ import { useAgentActions } from "@/app/hooks/useAgentActions";
 import React, { useState, useMemo, useEffect } from "react";
 import {
 	Card,
-	Button,
+	// Button,
 	Avatar,
 	Slider,
 	Tooltip,
@@ -37,14 +37,8 @@ import {
 	Tag,
 	Modal as AntdModal,
 } from "antd";
-import {
-	PlusCircleOutlined,
-	SettingOutlined,
-	UserOutlined,
-	ApiTwoTone,
-	ThunderboltTwoTone,
-	SwitcherOutlined,
-} from "@ant-design/icons";
+
+import { Button } from "@/components/ui/button";
 // import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import {
@@ -59,6 +53,7 @@ import AIConfigCard from "./AIConfigCard";
 import { updateMultiAgentSession } from "@/app/services/api/chats";
 import { useCurrentConversation } from "../multiAgentContext";
 import styles from "./AIConfig.module.scss";
+import { Plus } from "lucide-react";
 const AIConfigPanel: React.FC = () => {
 	const { updateConversation, setAIConfig } = useMultipleAgentStore();
 
@@ -141,15 +136,11 @@ const AIConfigPanel: React.FC = () => {
 
 	return (
 		<>
-			<div className={styles["addAgentButtonContainer"]}>
-				<Button
-					icon={<PlusCircleOutlined />}
-					onClick={handleModalClick}
-					className={styles["addAgentButton"]}
-					ghost
-					type="primary"
-				>
-					添加 Agent
+			<div className="flex items-center justify-between border-b p-4">
+				<h2 className="text-lg font-semibold">Agents</h2>
+				<Button size="icon" variant="ghost" onClick={handleModalClick}>
+					<Plus className="h-4 w-4" />
+					<span className="sr-only">添加 Agent</span>
 				</Button>
 			</div>
 
