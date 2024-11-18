@@ -234,23 +234,10 @@ export function getMessageImages(
  * @param model
  * @returns  Whether the model is a vision model
  */
-
 export function isVisionModel(model: string) {
-	// Note: This is a better way using the TypeScript feature instead of `&&` or `||` (ts v5.5.0-dev.20240314 I've been using)
-
 	if (typeof model !== "string") return false;
-	const visionKeywords = [
-		"vision",
-		"claude-3",
-		"gemini-1.5-pro",
-		"gemini-1.5-flash",
-		"gpt-4o",
-	];
-	const isGpt4Turbo =
-		model.includes("gpt-4-turbo") && !model.includes("preview");
-
-	return (
-		visionKeywords.some((keyword) => model.includes(keyword)) || isGpt4Turbo
+	return DEFAULT_MODELS.some((provider) =>
+		provider.models.some((m) => m.name === model && m.visionModel),
 	);
 }
 
@@ -263,10 +250,10 @@ export function isSupportRAGModel(modelName: string) {
 	];
 	if (specialModels.some((keyword) => modelName === keyword)) return true;
 	if (isVisionModel(modelName)) return false;
-	return DEFAULT_MODELS.filter(
-		(provider) => provider.provider === "Openai",
-	).some((provider) =>
-		provider.models.some((model) => model.name === modelName),
+	return DEFAULT_MODELS.some((provider) =>
+		provider.models.some(
+			(model) => model.name === modelName && model.isSupportRAG,
+		),
 	);
 }
 
@@ -275,17 +262,12 @@ export function isSupportRAGModel(modelName: string) {
  *
  * @param model - The model name as a string.
  * @returns A boolean indicating whether the model is a Pro model.
- * Pro models are identified by the presence of "pro" or "midjourney" in their names.
  */
 export function isProModel(model: string | undefined | null) {
-	const proKeywords = ["pro", "gpt-4", "claude-3"];
-
-	// 确保 model 是一个字符串
-	if (typeof model !== "string") {
-		return false;
-	}
-
-	return proKeywords.some((keyword) => model.includes(keyword));
+	if (typeof model !== "string") return false;
+	return DEFAULT_MODELS.some((provider) =>
+		provider.models.some((m) => m.name === model && m.proModel),
+	);
 }
 /**
  * check
