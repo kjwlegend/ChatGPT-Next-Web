@@ -41,7 +41,7 @@ import {
 } from "../../constant";
 
 import { useMaskStore } from "../../store/mask";
-import { useWorkflowGroupActions } from "./workflowContext";
+import { useWorkflowGroups } from "./hooks/useWorkflow/useWorkflowGroups";
 
 import { List, Input, Form, Row, Col } from "antd";
 import Avatar from "@/app/components/avatar";
@@ -59,7 +59,7 @@ export function WorkflowModalConfig(props: {
 	const { workflow, workflowSessions, onClose } = props;
 	const { topic, description, summary, id, created_at } = workflow;
 
-	const { updateWorkflowSessionInfo } = useWorkflowGroupActions();
+	const { updateWorkflowGroupInfo } = useWorkflowGroups();
 
 	const [workflowName, setWorkflowName] = useState(topic);
 	const [workflowDescription, setWorkflowDescription] = useState(description);
@@ -68,7 +68,7 @@ export function WorkflowModalConfig(props: {
 	// console.log("agentlist", agentlist);
 
 	const handleSave = async () => {
-		await updateWorkflowSessionInfo(workflow.id, {
+		await updateWorkflowGroupInfo(workflow.id, {
 			topic: workflowName,
 			description: workflowDescription,
 			lastUpdateTime: new Date().toISOString(),

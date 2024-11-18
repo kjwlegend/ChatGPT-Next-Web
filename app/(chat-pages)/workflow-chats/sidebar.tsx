@@ -10,7 +10,7 @@ import { useWorkflowStore } from "../../store/workflow";
 import { message } from "antd";
 import { WorkflowGroup } from "@/app/types/";
 
-import { useWorkflowGroups, useWorkflowSessions } from "./workflowContext";
+import { useWorkflowGroups } from "./hooks/useWorkflow/useWorkflowGroups";
 import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";
 import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
 import ChatList from "@/app/(chat-pages)/chats/sidebar/chatList";
@@ -73,7 +73,7 @@ export function WorkflowSidebar(props: { className?: string }) {
 			<SideBar
 				className={styles["sidebar-show"]}
 				chatSessions={workflowGroups}
-				loadMoreSessions={loadMoreSessions}
+				loadMoreSessions={(page: number) => loadMoreSessions({ page })}
 				onAddClick={handleAddClick}
 				onChatItemClick={handleChatItemClick}
 				onChatItemDelete={handleChatItemDelete}

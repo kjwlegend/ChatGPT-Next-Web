@@ -11,14 +11,10 @@ import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
 import LoadingIcon from "@/app/icons/three-dots.svg";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import {
-	useWorkflowSessionActions,
-	useWorkflowSessions,
-	WorkflowProvider,
-} from "../workflowContext";
-
+import { WorkflowProvider, useAgentListModal } from "../workflowContext";
+import { useWorkflowActions } from "../hooks/useWorkflow/useWorkflowActions";
+import { useWorkflowSessions } from "../hooks/useWorkflow/useWorkflowSessions";
 import styles from "../workflow-chats.module.scss";
-import styles2 from "@/app/(chat-pages)/chats/home.module.scss";
 import {
 	Avatar as UserAvatar,
 	Button,
@@ -69,8 +65,8 @@ export function ChatItemShort(props: {
 		<Draggable draggableId={`${props.id}`} index={props.index}>
 			{(provided) => (
 				<div
-					className={`${styles2["chat-item"]} ${styles2["multi-chat"]} ${
-						props.selected && styles2["chat-item-selected"]
+					className={`${styles["chat-item"]} ${styles["multi-chat"]} ${
+						props.selected && styles["chat-item-selected"]
 					}`}
 					onClick={props.onClick}
 					ref={(ele) => {
@@ -84,16 +80,16 @@ export function ChatItemShort(props: {
 					)}`}
 				>
 					<>
-						<div className={styles2["chat-item-title"]}>
+						<div className={styles["chat-item-title"]}>
 							{props.title}
-							<span className={styles2["chat-item-subtitle"]}>
+							<span className={styles["chat-item-subtitle"]}>
 								id:{props.id}
 							</span>
 						</div>
 					</>
 
 					<div
-						className={styles2["chat-item-delete"]}
+						className={styles["chat-item-delete"]}
 						onClickCapture={(e) => {
 							props.onDelete?.();
 							e.preventDefault();
@@ -113,26 +109,19 @@ export default function AgentList(props: {
 	sessions: any[];
 }) {
 	const [selectIndex, setSelectIndex] = useState(0);
-	const { deleteSessionFromGroup, moveSession } = useWorkflowSessionActions();
+	const { deleteSession, moveWorkflowSession } = useWorkflowSessions();
 
 	const [orderedSessions, setOrderedSessions] = useState<any[]>(props.sessions);
 
 	const [currentGroup, setCurrentGroup] = useState<any>(props.workflowGroup);
 	const { id: groupId, topic, description } = currentGroup;
 
+	const { openAgentList, closeAgentList } = useAgentListModal();
+
 	useEffect(() => {
 		setOrderedSessions(props.sessions);
 		setCurrentGroup(props.workflowGroup);
 	}, [props.sessions, props.workflowGroup]);
-
-	console.log("debug agentList", orderedSessions);
-	const [showAgentList, setShowAgentList] = useState(false);
-	const handleModalClick = useCallback(() => {
-		setShowAgentList(!showAgentList);
-	}, [showAgentList]);
-
-	const { handleAgentClick } = useSimpleWorkflowService();
-	const { onDelete, onChat } = useAgentActions();
 
 	const onDragEnd: OnDragEndResponder = (result) => {
 		const { destination, source } = result;
@@ -147,7 +136,7 @@ export default function AgentList(props: {
 		) {
 			return;
 		}
-		moveSession(groupId, source.index, destination.index);
+		moveWorkflowSession(groupId, source.index, destination.index);
 		setSelectIndex(destination.index);
 	};
 
@@ -158,7 +147,7 @@ export default function AgentList(props: {
 
 	const itemDeleteHandler = async (item: any) => {
 		// console.log("item", item);
-		deleteSessionFromGroup(groupId, item.id);
+		deleteSession(groupId, item.id);
 	};
 
 	return (
@@ -177,7 +166,7 @@ export default function AgentList(props: {
 					type="dashed"
 					className={styles["plus"]}
 					icon={<PlusCircleOutlined />}
-					onClick={() => setShowAgentList(!showAgentList)}
+					onClick={openAgentList}
 					size="small"
 				>
 					新增助手
@@ -215,28 +204,7 @@ export default function AgentList(props: {
 						</Droppable>
 					</DragDropContext>
 				)}
-
-				{/* button 样式 新增session */}
-
-				{/* 下拉菜单 */}
 			</div>
-			{showAgentList && (
-				<Modal
-					open={showAgentList}
-					onCancel={handleModalClick}
-					footer={null}
-					width="80vw"
-					height="80vh"
-					styles={{
-						body: {
-							height: "75vh",
-							overflow: "scroll",
-						},
-					}}
-				>
-					<MaskPage onItemClick={handleAgentClick} onDelete={onDelete} />
-				</Modal>
-			)}
 		</Fragment>
 	);
 }

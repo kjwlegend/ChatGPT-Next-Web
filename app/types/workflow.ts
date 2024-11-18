@@ -18,3 +18,23 @@ export type workflowChatSession = ChatSession & {
 	order: number;
 	enableAutoFlow?: boolean;
 };
+
+
+
+interface MultipleAgent {
+	multiple_agent_id: string;
+	multiple_agent_name: string;
+	image?: string;
+	language?: string;
+	description?: string;
+	active: boolean;
+	multiple_agent_type: string;
+	agents: string[];
+	agents_num: number;
+	agents_data?: any;
+	use_count: number;
+	tags?: string[];
+	creator?: string;
+	created_at: string;
+	updated_at: string;
+}

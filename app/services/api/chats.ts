@@ -121,3 +121,15 @@ export const updateWorkflowSessionChatGroupOrder = api(
 );
 
 export const getPromptHotness = apiGet(appnamespace, "/prompthotness/");
+
+// get multiple agents user/multiple-agents/
+export const getMultipleAgents = apiGet(appnamespace, "/user/multiple-agents/");
+export const deleteMultipleAgent = api(
+	appnamespace,
+	"/user/multiple-agents/:id/",
+);
+export const createMultipleAgent = api(appnamespace, "/user/multiple-agents/");
+export const updateMultipleAgent = apiPut(
+	appnamespace,
+	"/user/multiple-agents/:id/",
+);

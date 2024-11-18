@@ -55,14 +55,14 @@ export interface ChatSession {
 	topic: string;
 	memoryPrompt: string;
 	messages: ChatMessage[];
-	stat: ChatStat;
+	stat?: ChatStat;
 	lastUpdateTime: any;
 	lastSummarizeIndex: number;
 	clearContextIndex?: number;
 	mask: Mask;
 	responseStatus?: boolean;
 	isworkflow?: boolean;
-	mjConfig: MjConfig;
+	mjConfig?: MjConfig;
 	chat_count?: number;
 	isDoubleAgent?: boolean;
 	created_at?: string;
