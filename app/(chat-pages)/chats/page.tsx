@@ -25,7 +25,8 @@ import { SideBar } from "./sidebar/sidebar";
 import { useAppConfig } from "@/app/store/config";
 import { getClientConfig } from "@/app/config/client";
 import { api } from "@/app/client/api";
-import { useAccessStore, useChatStore } from "@/app/store";
+import { useAccessStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import ModalPopup from "@/app/components/welcome";
 import useAuth from "@/app/hooks/useAuth";
 import { log } from "console";
@@ -173,7 +174,7 @@ function Screen() {
 	} = useChatService();
 
 	const chatstore = useChatStore();
-	const sessionlist = chatstore.sessions;
+	const sessionlist = chatstore.selectAllSessions();
 	const { onDelete, onChat } = useAgentActions();
 
 	useEffect(() => {
@@ -236,7 +237,7 @@ const Home = () => {
 	useSwitchTheme();
 	useLoadData();
 	useHtmlLang();
-	useCheckCookieExpiration(); // 直接调用 hook
+	// useCheckCookieExpiration(); // 直接调用 hook
 
 	const [messageApi, contextHolder] = message.useMessage();
 

@@ -1,19 +1,10 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/store/auth";
 import { message } from "antd";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
+import { useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import useAuth from "@/app/hooks/useAuth";
 
 import {
@@ -92,7 +83,7 @@ export function useDoSubmit(
 					attachFiles,
 					session,
 				);
-				sendNextAgentMessage(session.id, userInput,attachImages);
+				sendNextAgentMessage(session.id, userInput, attachImages);
 				console.log("multi-agent submit", result);
 			} else {
 				throw new Error("Invalid submit type");

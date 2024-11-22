@@ -61,6 +61,7 @@ export function useMasks() {
 				featureMask: item.is_feature_agent,
 				zodiac: undefined, // 如果有对应字段可以填入
 				img: item.image || "", // 使用 image 字段作为 img
+				image: item.image || "", // 使用 image 字段作为 img
 				description: item.description,
 				intro: item.chat_intro,
 				hideContext: true, // 默认值，视具体需求而定

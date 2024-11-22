@@ -4,7 +4,7 @@ export function getClientConfig() {
 	if (typeof document !== "undefined") {
 		// client side
 		const clientConfig = queryMeta("config");
-		console.log("clientConfig", clientConfig);
+		// console.log("clientConfig", clientConfig);
 		return JSON.parse(clientConfig) as BuildConfig;
 	}
 

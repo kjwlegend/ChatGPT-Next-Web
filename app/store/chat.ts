@@ -12,7 +12,7 @@ import { nanoid } from "nanoid";
 import { UserStore, useUserStore } from "./user";
 import { BUILTIN_MASKS, DEFAULT_MASK } from "../masks";
 import type { BuiltinMask, sessionConfig } from "../types/index";
-import { Plugin, usePluginStore } from "../store/plugin";
+import { Plugin, usePluginStore } from "./plugin";
 import {
 	sendChatMessage,
 	handleChatCallbacks,
@@ -51,6 +51,8 @@ import { getMessages } from "@fortaine/fetch-event-source/lib/cjs/parse";
 import { CodeBlock, DocumentMeta } from "../api/langchain/tool/agent/agentapi";
 import { Reference } from "../api/langchain/tool/agent/agentapi";
 
+export const DEFAULT_TOPIC = Locale.Store.DefaultTopic || "未命名话题";
+
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 	const randomId = nanoid();
 	return {
@@ -64,8 +66,6 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 		...override,
 	};
 }
-
-export const DEFAULT_TOPIC = Locale.Store.DefaultTopic || "未命名话题";
 
 export const BOT_HELLO: ChatMessage = createMessage({
 	role: "assistant",
@@ -898,3 +898,5 @@ export const useChatStore = createPersistStore(
 		},
 	},
 );
+
+export * from "./chat/index";

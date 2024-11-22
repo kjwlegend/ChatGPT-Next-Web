@@ -5,12 +5,9 @@ import {
 	ModelProvider,
 	ServiceProvider,
 } from "../constant";
-import {
-	DEFAULT_CONFIG,
-	ModelType,
-	useAccessStore,
-	useChatStore,
-} from "../store";
+import { DEFAULT_CONFIG, ModelType, useAccessStore } from "../store";
+
+import { useChatStore } from "@/app/store/chat/index";
 import { ChatMessage } from "@/app/types/";
 
 import { ChatGPTApi } from "./platforms/openai";
@@ -262,44 +259,24 @@ export function getAuthHeaders() {
 }
 
 export function getHeaders(ignoreHeaders?: boolean) {
-	const accessStore = useAccessStore.getState();
 	let headers: Record<string, string> = {};
-	const modelConfig =
-		useChatStore.getState().currentSession()?.mask.modelConfig ||
-		DEFAULT_CONFIG.modelConfig;
-	const models = modelConfig.model ?? "gpt-4o-mini";
-	const isGoogle = models.startsWith("gemini");
-	if (!ignoreHeaders && !isGoogle) {
+
+	if (!ignoreHeaders) {
 		headers = {
 			"Content-Type": "application/json",
 			"x-requested-with": "XMLHttpRequest",
 			Accept: "application/json",
 		};
 	}
-	const isAzure = accessStore.provider === ServiceProvider.Azure;
-	let authHeader = "Authorization";
-	const apiKey = isGoogle
-		? accessStore.googleApiKey
-		: isAzure
-			? accessStore.azureApiKey
-			: accessStore.openaiApiKey;
 
-	const makeBearer = (s: string) =>
-		`${isGoogle || isAzure ? "" : "Bearer "}${s.trim()}`;
-	const validString = (x: string) => x && x.length > 0;
+	const accessStore = useAccessStore.getState();
+	const apiKey = accessStore.openaiApiKey;
 
-	// use user's api key first
-	if (validString(apiKey)) {
-		authHeader = isGoogle ? "x-goog-api-key" : authHeader;
-		headers[authHeader] = makeBearer(apiKey);
-		if (isAzure) headers["api-key"] = makeBearer(apiKey);
-	} else if (
-		accessStore.enabledAccessControl() &&
-		validString(accessStore.accessCode)
-	) {
-		headers[authHeader] = makeBearer(
-			ACCESS_CODE_PREFIX + accessStore.accessCode,
-		);
+	if (apiKey && apiKey.length > 0) {
+		headers["Authorization"] = `Bearer ${apiKey.trim()}`;
+	} else if (accessStore.enabledAccessControl() && accessStore.accessCode) {
+		headers["Authorization"] =
+			`Bearer ${ACCESS_CODE_PREFIX}${accessStore.accessCode}`;
 	}
 
 	return headers;

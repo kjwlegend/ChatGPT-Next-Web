@@ -204,7 +204,7 @@ $black-color: var(--black);
 }
 
 .chat-item {
-	padding: 5px 14px;
+	padding: 6px 15px;
 	background-color: var(--white);
 	border-radius: 10px;
 	margin-bottom: 5px;
@@ -236,13 +236,13 @@ $black-color: var(--black);
 }
 
 .chat-item-selected {
-	// border-color: var(--primary);
 	background: linear-gradient(270deg, var(--color-set1));
+	border: 1px solid var(--border-in-default);
 	box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 10%);
 }
 
 .chat-item-title {
-	font-size: 13px;
+	font-size: 12px;
 	// font-weight: bolder;
 	display: block;
 	width: auto;
@@ -252,10 +252,21 @@ $black-color: var(--black);
 	animation: slide-in ease 0.3s;
 }
 .chat-item-subtitle {
-	font-size: 10px;
+	font-size: 8px;
 	color: rgb(166, 166, 166);
 	animation: slide-in ease 0.3s;
 	margin: 5px;
+}
+.chat-item-date {
+	color: rgb(166, 166, 166);
+	font-size: 10px;
+	animation: slide-in ease 0.3s;
+}
+.chat-item-count,
+.chat-item-date {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .chat-item-delete,
@@ -292,17 +303,6 @@ $black-color: var(--black);
 	font-size: 12px;
 	// margin-top: 8px;
 	animation: slide-in ease 0.3s;
-}
-.chat-item-date {
-	color: rgb(166, 166, 166);
-	font-size: 12px;
-	animation: slide-in ease 0.3s;
-}
-.chat-item-count,
-.chat-item-date {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 .chat-item {

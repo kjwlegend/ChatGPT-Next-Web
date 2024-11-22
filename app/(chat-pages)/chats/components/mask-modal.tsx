@@ -9,12 +9,10 @@ import { Button } from "antd";
 import { genPrompt } from "@/app/chains/promptgen";
 
 import { ChatMessage, ChatSession, Mask, sessionConfig } from "@/app/types/";
-import {
-	createMessage,
-	ModelConfig,
-	useAppConfig,
-	useChatStore,
-} from "@/app/store";
+import { ModelConfig, useAppConfig } from "@/app/store";
+
+import { createMessage } from "@/app/store/chat";
+
 import { ROLES } from "@/app/client/api";
 import {
 	Input,

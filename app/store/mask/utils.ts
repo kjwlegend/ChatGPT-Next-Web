@@ -8,7 +8,7 @@ export const DEFAULT_MASK_AVATAR = "gpt-bot";
 
 export const createEmptyMask = () =>
 	({
-		id: nanoid(),
+		id: "1",
 		avatar: DEFAULT_MASK_AVATAR,
 		tags: ["通用"],
 		author: "",

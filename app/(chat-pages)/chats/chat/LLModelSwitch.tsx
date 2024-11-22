@@ -18,17 +18,9 @@ import { ChevronDown, Info } from "lucide-react";
 import { isProModel } from "@/app/utils";
 import styles from "./chats.module.scss";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
+import { useAppConfig, ModelType } from "@/app/store";
+
+import { useChatStore } from "@/app/store/chat/index";
 
 import { message } from "antd";
 
@@ -44,7 +36,7 @@ export function LLMModelSwitch(
 	const config = useAppConfig();
 	const chatStore = useChatStore.getState();
 	const { selectedId, updateWorkflowSession } = useWorkflowStore();
-	const session = props.session || chatStore.currentSession();
+	const session = props.session || chatStore.selectCurrentSession();
 
 	const [model, setModel] = useState("默认模型");
 	const availableModels = config.models;

@@ -1,58 +1,45 @@
 import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
-import { useAccessStore, useAppConfig, useChatStore } from "../../../../store";
+import { useAccessStore, useAppConfig } from "../../../../store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import { Path } from "../../../../constant";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, use } from "react";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { createEmptyMask } from "../../../../store/mask/utils";
-import { DEFAULT_TOPIC } from "../../../../store";
+import { createEmptyMask } from "@/app/store/mask/utils";
+import { DEFAULT_TOPIC } from "@/app/store/chat";
 import { useChatSetting } from "./useChatContext";
 import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";
 
 export const useChatService = () => {
 	const chatStore = useChatStore();
-	const sessionlist = chatStore.sessions;
+	const sessionlist = chatStore.selectAllSessions();
 	const navigate = useNavigate();
 	const config = useAppConfig();
 
 	const { isLoading, setIsLoading } = useGlobalLoading();
 
-	const [chatSessions, setChatSessions] = useState<any[]>(sessionlist);
-
-	const loadMoreSessions = async (page: number) => {
-		const param = { limit: 20, page };
-		try {
-			const res = await getChatSession(param);
-			updateChatSessions(res.data);
-			const newsessions = chatStore.sessions;
-			setChatSessions(newsessions);
-			return { data: newsessions, is_next: res.is_next };
-		} catch {
-			throw new Error("登录已过期");
-		}
-	};
-	// 监听 chatStore.sessions 的变化
-	useEffect(() => {
-		const updateChatSessions = () => {
-			setChatSessions(chatStore.sessions);
-		};
-
-		updateChatSessions(); // 初始化时更新一次
-
-		// 订阅 chatStore 的变化
-		// const unsubscribe = chatStore.subscribe(updateChatSessions);
-
-		// 清理函数
-		return () => {
-			// unsubscribe();
-		};
-	}, [sessionlist, loadMoreSessions]);
+	const loadMoreSessions = useCallback(
+		async (page: number) => {
+			const param = { limit: 20, page };
+			try {
+				const res = await getChatSession(param);
+				updateChatSessions(res.data);
+				return {
+					data: chatStore.selectAllSessions(),
+					is_next: res.is_next,
+				};
+			} catch {
+				throw new Error("登录已过期");
+			}
+		},
+		[chatStore],
+	);
 
 	const handleAddClick = useCallback(() => {
 		if (config.dontShowMaskSplashScreen) {
-			chatStore.newSession();
+			chatStore.create();
 			navigate(Path.Chat);
 		} else {
 			navigate(Path.NewChat);
@@ -95,7 +82,7 @@ export const useChatService = () => {
 	);
 
 	return {
-		chatSessions,
+		chatSessions: sessionlist,
 		isLoading,
 		loadMoreSessions,
 		handleAddClick,
@@ -109,10 +96,9 @@ export function updateChatSessions(newSessionsData: any[]) {
 	const chatStore = useChatStore.getState();
 
 	newSessionsData.forEach((sessionData) => {
-		const existingSessionIndex = chatStore.sessions.findIndex(
-			(s) => s.id === sessionData.id,
-		);
-		const exists = existingSessionIndex !== -1;
+		const exists = chatStore
+			.selectAllSessions()
+			.some((s) => s.id === sessionData.id);
 		const newSession: ChatSession = {
 			id: sessionData.id,
 			session_id: sessionData.session_id,
@@ -144,12 +130,16 @@ export function updateChatSessions(newSessionsData: any[]) {
 		};
 
 		if (!exists) {
-			chatStore.addSession(newSession);
+			chatStore.add(newSession);
 			console.log("add new session: ", newSession.id);
 		} else {
-			const existingSession = chatStore.sessions[existingSessionIndex];
-
-			if (newSession.lastUpdateTime! > existingSession.lastUpdateTime) {
+			const existingSession = chatStore
+				.selectAllSessions()
+				.find((s) => s.id === sessionData.id);
+			if (
+				existingSession &&
+				newSession.lastUpdateTime! > existingSession.lastUpdateTime
+			) {
 				chatStore.updateSession(newSession.id!, () => newSession);
 			}
 		}
@@ -159,7 +149,7 @@ export function updateChatSessions(newSessionsData: any[]) {
 // 获取chatsession 对应的messages
 export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 	const chatStore = useChatStore.getState();
-	const session = chatStore.sessions.find((s: ChatSession) => s.id === id);
+	const session = chatStore.selectSessionById(id.toString());
 	if (!session) return;
 	const session_id = session?.session_id;
 

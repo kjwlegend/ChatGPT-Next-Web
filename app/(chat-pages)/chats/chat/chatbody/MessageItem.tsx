@@ -9,6 +9,7 @@ import React, {
 	memo,
 } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 
 import { message as messagepop } from "antd";
 import {
@@ -21,9 +22,9 @@ import {
 
 // 全局状态管理和上下文
 import { useAppConfig } from "@/app/store";
-import { useChatStore, useUserStore } from "@/app/store";
+import { useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
-import dynamic from "next/dynamic";
 
 import {
 	EditIcon,

@@ -2,7 +2,7 @@
 import { useCallback } from "react";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import {
 	List,
 	ListItem,

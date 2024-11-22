@@ -13,16 +13,14 @@ import { getISOLang, getLang } from "@/app/locales";
 
 import {
 	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
 	useAccessStore,
 	Theme,
 	useAppConfig,
-	DEFAULT_TOPIC,
 	ModelType,
 	useUserStore,
 } from "@/app/store";
+import { useChatStore, DEFAULT_TOPIC, createMessage } from "@/app/store/chat";
+
 import { ChatMessage } from "@/app/types/chat";
 
 import Locale from "@/app/locales";

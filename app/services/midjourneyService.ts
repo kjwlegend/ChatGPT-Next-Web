@@ -5,11 +5,10 @@ import {
 	ChatToolMessage,
 	Mask,
 } from "@/app/types/";
-import { useChatStore } from "../store";
-import { useUserStore } from "../store";
-import { RequestMessage, api } from "../client/api";
+import { useChatStore, createMessage } from "@/app/store/chat";
+import { useUserStore } from "@/app/store";
+import { RequestMessage, api } from "@/app/client/api";
 import { oss_base, SUMMARIZE_MODEL } from "../constant";
-import { createMessage } from "../store";
 import { CreateChatData } from "../api/backend/chat";
 import {
 	ImagineParams,

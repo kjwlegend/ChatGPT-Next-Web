@@ -1,4 +1,4 @@
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
@@ -133,7 +133,6 @@ export const MJPanel = ({ open }: { open: boolean }) => {
 	const [model, setModel] = useState("v6");
 	const [seed, setSeed] = useState("");
 	const chatStore = useChatStore.getState();
-	const session = chatStore.currentSession();
 
 	useEffect(() => {
 		setVisible(open);

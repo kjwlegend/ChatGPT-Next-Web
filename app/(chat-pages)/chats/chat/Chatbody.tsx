@@ -13,6 +13,7 @@ import React, {
 
 import { getISOLang, getLang } from "@/app/locales";
 import Locale from "@/app/locales";
+import { useRouter } from "next/navigation";
 
 import {
 	EditIcon,
@@ -27,14 +28,13 @@ import {
 	PlayIcon,
 } from "@/app/icons"; // 假设的图标资源
 
-import { useChatStore, BOT_HELLO, createMessage } from "@/app/store";
+import { useChatStore, BOT_HELLO, createMessage } from "@/app/store/chat";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
 import { message } from "antd";
 import useAuth from "@/app/hooks/useAuth";
 import { ChatData } from "@/app/api/backend/chat";
-import { useRouter } from "next/navigation";
 import { MJFloatButton } from "./midjourney";
 
 import { MessageList } from "./chatbody/MessageList";

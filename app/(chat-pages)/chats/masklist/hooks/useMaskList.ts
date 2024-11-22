@@ -22,7 +22,7 @@ export const useMaskList = () => {
 
 	const loadMore = useCallback(async () => {
 		if (isNext) {
-			const result = await fetchPromptsCallback(page, 25);
+			const result = await fetchPromptsCallback(page, 60);
 			if (result.is_next !== undefined) {
 				setIsNext(result.is_next);
 			}

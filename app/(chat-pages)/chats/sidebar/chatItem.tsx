@@ -5,7 +5,7 @@ import { DeleteIcon } from "@/app/icons";
 import styles from "./sidebar.module.scss";
 
 import { EditIcon } from "@/app/icons";
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import Locale from "@/app/locales";
 

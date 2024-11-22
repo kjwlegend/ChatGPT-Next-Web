@@ -28,7 +28,8 @@ import {
 	DragIcon,
 } from "@/app/icons";
 import Image from "next/image";
-import { useAppConfig, useChatStore } from "@/app/store";
+import { useAppConfig } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import {
 	DEFAULT_SIDEBAR_WIDTH,
@@ -51,25 +52,6 @@ import { Divider } from "antd";
 import { useUserStore } from "@/app/store/user";
 import { useInfiniteScroll } from "@/app/hooks/useInfiniteScroll";
 import { NodeCollapseOutlined } from "@ant-design/icons";
-
-function useHotKey() {
-	const chatStore = useChatStore();
-
-	useEffect(() => {
-		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.altKey || e.ctrlKey) {
-				if (e.key === "ArrowUp") {
-					chatStore.nextSession(-1);
-				} else if (e.key === "ArrowDown") {
-					chatStore.nextSession(1);
-				}
-			}
-		};
-
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
-	});
-}
 
 function useToggleSideBar() {
 	const config = useAppConfig();
@@ -299,11 +281,9 @@ export function SideBar(props: SideBarProps) {
 	const { toggleSideBar, shouldNarrow } = useToggleSideBar();
 	const isMobileScreen = useMobileScreen();
 
-	useEffect(() => {
-		console.log("sidebar render", props.chatSessions);
-	}, [props.chatSessions]);
-
-	useHotKey();
+	// useEffect(() => {
+	// 	console.log("sidebar render", props.chatSessions);
+	// }, [props.chatSessions]);
 
 	return isMobileScreen ? (
 		<MobileSideBar

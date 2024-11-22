@@ -26,18 +26,7 @@ import BottomIcon from "@/app/icons/bottom.svg";
 import StopIcon from "@/app/icons/pause.svg";
 import RobotIcon from "@/app/icons/robot.svg";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	DEFAULT_TOPIC,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import Locale from "@/app/locales";
 

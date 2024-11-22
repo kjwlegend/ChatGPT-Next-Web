@@ -8,7 +8,8 @@ import {
 	SpeechOptions,
 	TranscriptionOptions,
 } from "../api";
-import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
+import { useAccessStore, useAppConfig } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { getClientConfig } from "@/app/config/client";
 import { DEFAULT_API_HOST } from "@/app/constant";
 import {

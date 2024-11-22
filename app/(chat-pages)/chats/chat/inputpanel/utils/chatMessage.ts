@@ -1,5 +1,5 @@
 import { ChatSession, ChatMessage } from "@/app/types/chat";
-import { createMessage } from "@/app/store";
+import { createMessage } from "@/app/store/chat";
 import { fillTemplateWith, ragSearchTemplate } from "@/app/chains/base";
 import Locale, { getLang } from "@/app/locales";
 import { estimateTokenLength } from "@/app/utils/chat/token";

@@ -30,12 +30,13 @@ import { ModelConfigList } from "@/app/(chat-pages)/chats/components/model-confi
 import { IconButton } from "@/app/components/button";
 import {
 	SubmitKey,
-	useChatStore,
 	Theme,
 	useUpdateStore,
 	useAccessStore,
 	useAppConfig,
 } from "@/app/store";
+
+import { useChatStore } from "@/app/store/chat/index";
 
 import Locale, {
 	AllLangs,
@@ -247,7 +248,7 @@ function DangerItems() {
 					text={Locale.Settings.Danger.Clear.Action}
 					onClick={async () => {
 						if (await showConfirm(Locale.Settings.Danger.Clear.Confirm)) {
-							chatStore.clearAllData();
+							chatStore.clearSessions();
 						}
 					}}
 					type="danger"

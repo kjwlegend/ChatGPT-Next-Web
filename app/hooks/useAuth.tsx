@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useAuthStore } from "../store/auth";
-import { useUserStore, User } from "../store/user";
-import { useChatStore } from "../store";
+import { useAuthStore } from "@/app/store/auth";
+import { useUserStore, User } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 interface LoginParams {
 	username: string;
@@ -127,7 +127,7 @@ export default function useAuth() {
 	const logoutHook = async () => {
 		await authStore.logout();
 		userStore.clearUser();
-		chatStore.clearChatData();
+		chatStore.clearSessions();
 		localStorage.clear();
 	};
 

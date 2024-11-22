@@ -1,5 +1,5 @@
 "use client";
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 import { message } from "antd";
 import React, {
@@ -74,16 +74,22 @@ export const ChatProvider = ({
 	children: React.ReactNode;
 	storeType: string;
 }) => {
-	// Call both store hooks unconditionally
 	const workflowStore = useWorkflowStore();
 	const chatStore = useChatStore();
 
-	// Use state for all variables, initialized with default values
-	const [store, setStore] = useState<any>(null);
+	// 使用 useMemo 来初始化 store
+	const store = useMemo(() => {
+		if (storeType === "workflow") {
+			return workflowStore;
+		} else if (storeType === "chatstore") {
+			return chatStore;
+		}
+		return null;
+	}, [storeType, workflowStore, chatStore]);
+
 	const [session, setSession] = useState<ChatSession | workflowChatSession>(
 		_session,
 	);
-	const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 	const [hitBottom, setHitBottom] = useState(true);
 	const [autoScroll, setAutoScroll] = useState(true);
 	const [showPromptModal, setShowPromptModal] = useState(false);
@@ -92,29 +98,28 @@ export const ChatProvider = ({
 		"chat" | "workflow" | "multiagent"
 	>("chat");
 	const [isLoading, setIsLoading] = useState(false);
-
-	// Set the correct store based on storeType
-	useEffect(() => {
+	// 使用 useMemo 来获取 messages
+	const messages = useMemo(() => {
+		if (!store) return [];
 		if (storeType === "workflow") {
-			setStore(workflowStore);
+			return workflowStore.getMessages(session.id) || [];
 		} else if (storeType === "chatstore") {
-			setStore(chatStore);
+			return chatStore.selectSessionMessages(session.id) || [];
 		}
-	}, [storeType, workflowStore, chatStore]);
+		return [];
+	}, [store, storeType, session.id, workflowStore, chatStore]);
+
+	console.log("storeType", storeType);
 
 	useEffect(() => {
 		console.log("chatcontext, props changed");
 		setSession(_session);
 	}, [_session]);
 
-	// If there's no store, render nothing
+	// 如果没有 store，显示加载状态或返回 null
 	if (!store) {
-		console.log("no store");
 		return null;
 	}
-
-	const messages = store.getMessages(session.id) || [];
-	// console.log("chatcontext refresh", session);
 
 	const currentSessionId = session.id;
 

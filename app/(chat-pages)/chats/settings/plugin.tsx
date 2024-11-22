@@ -6,12 +6,9 @@ import DownloadIcon from "@/app/icons/download.svg";
 import LeftIcon from "@/app/icons/left.svg";
 
 import { Plugin, usePluginStore } from "@/app/store/plugin";
-import {
-	createMessage,
-	ModelConfig,
-	useAppConfig,
-	useChatStore,
-} from "@/app/store";
+
+import { useChatStore } from "@/app/store/chat/index";
+
 import { ChatMessage } from "@/app/types/";
 import { ROLES } from "@/app/client/api";
 import {

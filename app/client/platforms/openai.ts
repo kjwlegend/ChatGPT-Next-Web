@@ -7,12 +7,8 @@ import {
 	REQUEST_TIMEOUT_MS,
 	ServiceProvider,
 } from "@/app/constant";
-import {
-	useAccessStore,
-	useAppConfig,
-	useChatStore,
-	useUserStore,
-} from "@/app/store";
+import { useAccessStore, useAppConfig, useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import {
 	AgentChatOptions,
@@ -217,7 +213,7 @@ export class ChatGPTApi implements LLMApi {
 
 		const modelConfig = {
 			...useAppConfig.getState().modelConfig,
-			...useChatStore.getState().currentSession().mask.modelConfig,
+			...useChatStore.getState().selectCurrentSession().mask.modelConfig,
 			...{
 				model: options.config.model,
 			},
@@ -441,7 +437,7 @@ export class ChatGPTApi implements LLMApi {
 
 		const modelConfig = {
 			...useAppConfig.getState().modelConfig,
-			...useChatStore.getState().currentSession().mask.modelConfig,
+			...useChatStore.getState().selectCurrentSession().mask.modelConfig,
 			...{
 				model: options.config.model,
 			},

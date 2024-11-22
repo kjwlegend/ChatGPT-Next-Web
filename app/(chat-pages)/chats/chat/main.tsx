@@ -13,18 +13,9 @@ import { useDebouncedCallback } from "use-debounce";
 import dynamic from "next/dynamic";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	DEFAULT_TOPIC,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
+import { useAppConfig } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
+
 import { api } from "@/app/client/api";
 import { ChatControllerPool } from "@/app/client/controller";
 import { Prompt, usePromptStore } from "@/app/store/prompt";
@@ -36,6 +27,7 @@ import {
 	Path,
 	REQUEST_TIMEOUT_MS,
 } from "@/app/constant";
+
 import { prettyObject } from "@/app/utils/format";
 
 import styles from "./chats.module.scss";
@@ -122,11 +114,13 @@ export function useLoadData() {
 }
 
 export function Chat() {
-	const chatStore = useChatStore.getState();
-	const sessionIndex = chatStore.currentSessionIndex;
-	const session = chatStore.currentSession();
+	const chatStore = useChatStore();
+	console.log(chatStore);
+	const sessionIndex = chatStore.selectCurrentSessionIndex();
+	console.log("sessionindex", sessionIndex);
+	const session = chatStore.selectCurrentSession();
+	console.log("session", session);
 	const navigate = useNavigate();
-
 	useEffect(() => {}, [session]);
 	if (!session) {
 		navigate(Path.NewChat);

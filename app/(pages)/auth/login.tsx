@@ -7,7 +7,7 @@ import { LoginResult } from "@/app/types";
 import { use, useState, useEffect } from "react";
 import { User } from "@/app/store";
 import { useUserStore } from "@/app/store";
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 import PasswordResetModal from "./PasswordResetModal";
 import { query } from "express";

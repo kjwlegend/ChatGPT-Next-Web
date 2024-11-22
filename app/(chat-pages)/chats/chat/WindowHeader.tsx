@@ -17,7 +17,9 @@ import CancelIcon from "@/app/icons/cancel.svg";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { useChatStore, useAppConfig, DEFAULT_TOPIC } from "@/app/store";
+import { useAppConfig } from "@/app/store";
+
+import { useChatStore, DEFAULT_TOPIC } from "@/app/store/chat";
 
 import { useNavigate } from "react-router-dom";
 import { useMobileScreen } from "@/app/hooks/useMobileScreen";

@@ -1,6 +1,6 @@
 // TypeScript
 
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { useWorkflowStore } from "@/app/store/workflow";
 import { ChatSession, workflowChatSession } from "@/app/types/";
 // 定义 ChatSession 和 WorkflowChatSession 类型

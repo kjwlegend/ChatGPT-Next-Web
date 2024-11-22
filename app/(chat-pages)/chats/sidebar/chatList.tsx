@@ -3,8 +3,7 @@ import styles from "../home.module.scss";
 import { useRef, useEffect, useState, useCallback, memo } from "react";
 
 import { ChatItem } from "./chatItem";
-import { useChatSetting } from "../chat/hooks/useChatContext";
-import { useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 
 interface ChatListProps {
 	narrow?: boolean;
@@ -74,21 +73,5 @@ const ChatList = ({
 		</div>
 	);
 };
-
-// const updateCompare = (prevProps: ChatListProps, nextProps: ChatListProps) => {
-// 	// 比较props中chatsessions[0] 的 id是否相同
-// 	console.log(
-// 		"debug: updateCompare",
-// 		prevProps.chatSessions[0]?.id,
-// 		prevProps.chatSessions[0]?.lastUpdateTime,
-// 		nextProps.chatSessions[0]?.id,
-// 		nextProps.chatSessions[0]?.lastUpdateTime,
-// 	);
-// 	return (
-// 		prevProps.chatSessions[0]?.id === nextProps.chatSessions[0]?.id &&
-// 		prevProps.chatSessions[0]?.lastUpdateTime ===
-// 			nextProps.chatSessions[0]?.lastUpdateTime
-// 	);
-// };
 
 export default memo(ChatList);

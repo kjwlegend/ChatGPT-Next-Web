@@ -5,7 +5,8 @@ import { FileName, Path } from "@/app/constant";
 
 import { useNavigate } from "react-router-dom";
 import { useMaskStore } from "../store/mask";
-import { useChatStore, useUserStore } from "../store";
+import { useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { Mask } from "@/app/types/mask";
 
 export const useAgentActions = () => {
@@ -17,7 +18,7 @@ export const useAgentActions = () => {
 	const onChat = useCallback(
 		(mask: Mask) => {
 			setTimeout(() => {
-				chatStore.newSession(mask, userStore);
+				chatStore.create(mask, userStore);
 			}, 10);
 			navigate(Path.Chat);
 		},

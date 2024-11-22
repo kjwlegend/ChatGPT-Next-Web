@@ -13,7 +13,6 @@ import React, {
 	memo,
 } from "react";
 import { getISOLang, getLang } from "@/app/locales";
-import { useRouter } from "next/navigation";
 
 import BottomIcon from "@/app/icons/bottom.svg";
 import StopIcon from "@/app/icons/pause.svg";
@@ -27,18 +26,8 @@ import { oss_base } from "@/app/constant";
 import CheckmarkIcon from "@/app/icons/checkmark.svg";
 import { FileInfo } from "@/app/client/platforms/utils";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	ModelType,
-	useUserStore,
-} from "@/app/store";
-
+import { useAccessStore, useAppConfig, useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { MULTI_AGENT_DEFAULT_TOPIC } from "@/app/store/multiagents";
 import {
 	copyToClipboard,
@@ -229,7 +218,9 @@ export const ChatActions = memo(
 	}) => {
 		const config = useAppConfig();
 		const chatStore = useChatStore.getState();
-		const session = props.session ? props.session : chatStore.currentSession();
+		const session = props.session
+			? props.session
+			: chatStore.selectCurrentSession();
 		const sessionId = session.id;
 		const { basic_chat_balance } = useUserStore.getState().user.user_balance;
 

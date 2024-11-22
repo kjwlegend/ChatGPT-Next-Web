@@ -9,7 +9,10 @@ import { api, RequestMessage } from "../client/api";
 import { estimateTokenLength } from "../utils/chat/token";
 
 import { ChatSession, Mask, ChatMessage, ChatToolMessage } from "../types/";
-import { useChatStore, createMessage, DEFAULT_TOPIC } from "../store";
+import { useChatStore } from "@/app/store/chat/index";
+
+import { DEFAULT_TOPIC } from "@/app/store/chat";
+
 import { MultiAgentChatMessage } from "../store/multiagents";
 import { strictLLMResult } from "./basic";
 import { getMessageTextContent } from "../utils";
@@ -26,7 +29,13 @@ export async function summarizeTitle(
 ): Promise<string | null> {
 	const chatStoreState = useChatStore.getState();
 	const config = useAppConfig.getState();
-	const session = chatStoreState.getSession(_session);
+	const session = _session
+		? chatStoreState.selectSessionById(_session.id)
+		: chatStoreState.selectCurrentSession();
+
+	if (!session) {
+		return null;
+	}
 
 	const messages = session.messages;
 	const SUMMARIZE_MIN_LEN = 200;
@@ -48,7 +57,7 @@ export async function summarizeTitle(
 		const message = await strictLLMResult(topicMessages);
 		const topic = message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC;
 
-		chatStoreState.updateCurrentSession((session) => {
+		chatStoreState.updateSession(session.id, (session) => {
 			session.topic = topic;
 		});
 

@@ -5,7 +5,8 @@ import { Button, Card, Flex, Skeleton } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useMaskStore } from "@/app/store/mask/index";
 import { Mask } from "@/app/types/mask";
-import { useUserStore, useChatStore } from "@/app/store";
+import { useUserStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { useCommand } from "@/app/command";
 import { BUILTIN_MASK_STORE } from "@/app/masks";
 import { useNewChat } from "./hooks/useNewChat";
@@ -40,7 +41,7 @@ export function NewChat() {
 
 	const startChat = (mask?: Mask) => {
 		setTimeout(() => {
-			chatStore.newSession(mask, userStore);
+			chatStore.create(mask, userStore);
 			navigate(Path.Chat);
 		}, 10);
 	};
@@ -78,7 +79,7 @@ export function NewChat() {
 					<h2 className={styles["section-title"]}>快速操作</h2>
 					<div className={styles["button-group"]}>
 						<Button
-							className={`${styles["full-width-button"]} ${styles["start-chat-button"]} bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white`}
+							className={`${styles["full-width-button"]} ${styles["start-chat-button"]} bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600`}
 							onClick={() => startChat()}
 							// variant="solid"
 						>
@@ -159,7 +160,7 @@ export function NewChat() {
 				<div className={styles["agents-grid"]}>
 					{otherMasks.slice(0, 5).map((mask) => (
 						<div key={mask.id} className={styles["agent-item"]}>
-							<Avatar avatar={mask.avatar} className={"w-12 h-12 mb-2"} />
+							<Avatar avatar={mask.avatar} className={"mb-2 h-12 w-12"} />
 							<h3>{mask.name}</h3>
 							<p>{mask.description}</p>
 							<Button onClick={() => startChat(mask)}>开始聊天</Button>

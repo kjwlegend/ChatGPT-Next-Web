@@ -28,7 +28,7 @@ interface PaymentModalProps {
 
 export default function Component({
 	isOpen = false,
-	onClose = () => {},
+	onClose,
 	productType = "membership",
 	product = {
 		name: "黄金会员",
