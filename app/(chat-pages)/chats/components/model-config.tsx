@@ -1,242 +1,222 @@
 "use client";
 import { ModalConfigValidator, ModelConfig, useAppConfig } from "@/app/store";
-
 import Locale from "@/app/locales";
-import { InputRange } from "@/app/components/input-range";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { ListItem, Select } from "@/app/components/ui-lib";
-import { useAllModels } from "@/app/utils/hooks";
-import { useUserStore } from "@/app/store";
+import { useState, useEffect } from "react";
 
 export function ModelConfigList(props: {
 	modelConfig: ModelConfig;
 	updateConfig: (updater: (config: ModelConfig) => void) => void;
 }) {
-	const allModels = useAllModels();
+	// 为所有滑块值创建状态
+	const [sliderValues, setSliderValues] = useState({
+		temperature: props.modelConfig.temperature ?? 0.5,
+		top_p: props.modelConfig.top_p ?? 1,
+		max_tokens: props.modelConfig.max_tokens,
+		presence_penalty: props.modelConfig.presence_penalty ?? 0,
+		frequency_penalty: props.modelConfig.frequency_penalty ?? 0,
+		historyMessageCount: props.modelConfig.historyMessageCount,
+	});
 
-	const user = useUserStore();
-	// 根据不同的用户会员等级设置不同的 maxtoken limit
-	const membership_level = user.user?.membership_level;
-	// 设置一个maxtoken的limit变量
-	let maxtoken_limit = 1000;
-	switch (membership_level) {
-		case "普通会员":
-			maxtoken_limit = 4000;
-			break;
-		case "黄金会员":
-			maxtoken_limit = 6000;
-			break;
-		case "白金会员":
-			maxtoken_limit = 8000;
-			break;
-		case "钻石会员":
-			maxtoken_limit = 10000;
-			break;
-		default:
-			maxtoken_limit = 4000;
-	}
+	const [isInjectSystemPrompts, setIsInjectSystemPrompts] = useState(
+		props.modelConfig.enableInjectSystemPrompts,
+	);
+
+	// 当 props 更新时同步所有状态
+	useEffect(() => {
+		setSliderValues({
+			temperature: props.modelConfig.temperature ?? 0.5,
+			top_p: props.modelConfig.top_p ?? 1,
+			max_tokens: props.modelConfig.max_tokens,
+			presence_penalty: props.modelConfig.presence_penalty ?? 0,
+			frequency_penalty: props.modelConfig.frequency_penalty ?? 0,
+			historyMessageCount: props.modelConfig.historyMessageCount,
+		});
+		setIsInjectSystemPrompts(props.modelConfig.enableInjectSystemPrompts);
+	}, [props.modelConfig]);
 
 	return (
 		<>
-			{/* <ListItem title={Locale.Settings.Model}>
-				<Select
-					value={props.modelConfig.model}
-					onChange={(e) => {
-						props.updateConfig(
-							(config) =>
-								(config.model = ModalConfigValidator.model(
-									e.currentTarget.value,
-								)),
-						);
-					}}
-				>
-					{allModels
-						.filter((v) => v.available)
-						.map((v, i) => (
-							<option value={v.name} key={i}>
-								{v.displayName}
-							</option>
-						))}
-				</Select>
-			</ListItem> */}
 			<ListItem
 				title={Locale.Settings.Temperature.Title}
 				subTitle={Locale.Settings.Temperature.SubTitle}
 			>
-				<InputRange
-					value={props.modelConfig.temperature?.toFixed(1)}
-					min="0"
-					max="1" // lets limit it to 0-1
-					step="0.1"
-					onChange={(e) => {
-						props.updateConfig(
-							(config) =>
-								(config.temperature = ModalConfigValidator.temperature(
-									e.currentTarget.valueAsNumber,
-								)),
-						);
-					}}
-				></InputRange>
+				<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+					<span style={{ minWidth: "40px" }}>{sliderValues.temperature}</span>
+					<div style={{ width: "300px" }}>
+						<Slider
+							defaultValue={[props.modelConfig.temperature ?? 0.5]}
+							min={0}
+							max={1}
+							step={0.1}
+							onValueChange={(value) => {
+								setSliderValues((prev) => ({ ...prev, temperature: value[0] }));
+								props.updateConfig(
+									(config) =>
+										(config.temperature = ModalConfigValidator.temperature(
+											value[0],
+										)),
+								);
+							}}
+						/>
+					</div>
+				</div>
 			</ListItem>
+
 			<ListItem
 				title={Locale.Settings.TopP.Title}
 				subTitle={Locale.Settings.TopP.SubTitle}
 			>
-				<InputRange
-					value={(props.modelConfig.top_p ?? 1).toFixed(1)}
-					min="0"
-					max="1"
-					step="0.1"
-					onChange={(e) => {
-						props.updateConfig(
-							(config) =>
-								(config.top_p = ModalConfigValidator.top_p(
-									e.currentTarget.valueAsNumber,
-								)),
-						);
-					}}
-				></InputRange>
+				<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+					<span style={{ minWidth: "40px" }}>{sliderValues.top_p}</span>
+					<div style={{ width: "300px" }}>
+						<Slider
+							defaultValue={[props.modelConfig.top_p ?? 1]}
+							min={0}
+							max={1}
+							step={0.1}
+							onValueChange={(value) => {
+								setSliderValues((prev) => ({ ...prev, top_p: value[0] }));
+								props.updateConfig(
+									(config) =>
+										(config.top_p = ModalConfigValidator.top_p(value[0])),
+								);
+							}}
+						/>
+					</div>
+				</div>
 			</ListItem>
+
 			<ListItem
 				title={Locale.Settings.MaxTokens.Title}
 				subTitle={Locale.Settings.MaxTokens.SubTitle}
 			>
-				<InputRange
-					min="100"
-					max={maxtoken_limit}
-					step="1000"
-					value={props.modelConfig.max_tokens}
-					onChange={(e) =>
-						props.updateConfig(
-							(config) =>
-								(config.max_tokens = ModalConfigValidator.max_tokens(
-									e.currentTarget.valueAsNumber,
-									// maxtoken_limit,
-								)),
-						)
-					}
-					// disabled
-				></InputRange>
+				<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+					<span style={{ minWidth: "40px" }}>{sliderValues.max_tokens}</span>
+					<div style={{ width: "300px" }}>
+						<Slider
+							defaultValue={[props.modelConfig.max_tokens]}
+							min={100}
+							max={8000}
+							step={1000}
+							onValueChange={(value) => {
+								setSliderValues((prev) => ({ ...prev, max_tokens: value[0] }));
+								props.updateConfig(
+									(config) =>
+										(config.max_tokens = ModalConfigValidator.max_tokens(
+											value[0],
+										)),
+								);
+							}}
+						/>
+					</div>
+				</div>
 			</ListItem>
+
 			<ListItem
 				title={Locale.Settings.PresencePenalty.Title}
 				subTitle={Locale.Settings.PresencePenalty.SubTitle}
 			>
-				<InputRange
-					value={props.modelConfig.presence_penalty?.toFixed(1)}
-					min="-2"
-					max="2"
-					step="0.1"
-					onChange={(e) => {
-						props.updateConfig(
-							(config) =>
-								(config.presence_penalty =
-									ModalConfigValidator.presence_penalty(
-										e.currentTarget.valueAsNumber,
-									)),
-						);
-					}}
-				></InputRange>
+				<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+					<span style={{ minWidth: "40px" }}>
+						{sliderValues.presence_penalty}
+					</span>
+					<div style={{ width: "300px" }}>
+						<Slider
+							defaultValue={[props.modelConfig.presence_penalty ?? 0]}
+							min={-2}
+							max={2}
+							step={0.1}
+							onValueChange={(value) => {
+								setSliderValues((prev) => ({
+									...prev,
+									presence_penalty: value[0],
+								}));
+								props.updateConfig(
+									(config) =>
+										(config.presence_penalty =
+											ModalConfigValidator.presence_penalty(value[0])),
+								);
+							}}
+						/>
+					</div>
+				</div>
 			</ListItem>
 
 			<ListItem
 				title={Locale.Settings.FrequencyPenalty.Title}
 				subTitle={Locale.Settings.FrequencyPenalty.SubTitle}
 			>
-				<InputRange
-					value={props.modelConfig.frequency_penalty?.toFixed(1)}
-					min="-2"
-					max="2"
-					step="0.1"
-					onChange={(e) => {
-						props.updateConfig(
-							(config) =>
-								(config.frequency_penalty =
-									ModalConfigValidator.frequency_penalty(
-										e.currentTarget.valueAsNumber,
-									)),
-						);
-					}}
-				></InputRange>
+				<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+					<span style={{ minWidth: "40px" }}>
+						{sliderValues.frequency_penalty}
+					</span>
+					<div style={{ width: "300px" }}>
+						<Slider
+							defaultValue={[props.modelConfig.frequency_penalty ?? 0]}
+							min={-2}
+							max={2}
+							step={0.1}
+							onValueChange={(value) => {
+								setSliderValues((prev) => ({
+									...prev,
+									frequency_penalty: value[0],
+								}));
+								props.updateConfig(
+									(config) =>
+										(config.frequency_penalty =
+											ModalConfigValidator.frequency_penalty(value[0])),
+								);
+							}}
+						/>
+					</div>
+				</div>
 			</ListItem>
 
 			<ListItem
 				title={Locale.Settings.InjectSystemPrompts.Title}
 				subTitle={Locale.Settings.InjectSystemPrompts.SubTitle}
 			>
-				<input
-					type="checkbox"
-					checked={props.modelConfig.enableInjectSystemPrompts}
-					onChange={(e) =>
+				<Switch
+					checked={isInjectSystemPrompts}
+					onCheckedChange={(checked) => {
+						setIsInjectSystemPrompts(checked);
 						props.updateConfig(
-							(config) =>
-								(config.enableInjectSystemPrompts = e.currentTarget.checked),
-						)
-					}
-				></input>
+							(config) => (config.enableInjectSystemPrompts = checked),
+						);
+					}}
+				/>
 			</ListItem>
-
-			{/* <ListItem
-        title={Locale.Settings.InputTemplate.Title}
-        subTitle={Locale.Settings.InputTemplate.SubTitle}
-      >
-        <input
-          type="text"
-          value={props.modelConfig.template}
-          onChange={(e) =>
-            props.updateConfig(
-              (config) => (config.template = e.currentTarget.value),
-            )
-          }
-        ></input>
-      </ListItem> */}
 
 			<ListItem
 				title={Locale.Settings.HistoryCount.Title}
 				subTitle={Locale.Settings.HistoryCount.SubTitle}
 			>
-				<InputRange
-					title={props.modelConfig.historyMessageCount.toString()}
-					value={props.modelConfig.historyMessageCount}
-					min="0"
-					max="64"
-					step="1"
-					onChange={(e) =>
-						props.updateConfig(
-							(config) => (config.historyMessageCount = e.target.valueAsNumber),
-						)
-					}
-				></InputRange>
+				<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+					<span style={{ minWidth: "40px" }}>
+						{sliderValues.historyMessageCount}
+					</span>
+					<div style={{ width: "300px" }}>
+						<Slider
+							defaultValue={[props.modelConfig.historyMessageCount]}
+							min={0}
+							max={64}
+							step={1}
+							onValueChange={(value) => {
+								setSliderValues((prev) => ({
+									...prev,
+									historyMessageCount: value[0],
+								}));
+								props.updateConfig(
+									(config) => (config.historyMessageCount = value[0]),
+								);
+							}}
+						/>
+					</div>
+				</div>
 			</ListItem>
-
-			{/* <ListItem
-        title={Locale.Settings.CompressThreshold.Title}
-        subTitle={Locale.Settings.CompressThreshold.SubTitle}
-      >
-        <input
-          type="number"
-          min={500}
-          max={4000}
-          value={props.modelConfig.compressMessageLengthThreshold}
-          onChange={(e) =>
-            props.updateConfig(
-              (config) =>
-                (config.compressMessageLengthThreshold =
-                  e.currentTarget.valueAsNumber),
-            )
-          }
-        ></input>
-      </ListItem>
-      <ListItem title={Locale.Memory.Title} subTitle={Locale.Memory.Send}>
-        <input
-          type="checkbox"
-          checked={props.modelConfig.sendMemory}
-          onChange={(e) =>
-            props.updateConfig(
-              (config) => (config.sendMemory = e.currentTarget.checked),
-            )
-          }
-        ></input>
-      </ListItem> */}
 		</>
 	);
 }

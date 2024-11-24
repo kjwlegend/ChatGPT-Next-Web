@@ -17,7 +17,6 @@ import { useAppConfig } from "@/app/store";
 import { useChatStore } from "@/app/store/chat/index";
 
 import { api } from "@/app/client/api";
-import { ChatControllerPool } from "@/app/client/controller";
 import { Prompt, usePromptStore } from "@/app/store/prompt";
 
 import {
@@ -25,10 +24,7 @@ import {
 	LAST_INPUT_KEY,
 	MAX_RENDER_MSG_COUNT,
 	Path,
-	REQUEST_TIMEOUT_MS,
 } from "@/app/constant";
-
-import { prettyObject } from "@/app/utils/format";
 
 import styles from "./chats.module.scss";
 
@@ -60,10 +56,12 @@ interface ChatProps {
 	isworkflow: boolean;
 	submitType: "chat" | "workflow" | undefined;
 	storeType: string;
+	className?: string;
 }
 
 export const _Chat: React.FC<ChatProps> = memo((props) => {
-	const { _session, index, isworkflow, submitType, storeType } = props;
+	const { _session, index, isworkflow, submitType, storeType, className } =
+		props;
 	const chatStore = useChatStore.getState();
 	const { setSession } = useChatActions();
 
@@ -88,7 +86,7 @@ export const _Chat: React.FC<ChatProps> = memo((props) => {
 	return (
 		<ChatProvider _session={_session} storeType={storeType}>
 			<div
-				className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""}`}
+				className={`${styles.chat} ${isworkflow ? styles["workflow-chat"] : ""} ${className}`}
 				key={sessionId}
 				data-index={sessionId}
 			>
@@ -115,11 +113,8 @@ export function useLoadData() {
 
 export function Chat() {
 	const chatStore = useChatStore();
-	console.log(chatStore);
 	const sessionIndex = chatStore.selectCurrentSessionIndex();
-	console.log("sessionindex", sessionIndex);
 	const session = chatStore.selectCurrentSession();
-	console.log("session", session);
 	const navigate = useNavigate();
 	useEffect(() => {}, [session]);
 	if (!session) {

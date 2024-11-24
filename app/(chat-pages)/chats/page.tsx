@@ -38,9 +38,6 @@ import ChatList from "./sidebar/chatList";
 
 import { useChatService } from "@/app/(chat-pages)/chats/chat/hooks/useChatHook";
 import { useAgentActions } from "@/app/hooks/useAgentActions";
-import { useCheckCookieExpiration } from "@/app/hooks/useExpireCheck";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { refreshToken } from "@/app/services/api/user";
 import { useTokenRefresh } from "@/app/hooks/useTokenRefresh";
 
 function Loading(props: { noLogo?: boolean }) {

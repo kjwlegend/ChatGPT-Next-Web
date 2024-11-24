@@ -26,7 +26,7 @@ export default function Component() {
 			features: [
 				{ name: "基础对话", limit: "200次/每日" },
 				{ name: "高级对话", limit: "5次/每日" },
-				{ name: "模罗占卜", limit: "1次/每日" },
+				{ name: "塔罗占卜", limit: "1次/每日" },
 			],
 			color: "bg-gradient-to-br from-gray-50 to-gray-100",
 			buttonVariant: "outline" as const,
@@ -38,7 +38,7 @@ export default function Component() {
 			features: [
 				{ name: "基础对话", limit: "1000次/每日" },
 				{ name: "高级对话", limit: "30次/每日" },
-				{ name: "模罗占卜", limit: "5次/每日" },
+				{ name: "塔罗占卜", limit: "5次/每日" },
 			],
 			color: "bg-gradient-to-br from-yellow-50 to-yellow-100",
 			buttonVariant: "secondary" as const,
@@ -51,7 +51,7 @@ export default function Component() {
 			features: [
 				{ name: "基础对话", limit: "无限" },
 				{ name: "高级对话", limit: "100次/每日" },
-				{ name: "模罗占卜", limit: "10次/每日" },
+				{ name: "塔罗占卜", limit: "10次/每日" },
 			],
 			color: "bg-gradient-to-br from-purple-50 to-purple-100",
 			buttonVariant: "default" as const,
@@ -61,7 +61,7 @@ export default function Component() {
 	const singlePurchaseItems = [
 		{ name: "基础对话次数", price: 1, unit: "100次", defaultValue: 1 },
 		{ name: "高级对话次数", price: 1, unit: "15次", defaultValue: 1 },
-		{ name: "模罗占卜次数", price: 1, unit: "1次", defaultValue: 1 },
+		{ name: "塔罗占卜次数", price: 1, unit: "1次", defaultValue: 1 },
 	];
 
 	return (

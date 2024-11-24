@@ -17,20 +17,19 @@ export const useWorkflowInteractions = () => {
 		selectedId,
 	} = useWorkflowGroups();
 	const { addAgentToWorkflow, fetchSessionChats } = useWorkflowSessions();
-	const { fetchWorkflowSessionChats } = useWorkflowActions();
 
 	// 处理点击工作流组
 	const handleChatItemClick = useCallback(
 		async (id: string) => {
 			try {
 				setSelectedId(id);
-				await fetchWorkflowSessionChats(id);
+				await fetchSessionChats(id);
 				//   router.push(Path.Chat);
 			} catch (error) {
 				console.error("Error handling chat item click:", error);
 			}
 		},
-		[setSelectedId, fetchWorkflowSessionChats],
+		[setSelectedId, fetchSessionChats],
 	);
 
 	// 处理添加新工作流组

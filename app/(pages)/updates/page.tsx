@@ -4,6 +4,7 @@ import React from "react";
 import { Layout, Timeline } from "antd";
 import styles from "./updates.module.scss";
 import FadeInEffect from "./FadeInEffect"; // 引入客户端组件
+import RetroGrid from "@/components/ui/retro-grid";
 
 const items = [
 	{
@@ -1102,6 +1103,24 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-11-25",
+		color: "green",
+		children: (
+			<>
+				发布 V3.1.10 版本, 小光说:
+				<ul>
+					<li>
+						代码重构优化
+						<li>优化对话列表展示样式</li>
+						<li>优化侧边栏交互与布局</li>
+						<li>优化工作流页面整体设计</li>
+					</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
@@ -1109,6 +1128,9 @@ const Log = () => {
 		<Layout className={styles["home-page"]}>
 			<FadeInEffect /> {/* 使用淡入效果组件 */}
 			<Timeline mode="left" items={items} pending="On my road.." reverse />
+			<div className="fixed inset-0 z-[1]">
+				<RetroGrid />
+			</div>
 		</Layout>
 	);
 };

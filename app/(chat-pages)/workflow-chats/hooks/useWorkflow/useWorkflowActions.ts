@@ -103,48 +103,6 @@ export const useWorkflowActions = () => {
 		[workflowSessions, updateLocalWorkflowSession],
 	);
 
-	// 获取工作流会话的聊天记录
-	const fetchWorkflowSessionChats = useCallback(
-		async (workflowGroupId: string) => {
-			const chatGroupIds = workflowSessionsIndex[workflowGroupId] || [];
-			const limit = 100;
-
-			try {
-				await Promise.all(
-					chatGroupIds.map(async (sessionId) => {
-						const res = await getWorkflowSessionChats(
-							{
-								chat_group_id: sessionId,
-								limit,
-							},
-							workflowGroupId,
-						);
-
-						if (res.code === 401) {
-							throw new Error("登录状态已过期");
-						}
-
-						const newMessages = res.chats.data.map((item: any) => ({
-							...item,
-							role: item.chat_role,
-							model: item.chat_model,
-							images: item.chat_images,
-						}));
-
-						updateLocalWorkflowSession(workflowGroupId, sessionId, {
-							messages: newMessages,
-						});
-					}),
-				);
-			} catch (error: any) {
-				console.error("Error fetching workflow chat session chats:", error);
-				messageApi.error(`获取聊天记录失败: ${error.message}`);
-				throw error;
-			}
-		},
-		[workflowSessionsIndex, updateLocalWorkflowSession],
-	);
-
 	// 加载更多会话
 	const loadMoreSessions = useCallback(
 		async (params: WorkflowParams) => {
@@ -172,7 +130,6 @@ export const useWorkflowActions = () => {
 
 	return {
 		fetchWorkflowChatSessions,
-		fetchWorkflowSessionChats,
 		loadMoreSessions,
 		contextHolder,
 	};

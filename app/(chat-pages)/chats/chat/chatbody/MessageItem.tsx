@@ -484,8 +484,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 							</div>
 							<div className={styles["chat-message-notes"]}>
 								<div>
-									Token counts: {message.token_counts_total} | {message.date} |
-									messageid: {message.id}
+									Token: {message.token_counts_total} | {message.date} |
 								</div>
 							</div>
 						</div>

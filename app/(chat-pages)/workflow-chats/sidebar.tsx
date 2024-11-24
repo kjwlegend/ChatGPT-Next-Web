@@ -14,7 +14,7 @@ import { useWorkflowGroups } from "./hooks/useWorkflow/useWorkflowGroups";
 import { useSimpleWorkflowService } from "@/app/(chat-pages)/workflow-chats/hooks/useSimpleWorkflowHook";
 import { SideBar } from "@/app/(chat-pages)/chats/sidebar/sidebar";
 import ChatList from "@/app/(chat-pages)/chats/sidebar/chatList";
-import { WorkflowModalConfig } from "./modal";
+import { WorkflowModalConfig } from "./components/modal/WorkflowEditModal";
 
 export function WorkflowSidebar(props: { className?: string }) {
 	const {

@@ -8,22 +8,16 @@ import React, {
 	Fragment,
 } from "react";
 
-import { getISOLang, getLang } from "../../locales";
-
-import SendWhiteIcon from "@/app/icons/send-white.svg";
-
 import CopyIcon from "@/app/icons/copy.svg";
 import PromptIcon from "@/app/icons/prompt.svg";
 
 import ResetIcon from "@/app/icons/reload.svg";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
-import { SubmitKey, useChatStore } from "../../store";
+import Locale from "../../../../locales";
 
-import Locale from "../../locales";
-
-import { IconButton } from "../../components/button";
-import styles from "./workflow-chats.module.scss";
+import { IconButton } from "../../../../components/button";
+import styles from "../../workflow-chats.module.scss";
 
 import {
 	Modal,
@@ -31,17 +25,17 @@ import {
 	showConfirm,
 	showPrompt,
 	showToast,
-} from "../../components/ui-lib";
+} from "@/app/components/ui-lib";
 import {
 	CHAT_PAGE_SIZE,
 	LAST_INPUT_KEY,
 	MAX_RENDER_MSG_COUNT,
 	Path,
 	REQUEST_TIMEOUT_MS,
-} from "../../constant";
+} from "../../../../constant";
 
-import { useMaskStore } from "../../store/mask";
-import { useWorkflowGroups } from "./hooks/useWorkflow/useWorkflowGroups";
+import { useMaskStore } from "../../../../store/mask";
+import { useWorkflowGroups } from "../../hooks/useWorkflow/useWorkflowGroups";
 
 import { List, Input, Form, Row, Col } from "antd";
 import Avatar from "@/app/components/avatar";

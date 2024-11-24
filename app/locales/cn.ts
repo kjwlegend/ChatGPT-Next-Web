@@ -43,6 +43,7 @@ const cn = {
 			Delete: "删除",
 			Edit: "编辑",
 			Next: "下一步",
+			Play: "播放",
 		},
 		Commands: {
 			new: "新建聊天",

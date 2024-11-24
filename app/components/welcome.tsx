@@ -105,18 +105,16 @@ const ModalPopup = () => {
 					</div>
 				</div>
 				<div className={styles["update-content"]}>
-					<div className={styles["update-image-container"]}>
-						<Image
-							src={`${oss_base}/public/latest_customer_qr.png!webp90`}
-							alt="更新图片"
-							width={200}
-							height={200}
-							className={styles["update-image"]}
-						/>
-						<p className={styles["update-title"]}>
-							进群可升级成黄金会员,获取1000次免费对话额度!
-						</p>
-					</div>
+					<Image
+						src={`${oss_base}/public/latest_customer_qr.png!webp90`}
+						alt="更新图片"
+						width={200}
+						height={200}
+						className={styles["update-image"]}
+					/>
+					<p className={styles["update-title"]}>
+						进群可升级成黄金会员,获取1000次免费对话额度!
+					</p>
 				</div>
 
 				<p className={styles.buttons}>

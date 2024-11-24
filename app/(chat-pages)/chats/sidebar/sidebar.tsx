@@ -154,17 +154,17 @@ const DesktopSideBar = ({
 			<div className={styles["sidebar-header-bar"]}>
 				<div className="flex-container space-between">
 					<IconButton
+						icon={<NodeCollapseOutlined />}
+						text={shouldNarrow ? undefined : "隐藏"}
+						onClick={toggleSideBar}
+						shadow
+					/>
+					<IconButton
 						icon={<AddIcon styles={{ fill: "white" }} />}
 						text={shouldNarrow ? undefined : Locale.Home.NewChat}
 						onClick={onAddClick}
 						shadow
 						// type="primary"
-					/>
-					<IconButton
-						icon={<NodeCollapseOutlined />}
-						text={shouldNarrow ? undefined : "隐藏"}
-						onClick={toggleSideBar}
-						shadow
 					/>
 				</div>
 			</div>

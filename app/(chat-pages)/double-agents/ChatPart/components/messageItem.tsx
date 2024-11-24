@@ -124,10 +124,7 @@ export const AgentMessageItem: React.FC<AgentMessageItemProps> = ({
 
 					<div className={styles["chat-message-actions"]}>
 						<div className={styles["chat-message-notes"]}>
-							<div>
-								Token counts: {message.token_counts_total} | messageid:{" "}
-								{message.id}
-							</div>
+							<div>Token counts: {message.token_counts_total}</div>
 						</div>
 					</div>
 				</div>

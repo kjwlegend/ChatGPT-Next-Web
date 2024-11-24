@@ -174,13 +174,18 @@ function WindowHeaderTitle({
 }: WindowHeaderTitleProps) {
 	const currentSession = session;
 	const [isEditingMessage, setIsEditingMessage] = useState(false);
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
 	return (
 		<>
-			<div className="flex items-center gap-3">
+			<div
+				className={`flex ${isMobileScreen ? "flex-col items-start gap-1" : "items-center gap-3"}`}
+			>
 				{!isworkflow && (
-					<>
-						<h1 className="text-base font-semibold">
+					<div className="flex items-center gap-2">
+						<h1
+							className={`font-semibold ${isMobileScreen ? "text-sm" : "text-base"}`}
+						>
 							{!currentSession.topic ? DEFAULT_TOPIC : currentSession.topic}
 						</h1>
 						<Button
@@ -192,14 +197,18 @@ function WindowHeaderTitle({
 							<Pencil className="h-3 w-3" />
 							<span className="sr-only">Edit title</span>
 						</Button>
-					</>
+					</div>
 				)}
-				<Badge variant="secondary" className="px-1 py-0 text-xs">
-					智能体: {session?.mask.name}
-				</Badge>
-				<span className="text-xs text-muted-foreground">
-					id: {session?.mask.id || session?.mask.agent_id}
-				</span>
+				<div
+					className={`flex items-center ${isMobileScreen ? "gap-2" : "gap-3"}`}
+				>
+					<Badge variant="secondary" className="px-1 py-0 text-xs">
+						智能体: {session?.mask.name}
+					</Badge>
+					<span className="text-xs text-muted-foreground">
+						id: {session?.mask.id || session?.mask.agent_id}
+					</span>
+				</div>
 			</div>
 			{isEditingMessage && (
 				<EditMessageModal

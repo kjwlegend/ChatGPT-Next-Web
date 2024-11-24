@@ -9,7 +9,7 @@ import {
 } from "@/app/services/api/chats";
 import { useUserStore } from "@/app/store";
 import { Mask } from "@/app/types/mask";
-import { createEmptySession } from "@/app/store";
+import { createEmptySession } from "@/app/store/chat/utils";
 import { useMaskStore } from "@/app/store/mask";
 
 export const useWorkflowSessions = () => {
@@ -18,7 +18,7 @@ export const useWorkflowSessions = () => {
 		addSessionToGroup,
 		moveSession,
 		deleteSessionFromGroup,
-		updateWorkflowSession: updateLocalWorkflowSession,
+		updateWorkflowSession,
 	} = useWorkflowStore();
 
 	const [messageApi, contextHolder] = message.useMessage();
@@ -136,21 +136,23 @@ export const useWorkflowSessions = () => {
 							role: item.chat_role,
 							model: item.chat_model,
 							images: item.chat_images,
+							date: item.created_at,
 						}));
 
-						updateLocalWorkflowSession(workflowGroupId, sessionId, {
+						updateWorkflowSession(workflowGroupId, sessionId, {
 							messages: newMessages,
 						});
 
 						return res.chats.data;
-					} catch (error) {
+					} catch (error: any) {
 						console.error("Error fetching workflow chat session chats:", error);
+						messageApi.error(`获取聊天记录失败: ${error.message}`);
 						throw error;
 					}
 				}),
 			);
 		},
-		[updateLocalWorkflowSession],
+		[updateWorkflowSession],
 	);
 
 	return {

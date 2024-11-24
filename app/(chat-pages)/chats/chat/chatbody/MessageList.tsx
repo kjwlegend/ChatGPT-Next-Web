@@ -12,7 +12,7 @@ import React, {
 import { useMobileScreen } from "@/app/hooks/useMobileScreen";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import MessageItem from "./MessageItem";
+import MessageItem from "./MessageItem/index";
 
 import { copyToClipboard } from "@/app/utils";
 
@@ -53,4 +53,3 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 		</>
 	);
 };
- 

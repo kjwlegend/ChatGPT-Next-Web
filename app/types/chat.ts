@@ -27,8 +27,8 @@ export type ChatMessage = RequestMessage & {
 };
 
 export interface ChatToolMessage {
-	toolName?: string;
-	toolInput?: string;
+	toolName: string;
+	toolInput: string;
 	references?: Reference[];
 	content?: string;
 	toolOutput?: string;

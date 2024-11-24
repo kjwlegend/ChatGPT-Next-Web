@@ -266,6 +266,7 @@
 	&.workflow-chat {
 		min-width: 40%;
 		width: 50%;
+		border-left: 1px solid #e6e6e6;
 	}
 }
 
@@ -338,23 +339,21 @@
 	display: flex;
 	flex-direction: row;
 
+	margin-bottom: 10px;
+
 	&:last-child {
 		animation: slide-in ease 0.3s;
+	}
+
+	&.user {
+		flex-direction: row-reverse;
 	}
 }
 
 .chat-message-user {
 	display: flex;
 	flex-direction: row-reverse;
-
-	.chat-message-header {
-		flex-direction: row-reverse;
-	}
-	.multi-agents {
-		.chat-message-header {
-			flex-direction: unset;
-		}
-	}
+	margin-bottom: 10px;
 }
 
 .chat-message-header {
@@ -397,20 +396,6 @@
 	flex-direction: row;
 	align-items: flex-start;
 
-	&:hover {
-		.chat-message-edit {
-			opacity: 0.9;
-		}
-	}
-	.chat-message-actions {
-		opacity: 1;
-		pointer-events: all;
-		transform: scale(1) translateY(0);
-		margin-top: 5px;
-		padding-top: 5px;
-
-		border-top: 1px solid #e6e6e6;
-	}
 	&.multi-agents {
 		flex-direction: column;
 	}
@@ -476,12 +461,12 @@
 .chat-message-item {
 	box-sizing: border-box;
 	max-width: 100%;
-	margin-top: 10px;
+	margin: 0 5px;
 	border-radius: 10px;
 	background-color: rgb(187 186 255 / 10%);
 	box-shadow: var(--card-shadow);
 	padding: 10px;
-	font-size: 14px;
+	font-size: 13px;
 	user-select: text;
 	word-break: break-word;
 	position: relative;
@@ -489,9 +474,9 @@
 
 	@media screen and (max-width: 768px) {
 		padding: 8px;
-		font-size: 13px;
-		margin-top: 8px;
-		width: 85%;
+		font-size: 12px;
+		margin-top: 5px;
+		// width: 85%;
 	}
 
 	.mj-action-button {
