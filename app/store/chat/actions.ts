@@ -75,6 +75,7 @@ export const createChatActions = (
 		const { sessions } = get();
 		sessions[session.id] = session;
 		set({ sessions });
+
 		return sessions;
 	},
 
@@ -165,7 +166,7 @@ export const createChatActions = (
 		_session?: ChatSession,
 	) {
 		const store = get();
-		const session = _session ?? store.selectCurrentSession();
+		const session = _session ?? store.sessions[store.currentSessionId!];
 		if (!session) return;
 
 		const userStore = useUserStore.getState();

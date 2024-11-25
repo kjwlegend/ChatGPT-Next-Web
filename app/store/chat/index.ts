@@ -1,6 +1,6 @@
 import { createPersistStore } from "../../utils/store";
 import { DEFAULT_CHAT_STATE } from "./initialState";
-import { ChatState, ChatStore, ChatSelectors } from "./types";
+import { ChatState, ChatStore, ChatSelectors, ChatActions } from "./types";
 import { createChatActions } from "./actions";
 import * as selectorsModule from "./selectors";
 import { StoreKey } from "../../constant";
@@ -14,7 +14,7 @@ type Selectors = typeof selectorsModule;
 export const useChatStore = createPersistStore<ChatState, ChatStore>(
 	DEFAULT_CHAT_STATE,
 	(set, get) => {
-		const actions = createChatActions(set, get);
+		const actions: ChatActions = createChatActions(set, get);
 		const selectors: ChatSelectors = Object.keys(selectorsModule).reduce(
 			(acc, key) => {
 				acc[key as keyof ChatSelectors] = (...args: any[]) =>
@@ -23,8 +23,6 @@ export const useChatStore = createPersistStore<ChatState, ChatStore>(
 			},
 			{} as ChatSelectors,
 		);
-
-		console.log("selectors original", selectors);
 
 		return {
 			...DEFAULT_CHAT_STATE,

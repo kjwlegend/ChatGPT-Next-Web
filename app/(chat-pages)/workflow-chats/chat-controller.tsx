@@ -11,18 +11,9 @@ import React, {
 import { getISOLang, getLang } from "../../locales";
 import { ChatMessage, ChatSession, Mask } from "@/app/types/";
 
-import {
-	SubmitKey,
-	useChatStore,
-	BOT_HELLO,
-	createMessage,
-	useAccessStore,
-	Theme,
-	useAppConfig,
-	DEFAULT_TOPIC,
-	ModelType,
-	useUserStore,
-} from "../../store";
+import { SubmitKey, useAccessStore, Theme, useAppConfig } from "../../store";
+
+import { useChatStore } from "@/app/store/chat/index";
 
 import Locale from "../../locales";
 

@@ -124,10 +124,10 @@ export const usePromptStore = createPersistStore(
 
 		search(text: string) {
 			if (text.length === 0) {
-				// return all rompts
-				return this.getUserPrompts().concat(
-					SearchService.builtinPrompts,
-				);
+				// return all prompts
+				return get().prompts
+					? Object.values(get().prompts).concat(SearchService.builtinPrompts)
+					: SearchService.builtinPrompts;
 			}
 			return SearchService.search(text) as Prompt[];
 		},
@@ -142,9 +142,7 @@ export const usePromptStore = createPersistStore(
 			};
 
 			if (version < 3) {
-				Object.values(newState.prompts).forEach(
-					(p) => (p.id = nanoid()),
-				);
+				Object.values(newState.prompts).forEach((p) => (p.id = nanoid()));
 			}
 
 			return newState as any;
@@ -162,22 +160,20 @@ export const usePromptStore = createPersistStore(
 					if (getLang() === "cn") {
 						fetchPrompts = fetchPrompts.reverse();
 					}
-					const builtinPrompts = fetchPrompts.map(
-						(promptList: PromptList) => {
-							return promptList.map(
-								([title, content]) =>
-									({
-										id: nanoid(),
-										title,
-										content,
-										createdAt: Date.now(),
-									}) as Prompt,
-							);
-						},
-					);
-
-					const userPrompts =
-						usePromptStore.getState().getUserPrompts() ?? [];
+					const builtinPrompts = fetchPrompts.map((promptList: PromptList) => {
+						return promptList.map(
+							([title, content]) =>
+								({
+									id: nanoid(),
+									title,
+									content,
+									createdAt: Date.now(),
+								}) as Prompt,
+						);
+					});
+					const userPrompts = usePromptStore.getState().prompts
+						? Object.values(usePromptStore.getState().prompts)
+						: [];
 
 					const allPromptsForSearch = builtinPrompts
 						.reduce((pre, cur) => pre.concat(cur), [])

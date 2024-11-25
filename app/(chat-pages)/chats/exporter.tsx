@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { ModelType, useAppConfig, useChatStore } from "@/app/store";
+import { useChatStore } from "@/app/store/chat/index";
 import { ChatMessage } from "@/app/types/chat";
 
 import Locale from "@/app/locales";
@@ -44,6 +44,7 @@ import { getClientConfig } from "@/app/config/client";
 import { ClientApi } from "@/app/client/api";
 import { getMessageTextContent } from "@/app/utils";
 import { identifyDefaultClaudeModel } from "@/app/utils/checkers";
+import { useAppConfig } from "@/app/store";
 
 const Markdown = dynamic(
 	async () => (await import("./components/markdown")).Markdown,

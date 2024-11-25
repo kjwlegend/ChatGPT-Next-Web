@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAppConfig, useChatStore } from "../store";
+import { useAppConfig } from "../store";
+import { useChatStore } from "../store/chat/index";
 import { ChatMessage } from "../types/";
 import { Updater } from "../typing";
 import { IconButton } from "./button";
@@ -72,7 +73,7 @@ export function MessageSelector(props: {
 	onSelected?: (messages: ChatMessage[]) => void;
 }) {
 	const chatStore = useChatStore();
-	const session = chatStore.currentSession();
+	const session = chatStore.selectCurrentSession();
 	const isValid = (m: ChatMessage) => m.content && !m.isError && !m.streaming;
 	const messages = session.messages.filter(
 		(m, i) =>

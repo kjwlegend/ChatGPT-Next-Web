@@ -1,10 +1,8 @@
 import { Button } from "antd";
-import { useAuthStore } from "../store/auth";
-import { useRouter } from "next/navigation";
-import { logoutAPI } from "../api/auth";
+
 import useAuth from "../hooks/useAuth";
 import styles from "./button.module.scss";
-import { useChatStore } from "../store";
+import { useChatStore } from "../store/chat/index";
 interface LogoutButtonProps {
 	isButton?: boolean;
 }

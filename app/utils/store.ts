@@ -22,13 +22,14 @@ type SetStoreState<T> = (
 	partial: T | Partial<T> | ((state: T) => T | Partial<T>),
 	replace?: boolean | undefined,
 ) => void;
-
-export function createPersistStore<T extends object, M>(
+export function createPersistStore<
+	T extends object,
+	M,
+	S = T & M & MakeUpdater<T>,
+	G extends S = S,
+>(
 	state: T,
-	methods: (
-		set: SetStoreState<T & MakeUpdater<T>>,
-		get: () => T & MakeUpdater<T>,
-	) => M,
+	methods: (set: SetStoreState<T & MakeUpdater<T>>, get: () => G) => M,
 	persistOptions: SecondParam<typeof persist<T & M & MakeUpdater<T>>>,
 ) {
 	return create(

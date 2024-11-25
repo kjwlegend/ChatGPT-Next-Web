@@ -45,6 +45,7 @@ const en: LocaleType = {
 			Delete: "Delete",
 			Edit: "Edit",
 			Next: "Next",
+			Play: "Play",
 		},
 		Commands: {
 			new: "Start a new chat",

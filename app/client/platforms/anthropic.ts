@@ -106,7 +106,7 @@ export class ClaudeApi implements LLMApi {
 
 		const modelConfig = {
 			...useAppConfig.getState().modelConfig,
-			...useChatStore.getState().currentSession().mask.modelConfig,
+			...useChatStore.getState().selectCurrentSession().mask.modelConfig,
 			...{
 				model: options.config.model,
 			},
