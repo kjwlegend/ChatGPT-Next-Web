@@ -127,8 +127,8 @@ export const useChatStore = createPersistStore<ChatState, ChatStore>(
 	},
 );
 
-console.log("selectors", selectorsModule);
-console.log("useChatStore", useChatStore);
+// console.log("selectors", selectorsModule);
+// console.log("useChatStore", useChatStore);
 
 export * from "./types";
 export { selectorsModule as selectors };
