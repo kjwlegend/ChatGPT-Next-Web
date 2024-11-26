@@ -48,15 +48,19 @@ export const useChatService = () => {
 
 	const handleChatItemClick = useCallback(
 		async (id: string) => {
-			console.log("handleChatItemClick started, setting isLoading to true");
+			console.log(
+				"handleChatItemClick started, setting isLoading to true. click id:",
+				id,
+			);
 			setIsLoading(true);
+			chatStore.setCurrentSessionId(id);
+
 			const param = { limit: 60 };
 			try {
 				console.log("Fetching chat session chats...");
 				const res = await getChatSessionChats(param, id);
 				const chats = res.data;
 				UpdateChatMessages(id, chats);
-				chatStore.selectSessionById(id);
 				navigate(Path.Chat);
 			} catch (error) {
 				console.log("get chatSession list error", error);

@@ -1121,6 +1121,19 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-11-26",
+		color: "green",
+		children: (
+			<>
+				发布 V3.1.11 版本, 小光说:
+				<ul>
+					<li>修复对话列表加载与展示相关bug</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {

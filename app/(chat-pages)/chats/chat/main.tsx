@@ -116,11 +116,18 @@ export function Chat() {
 	const sessionIndex = chatStore.selectCurrentSessionIndex();
 	const session = chatStore.selectCurrentSession();
 	const navigate = useNavigate();
-	useEffect(() => {}, [session]);
+
+	console.log("session", session);
+	useEffect(() => {
+		if (!session) {
+			navigate(Path.NewChat);
+		}
+	}, []);
+
 	if (!session) {
-		navigate(Path.NewChat);
 		return null;
 	}
+
 	return (
 		<_Chat
 			_session={session}

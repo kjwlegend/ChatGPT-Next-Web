@@ -13,6 +13,7 @@ export interface ChatActions {
 	create: (mask?: Mask, userStore?: UserStore) => Promise<ChatSession>;
 	updateState: (state: Partial<ChatState>) => void;
 	add: (session: ChatSession) => Record<string, ChatSession>;
+	setCurrentSessionId: (id: string) => void;
 	updateSession: (
 		id: string,
 		updater: (session: ChatSession) => void,

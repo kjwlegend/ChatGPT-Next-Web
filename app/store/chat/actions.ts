@@ -68,6 +68,9 @@ export const createChatActions = (
 			throw error;
 		}
 	},
+	setCurrentSessionId: (id: string) => {
+		set({ currentSessionId: id });
+	},
 
 	updateState: (state: Partial<ChatState>) => set(state),
 
