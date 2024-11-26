@@ -49,7 +49,7 @@ export interface PaginationData {
 const appnamespace = AppMapping.llm;
 export const createChatSession = api(appnamespace, "/user/chatsessions/");
 export const getChatSession = apiGet(appnamespace, "/user/chatsessions/");
-export const getChatSessionChats = apiGet(
+export const getChatSessionMessages = apiGet(
 	appnamespace,
 	"/user/chatsessions/:id/chats",
 );

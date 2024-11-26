@@ -222,6 +222,19 @@ export const createChatActions = (
 				token_counts_total: total_token_count,
 			});
 
+			const userMessagetoSend = !attachImages
+				? userMessage
+				: ({
+						role: "user",
+						content: [
+							{ type: "text", text: content },
+							...attachImages!.map((item: string) => ({
+								type: "image_url",
+								image_url: { url: item },
+							})),
+						],
+					} as ChatMessage);
+
 			const botMessage = createMessage({
 				role: "assistant",
 				streaming: true,
@@ -230,7 +243,7 @@ export const createChatActions = (
 				isFinished: false,
 			});
 
-			sendMessages = recentMessages.concat(userMessage);
+			sendMessages = [...recentMessages, userMessagetoSend as ChatMessage];
 			// 更新会话
 			store.updateSession(
 				sessionId,

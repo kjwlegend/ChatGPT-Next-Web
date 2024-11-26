@@ -247,6 +247,7 @@ export function Inputpanel(props: {
 		[attachImages],
 	);
 
+	// 上传图片 监听并输出图片console
 	const handleUploadImage = useCallback(async () => {
 		try {
 			await uploadImage(setAttachImages);

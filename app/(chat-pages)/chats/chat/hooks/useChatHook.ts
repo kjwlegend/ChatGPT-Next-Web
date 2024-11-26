@@ -1,4 +1,7 @@
-import { getChatSession, getChatSessionChats } from "@/app/services/api/chats";
+import {
+	getChatSession,
+	getChatSessionMessages,
+} from "@/app/services/api/chats";
 import { useAccessStore, useAppConfig } from "../../../../store";
 import { useChatStore } from "@/app/store/chat/index";
 
@@ -58,7 +61,7 @@ export const useChatService = () => {
 			const param = { limit: 60 };
 			try {
 				console.log("Fetching chat session chats...");
-				const res = await getChatSessionChats(param, id);
+				const res = await getChatSessionMessages(param, id);
 				const chats = res.data;
 				UpdateChatMessages(id, chats);
 				navigate(Path.Chat);

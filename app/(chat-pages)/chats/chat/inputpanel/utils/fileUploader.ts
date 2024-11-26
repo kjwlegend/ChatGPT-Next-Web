@@ -81,7 +81,6 @@ export const uploadFile = async (
 	session: ChatSession,
 	userinfo: User,
 ): Promise<FileInfo> => {
-	console.log("uploadFile", file);
 	const api = new ClientApi();
 	let fileInfo: FileInfo = {
 		originalFilename: file.name,
@@ -92,7 +91,6 @@ export const uploadFile = async (
 	};
 
 	// 上传文件
-	console.log("uploadingFile", file);
 	fileInfo = await api.file.upload(file, "RAG");
 	fileInfo.status = "uploading"; // 上传完成，设置为转码中
 
@@ -161,6 +159,7 @@ export const handlePasteEvent = async (
 					images.splice(maxImages);
 				}
 				setAttachImages(images);
+				console.log("images", images);
 			}
 		}
 	}

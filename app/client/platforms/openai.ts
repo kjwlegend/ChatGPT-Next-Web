@@ -211,6 +211,8 @@ export class ChatGPTApi implements LLMApi {
 			content: visionModel ? v.content : getMessageTextContent(v),
 		}));
 
+		console.log("visionModel", visionModel);
+
 		const modelConfig = {
 			...useAppConfig.getState().modelConfig,
 			...useChatStore.getState().selectCurrentSession().mask.modelConfig,

@@ -186,18 +186,6 @@ export const DEFAULT_MODELS = [
 			},
 		],
 	},
-	// {
-	// 	name: "midjourney",
-	// 	available: true,
-	// 	displayName: "Midjourney(2积分/次)",
-	// 	proModel: false,
-	// 	supportFunctionCall: false,
-	// 	provider: {
-	// 		id: "midjourney",
-	// 		providerName: "midjourney",
-	// 		providerType: "midjourney",
-	// 	},
-	// },
 ] as const;
 
 import { getServerSideConfig } from "@/app/config/server";
@@ -211,7 +199,7 @@ export const server_url = "https://admin.xiaoguang.fun";
 
 // export const server_url = "http://localhost:8000";
 
-export const version = "3.1.11";
+export const version = "3.1.12";
 
 export const CHAT_PAGE_SIZE = 15;
 export const MAX_RENDER_MSG_COUNT = 45;

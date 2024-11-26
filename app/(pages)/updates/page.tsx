@@ -1134,6 +1134,19 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-11-27",
+		color: "green",
+		children: (
+			<>
+				发布 V3.1.12 版本, 小光说:
+				<ul>
+					<li>修复对话中图片识别失效的问题</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
