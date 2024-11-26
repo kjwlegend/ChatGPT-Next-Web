@@ -80,55 +80,57 @@ OpenAI API密钥，用于访问OpenAI服务。
 
 OpenAI组织ID。
 
-### Azure配置
+小光AI 只支持 OpenAI 接口模式
 
-#### `AZURE_URL` (可选)
+### OneAPI代理配置
 
-> 示例: https://{azure-resource-url}/openai/deployments/{deploy-name}
+#### `BASE_URL` (可选)
 
-#### `AZURE_API_KEY` (可选)
+如果您使用其他API服务商提供的接口，可以通过 [OneAPI](https://github.com/songquanpeng/one-api) 进行代理转发。设置 `BASE_URL` 为您的 OneAPI 服务地址即可。
 
-Azure API密钥。
+> 示例: `https://your-oneapi-service.com/v1`
 
-#### `AZURE_API_VERSION` (可选)
+OneAPI 支持多种模型服务商:
 
-Azure API版本。
+- OpenAI
+- Azure OpenAI
+- Claude (Anthropic)
+- PaLM2 (Google)
+- 智谱 AI
+- 百度文心
+- 讯飞星火
+- 等等
 
-### 功能控制
-
-#### `HIDE_USER_API_KEY` (可选)
-
-设置为1时禁用用户自行填入API Key。
-
-#### `DISABLE_GPT4` (可选)
-
-设置为1时禁用GPT-4模型。
-
-#### `ENABLE_BALANCE_QUERY` (可选)
-
-设置为1时允许余额查询。
-
-#### `DISABLE_FAST_LINK` (可选)
-
-设置为1时禁用URL参数解析。
-
-#### `CUSTOM_MODELS` (可选)
-
-> 示例: `+llama,+claude-2,-gpt-3.5-turbo`
-> 自定义模型控制，使用+添加模型，使用-隐藏模型。
+通过 OneAPI 代理，您可以使用统一的接口格式访问不同厂商的模型服务。
 
 ### 存储配置
 
-#### `R2_ACCESS_KEY_ID` (可选)
+#### `ALIYUN_OSS_REGION` (可选)
 
-Cloudflare R2访问密钥ID。
+阿里云OSS区域。
 
-#### `R2_SECRET_ACCESS_KEY` (可选)
+> 示例: `oss-cn-hangzhou`
 
-Cloudflare R2密钥。
+#### `ALIYUN_OSS_BUCKET` (可选)
 
-#### `R2_BUCKET` (可选)
+阿里云OSS存储桶名称。
 
-Cloudflare R2 Bucket名称。
+#### `ALIYUN_OSS_ACCESS_KEY_ID` (可选)
+
+阿里云OSS访问密钥ID。
+
+#### `ALIYUN_OSS_ACCESS_KEY_SECRET` (可选)
+
+阿里云OSS访问密钥密码。
+
+#### `ALIYUN_OSS_ENDPOINT` (可选)
+
+阿里云OSS访问域名。
+
+> 示例: `oss-cn-hangzhou.aliyuncs.com`
+
+## License
+
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details.
 
 </div>

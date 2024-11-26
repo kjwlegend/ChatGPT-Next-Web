@@ -7,7 +7,7 @@ import { useMaskStore } from "@/app/store/mask/index";
 import { Mask } from "@/app/types/mask";
 import { useUserStore } from "@/app/store";
 import { useChatStore } from "@/app/store/chat/index";
-import { useCommand } from "@/app/command";
+import { useCommand } from "@/app/hooks/command";
 import { BUILTIN_MASK_STORE } from "@/app/masks";
 import { useNewChat } from "./hooks/useNewChat";
 import FeatureMaskItem from "./components/FeatureMaskItem";

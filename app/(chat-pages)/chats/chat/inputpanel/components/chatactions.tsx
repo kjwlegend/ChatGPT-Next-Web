@@ -48,14 +48,7 @@ import { ChatControllerPool } from "@/app/client/controller";
 import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
-import { IconButton } from "@/app/components/button";
 import styles from "../../chats.module.scss";
-
-import {
-	startSpeechToText,
-	convertTextToSpeech,
-} from "@/app/utils/voicetotext";
-import { useAllModels } from "@/app/utils/hooks";
 
 import {
 	ApiTwoTone,
@@ -348,12 +341,6 @@ export const ChatActions = memo(
 
 		// switch model
 		const currentModel = session.mask.modelConfig.model;
-		const models = useAllModels()
-			.filter((m) => m.available)
-			.map((m) => ({
-				title: m.displayName,
-				value: m.name,
-			}));
 
 		useEffect(() => {
 			const show = isVisionModel(currentModel);
