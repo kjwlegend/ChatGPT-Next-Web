@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/api/auth";
 import { ACCESS_CODE_PREFIX, ModelProvider } from "@/app/constant";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
@@ -15,8 +15,6 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { getServerSideConfig } from "@/app/config/server";
 import { FileInfo } from "@/app/client/platforms/utils";
 import mime from "mime";
-import LocalFileStorage from "@/app/utils/local_file_storage";
-import S3FileStorage from "@/app/utils/s3_file_storage";
 
 import { getEmbeddings } from "@/app/api/langchain/embeddings";
 import { LangchainConfig } from "@/app/api/langchain/config";
@@ -85,13 +83,10 @@ async function handle(req: NextRequest) {
 			const contentType = mime.getType(fileInfo.fileName);
 			// get file buffer
 			var fileBuffer: Buffer | undefined;
-			if (serverConfig.isStoreFileToLocal) {
-				fileBuffer = await LocalFileStorage.get(fileInfo.fileName);
-			} else {
-				const file = await AliOSS.get(fileInfo.fileName);
-				if (file && file.content) {
-					fileBuffer = Buffer.from(file.content);
-				}
+
+			const file = await AliOSS.get(fileInfo.fileName);
+			if (file && file.content) {
+				fileBuffer = Buffer.from(file.content);
 			}
 			if (!fileBuffer || !contentType) {
 				console.error(`get ${fileInfo.fileName} buffer fail`);
