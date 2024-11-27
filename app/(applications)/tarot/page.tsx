@@ -16,10 +16,7 @@ import { useUserStore } from "@/app/store";
 import { useAuthStore } from "@/app/store/auth";
 import Login from "@/app/(pages)/auth/login";
 import { Button } from "antd";
-import DrawerMenu from "@/app/components/drawer-menu";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { useAppConfig } from "@/app/store";
 import { SEOHeader } from "@/app/components/seo-header";
 const Index: React.FC = () => {
 	const TarotStore = useTarotStore();

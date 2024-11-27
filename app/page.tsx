@@ -10,9 +10,10 @@ import Head from "next/head";
 import Home from "./(chat-pages)/chats/page";
 import AuthPage from "./(pages)/auth/page";
 import { Toaster } from "@/components/ui/toaster";
+import { Suspense } from "react";
 const serverConfig = getServerSideConfig();
 
-export default function App() {
+function App() {
 	const query = useSearchParams();
 
 	const inviteCode = query.get("i");
@@ -31,5 +32,14 @@ export default function App() {
 			<Home />
 			{/* <AuthPage /> */}
 		</>
+	);
+}
+
+// 包裹 App 组件的 Suspense 边界
+export default function Page() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<App />
+		</Suspense>
 	);
 }
