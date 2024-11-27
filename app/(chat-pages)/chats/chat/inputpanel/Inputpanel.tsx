@@ -103,7 +103,7 @@ import {
 	uploadImage,
 } from "./utils/fileUploader";
 import { AttachFiles } from "./components/AttachFiles";
-import { useDoSubmit } from "./hooks/useDoSubmit";
+import { useDoSubmit } from "../hooks/useDoSubmit";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import {
 	useChatActions,

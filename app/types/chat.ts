@@ -20,7 +20,6 @@ export type ChatMessage = RequestMessage & {
 	streaming?: boolean;
 	isError?: boolean;
 	preview?: boolean;
-	isFinished?: boolean;
 	token_counts_total?: number;
 	lastUpdateTime?: number;
 	[key: string]: any;
@@ -35,15 +34,6 @@ export interface ChatToolMessage {
 	documents?: DocumentMeta[];
 	codeBlocks?: CodeBlock[];
 }
-
-export type MjConfig = {
-	size: string;
-	quality: string;
-	stylize: string;
-	model: string;
-	speed?: string;
-	seed?: string;
-};
 
 export interface ChatStat {
 	tokenCount: number;
@@ -90,3 +80,12 @@ export interface MJMessage {
 	status: string;
 	submitTime: number;
 }
+
+export type MjConfig = {
+	size: string;
+	quality: string;
+	stylize: string;
+	model: string;
+	speed?: string;
+	seed?: string;
+};

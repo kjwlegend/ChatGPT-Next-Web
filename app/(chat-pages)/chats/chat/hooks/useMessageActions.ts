@@ -19,7 +19,7 @@ import { message } from "antd";
 import { convertTextToSpeech } from "@/app/utils/voicetotext";
 import { SpeechSynthesizer } from "microsoft-cognitiveservices-speech-sdk";
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
-import { useChatActions } from "../hooks/useChatContext";
+import { useChatActions } from "./useChatContext";
 import { useWorkflowStore } from "@/app/store/workflow";
 import { sessionConfigUpdate } from "../../utils/chatUtils";
 import { sessionConfig, workflowChatSession } from "@/app/types/";

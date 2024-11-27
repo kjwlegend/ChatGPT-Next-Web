@@ -28,7 +28,7 @@ import {
 
 import styles from "./chats.module.scss";
 
-import { WindowHeader } from "./WindowHeader";
+import { WindowHeader } from "./chat-header/WindowHeader";
 
 import { useNavigate } from "react-router-dom";
 import { workflowChatSession } from "@/app/types/";
@@ -36,7 +36,7 @@ import { createContext } from "vm";
 import { ChatProvider, useChatActions } from "./hooks/useChatContext";
 
 const ChatbodyDynamic = dynamic(
-	async () => (await import("./Chatbody")).Chatbody,
+	async () => (await import("./chatbody/Chatbody")).Chatbody,
 	{
 		ssr: false,
 	},
@@ -117,7 +117,6 @@ export function Chat() {
 	const session = chatStore.selectCurrentSession();
 	const navigate = useNavigate();
 
-	console.log("session", session);
 	useEffect(() => {
 		if (!session) {
 			navigate(Path.NewChat);

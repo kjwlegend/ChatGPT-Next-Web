@@ -7,6 +7,7 @@ export interface ChatState {
 	sessions: Record<string, ChatSession>;
 	currentSessionId: string | null;
 	total: number;
+	activeSessionIds: string[];
 }
 
 export interface ChatActions {

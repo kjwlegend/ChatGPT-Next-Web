@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ErrorBoundary } from "@/app/components/error";
-import { ReturnButton } from "../chat/WindowHeader";
+import { ReturnButton } from "../chat/chat-header/WindowHeader";
 import FilterOptions from "./components/FilterOptions";
 import MaskList from "./components/MaskList";
 import SegmentedControl from "./components/SegmentedControl";

@@ -79,15 +79,17 @@ export const useAuthStore = create<AuthState>()(
 					refreshToken: null,
 					user: null,
 				});
-				document.cookie =
-					"authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-				document.cookie =
-					"user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-				document.cookie =
-					"access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-				document.cookie =
-					"refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+				// Clear all auth-related cookies at once
+				const cookies = [
+					"authenticated",
+					"user_id",
+					"access_token",
+					"refresh_token",
+				];
+				cookies.forEach((name) => {
+					document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+				});
 			},
 			getAccessToken: () => {
 				return get().accessToken;

@@ -6,7 +6,7 @@ import MessageContent from "./MessageContent";
 import MessageToolContent from "./MessageToolContent";
 import MessageFileContent from "./MessageFileContent";
 import MessageImageContent from "./MessageImageContent";
-import { useMessageActions } from "../useMessageActions";
+import { useMessageActions } from "../../hooks/useMessageActions";
 import {
 	getMessageImages,
 	getMessageTextContent,

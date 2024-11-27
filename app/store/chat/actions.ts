@@ -25,6 +25,8 @@ import {
 	CodeBlock,
 	DocumentMeta,
 } from "@/app/api/langchain/tool/agent/agentapi";
+import { manageActiveSessions } from "./utils";
+
 export const createChatActions = (
 	set: (
 		partial: Partial<ChatState> | ((state: ChatState) => Partial<ChatState>),
@@ -69,7 +71,15 @@ export const createChatActions = (
 		}
 	},
 	setCurrentSessionId: (id: string) => {
-		set({ currentSessionId: id });
+		const { sessions, activeSessionIds } = get();
+		const { activeSessionIds: newActiveSessionIds, sessions: updatedSessions } =
+			manageActiveSessions(activeSessionIds, sessions, id);
+
+		set({
+			currentSessionId: id,
+			activeSessionIds: newActiveSessionIds,
+			sessions: updatedSessions,
+		});
 	},
 
 	updateState: (state: Partial<ChatState>) => set(state),

@@ -44,3 +44,33 @@ export function createMessage(override: Partial<ChatMessage>): ChatMessage {
 		...override,
 	};
 }
+
+const MAX_ACTIVE_SESSIONS = 5; // 最大保留的活跃会话数
+
+export function manageActiveSessions(
+	activeSessionIds: string[],
+	sessions: Record<string, ChatSession>,
+	currentSessionId: string,
+): { activeSessionIds: string[]; sessions: Record<string, ChatSession> } {
+	// 创建新的活跃会话列表
+	const newActiveSessionIds = [
+		currentSessionId,
+		...activeSessionIds.filter((id) => id !== currentSessionId),
+	].slice(0, MAX_ACTIVE_SESSIONS);
+
+	// 清理非活跃会话的消息
+	const updatedSessions = { ...sessions };
+	Object.keys(updatedSessions).forEach((sessionId) => {
+		if (!newActiveSessionIds.includes(sessionId)) {
+			updatedSessions[sessionId] = {
+				...updatedSessions[sessionId],
+				messages: [], // 清空非活跃会话的消息
+			};
+		}
+	});
+
+	return {
+		activeSessionIds: newActiveSessionIds,
+		sessions: updatedSessions,
+	};
+}

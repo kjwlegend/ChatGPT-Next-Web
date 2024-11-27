@@ -28,7 +28,7 @@ import { Path } from "@/app/constant";
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "./chats.module.scss";
+import styles from "../chats.module.scss";
 
 import {
 	List,
@@ -46,7 +46,7 @@ import { getClientConfig } from "@/app/config/client";
 
 import { message, Switch } from "antd";
 
-import { SessionConfigModal } from "./modals/SessionConfigModal";
+import { SessionConfigModal } from "../modals/SessionConfigModal";
 
 import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { LLMModelSwitch } from "./LLModelSwitch";
@@ -55,8 +55,8 @@ import {
 	useChatActions,
 	useChatSetting,
 	useSessions,
-} from "./hooks/useChatContext";
-import { SessionModal } from "./modals/sessionConfig";
+} from "../hooks/useChatContext";
+import { SessionModal } from "../modals/sessionConfig";
 import { sessionConfig } from "@/app/types/";
 import { useWorkflowStore } from "@/app/store/workflow";
 

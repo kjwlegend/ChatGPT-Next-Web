@@ -42,7 +42,6 @@ import {
 // 自定义组件和工具函数
 import { ClearContextDivider } from "../../../../hooks/useGeneralChatHook";
 import MjActions from "../midjourney";
-import { RenderMessage } from "./MessageList";
 import { copyToClipboard, selectOrCopy } from "@/app/utils";
 import { ChatAction } from "../inputpanel/components/chatactions";
 import Avatar from "@/app/components/avatar";
@@ -63,7 +62,7 @@ interface MessageItemProps {
 import { getMessageImages, getMessageTextContent } from "@/app/utils";
 import IconTooltipButton from "@/app/components/iconButton";
 import { useMessages, useSessions } from "../hooks/useChatContext";
-import { useMessageActions } from "./useMessageActions";
+import { useMessageActions } from "../hooks/useMessageActions";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {

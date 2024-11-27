@@ -18,7 +18,7 @@ export function useInfiniteScroll(loadMoreFn: () => Promise<void>) {
 				threshold: 1.0,
 			};
 
-			const debouncedLoadMore = debounce(() => loadMoreFn(), 1000);
+			const debouncedLoadMore = debounce(() => loadMoreFn(), 2000);
 
 			observer = new IntersectionObserver((entries) => {
 				entries.forEach((entry) => {

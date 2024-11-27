@@ -25,7 +25,7 @@ export const useChatService = () => {
 
 	const loadMoreSessions = useCallback(
 		async (page: number) => {
-			const param = { limit: 20, page };
+			const param = { limit: 15, page };
 			try {
 				const res = await getChatSession(param);
 				updateChatSessions(res.data);
@@ -63,6 +63,7 @@ export const useChatService = () => {
 				console.log("Fetching chat session chats...");
 				const res = await getChatSessionMessages(param, id);
 				const chats = res.data;
+				console.log("chats: ", chats);
 				UpdateChatMessages(id, chats);
 				navigate(Path.Chat);
 			} catch (error) {
@@ -97,15 +98,16 @@ export const useChatService = () => {
 		handleChatItemDelete,
 	};
 };
-
 // 获取chatsession 列表
 export function updateChatSessions(newSessionsData: any[]) {
 	const chatStore = useChatStore.getState();
+	const allSessions = chatStore.selectAllSessions();
+
+	// 创建一个映射以提高查找效率
+	const sessionMap = new Map(allSessions.map((s) => [s.id, s]));
 
 	newSessionsData.forEach((sessionData) => {
-		const exists = chatStore
-			.selectAllSessions()
-			.some((s) => s.id === sessionData.id);
+		const existingSession = sessionMap.get(sessionData.id);
 		const newSession: ChatSession = {
 			id: sessionData.id,
 			session_id: sessionData.session_id,
@@ -117,16 +119,17 @@ export function updateChatSessions(newSessionsData: any[]) {
 			},
 			lastSummarizeIndex: 0,
 			clearContextIndex: undefined,
-			mask:
-				{
-					...sessionData.custom_agent_data,
-					context: sessionData.custom_agent_data?.prompts_data ?? [],
-					intro: sessionData.custom_agent_data?.chat_intro ?? "",
-					name: sessionData.custom_agent_data?.agent_name ?? "",
-					img: sessionData.custom_agent_data?.image ?? "",
-					hideContext: sessionData.custom_agent_data?.hideContext ?? true,
-					plugins: sessionData.custom_agent_data?.plugins ?? [],
-				} ?? createEmptyMask(),
+			mask: sessionData.custom_agent_data
+				? {
+						...sessionData.custom_agent_data,
+						context: sessionData.custom_agent_data.prompts_data ?? [],
+						intro: sessionData.custom_agent_data.chat_intro ?? "",
+						name: sessionData.custom_agent_data.agent_name ?? "",
+						img: sessionData.custom_agent_data.image ?? "",
+						hideContext: sessionData.custom_agent_data.hideContext ?? true,
+						plugins: sessionData.custom_agent_data.plugins ?? [],
+					}
+				: createEmptyMask(),
 			responseStatus: undefined,
 			isworkflow: false,
 			mjConfig: sessionData.mjConfig,
@@ -136,19 +139,11 @@ export function updateChatSessions(newSessionsData: any[]) {
 			lastUpdateTime: Date.parse(sessionData.updated_at),
 		};
 
-		if (!exists) {
+		if (!existingSession) {
 			chatStore.add(newSession);
 			console.log("add new session: ", newSession.id);
-		} else {
-			const existingSession = chatStore
-				.selectAllSessions()
-				.find((s) => s.id === sessionData.id);
-			if (
-				existingSession &&
-				newSession.lastUpdateTime! > existingSession.lastUpdateTime
-			) {
-				chatStore.updateSession(newSession.id!, () => newSession);
-			}
+		} else if (newSession.lastUpdateTime! > existingSession.lastUpdateTime) {
+			chatStore.updateSession(newSession.id!, () => newSession);
 		}
 	});
 }
@@ -158,7 +153,7 @@ export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 	const chatStore = useChatStore.getState();
 	const session = chatStore.selectSessionById(id.toString());
 	if (!session) return;
-	const session_id = session?.session_id;
+	const session_id = session.id;
 
 	messagesData.forEach((messageData) => {
 		// 检查是否已经存在该消息
@@ -179,10 +174,8 @@ export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 			token_counts_total: messageData.token_counts_total,
 			sender_name: messageData.sender_name,
 			chat_model: messageData.chat_model,
-
-			// 下面属性可能被移除
-			mjstatus: messageData.mjstatus,
 		};
+		// console.log("newMessage: ", newMessage);
 
 		// 使用 chatStore 的方法来添加新消息
 		chatStore.addMessageToSession(session_id, newMessage);

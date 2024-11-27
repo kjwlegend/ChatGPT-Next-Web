@@ -13,20 +13,9 @@ import styles from "./sidebar.module.scss";
 
 import { IconButton } from "@/app/components/button";
 
-import MainNav from "@/app/components/header";
 import Locale from "@/app/locales";
 
-import {
-	SettingsIcon,
-	GithubIcon,
-	ChatGptIcon,
-	AddIcon,
-	CloseIcon,
-	DeleteIcon,
-	MaskIcon,
-	PluginIcon,
-	DragIcon,
-} from "@/app/icons";
+import { AddIcon, DragIcon } from "@/app/icons";
 import Image from "next/image";
 import { useAppConfig } from "@/app/store";
 import { useChatStore } from "@/app/store/chat/index";

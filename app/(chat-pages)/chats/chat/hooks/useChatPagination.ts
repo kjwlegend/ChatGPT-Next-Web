@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useContext } from "react";
 import { useUserStore } from "@/app/store"; // 确保路径正确
-import { RenderMessage } from "./MessageList"; // 确保路径正确，RenderMessage 应从 MessageList 导入
 import { getChat } from "@/app/api/backend/chat";
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 

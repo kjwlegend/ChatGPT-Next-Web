@@ -32,60 +32,10 @@ export const useChatStore = createPersistStore<ChatState, ChatStore>(
 	},
 	{
 		name: StoreKey.Chat,
-		version: 3.8,
+		version: 3.9,
 		migrate: (persistedState: unknown, version: number) => {
 			const state = persistedState as any;
 			const newState = JSON.parse(JSON.stringify(state)) as ChatState;
-
-			if (version < 2) {
-				// Convert array-based sessions to record-based
-				const oldSessions = state.sessions as ChatSession[];
-				newState.sessions = {};
-				oldSessions.forEach((oldSession) => {
-					const newSession = createEmptySession();
-					newSession.topic = oldSession.topic;
-					newSession.messages = [...oldSession.messages];
-					newSession.mask.modelConfig.sendMemory = true;
-					newSession.mask.modelConfig.historyMessageCount = 4;
-					newSession.mask.modelConfig.compressMessageLengthThreshold = 1000;
-					newState.sessions[newSession.id] = newSession;
-				});
-			}
-
-			if (version < 3) {
-				// Migrate id to nanoid
-				Object.values(newState.sessions).forEach((s) => {
-					if (!s.id) s.id = nanoid();
-					s.messages.forEach((m) => {
-						if (!m.id) m.id = nanoid();
-						m.nanoid = m.id;
-					});
-				});
-			}
-
-			if (version < 3.1) {
-				// Enable `enableInjectSystemPrompts` attribute for old sessions
-				Object.values(newState.sessions).forEach((s) => {
-					if (!s.mask.modelConfig.hasOwnProperty("enableInjectSystemPrompts")) {
-						const config = useAppConfig.getState();
-						s.mask.modelConfig.enableInjectSystemPrompts =
-							config.modelConfig.enableInjectSystemPrompts;
-					}
-				});
-			}
-
-			if (version < 3.2) {
-				// Add workflow and MJ related fields
-				Object.values(newState.sessions).forEach((s) => {
-					s.isworkflow = false;
-					s.mjConfig = {
-						size: "",
-						quality: "",
-						stylize: "",
-						model: "",
-					};
-				});
-			}
 
 			if (version < 3.4) {
 				// Add new model config options
@@ -119,6 +69,7 @@ export const useChatStore = createPersistStore<ChatState, ChatStore>(
 					newState.currentSessionId = sessions[index]?.id ?? null;
 				}
 			}
+			//  更新了initialstate
 
 			return newState as any;
 		},

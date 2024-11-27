@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ChevronDown, Info } from "lucide-react";
 import { isProModel } from "@/app/utils";
-import styles from "./chats.module.scss";
+import styles from "../chats.module.scss";
 
 import { useAppConfig, ModelType } from "@/app/store";
 
