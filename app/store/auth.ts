@@ -92,10 +92,24 @@ export const useAuthStore = create<AuthState>()(
 				});
 			},
 			getAccessToken: () => {
-				return get().accessToken;
+				const token = get().accessToken;
+				if (token) {
+					// Update cookie with current token
+					const newExpirationDate = new Date();
+					newExpirationDate.setDate(newExpirationDate.getDate() + 7); // Set expiry to 7 days
+					document.cookie = `access_token=${token}; expires=${newExpirationDate.toUTCString()}; path=/`;
+				}
+				return token;
 			},
 			getRefreshToken: () => {
-				return get().refreshToken;
+				const token = get().refreshToken;
+				if (token) {
+					// Update cookie with current token
+					const newExpirationDate = new Date();
+					newExpirationDate.setDate(newExpirationDate.getDate() + 7); // Set expiry to 7 days
+					document.cookie = `refresh_token=${token}; expires=${newExpirationDate.toUTCString()}; path=/`;
+				}
+				return token;
 			},
 			updateToken: (token: string) => {
 				set({ accessToken: token });

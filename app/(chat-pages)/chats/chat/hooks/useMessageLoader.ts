@@ -23,7 +23,7 @@ export function useMessageLoader(sessionId: string) {
 			if (messages.length === 0) {
 				setHasNextPage(false);
 			} else {
-				UpdateChatMessages(sessionId, messages);
+				UpdateChatMessages(sessionId, messages, "prepend");
 				setCurrentPage((prev) => prev + 1);
 			}
 		} catch (error) {

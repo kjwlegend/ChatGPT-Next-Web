@@ -29,8 +29,7 @@ import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";
 import { useChatScroll } from "../hooks/useChatScroll";
 import { useChatDimensions } from "../hooks/useChatDimensions";
 import { useMessageLoader } from "../hooks/useMessageLoader";
-
-type RenderMessage = ChatMessage & { preview?: boolean };
+import ChatIntro from "./ChatIntro";
 
 const MemoMessageList = React.memo(MessageList);
 export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
@@ -39,19 +38,12 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 	const { isLoading } = useGlobalLoading();
 
 	const scrollRef = useRef<HTMLDivElement>(null);
-	const inputRef = useRef<HTMLTextAreaElement>(null);
 
 	const dimensions = useChatDimensions(scrollRef);
-	const { autoScroll, scrollToBottom } = useChatScroll();
 	const { messageLoading, hasNextPage, loadMoreMessages } = useMessageLoader(
 		session.id,
 	);
-
-	useEffect(() => {
-		if (autoScroll) {
-			scrollToBottom(scrollRef.current!);
-		}
-	}, [autoScroll, messages, scrollToBottom]);
+	// console.log("session: ", session);
 
 	return (
 		<div className={styles["chat-body"]} ref={scrollRef}>
@@ -61,14 +53,16 @@ export function Chatbody(props: { index?: number; isworkflow?: boolean }) {
 					<span>加载中...</span>
 				</div>
 			) : (
-				<MemoMessageList
-					messages={messages}
-					isLoading={messageLoading}
-					hasNextPage={hasNextPage}
-					onLoadMore={loadMoreMessages}
-					height={dimensions.height}
-					width={dimensions.width}
-				/>
+				<>
+					<MemoMessageList
+						messages={messages}
+						isLoading={messageLoading}
+						hasNextPage={hasNextPage}
+						onLoadMore={loadMoreMessages}
+						height={dimensions.height}
+						width={dimensions.width}
+					/>
+				</>
 			)}
 		</div>
 	);

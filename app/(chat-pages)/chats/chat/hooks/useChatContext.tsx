@@ -63,7 +63,6 @@ interface LoadingContextType {
 	isLoading: boolean;
 	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
 export const ChatProvider = ({
 	_session,
 	children,
@@ -76,7 +75,7 @@ export const ChatProvider = ({
 	const workflowStore = useWorkflowStore();
 	const chatStore = useChatStore();
 
-	// 使用 useMemo 来初始化 store
+	// 将 store 的选择逻辑提取到 useMemo 中避免重复计算
 	const store = useMemo(() => {
 		if (storeType === "workflow") {
 			return workflowStore;
@@ -86,6 +85,7 @@ export const ChatProvider = ({
 		return null;
 	}, [storeType, workflowStore, chatStore]);
 
+	// 将 session 状态提升,避免子组件重复渲染
 	const [session, setSession] = useState<ChatSession | workflowChatSession>(
 		_session,
 	);
@@ -96,31 +96,32 @@ export const ChatProvider = ({
 	const [submitType, setSubmitType] = useState<
 		"chat" | "workflow" | "multiagent"
 	>("chat");
-	const [isLoading, setIsLoading] = useState(false);
-	// 使用 useMemo 来获取 messages
+
+	// 优化 messages 的依赖项,只在必要时更新
 	const messages = useMemo(() => {
-		if (!store) return [];
+		if (!store || !session?.id) return [];
+
 		if (storeType === "workflow") {
 			return workflowStore.getMessages(session.id) || [];
-		} else if (storeType === "chatstore") {
+		}
+
+		if (storeType === "chatstore") {
 			return chatStore.selectSessionMessages(session.id) || [];
 		}
+
 		return [];
-	}, [store, storeType, session.id, workflowStore, chatStore]);
+	}, [store, storeType, session?.id]);
 
-	console.log("storeType", storeType);
-
+	// 只在 _session 变化时更新 session
 	useEffect(() => {
-		console.log("chatcontext, props changed");
-		setSession(_session);
+		if (_session?.id !== session?.id) {
+			setSession(_session);
+		}
 	}, [_session]);
 
-	// 如果没有 store，显示加载状态或返回 null
-	if (!store) {
-		return null;
-	}
+	if (!store) return null;
 
-	const currentSessionId = session.id;
+	const currentSessionId = session?.id || "0";
 
 	return (
 		<ChatActionContext.Provider
@@ -153,15 +154,16 @@ export const ChatProvider = ({
 	);
 };
 
-export const useSessions = () => {
-	const session = useContext(ChatSessionContext) as sessionConfig;
-	return session;
-};
 export const useMessages = () => {
 	const messages = useContext(ChatMessagesContext) as ChatMessage[];
 	return messages;
 };
 
+export const useSessions = () => {
+	const session = useContext(ChatSessionContext) as sessionConfig;
+	// console.log("useSessions rendered", session);
+	return session;
+};
 export const useChatSetting = () => {
 	const {
 		hitBottom,

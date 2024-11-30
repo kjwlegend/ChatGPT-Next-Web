@@ -25,9 +25,10 @@ export const selectCurrentSessionIndex = (state: ChatState) => {
 	const sessions = Object.values(state.sessions);
 	return sessions.findIndex((s) => s.id === state.currentSessionId);
 };
-
-export const selectSessionMessages = (state: ChatState, sessionId: string) =>
-	state.sessions[sessionId]?.messages || [];
+export const selectSessionMessages = (state: ChatState, sessionId: string) => {
+	// console.log("state.sessions: ", state.sessions);
+	return state.sessions[sessionId]?.messages || [];
+};
 
 export const selectSessionCount = (state: ChatState) =>
 	Object.keys(state.sessions).length;

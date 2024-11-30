@@ -33,6 +33,7 @@ export interface ChatActions {
 		updater: (message: ChatMessage) => void,
 	) => void;
 	addMessageToSession: (sessionId: string, message: ChatMessage) => void;
+	prependMessages: (sessionId: string, messages: ChatMessage[]) => void;
 	resetSession: (sessionId: string) => void;
 	onNewMessage: (message: ChatMessage) => Promise<void>;
 	getMessagesWithMemory: (session?: ChatSession) => ChatMessage[];
@@ -48,7 +49,7 @@ export interface ChatSelectors {
 	selectCurrentSession: () => ChatSession;
 	selectSessionByIndex: (index: number) => ChatSession | undefined;
 	selectCurrentSessionIndex: () => number;
-	selectSessionMessages: (sessionId: string) => ChatMessage[];
+	selectSessionMessages: (sessionId: string | number) => ChatMessage[];
 	selectSessionCount: () => number;
 	selectMessageCount: (sessionId: string) => number;
 	selectSortedSessions: () => ChatSession[];

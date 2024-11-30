@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useResizeObserver } from "@/app/hooks/useResizeObserver";
 
 export function useChatDimensions(ref: React.RefObject<HTMLElement>) {
@@ -6,7 +6,9 @@ export function useChatDimensions(ref: React.RefObject<HTMLElement>) {
 
 	useResizeObserver(ref, (entry: ResizeObserverEntry) => {
 		const { width, height } = entry.contentRect;
-		setDimensions({ width, height });
+		if (width !== dimensions.width || height !== dimensions.height) {
+			setDimensions({ width, height });
+		}
 	});
 
 	return dimensions;

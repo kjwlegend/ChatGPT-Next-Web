@@ -102,6 +102,7 @@ export const createChatActions = (
 		if (!session) return;
 
 		updater(session);
+
 		set({ sessions: { ...sessions } });
 
 		if (sync) {
@@ -155,6 +156,14 @@ export const createChatActions = (
 		const session = sessions[sessionId];
 		if (!session) return;
 		session.messages.push(message);
+		set({ sessions: { ...sessions } });
+	},
+	prependMessages: (sessionId: string, messages: ChatMessage[]) => {
+		const sessions = get().sessions;
+		const session = sessions[sessionId];
+		if (!session) return;
+
+		session.messages = [...messages, ...session.messages];
 		set({ sessions: { ...sessions } });
 	},
 
@@ -278,11 +287,11 @@ export const createChatActions = (
 			const onUpdateCallback = (message: string) => {
 				botMessage.content = message;
 				botMessage.lastUpdateTime = Date.now();
-
 				store.updateSession(
 					sessionId,
 					(session: ChatSession) => {
 						session.messages = session.messages.concat();
+						// session.messages = [...session.messages];
 					},
 					false,
 				);

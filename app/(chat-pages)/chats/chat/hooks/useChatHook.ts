@@ -14,6 +14,10 @@ import { createEmptyMask } from "@/app/store/mask/utils";
 import { DEFAULT_TOPIC } from "@/app/store/chat";
 import { useChatSetting } from "./useChatContext";
 import { useGlobalLoading } from "@/app/contexts/GlobalLoadingContext";
+import {
+	selectSessionById,
+	selectSessionMessages,
+} from "@/app/store/chat/selectors";
 
 export const useChatService = () => {
 	const chatStore = useChatStore();
@@ -149,17 +153,33 @@ export function updateChatSessions(newSessionsData: any[]) {
 }
 
 // 获取chatsession 对应的messages
-export function UpdateChatMessages(id: string | number, messagesData: any[]) {
+export function UpdateChatMessages(
+	id: string | number,
+	messagesData: any[],
+	order: "prepend" | "append" = "append",
+) {
 	const chatStore = useChatStore.getState();
 	const session = chatStore.selectSessionById(id.toString());
 	if (!session) return;
 	const session_id = session.id;
 
-	messagesData.forEach((messageData) => {
+	const existingMessages = selectSessionMessages(chatStore, session_id);
+	const reversedMessagesData = messagesData.reverse();
+
+	console.log("session: ", session);
+	console.log("mask: ", session.mask);
+	console.log("modleconfig", session.mjConfig);
+	console.log("messages: ", existingMessages);
+
+	const existingMessageIds = new Set(
+		existingMessages.map((m) => m.id.toString()),
+	);
+	console.log("existingMessageIds: ", existingMessageIds);
+
+	reversedMessagesData.forEach((messageData) => {
 		// 检查是否已经存在该消息
-		const exists = session?.messages.some((m) => m.id == messageData.id);
-		if (exists) {
-			// console.log("message already exists: ", messageData.id);
+		if (existingMessageIds.has(messageData.id.toString())) {
+			console.log("message already exists: ", messageData.id);
 			return;
 		}
 
@@ -176,8 +196,6 @@ export function UpdateChatMessages(id: string | number, messagesData: any[]) {
 			chat_model: messageData.chat_model,
 		};
 		// console.log("newMessage: ", newMessage);
-
-		// 使用 chatStore 的方法来添加新消息
 		chatStore.addMessageToSession(session_id, newMessage);
 	});
 }

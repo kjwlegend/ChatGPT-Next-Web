@@ -68,7 +68,6 @@ export const createChatDataAndFetchId = async (options: {
 		return { chat_id: chatResponse.chat_id, id: chatResponse.id };
 	} catch (error) {
 		console.error("Error creating chat data:", error);
-
 		throw new Error("登录已过期或账号无效, 请重新登录再试");
 	}
 };
@@ -123,7 +122,12 @@ export function handleChatCallbacks(
 		onUpdate: (message: string) => {
 			botMessage.streaming = true;
 			if (message) {
-				botMessage.content = message;
+				// 创建新的消息对象以确保引用变化
+				Object.assign(botMessage, {
+					streaming: true,
+					content: message,
+					lastUpdateTime: Date.now(),
+				});
 			}
 			if (onUpdateCallback) {
 				onUpdateCallback(message);

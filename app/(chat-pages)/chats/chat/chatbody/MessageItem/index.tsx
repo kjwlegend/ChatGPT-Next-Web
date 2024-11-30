@@ -66,6 +66,19 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 		}
 	};
 
+	const messageContent = useMemo(() => {
+		return (
+			<MessageContent
+				content={messageText}
+				isLoading={!!(showTyping && messageText.length === 0 && !isUser)}
+				isUser={isUser}
+				fontSize={config.fontSize}
+				onRightClick={(e) => onRightClick(e, message)}
+				onDoubleClick={() => setUserInput(messageText)}
+			/>
+		);
+	}, [messageText, message.lastUpdateTime]);
+
 	return (
 		<div
 			className={isUser ? styles["chat-message-user"] : styles["chat-message"]}
@@ -104,15 +117,15 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 						<MessageToolContent toolMessages={message.toolMessages} />
 					)}
 
-					<MessageContent
+					{/* <MessageContent
 						content={messageText}
 						isLoading={!!(showTyping && messageText.length === 0 && !isUser)}
 						isUser={isUser}
 						fontSize={config.fontSize}
 						onRightClick={(e) => onRightClick(e, message)}
 						onDoubleClick={() => setUserInput(messageText)}
-					/>
-
+					/> */}
+					{messageContent}
 					{message.fileInfos && (
 						<MessageFileContent fileInfos={message.fileInfos} />
 					)}
