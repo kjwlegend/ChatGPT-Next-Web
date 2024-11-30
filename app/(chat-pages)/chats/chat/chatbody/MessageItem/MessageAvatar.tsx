@@ -16,6 +16,11 @@ const MessageAvatar: React.FC<MessageAvatarProps> = ({
 	agentAvatar,
 	agentName,
 }) => {
+	console.log("isUser", isUser);
+	console.log("userAvatar", userAvatar);
+	console.log("userNickname", userNickname);
+	console.log("agentAvatar", agentAvatar);
+	console.log("agentName", agentName);
 	if (isUser) {
 		return <Avatar avatar={userAvatar} nickname={userNickname} />;
 	}

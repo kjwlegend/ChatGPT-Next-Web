@@ -19,7 +19,7 @@ import { Loading3QuartersOutlined } from "@ant-design/icons";
 import Locale from "@/app/locales";
 import { PlayIcon } from "@/app/icons";
 import { useSessions } from "../../hooks/useChatContext";
-import { useAppConfig } from "@/app/store";
+import { useAppConfig, useUserStore } from "@/app/store";
 import { useWorkflowStore } from "@/app/store/workflow";
 import { LAST_INPUT_KEY } from "@/app/constant";
 
@@ -32,6 +32,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 	const [userInput, setUserInput] = useState("");
 	const [showToastModal, setShowToastModal] = useState(false);
 	const session = useSessions();
+	const user = useUserStore.getState().user;
 	const sessionId = session.id;
 
 	const config = useAppConfig();
@@ -87,8 +88,8 @@ const MessageItem: React.FC<MessageItemProps> = ({ message, i }) => {
 				<div className="hidden md:block">
 					<MessageAvatar
 						isUser={isUser}
-						userAvatar={session.user?.avatar}
-						userNickname={session.user?.nickname}
+						userAvatar={user.avatar!}
+						userNickname={user.nickname}
 						agentAvatar={session.mask.image}
 						agentName={session.mask.name}
 					/>
