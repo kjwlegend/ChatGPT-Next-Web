@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useDoSubmit } from "../hooks/useDoSubmit";
 import { message } from "antd";
+import { useMemo, useCallback } from "react";
 
 const ChatIntro = () => {
 	const session = useSessions();
@@ -93,18 +94,24 @@ const ChatIntro = () => {
 		],
 	};
 
-	// 从每组随机选择一个问题，最多显示4-5个
-	const quickQuestions = Object.entries(allQuickQuestions)
-		.sort(() => Math.random() - 0.5) // 随机打乱分组顺序
-		.slice(0, 4) // 选择前4个分组
-		.map(
-			([_, questions]) =>
-				questions[Math.floor(Math.random() * questions.length)],
-		);
+	// 使用 useMemo 缓存快捷问题的计算结果
+	const quickQuestions = useMemo(() => {
+		return Object.entries(allQuickQuestions)
+			.sort(() => Math.random() - 0.5)
+			.slice(0, 4)
+			.map(
+				([_, questions]) =>
+					questions[Math.floor(Math.random() * questions.length)],
+			);
+	}, []); // 空依赖数组意味着只在组件首次渲染时计算
 
-	const handleQuestionClick = async (question: string) => {
-		await doSubmit(question);
-	};
+	// 使用 useCallback 缓存点击处理函数
+	const handleQuestionClick = useCallback(
+		async (question: string) => {
+			await doSubmit(question);
+		},
+		[doSubmit],
+	);
 
 	return (
 		<Card className="w-full border-0 bg-gradient-to-b from-muted/30 to-background">
