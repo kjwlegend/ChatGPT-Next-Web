@@ -33,6 +33,7 @@ interface ChatContextValue {
 	enableAutoFlow: boolean;
 	submitType: "chat" | "workflow" | "multiagent";
 	currentSessionId: string;
+	storeType: string;
 }
 
 const ChatActionContext = React.createContext<ActionContextType>({
@@ -55,6 +56,7 @@ const defaultChatContextValue: ChatContextValue = {
 	enableAutoFlow: false,
 	submitType: "chat",
 	currentSessionId: "0",
+	storeType: "chatstore",
 };
 
 export const ChatSettingContext = React.createContext(defaultChatContextValue);
@@ -142,6 +144,7 @@ export const ChatProvider = ({
 					enableAutoFlow,
 					submitType,
 					currentSessionId,
+					storeType,
 				}}
 			>
 				<ChatSessionContext.Provider value={session}>
@@ -172,6 +175,7 @@ export const useChatSetting = () => {
 		enableAutoFlow,
 		submitType,
 		currentSessionId,
+		storeType,
 	} = useContext(ChatSettingContext);
 
 	return {
@@ -181,6 +185,7 @@ export const useChatSetting = () => {
 		enableAutoFlow,
 		submitType,
 		currentSessionId,
+		storeType,
 	};
 };
 

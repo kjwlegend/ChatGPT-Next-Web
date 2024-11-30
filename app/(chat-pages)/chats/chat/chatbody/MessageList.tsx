@@ -15,6 +15,7 @@ import styles from "../chats.module.scss";
 import { useChatScroll } from "@/app/(chat-pages)/chats/chat/hooks/useChatScroll";
 import ChatIntro from "./ChatIntro";
 import { RequestMessage } from "@/app/client/api";
+import { useChatSetting } from "../hooks/useChatContext";
 
 interface ChatMessageListProps {
 	messages: ChatMessage[];
@@ -23,12 +24,6 @@ interface ChatMessageListProps {
 	onLoadMore: () => void;
 	height: number;
 	width: number;
-}
-
-interface VirtualRowProps {
-	virtualRow: VirtualItem;
-	message: ChatMessage;
-	measureRef: (el: HTMLElement | null) => void;
 }
 
 const MessageContent = memo(
@@ -43,32 +38,6 @@ const MessageContent = memo(
 	},
 );
 
-const VirtualRow = memo(
-	({ virtualRow, message, measureRef }: VirtualRowProps) => {
-		return (
-			<div
-				ref={measureRef}
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-					width: "100%",
-					transform: `translateY(${virtualRow.start}px)`,
-				}}
-			>
-				<div className={styles["chat-message-wrapper"]}>
-					<MessageContent message={message} index={virtualRow.index} />
-				</div>
-			</div>
-		);
-	},
-	(prev, next) => {
-		return prev.virtualRow.start === next.virtualRow.start;
-	},
-);
-
-VirtualRow.displayName = "VirtualRow";
-
 export const MessageList: React.FC<ChatMessageListProps> = ({
 	messages,
 	isLoading,
@@ -79,6 +48,7 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 }) => {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const { autoScroll, setAutoScroll, scrollToBottom } = useChatScroll();
+	const { storeType } = useChatSetting();
 
 	// 增加对最后一条消息的特殊处理
 	const lastMessageRef = useRef<RequestMessage["content"]>("");
@@ -116,7 +86,7 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 			}}
 			onScroll={handleScroll}
 		>
-			<ChatIntro />
+			{storeType === "chatstore" && <ChatIntro />}
 
 			{isLoading && (
 				<div className={styles["loading-indicator"]}>
@@ -143,3 +113,9 @@ export const MessageList: React.FC<ChatMessageListProps> = ({
 		</div>
 	);
 };
+
+MessageList.displayName = "ChatMessageList";
+
+// 如果你使用了 memo，也可以这样写：
+export const MemoizedMessageList = memo(MessageList);
+MemoizedMessageList.displayName = "MemoizedChatMessageList";
