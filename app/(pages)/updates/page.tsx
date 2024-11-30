@@ -1162,6 +1162,21 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-11-29",
+		color: "green",
+		children: (
+			<>
+				发布 V3.1.14 版本, 小光说:
+				<ul>
+					<li>优化对话起始界面, 增加AI助手自我介绍</li>
+					<li>优化对话加载体验</li>
+					<li>优化账号登录状态持久化机制</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
