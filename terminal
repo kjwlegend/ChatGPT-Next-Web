@@ -1,0 +1,1 @@
+mkdir -p components/{ChatWindow,AgentConfig} hooks services types styles 

@@ -6,7 +6,7 @@ import { Row, Col } from "antd";
 import dynamic from "next/dynamic";
 
 const AIConfigPanel = dynamic(
-	async () => await import("../agentConfig/AIConfigPanel"),
+	async () => await import("../AgentConfig/AIConfigPanel"),
 	{
 		ssr: false,
 	},

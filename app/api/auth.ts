@@ -7,6 +7,7 @@ import { useAuthStore } from "../store/auth";
 import { use } from "react";
 import { useUserStore } from "../store";
 import { server_url } from "../constant";
+import { verifyAccessToken, verifyUserPermissions } from "./verification";
 
 function getIP(req: NextRequest) {
 	// Use x-forwarded-for header as the source of the IP address
@@ -30,171 +31,54 @@ function parseApiKey(bearToken: string) {
 	};
 }
 
-export function auth(req: NextRequest, modelProvider?: ModelProvider) {
-	const authToken = req.headers.get("Authorization") ?? "";
-	const isAuthenticated = req.cookies.get("authenticated")?.value === "true";
+export async function auth(req: NextRequest) {
+	// 1. 获取token
+	const accessToken = req.cookies.get("access_token")?.value ?? "";
 
-	console.log("[Auth] isAuthenticated", isAuthenticated);
-
-	// check if it is openai api key or user token
-	let { accessCode, apiKey } = parseApiKey(authToken);
-
-	if (modelProvider === ModelProvider.GeminiPro) {
-		const googleAuthToken = req.headers.get("x-goog-api-key") ?? "";
-		apiKey = googleAuthToken.trim().replaceAll("Bearer ", "").trim();
-	}
-
-	const hashedCode = md5.hash(accessCode ?? "").trim();
-
-	const serverConfig = getServerSideConfig();
-	// console.log("[Auth] allowed hashed codes: ", [...serverConfig.codes]);
-	// console.log("[Auth] got access code:", accessCode);
-	// console.log("[Auth] hashed access code:", hashedCode);
-	// console.log("[Auth] got api key:", apiKey);
-	// console.log("[User IP] ", getIP(req));
-	// console.log("Auth", isAuthenticated);
-	// console.log("[Time] ", new Date().toLocaleString());
-
-	if (isAuthenticated === false) {
+	// 2. 验证token
+	const verification = await verifyAccessToken(accessToken);
+	console.log("verification", verification);
+	if (!verification.isValid) {
 		return {
 			error: true,
-			msg: !accessCode
-				? "未登录或登录已过期, 请重新登录"
-				: "未登录或授权码为空, 如清除了cookie, 请重新登录",
+			msg: "请重新登录",
+			status: 401,
 		};
 	}
 
-	// if user does not provide an api key, inject system api key
-	if (isAuthenticated === true) {
-		const serverApiKey =
-			modelProvider === ModelProvider.GeminiPro
-				? serverConfig.googleApiKey
-				: serverConfig.isAzure
-					? serverConfig.azureApiKey
-					: serverConfig.apiKey;
+	const serverConfig = getServerSideConfig();
+	const serverApiKey = serverConfig.apiKey;
+	console.log("serverApiKey", serverApiKey);
 
-		if (serverApiKey) {
-			console.log("[Auth] use system api key");
-			req.headers.set(
-				"Authorization",
-				`${serverConfig.isAzure ? "" : "Bearer "}${serverApiKey}`,
-			);
-		} else {
-			console.log("[Auth] admin did not provide an api key");
-		}
+	if (serverApiKey) {
+		// 设置请求头中的API Key
+		const authHeader = `Bearer ${serverApiKey}`;
+		req.headers.set("Authorization", authHeader);
 	} else {
-		console.log("[Auth] use user api key");
+		return {
+			error: true,
+			msg: "服务配置错误",
+			status: 500,
+		};
 	}
-
 	return {
 		error: false,
+		user_id: verification.user_id,
+		username: verification.username,
 	};
+}
+
+// 辅助函数
+function formatAuthHeader(
+	apiKey: string,
+	modelProvider?: ModelProvider,
+	config?: any,
+): string {
+	if (modelProvider === ModelProvider.GeminiPro) {
+		return apiKey;
+	}
+	return `${config?.isAzure ? "" : "Bearer "}${apiKey}`;
 }
 
 // Path: app\api\auth.ts
 // @JINGWEI KONG Customized
-
-export interface RegisterParams {
-	username: string;
-	password: string;
-	nickname?: string;
-	gender?: string;
-	email: string;
-	invite_code?: string;
-}
-
-export interface RegisterResult {
-	token: string;
-	status: string;
-	data: object;
-}
-
-interface ChangePasswordParams {
-	email: string;
-	reset_code: string;
-	new_password: string;
-}
-
-export async function register(params: any): Promise<any> {
-	return request
-		.post("/gpt/register/", params)
-		.then((res) => res.data)
-		.catch((err) => {
-			// console.log("error", err);
-			return err.response.data;
-		});
-}
-
-interface LoginParams {
-	username: string;
-	password: string;
-}
-
-export async function loginAPI(params: LoginParams) {
-	return request({
-		url: "/gpt/login/",
-		method: "post",
-		data: params,
-	})
-		.then((res) => {
-			return res.data;
-		})
-		.catch((err) => {
-			// console.log(err);
-			return err;
-		});
-}
-
-export async function resetPasswordAPI(params: any) {
-	return request({
-		url: "/gpt/reset-password/",
-		method: "post",
-		data: params,
-	})
-		.then((res) => {
-			return res.data;
-		})
-		.catch((err) => {
-			// console.log(err);
-			return err.response.data;
-		});
-}
-
-export async function changePasswordAPI(params: ChangePasswordParams) {
-	return request({
-		url: "/gpt/reset-password-confirm/",
-		method: "post",
-		data: params,
-	})
-		.then((res) => {
-			return res.data;
-		})
-		.catch((err) => {
-			// console.log(err);
-			return err.response.data;
-		});
-}
-
-export async function logoutAPI() {
-	return request({
-		url: "/gpt/logout/",
-		method: "post",
-	})
-		.then((res) => {
-			// logout 后清除所有cookie
-			document.cookie =
-				"authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie =
-				"user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie =
-				"membership_level=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-			document.cookie =
-				"membership_expiry_date=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-			return res.data;
-		})
-		.catch((err) => {
-			// console.log(err);
-			return err.response;
-		});
-}

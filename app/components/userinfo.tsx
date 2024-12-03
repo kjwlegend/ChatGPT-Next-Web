@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import LogoutButton from "./logout";
 import { useUserStore } from "../store/user";
 import Link from "next/link";
+import Image from "next/image";
+
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Path } from "../constant";
 
@@ -15,7 +17,6 @@ import LightningIcon from "@/app/icons/lightning.svg";
 import EditIcon from "@/app/icons/menu.svg";
 import { Modal } from "antd";
 import style from "./welcome.module.scss";
-import Image from "next/image";
 import { text } from "stream/consumers";
 import { SettingsIcon } from "../icons";
 import { oss_base } from "../constant";
@@ -250,8 +251,8 @@ const NewUserInfo = () => {
 				sideOffset={4}
 			>
 				<DropdownMenuLabel className="p-0 font-normal">
-					<div className="flex flex-col  gap-2 px-1 py-1.5 text-left text-sm">
-						<div className="flex  gap-2">
+					<div className="flex flex-col gap-2 px-1 py-1.5 text-left text-sm">
+						<div className="flex gap-2">
 							<Avatar className="h-8 w-8 rounded-lg">
 								<AvatarImage
 									src={`${oss_base}/${user.avatar}`}

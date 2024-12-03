@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -40,15 +41,10 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 
-import { prettyObject } from "@/app/utils/format";
-import { ExportMessageModal } from "@/app/(chat-pages)/chats/exporter";
-import { getClientConfig } from "@/app/config/client";
-
-import { message, Switch } from "antd";
+import { Switch } from "@/components/ui/switch";
 
 import { SessionConfigModal } from "../modals/SessionConfigModal";
 
-import { MultiAgentChatSession } from "@/app/store/multiagents";
 import { LLMModelSwitch } from "./LLModelSwitch";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import {
@@ -249,10 +245,10 @@ type AutoFlowSwitchProps = {
 };
 function AutoFlowSwitch({ index, session }: AutoFlowSwitchProps) {
 	const enable = session.enableAutoFlow;
-
 	const [enableAutoFlow, setEnableAutoFlow] = useState(enable);
-
 	const workflowStore = useWorkflowStore();
+
+	console.log("AutoFlowSwitch session:", session);
 
 	const handleChange = () => {
 		const newEnableAutoFlow = !enableAutoFlow;
@@ -262,15 +258,20 @@ function AutoFlowSwitch({ index, session }: AutoFlowSwitchProps) {
 		});
 	};
 
+	// 使用 useEffect 监听 enableAutoFlow 的变化
+	useEffect(() => {
+		// 这里可以添加一些副作用，比如更新 UI 状态
+	}, [enableAutoFlow]);
+
 	return (
-		<div>
-			<span style={{ marginRight: "10px", fontSize: "12px" }}>自动流</span>
+		<div className="flex items-center gap-2">
+			<span className="text-xs">自动流</span>
 			<Switch
-				checkedChildren="开启"
-				unCheckedChildren="人工"
-				defaultChecked={enableAutoFlow}
-				onChange={handleChange}
+				checked={enable}
+				onCheckedChange={handleChange}
+				aria-label="Auto flow toggle"
 			/>
+			<span className="text-xs">{enable ? "开启" : "人工"}</span>
 		</div>
 	);
 }
@@ -323,8 +324,8 @@ function WindowActions(props: {
 }
 
 export const WindowHeader = React.memo(
-	(props: { index?: number; isworkflow: boolean; MultiAgent?: boolean }) => {
-		const { index, isworkflow, MultiAgent } = props;
+	(props: { index?: number; isworkflow: boolean }) => {
+		const { index, isworkflow } = props;
 
 		const session = useSessions() as sessionConfig;
 		const hitBottom = false;
@@ -334,15 +335,13 @@ export const WindowHeader = React.memo(
 		const [isEditingMessage, setIsEditingMessage] = useState(false);
 
 		const isMobileScreen = useContext(AppGeneralContext).isMobile;
-
-		const commonProps = useMemo(
-			() => ({
+		const commonProps = useMemo(() => {
+			return {
 				session,
 				index,
 				isworkflow,
-			}),
-			[session, index, isworkflow],
-		);
+			};
+		}, [session, index, isworkflow]);
 
 		return (
 			<>

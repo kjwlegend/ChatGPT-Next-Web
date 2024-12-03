@@ -22,7 +22,7 @@ import { createChatDataAndFetchId } from "../services/chatService";
 import {
 	decideNextAgent,
 	sendNextAgentMessage,
-} from "../(chat-pages)/double-agents/MultiAgentService";
+} from "../(chat-pages)/double-agents/service/MultiAgentService";
 import { AttachImages } from "../(chat-pages)/chats/chat/inputpanel/components/AttachImages";
 
 export type MultiAgentChatMessage = ChatMessage & {
@@ -81,6 +81,7 @@ export type MultiAgentChatSession = {
 	round: number; // 轮次
 	paused?: boolean; // 是否暂停
 	next_agent_type: "round-robin" | "random" | "intelligent"; // 选择下一个 agent 的策略
+	conversation_mode: "chat" | "task"; // 对话模式
 };
 
 export const MULTI_AGENT_DEFAULT_TOPIC = "未定义话题";
@@ -197,6 +198,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				round: 0,
 				paused: false,
 				next_agent_type: "round-robin",
+				conversation_mode: "chat",
 			};
 
 			const newState = {
@@ -234,6 +236,7 @@ const storeCreator: StateCreator<StoreState> = (set, get) => ({
 				paused: false, // 默认不暂停
 				next_agent_type: "round-robin", // 默认使用轮询策略
 				memory: "",
+				conversation_mode: "chat",
 			}),
 		);
 

@@ -11,7 +11,7 @@ export function strictLLMResult(
 	const chatOptions = {
 		messages: prompt,
 		config: {
-			temperature: 0.1,
+			temperature: 0,
 			top_p: 1,
 			model: model ?? SUMMARIZE_MODEL, // 假设 SUMMARIZE_MODEL 是一个已定义的常量
 			stream: false,

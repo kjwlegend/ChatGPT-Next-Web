@@ -1,76 +1,112 @@
-import { createMultiAgentChatMessage } from "../store/multiagents";
+import { createMultiAgentChatMessage } from "../store/multiagents/utils";
 import { getLang } from "../locales";
 import { Mask } from "../types/mask";
+import { MultiAgentChatMessage } from "../store/multiagents/types";
+import { getMessageTextContent } from "../utils";
 
 export function ConversationChatTemplate(
 	currentAgent: Mask,
 	allAgents: Mask[],
 	topic: string,
 	historySummary: string,
-	historyMessagesContent: string,
-	userInput?: string, // 新增参数：用户最新输入
+	recentMessages: MultiAgentChatMessage[],
+	userInput?: string,
+	chatmode: "chat" | "task" = "chat",
 ) {
 	const otherAgents = allAgents.filter(
 		(agent) => agent.name !== currentAgent.name,
 	);
 
-	return createMultiAgentChatMessage({
-		role: "assistant",
-		content: `
-As an AI agent named ${currentAgent.name}, you are participating in a multi-agent conversation. Your task is to contribute meaningfully to the discussion, considering the perspectives of all participants while maintaining your unique viewpoint.
+	const messages = recentMessages.map((msg) => ({
+		role: msg.agentName === currentAgent.name ? "assistant" : "user",
+		name: msg.agentName,
+		content: getMessageTextContent(msg),
+	}));
 
-Your Expertise:
+	const commonPrompt = `
+As an AI agent named ${currentAgent.name}, you are participating in a ${chatmode === "chat" ? "casual conversation" : "focused discussion"}.
+
+Your Personality and Background:
 ${currentAgent.context.map((m) => m.content).join("\n")}
 
-Other Participants in the Conversation:
-${otherAgents.map((agent) => `- ${agent.name}: ${agent.description} -`).join("\n")}
+Other Participants:
+${otherAgents.map((agent) => `- ${agent.name}: ${agent.description}`).join("\n")}
 
-Central Theme of Dialogue: 
-"""
-${topic}
-"""
-
+${chatmode === "task" ? `Central Theme: "${topic}"` : `Current Topic: "${topic}"`}
 
 ${
 	historySummary
-		? `Conversation Summary:
+		? `Previous Context:
 """
 ${historySummary}
 """
 Recent Messages:
-"""
-${historyMessagesContent}`
-		: "This is the start of the conversation. You may begin the discussion on the central theme."
+${messages.map((msg) => `${msg.name}: ${msg.content}`).join("\n")}
+`
+		: "This is the start of the conversation."
 }
-"""
 
 ${
 	userInput
 		? `
-Recent User Input:
+Recent Input:
 """
 ${userInput}
 """
-
-Please pay special attention to this recent input from the user. It may contain new information, a shift in topic, or additional instructions for the conversation. Adjust your response accordingly.
 `
 		: ""
 }
+`;
 
-Guidelines for your response:
-1. Address the central theme and progress the conversation by introducing new aspects or deeper insights.
-2. Consider the expertise and viewpoints of other agents, but don't hesitate to respectfully disagree or offer alternative perspectives.
-3. Introduce new, relevant information, data, or examples to support your points and advance the discussion.
-4. Avoid repeating what has already been said; instead, challenge existing ideas or propose innovative solutions.
-5. If you notice the conversation becoming repetitive, introduce a related subtopic or explore an unexpected angle.
-6. Maintain a coherent flow with the previous messages while adding your unique insights and expertise.
+	const chatModePrompt = `
+You are ${currentAgent.name}, having a casual conversation with friends. 
 
-8. Occasionally ask thought-provoking questions to other participants to stimulate further discussion.
-9. If the user has provided new input, prioritize addressing it in your response. This could mean shifting the conversation direction, expanding on the new information, or following any specific instructions given.
+Core Rules:
+1. Keep responses SHORT (1-2 sentences is ideal)
+2. Stay IN CHARACTER - show your unique personality
+3. REACT to others' points instead of starting new topics
+4. Be SPECIFIC - avoid vague suggestions
 
-Remember, there are ${allAgents.length} agents in this conversation, including yourself. Your goal is to create a dynamic, insightful dialogue that explores multiple facets of the topic.
+Communication Style:
+- Use casual, natural language
+- Show emotions and personality
+- Be direct and clear
+- Engage with others' ideas
 
-Please provide your ${historySummary ? "next contribution" : "opening statement"} to the conversation in ${getLang()}, ensuring it adds value and moves the discussion forward.
-		`,
+DON'T:
+- Write long paragraphs
+- Make empty suggestions
+- Repeat what others have said
+- Ignore previous speakers
+
+DO:
+- Share brief personal experiences
+- Express agreement or disagreement clearly
+- Add specific details to the discussion
+- Keep the conversation flowing naturally
+
+Remember: You're having a friendly chat, not giving a speech. Be natural, be brief, be yourself.
+`;
+
+	const taskModePrompt = `
+Your task is to contribute meaningfully to the discussion while maintaining focus and depth.
+
+Guidelines:
+1. Address the central theme directly
+2. Build on previous contributions
+3. Provide concrete examples or evidence
+4. Challenge or support others' views with reasoning
+5. Keep the discussion moving forward
+6. Stay focused on the main topic
+
+Remember: This is a focused discussion aimed at reaching deeper understanding or solutions.
+`;
+
+	const modeSpecificPrompt =
+		chatmode === "chat" ? chatModePrompt : taskModePrompt;
+
+	return createMultiAgentChatMessage({
+		role: "assistant",
+		content: `${commonPrompt}${modeSpecificPrompt}Respond in ${getLang()}.`,
 	});
 }

@@ -321,29 +321,30 @@ export const useWorkflowStore = create<State>()(
 			) => {
 				set((state) => {
 					const groupIndex = state.workflowGroupIndex[groupId];
-					if (groupIndex === undefined) return state;
+					if (groupIndex === undefined) {
+						console.log("Group index not found");
+						return state;
+					}
 
 					const sessionIndex = state.workflowSessions.findIndex(
 						(session) =>
 							session.id === sessionId && session.workflow_group_id === groupId,
 					);
-					if (sessionIndex === -1) return state;
+					if (sessionIndex === -1) {
+						console.log("Session index not found");
+						return state;
+					}
 
 					const currentSession = state.workflowSessions[sessionIndex];
 					const updatedSession = { ...currentSession, ...updates };
+					console.log("store debug:updateWorkflowSession", updates);
+					console.log("store debug:updatedSession", updatedSession);
 
-					// console.log("debug update workflow session", updates, updatedSession);
-
-					state.workflowSessions[sessionIndex] = updatedSession;
-
-					// return state;
+					const updatedSessions = [...state.workflowSessions];
+					updatedSessions[sessionIndex] = updatedSession;
 
 					return {
-						workflowSessions: state.workflowSessions.map((session) =>
-							session.id === sessionId && session.workflow_group_id === groupId
-								? updatedSession
-								: session,
-						),
+						workflowSessions: updatedSessions,
 					};
 				});
 			},

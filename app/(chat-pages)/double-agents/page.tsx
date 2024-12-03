@@ -1,24 +1,22 @@
 "use client";
 import React, { useState, useEffect, memo } from "react";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+
 import { Button, Layout, message } from "antd";
 import { useAuthStore } from "@/app/store/auth";
 import { useMultipleAgentStore } from "@/app/store/multiagents";
-import {
-	MultiAgentChatProvider,
-	useConversationActions,
-} from "./multiAgentContext";
+import { useConversationActions } from "./hooks/useConversationActions";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { Path, SlotID } from "@/app/constant";
 import styles2 from "@/app/(chat-pages)/chats/home.module.scss";
 import styles from "./multi-agents.module.scss";
-import Image from "next/image";
 import { PlusCircleOutlined, RightSquareOutlined } from "@ant-design/icons";
 import { Loading } from "@/app/components/ui-lib";
 import { getClientConfig } from "@/app/config/client";
 import { getISOLang } from "@/app/locales";
 import { useAccessStore } from "@/app/store";
 
-import dynamic from "next/dynamic";
 import Logo from "@/app/components/logo";
 
 const MultiAgentSideBar = dynamic(
@@ -26,7 +24,7 @@ const MultiAgentSideBar = dynamic(
 	{ loading: () => null, ssr: false },
 );
 
-const ChatArea = dynamic(() => import("./ChatPart/chatLayout"));
+const ChatArea = dynamic(() => import("./components/ChatWindow/chatLayout"));
 
 const { Content } = Layout;
 
@@ -113,21 +111,19 @@ MainScreen.displayName = "MainScreen";
 
 const DoulbeAgentLayout = memo(() => {
 	return (
-		<MultiAgentChatProvider>
-			<Layout style={{ flexDirection: "row" }} className="tight-container">
-				<MultiAgentSideBar />
-				<Layout
-					className={`${styles2["window-content"]} ${styles["background"]}`}
-				>
-					<Content id={SlotID.AppBody}>
-						<Routes>
-							<Route path={"/"} element={<MainScreen />} />
-							<Route path={Path.Chat} element={<MainScreen />} />
-						</Routes>
-					</Content>
-				</Layout>
+		<Layout style={{ flexDirection: "row" }} className="tight-container">
+			<MultiAgentSideBar />
+			<Layout
+				className={`${styles2["window-content"]} ${styles["background"]}`}
+			>
+				<Content id={SlotID.AppBody}>
+					<Routes>
+						<Route path={"/"} element={<MainScreen />} />
+						<Route path={Path.Chat} element={<MainScreen />} />
+					</Routes>
+				</Content>
 			</Layout>
-		</MultiAgentChatProvider>
+		</Layout>
 	);
 });
 

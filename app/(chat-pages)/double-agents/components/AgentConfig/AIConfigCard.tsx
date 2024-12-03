@@ -12,17 +12,7 @@ import {
 	Badge,
 	Menu,
 } from "antd";
-import {
-	SettingOutlined,
-	UserOutlined,
-	PlusCircleOutlined,
-	SwitcherOutlined,
-	ApiTwoTone,
-	ThunderboltTwoTone,
-	EditOutlined,
-	DeleteOutlined,
-	SwapOutlined,
-} from "@ant-design/icons";
+
 import { Button } from "@/components/ui/button";
 
 import {
@@ -49,16 +39,13 @@ import {
 } from "@hello-pangea/dnd";
 
 import styles from "./AIConfig.module.scss";
-import {
-	useMultipleAgentStore,
-	MultiAgentChatSession,
-} from "@/app/store/multiagents";
-import { AIConfig } from "../types";
+import { useMultipleAgentStore } from "@/app/store/multiagents/index";
+import { AIConfig } from "../../types";
 import { Mask } from "@/app/types/";
 import { usePluginStore } from "@/app/store/plugin";
 import { getLang } from "@/app/locales";
 import Avatar from "@/app/components/avatar";
-import { useConversationActions } from "../multiAgentContext";
+import { useConversationActions } from "../../hooks/useConversationActions";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 
 interface AgentCardProps {

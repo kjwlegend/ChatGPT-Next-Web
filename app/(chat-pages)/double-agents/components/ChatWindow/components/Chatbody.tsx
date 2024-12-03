@@ -2,44 +2,74 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { MultiAgentMessageList } from "./messageList";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
-import {
-	useMultipleAgentStore,
-	MultiAgentChatMessage,
-} from "@/app/store/multiagents";
+import { useMultipleAgentStore } from "@/app/store/multiagents/index";
+import { MultiAgentChatMessage } from "@/app/store/multiagents/types";
 import { CHAT_PAGE_SIZE } from "@/app/constant";
-import useMessage from "antd/es/message/useMessage";
-import { useCurrentConversation, useMessages } from "../../multiAgentContext";
 
 export function MultiAgentChatbody() {
-	const { conversation, conversationId } = useCurrentConversation();
+	const multiAgentStore = useMultipleAgentStore.getState();
 
-	const currentSessionId = conversationId;
-	const session = conversation;
+	const currentSessionId = multiAgentStore.currentConversationId;
+	const session = multiAgentStore.currentSession();
 
-	const { messages } = useMessages();
+	const messages = multiAgentStore.getCurrentMessages();
 
-	const [displayMessages, setDisplayMessages] =
-		useState<MultiAgentChatMessage[]>(messages);
+	const [displayMessages, setDisplayMessages] = useState<
+		MultiAgentChatMessage[]
+	>(messages ?? []);
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(true);
 
 	const chatBodyRef = useRef<HTMLDivElement>(null);
 	const [autoScroll, setAutoScroll] = useState(true);
+	const mounted = useRef(true);
 
-	// 初始化显示消息和检查是否还有更多消息
+	// 组件卸载时清理
 	useEffect(() => {
-		if (session) {
+		mounted.current = true;
+		return () => {
+			mounted.current = false;
+		};
+	}, []);
+
+	// 处理 session 变化和初始化
+	useEffect(() => {
+		if (!mounted.current) return;
+
+		if (!session) {
+			setDisplayMessages([]);
+			setHasNextPage(false);
+			return;
+		}
+
+		if (session.messages?.length) {
 			const totalMessages = session.messages.length;
 			const initialMessages = session.messages.slice(-CHAT_PAGE_SIZE);
 			setDisplayMessages(initialMessages);
 			setHasNextPage(totalMessages > CHAT_PAGE_SIZE);
+		} else {
+			setDisplayMessages([]);
+			setHasNextPage(false);
 		}
-	}, [session, currentSessionId]); // 只在会话ID变化时重新初始化
+	}, [session]);
 
-	// 监听 messages 的变化并更新 displayMessages
+	// 处理新消息更新
 	useEffect(() => {
-		setDisplayMessages(messages);
+		if (session?.messages && messages) {
+			const totalMessages = messages.length;
+			const displayedCount = displayMessages.length;
+
+			if (totalMessages > displayedCount) {
+				const newMessages = messages.slice(displayedCount);
+				setDisplayMessages((prevMessages) => {
+					const uniqueNewMessages = newMessages.filter(
+						(msg) => !prevMessages.some((prevMsg) => prevMsg.id === msg.id),
+					);
+					return [...prevMessages, ...uniqueNewMessages];
+				});
+			}
+		}
 	}, [messages]);
 
 	// 处理滚动事件
@@ -79,7 +109,7 @@ export function MultiAgentChatbody() {
 
 	// 监听新消息
 	useEffect(() => {
-		if (session) {
+		if (session?.messages) {
 			const totalMessages = session.messages.length;
 			const displayedCount = displayMessages.length;
 
@@ -106,7 +136,6 @@ export function MultiAgentChatbody() {
 		return null;
 	}
 
-	console.log("double agent message", displayMessages);
 	return (
 		<div
 			className={styles["chat-body"]}

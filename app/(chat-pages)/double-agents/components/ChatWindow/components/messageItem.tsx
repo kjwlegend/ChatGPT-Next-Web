@@ -1,5 +1,5 @@
 import React, { use, useMemo } from "react";
-import { MultiAgentChatMessage } from "@/app/store/multiagents";
+import { MultiAgentChatMessage } from "@/app/store/multiagents/types";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import { Markdown } from "@/app/components/markdown";
 import { MaskAvatar } from "@/app/(chat-pages)/chats/components/mask-modal";

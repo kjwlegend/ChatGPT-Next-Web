@@ -246,6 +246,9 @@ importers:
       jsdom:
         specifier: ^22.1.0
         version: 22.1.0(utf-8-validate@5.0.10)
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       langchain:
         specifier: ^0.3.4
         version: 0.3.5(@langchain/core@0.3.15(openai@4.68.4(encoding@0.1.13)(zod@3.23.8)))(axios@1.7.7)(cheerio@1.0.0)(encoding@0.1.13)(openai@4.68.4(encoding@0.1.13)(zod@3.23.8))
@@ -442,6 +445,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.13
         version: 29.5.14
+      '@types/jsonwebtoken':
+        specifier: ^9.0.7
+        version: 9.0.7
       '@types/md5':
         specifier: ^2.3.5
         version: 2.3.5
@@ -3805,6 +3811,9 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
+  '@types/jsonwebtoken@9.0.7':
+    resolution: {integrity: sha512-ugo316mmTYBl2g81zDFnZ7cfxlut3o+/EQdaP7J8QN2kY6lJ22hmQYCK5EHcJHbrW+dkCGSCPgbG8JtYj6qSrg==}
+
   '@types/katex@0.16.7':
     resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
 
@@ -3832,8 +3841,8 @@ packages:
   '@types/node@18.19.60':
     resolution: {integrity: sha512-cYRj7igVqgxhlHFdBHHpU2SNw3+dN2x0VTZJtLYk6y/ieuGN4XiBgtDjYVktM/yk2y/8pKMileNc6IoEzEJnUw==}
 
-  '@types/node@18.19.64':
-    resolution: {integrity: sha512-955mDqvO2vFf/oL7V3WiUtiz+BugyX8uVbaT2H8oj3+8dRyH2FLiNdowe7eNqRM7IOIZvzDH76EoAT+gwm6aIQ==}
+  '@types/node@18.19.67':
+    resolution: {integrity: sha512-wI8uHusga+0ZugNp0Ol/3BqQfEcCCNfojtO6Oou9iVNGPTL6QNSdnUdqq85fRgIorLhLMuPIKpsN98QE9Nh+KQ==}
 
   '@types/node@20.17.2':
     resolution: {integrity: sha512-OOHK4sjXqkL7yQ7VEEHcf6+0jSvKjWqwnaCtY7AKD/VLEvRHMsxxu7eI8ErnjxHS8VwmekD4PeVCpu4qZEZSxg==}
@@ -4454,8 +4463,8 @@ packages:
   caniuse-lite@1.0.30001673:
     resolution: {integrity: sha512-WTrjUCSMp3LYX0nE12ECkV0a+e6LC85E0Auz75555/qr78Oc8YWhEPNfDd6SHdtlCMSzqtuXY0uyEMNRcsKpKw==}
 
-  caniuse-lite@1.0.30001680:
-    resolution: {integrity: sha512-rPQy70G6AGUMnbwS1z6Xg+RkHYPAi18ihs47GH0jcxIG7wArmPgY3XbS2sRdBbxJljp3thdT8BIqv9ccCypiPA==}
+  caniuse-lite@1.0.30001684:
+    resolution: {integrity: sha512-G1LRwLIQjBQoyq0ZJGqGIJUXzJ8irpbjHLpVRXDvBEScFJ9b17sgK6vlx0GAJFE21okD7zXl08rRRUfq6HdoEQ==}
 
   cargo@0.8.0:
     resolution: {integrity: sha512-Fl49HZ8CAs4++TjtwcoZgwyq2ZQUiFVGQ3byyKKUilNk65iuBRDjpCGH/AUORvAODaVVbGbKyFCa67tlDG3p4g==}
@@ -7062,6 +7071,11 @@ packages:
 
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@3.3.8:
+    resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -10859,7 +10873,7 @@ snapshots:
 
   '@ibm-cloud/watsonx-ai@1.1.1':
     dependencies:
-      '@types/node': 18.19.64
+      '@types/node': 18.19.67
       extend: 3.0.2
       ibm-cloud-sdk-core: 5.1.0
     transitivePeerDependencies:
@@ -13175,6 +13189,10 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
+  '@types/jsonwebtoken@9.0.7':
+    dependencies:
+      '@types/node': 20.17.2
+
   '@types/katex@0.16.7': {}
 
   '@types/md5@2.3.5': {}
@@ -13200,7 +13218,7 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@18.19.64':
+  '@types/node@18.19.67':
     dependencies:
       undici-types: 5.26.5
 
@@ -14066,7 +14084,7 @@ snapshots:
 
   caniuse-lite@1.0.30001673: {}
 
-  caniuse-lite@1.0.30001680: {}
+  caniuse-lite@1.0.30001684: {}
 
   cargo@0.8.0: {}
 
@@ -17404,6 +17422,8 @@ snapshots:
 
   nanoid@3.3.7: {}
 
+  nanoid@3.3.8: {}
+
   nanoid@5.0.8: {}
 
   natural-compare@1.4.0: {}
@@ -17453,7 +17473,7 @@ snapshots:
       '@next/env': 14.2.17
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001680
+      caniuse-lite: 1.0.30001684
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.3.1
@@ -17891,7 +17911,7 @@ snapshots:
 
   postcss@8.4.31:
     dependencies:
-      nanoid: 3.3.7
+      nanoid: 3.3.8
       picocolors: 1.1.1
       source-map-js: 1.2.1
 

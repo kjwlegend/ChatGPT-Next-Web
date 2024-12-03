@@ -19,7 +19,7 @@ import {
 import { FileInfo } from "@/app/client/platforms/utils";
 import { useWorkflowStore } from "@/app/store/workflow";
 import { useMultipleAgentStore } from "@/app/store/multiagents";
-import { sendNextAgentMessage } from "@/app/(chat-pages)/double-agents/MultiAgentService";
+import { sendNextAgentMessage } from "@/app/(chat-pages)/double-agents/service/MultiAgentService";
 
 export function useDoSubmit(
 	session: any,

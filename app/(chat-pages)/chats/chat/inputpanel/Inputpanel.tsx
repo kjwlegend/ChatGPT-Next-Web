@@ -51,7 +51,7 @@ import { useAppConfig, ModelType, useUserStore } from "@/app/store";
 import {
 	MULTI_AGENT_DEFAULT_TOPIC,
 	useMultipleAgentStore,
-} from "@/app/store/multiagents";
+} from "@/app/store/multiagents/index";
 import {
 	copyToClipboard,
 	selectOrCopy,
@@ -111,11 +111,6 @@ import {
 	useSessions,
 } from "../hooks/useChatContext";
 import { sessionConfig } from "@/app/types/";
-import {
-	useConversations,
-	useCurrentConversation,
-} from "@/app/(chat-pages)/double-agents/multiAgentContext";
-let voicetext: string[] = [];
 
 import { UploadFile } from "antd/es/upload/interface"; // 导入 UploadFile 类型
 import { Badge } from "@/components/ui/badge";
@@ -137,12 +132,13 @@ export function Inputpanel(props: {
 	const { index, isworkflow, submitType } = props;
 	const config = useAppConfig();
 	const multiAgentStore = useMultipleAgentStore.getState();
-	const { conversation, conversationId } = useCurrentConversation();
+	const multipleagentConversation = multiAgentStore.currentSession();
 	const sessions = useSessions(); // Call this hook unconditionally
 	const { user } = useUserStore.getState();
 
 	// Then use the result conditionally
-	const session = submitType === "multi-agent" ? conversation : sessions;
+	const session =
+		submitType === "multi-agent" ? multipleagentConversation : sessions;
 
 	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 

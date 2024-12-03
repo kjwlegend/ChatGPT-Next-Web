@@ -1,5 +1,5 @@
 import React from "react";
-import { MultiAgentChatMessage } from "@/app/store/multiagents";
+import { MultiAgentChatMessage } from "@/app/store/multiagents/types";
 import { AgentMessageItem } from "./messageItem";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 import { Spin } from "antd";
@@ -22,7 +22,7 @@ export const MultiAgentMessageList: React.FC<
 	}
 
 	return (
-		<>
+		<div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent h-full overflow-y-auto">
 			{isLoading && hasNextPage && (
 				<div className={styles.loadingMore}>
 					<Spin /> Loading more messages...
@@ -31,6 +31,6 @@ export const MultiAgentMessageList: React.FC<
 			{messages.map((message, index) => (
 				<AgentMessageItem key={message.id} message={message} index={index} />
 			))}
-		</>
+		</div>
 	);
 };
