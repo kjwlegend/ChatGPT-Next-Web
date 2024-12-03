@@ -13,7 +13,7 @@ import { useChatStore } from "@/app/store/chat/index";
 
 import { DEFAULT_TOPIC } from "@/app/store/chat";
 
-import { MultiAgentChatMessage } from "../store/multiagents";
+import { MultiAgentChatMessage } from "../store/multiagents/types";
 import { strictLLMResult } from "./basic";
 import { getMessageTextContent } from "../utils";
 

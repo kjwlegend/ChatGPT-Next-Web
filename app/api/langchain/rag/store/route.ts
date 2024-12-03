@@ -61,7 +61,7 @@ async function handle(req: NextRequest) {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
 	try {
-		const authResult = auth(req, ModelProvider.GPT);
+		const authResult = await auth(req);
 		if (authResult.error) {
 			return NextResponse.json(authResult, {
 				status: 401,

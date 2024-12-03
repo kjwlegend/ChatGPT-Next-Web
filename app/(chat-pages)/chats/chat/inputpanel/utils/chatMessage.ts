@@ -5,7 +5,7 @@ import Locale, { getLang } from "@/app/locales";
 import { estimateTokenLength } from "@/app/utils/chat/token";
 import { getMessageTextContent } from "@/app/utils";
 import { workflowChatSession } from "@/app/types/";
-import { MultiAgentChatSession } from "@/app/store/multiagents";
+
 import { FileInfo } from "@/app/client/platforms/utils";
 export function getMessagesWithMemory(
 	session: ChatSession | workflowChatSession,
@@ -35,15 +35,6 @@ export function getMessagesWithMemory(
 		}),
 	];
 
-	// let ragPrompt;
-	// if (session.attachFiles && session.attachFiles.length > 0) {
-	// 	const ragTemplate = ragSearchTemplate(session.attachFiles);
-	// 	ragPrompt = createMessage({
-	// 		role: "system",
-	// 		content: ragTemplate,
-	// 		date: "",
-	// 	});
-	// }
 	const MemoryPrompt = {
 		role: "system",
 		content:

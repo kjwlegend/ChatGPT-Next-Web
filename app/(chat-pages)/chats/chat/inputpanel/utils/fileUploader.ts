@@ -1,22 +1,12 @@
 import { useDebouncedCallback } from "use-debounce";
 import React from "react";
 
-import { oss_base } from "@/app/constant";
 import { FileInfo } from "@/app/client/platforms/utils";
-
-import {
-	PauseOutlined,
-	PlayCircleOutlined,
-	DeleteOutlined,
-	HeartTwoTone,
-} from "@ant-design/icons";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
-import { compressImage } from "@/app/utils/chat/chat";
 import { ClientApi } from "@/app/client/api";
 
-import { createFromIconfontCN } from "@ant-design/icons";
 import { User } from "@/app/store";
 
 type FileProcessFunction<T> = (file: File) => Promise<T>;

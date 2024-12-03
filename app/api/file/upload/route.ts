@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
-import S3FileStorage from "../../../utils/s3_file_storage";
-import { ModelProvider } from "@/app/constant";
 import AliOSS from "@/app/utils/alioss";
 import { oss_base } from "@/app/constant";
 
@@ -10,7 +8,7 @@ async function handle(req: NextRequest) {
 		return NextResponse.json({ body: "OK" }, { status: 200 });
 	}
 
-	const authResult = auth(req, ModelProvider.GPT);
+	const authResult = await auth(req);
 	if (authResult.error) {
 		return NextResponse.json(authResult, {
 			status: 401,

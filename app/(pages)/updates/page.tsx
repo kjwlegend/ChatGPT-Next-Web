@@ -1177,6 +1177,21 @@ const items = [
 		),
 		className: "fade-in-element",
 	},
+	{
+		label: "2024-12-03",
+		color: "red",
+		children: (
+			<>
+				发布 V3.2.0 版本, 小光说:
+				<ul>
+					<li>全新多人对话模式上线</li>
+					<li>开通智能决策模式</li>
+					<li>新增对话及任务模式</li>
+				</ul>
+			</>
+		),
+		className: "fade-in-element",
+	},
 ];
 
 const Log = () => {
