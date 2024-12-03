@@ -90,7 +90,6 @@ export function createEmptySession(props: {
 		lastSummarizeIndex: 0,
 		mask: props.mask ?? createEmptyMask(),
 		isworkflow: false,
-		mjConfig: { size: "", quality: "", stylize: "", model: "" },
 		isDoubleAgent: false,
 	};
 }

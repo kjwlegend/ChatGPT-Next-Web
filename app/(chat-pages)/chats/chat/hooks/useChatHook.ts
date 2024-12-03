@@ -136,7 +136,6 @@ export function updateChatSessions(newSessionsData: any[]) {
 				: createEmptyMask(),
 			responseStatus: undefined,
 			isworkflow: false,
-			mjConfig: sessionData.mjConfig,
 			chat_count: 0,
 			updated_at: sessionData.updated_at,
 			created_at: sessionData.created_at,
@@ -168,7 +167,6 @@ export function UpdateChatMessages(
 
 	console.log("session: ", session);
 	console.log("mask: ", session.mask);
-	console.log("modleconfig", session.mjConfig);
 	console.log("messages: ", existingMessages);
 
 	const existingMessageIds = new Set(

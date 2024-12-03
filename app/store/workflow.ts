@@ -20,6 +20,7 @@ import { message } from "antd";
 import { WorkflowGroup, workflowChatSession } from "../types/workflow";
 import { createChat } from "../api/backend/chat";
 import { getMessageImages, getMessageTextContent } from "../utils";
+import _ from "lodash";
 
 type State = {
 	workflowGroups: WorkflowGroup[];
@@ -108,7 +109,7 @@ export const useWorkflowStore = create<State>()(
 				get().sortWorkflowGroups();
 			},
 			updateWorkflowGroup: (groupId, updates) => {
-				console.log("store debug:updateWorkflowGroup", groupId, updates);
+				// console.log("store debug:updateWorkflowGroup", groupId, updates);
 				set((state) => {
 					const index = state.workflowGroupIndex[groupId];
 					if (index === undefined) return state;
@@ -167,7 +168,6 @@ export const useWorkflowStore = create<State>()(
 				}
 			},
 			fetchNewWorkflowGroup: (data: WorkflowGroup[]) => {
-				console.log("store debug:adding workflow", data);
 				const existingGroups = get().workflowGroups;
 				const existingIndex = get().workflowGroupIndex;
 
@@ -187,13 +187,10 @@ export const useWorkflowStore = create<State>()(
 						created_at,
 					} = item;
 
-					console.log("store debug:fetchNewWorkflowGroup", item);
 					// Convert updated_at string to Date timestamp
 					const lastUpdateTime = new Date(updated_at).getTime();
 					const existingGroupIndex = existingIndex[id];
-					console.log("store debug:existingGroupIndex", existingGroupIndex);
 
-					console.log("store debug:new group");
 					const newGroup = {
 						id,
 						topic: session_topic,
@@ -208,22 +205,15 @@ export const useWorkflowStore = create<State>()(
 					};
 
 					if (existingGroupIndex === undefined) {
-						// console.log(
-						// 	"store debug:new group",
-						// 	newGroup,
-						// 	"index",
-						// 	existingGroupIndex,
-						// );
-						// 如果该组不存在，则将其添加到数组末尾
 						updatedGroups.push(newGroup);
 						updatedIndex[id] = updatedGroups.length - 1; // 更新索引以指向新组
 					} else {
 						// 如果该组已存在，进行合并操作
-						console.log(
-							"store debug:existing group",
-							existingGroupIndex,
-							newGroup,
-						);
+						// console.log(
+						// 	"store debug:existing group",
+						// 	existingGroupIndex,
+						// 	newGroup,
+						// );
 						updatedGroups[existingGroupIndex] = {
 							...updatedGroups[existingGroupIndex],
 							...newGroup, // 合并新组的属性
@@ -236,10 +226,6 @@ export const useWorkflowStore = create<State>()(
 							],
 							sessions: updatedGroups[existingGroupIndex].sessions || [],
 						};
-						console.log(
-							"store debug:updated group",
-							updatedGroups[existingGroupIndex],
-						);
 					}
 				});
 
@@ -317,7 +303,7 @@ export const useWorkflowStore = create<State>()(
 			updateWorkflowSession: (
 				groupId: string,
 				sessionId: string,
-				updates: Partial<ChatSession>,
+				updates: Partial<workflowChatSession>,
 			) => {
 				set((state) => {
 					const groupIndex = state.workflowGroupIndex[groupId];
@@ -334,12 +320,8 @@ export const useWorkflowStore = create<State>()(
 						console.log("Session index not found");
 						return state;
 					}
-
 					const currentSession = state.workflowSessions[sessionIndex];
 					const updatedSession = { ...currentSession, ...updates };
-					console.log("store debug:updateWorkflowSession", updates);
-					console.log("store debug:updatedSession", updatedSession);
-
 					const updatedSessions = [...state.workflowSessions];
 					updatedSessions[sessionIndex] = updatedSession;
 

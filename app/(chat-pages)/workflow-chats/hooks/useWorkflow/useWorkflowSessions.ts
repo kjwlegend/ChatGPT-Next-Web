@@ -40,7 +40,6 @@ export const useWorkflowSessions = () => {
 					agent: agent.id,
 					workflow_session: groupId,
 				};
-				const mask = maskStore.selectMaskById(agent.id);
 				const res = await createWorkflowSessionChatGroup(apidata, groupId);
 				const newsession = createEmptySession({ id: res.id, mask: agent });
 				addSessionToGroup(groupId, newsession);

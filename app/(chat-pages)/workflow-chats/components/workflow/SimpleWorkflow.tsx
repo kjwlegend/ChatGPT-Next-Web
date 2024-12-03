@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Layout } from "antd";
 import { WorkflowSidebar } from "../../sidebar";
 import AgentList from "../AgentList";
@@ -20,11 +20,6 @@ const SimpleWorkflow: React.FC = () => {
 	const { showAgentList, openAgentList, closeAgentList } = useAgentListModal();
 	const [isAuth, setIsAuth] = useState(false);
 	const router = useRouter();
-	const workflowSessionsRef = useRef(workflowSessions);
-
-	useEffect(() => {
-		workflowSessionsRef.current = workflowSessions;
-	}, [workflowSessions]);
 
 	useEffect(() => {
 		setIsAuth(isAuthenticated);
@@ -44,7 +39,7 @@ const SimpleWorkflow: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		const sessions = workflowSessionsRef.current.filter(
+		const sessions = workflowSessions.filter(
 			(session) => session.workflow_group_id === selectedId,
 		);
 		setCurrentSessions(sessions.sort((a, b) => a.order - b.order));

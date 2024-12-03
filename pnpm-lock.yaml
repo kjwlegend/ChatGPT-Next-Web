@@ -448,6 +448,9 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.7
         version: 9.0.7
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.13
       '@types/md5':
         specifier: ^2.3.5
         version: 2.3.5
@@ -3816,6 +3819,9 @@ packages:
 
   '@types/katex@0.16.7':
     resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
+
+  '@types/lodash@4.17.13':
+    resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
 
   '@types/md5@2.3.5':
     resolution: {integrity: sha512-/i42wjYNgE6wf0j2bcTX6kuowmdL/6PE4IVitMpm2eYKBUuYCprdcWVK+xEF0gcV6ufMCRhtxmReGfc6hIK7Jw==}
@@ -13194,6 +13200,8 @@ snapshots:
       '@types/node': 20.17.2
 
   '@types/katex@0.16.7': {}
+
+  '@types/lodash@4.17.13': {}
 
   '@types/md5@2.3.5': {}
 

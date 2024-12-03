@@ -1,37 +1,13 @@
 import { useDebouncedCallback } from "use-debounce";
-import React, {
-	useState,
-	useRef,
-	useEffect,
-	useMemo,
-	useCallback,
-	Fragment,
-} from "react";
-
-import { getISOLang, getLang } from "@/app/locales";
-
-import SendWhiteIcon from "@/app/icons/send-white.svg";
+import React, { useState } from "react";
 
 import CopyIcon from "@/app/icons/copy.svg";
-import PromptIcon from "@/app/icons/prompt.svg";
-
-import ResetIcon from "@/app/icons/reload.svg";
-import BreakIcon from "@/app/icons/break.svg";
-import SettingsIcon from "@/app/icons/chat-settings.svg";
-
-import LightIcon from "@/app/icons/light.svg";
-import DarkIcon from "@/app/icons/dark.svg";
-import AutoIcon from "@/app/icons/auto.svg";
-import BottomIcon from "@/app/icons/bottom.svg";
-import StopIcon from "@/app/icons/pause.svg";
-import RobotIcon from "@/app/icons/robot.svg";
 
 import { useChatStore } from "@/app/store/chat/index";
 
 import Locale from "@/app/locales";
 
 import { IconButton } from "@/app/components/button";
-import styles from "./chats.module.scss";
 
 import {
 	List,
@@ -43,8 +19,6 @@ import {
 	showToast,
 } from "@/app/components/ui-lib";
 
-import { BotAvatar } from "@/app/components/emoji";
-import { Avatar as UserAvatar } from "antd";
 import {
 	ContextPrompts,
 	MaskAvatar,
@@ -85,6 +59,12 @@ export function SessionConfigModal(props: {
 
 	const handleSave = () => {
 		if (isWorkflow) {
+			console.log(
+				"handleSave workflowId:",
+				workflowId,
+				sessionId,
+				childSessionData,
+			);
 			workflowStore.updateWorkflowSession(
 				workflowId ?? "0",
 				sessionId,
@@ -149,3 +129,26 @@ export function SessionConfigModal(props: {
 		</div>
 	);
 }
+
+export const SessionModal = (props: {
+	session?: sessionConfig;
+	index?: number;
+	isworkflow: boolean;
+	showModal?: boolean;
+	setShowModal: (_: boolean) => void;
+	MultiAgent?: boolean;
+}) => {
+	const session = props.session;
+
+	return (
+		<div>
+			{props.showModal && (
+				<SessionConfigModal
+					onClose={() => props.setShowModal(false)}
+					session={session}
+					isworkflow={props.isworkflow}
+				/>
+			)}
+		</div>
+	);
+};

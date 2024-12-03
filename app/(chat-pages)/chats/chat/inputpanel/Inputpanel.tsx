@@ -33,16 +33,7 @@ import {
 	X,
 } from "lucide-react";
 import { oss_base } from "@/app/constant";
-import CheckmarkIcon from "@/app/icons/checkmark.svg";
 import { FileInfo } from "@/app/client/platforms/utils";
-
-import {
-	PauseOutlined,
-	PlayCircleOutlined,
-	DeleteOutlined,
-	HeartTwoTone,
-	UploadOutlined,
-} from "@ant-design/icons";
 
 import { ChatMessage, ChatSession } from "@/app/types/chat";
 
@@ -63,7 +54,6 @@ import {
 import { Prompt, usePromptStore } from "@/app/store/prompt";
 import Locale from "@/app/locales";
 
-import { IconButton } from "@/app/components/button";
 import styles from "@/app/(chat-pages)/chats/chat/chats.module.scss";
 
 import {

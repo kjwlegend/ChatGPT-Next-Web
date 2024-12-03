@@ -235,7 +235,7 @@ export const ChatActions = memo(
 		const webSearchEnabled =
 			session.mask.plugins?.includes("web-search") ?? false;
 
-		console.log("plugins", usePlugins, "webSearchEnabled", webSearchEnabled);
+		// console.log("plugins", usePlugins, "webSearchEnabled", webSearchEnabled);
 		const [isWebSearchEnabled, setIsWebSearchEnabled] =
 			useState(webSearchEnabled);
 		const [showModelSelector, setShowModelSelector] = useState(false);

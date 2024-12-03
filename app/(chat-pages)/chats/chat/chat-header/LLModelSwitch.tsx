@@ -35,7 +35,8 @@ export function LLMModelSwitch(
 ) {
 	const config = useAppConfig();
 	const chatStore = useChatStore.getState();
-	const { selectedId, updateWorkflowSession } = useWorkflowStore();
+	const workflowStore = useWorkflowStore.getState();
+	const { selectedId, updateWorkflowSession } = workflowStore;
 	const session = props.session || chatStore.selectCurrentSession();
 
 	const [model, setModel] = useState("默认模型");
@@ -43,15 +44,17 @@ export function LLMModelSwitch(
 
 	const handleModelChange = useCallback(
 		async (newModel: Model) => {
+			console.log("handleModelChange newModel:", newModel);
 			try {
 				setModel(newModel.displayName ?? newModel.name);
 				if (props.isworkflow) {
-					await updateWorkflowSession(selectedId, session.id, {
+					updateWorkflowSession(selectedId, session.id, {
 						mask: {
 							...session.mask,
 							modelConfig: {
 								...session.mask.modelConfig,
-								model: newModel.name as ModelType,
+								model: newModel.name,
+								historyMessageCount: 33,
 							},
 						},
 					});

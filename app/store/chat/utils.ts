@@ -12,23 +12,12 @@ export const createEmptySession = (props?: {
 	session_id: "",
 	topic: "未命名话题",
 	messages: [],
-	modelConfig: { ...useAppConfig.getState().modelConfig },
 	lastUpdateTime: Date.now(),
 	createdAt: Date.now(),
 	mask: props?.mask ?? createEmptyMask(),
 	memoryPrompt: "",
 	lastSummarizeIndex: 0,
-	stat: {
-		tokenCount: 0,
-	},
 	isworkflow: false,
-	mjConfig: {
-		size: "",
-		quality: "",
-		stylize: "",
-		model: "",
-	},
-	isDoubleAgent: false,
 });
 
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {

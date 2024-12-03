@@ -62,7 +62,7 @@ interface ChatProps {
 export const _Chat: React.FC<ChatProps> = memo((props) => {
 	const { _session, index, isworkflow, submitType, storeType, className } =
 		props;
-	const chatStore = useChatStore.getState();
+
 	const { setSession } = useChatActions();
 
 	useEffect(() => {

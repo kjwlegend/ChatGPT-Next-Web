@@ -163,14 +163,10 @@ export default function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	// get theme from viewpoint meta
-
 	const config = useAppConfig();
-	const updateConfig = config.update;
 	const theme = config.theme === "dark" ? darkTheme : lightTheme;
 
 	const isMobile = useMobileScreen();
-	console.log("ismobile", isMobile);
 
 	return (
 		<html lang="en">

@@ -43,8 +43,6 @@ import {
 
 import { Switch } from "@/components/ui/switch";
 
-import { SessionConfigModal } from "../modals/SessionConfigModal";
-
 import { LLMModelSwitch } from "./LLModelSwitch";
 import { AppGeneralContext } from "@/app/contexts/AppContext";
 import {
@@ -52,7 +50,7 @@ import {
 	useChatSetting,
 	useSessions,
 } from "../hooks/useChatContext";
-import { SessionModal } from "../modals/sessionConfig";
+import { SessionModal } from "../modals/SessionConfigModal";
 import { sessionConfig } from "@/app/types/";
 import { useWorkflowStore } from "@/app/store/workflow";
 
@@ -244,34 +242,32 @@ type AutoFlowSwitchProps = {
 	session: sessionConfig;
 };
 function AutoFlowSwitch({ index, session }: AutoFlowSwitchProps) {
-	const enable = session.enableAutoFlow;
-	const [enableAutoFlow, setEnableAutoFlow] = useState(enable);
 	const workflowStore = useWorkflowStore();
-
-	console.log("AutoFlowSwitch session:", session);
+	const [enableAutoFlow, setEnableAutoFlow] = useState(session.enableAutoFlow);
 
 	const handleChange = () => {
 		const newEnableAutoFlow = !enableAutoFlow;
-		setEnableAutoFlow(newEnableAutoFlow);
-		workflowStore.updateWorkflowSession(session.workflow_group_id, session.id, {
-			enableAutoFlow: newEnableAutoFlow,
-		});
-	};
 
-	// 使用 useEffect 监听 enableAutoFlow 的变化
-	useEffect(() => {
-		// 这里可以添加一些副作用，比如更新 UI 状态
-	}, [enableAutoFlow]);
+		// 1. 使用 setTimeout 将 store 更新放到下一个事件循环
+		setEnableAutoFlow(newEnableAutoFlow);
+		setTimeout(() => {
+			workflowStore.updateWorkflowSession(
+				session.workflow_group_id,
+				session.id,
+				{ enableAutoFlow: newEnableAutoFlow },
+			);
+		}, 500);
+	};
 
 	return (
 		<div className="flex items-center gap-2">
 			<span className="text-xs">自动流</span>
 			<Switch
-				checked={enable}
+				checked={enableAutoFlow}
 				onCheckedChange={handleChange}
 				aria-label="Auto flow toggle"
 			/>
-			<span className="text-xs">{enable ? "开启" : "人工"}</span>
+			<span className="text-xs">{enableAutoFlow ? "开启" : "人工"}</span>
 		</div>
 	);
 }
@@ -322,48 +318,37 @@ function WindowActions(props: {
 		</>
 	);
 }
+export const WindowHeader = (props: {
+	index?: number;
+	isworkflow: boolean;
+}) => {
+	const { index, isworkflow } = props;
 
-export const WindowHeader = React.memo(
-	(props: { index?: number; isworkflow: boolean }) => {
-		const { index, isworkflow } = props;
+	const session = useSessions() as sessionConfig;
+	const { showPromptModal } = useChatSetting();
+	const { setShowPromptModal } = useChatActions();
+	const isMobileScreen = useContext(AppGeneralContext).isMobile;
 
-		const session = useSessions() as sessionConfig;
-		const hitBottom = false;
+	const commonProps = { session, index, isworkflow };
 
-		const { showPromptModal } = useChatSetting();
-		const { setShowPromptModal } = useChatActions();
-		const [isEditingMessage, setIsEditingMessage] = useState(false);
+	return (
+		<>
+			<div
+				className="window-header flex items-center justify-between"
+				data-tauri-drag-region
+			>
+				{isMobileScreen && !isworkflow && <ReturnButton />}
+				<WindowHeaderTitle {...commonProps} />
+				<WindowActions {...commonProps} />
+			</div>
 
-		const isMobileScreen = useContext(AppGeneralContext).isMobile;
-		const commonProps = useMemo(() => {
-			return {
-				session,
-				index,
-				isworkflow,
-			};
-		}, [session, index, isworkflow]);
-
-		return (
-			<>
-				<div
-					className="window-header flex items-center justify-between"
-					data-tauri-drag-region
-				>
-					{isMobileScreen && !isworkflow && <ReturnButton />}
-
-					<WindowHeaderTitle {...commonProps} />
-
-					<WindowActions {...commonProps} />
-				</div>
-
-				<SessionModal
-					showModal={showPromptModal}
-					setShowModal={setShowPromptModal}
-					{...commonProps}
-				/>
-			</>
-		);
-	},
-);
+			<SessionModal
+				showModal={showPromptModal}
+				setShowModal={setShowPromptModal}
+				{...commonProps}
+			/>
+		</>
+	);
+};
 
 WindowHeader.displayName = "WindowHeader";

@@ -11,7 +11,6 @@ import React, {
 	useMemo,
 } from "react";
 import { useWorkflowStore } from "@/app/store/workflow";
-import { MultiAgentChatSession } from "@/app/store/multiagents";
 
 import { workflowChatSession, sessionConfig } from "@/app/types/";
 interface ActionContextType {
@@ -116,9 +115,7 @@ export const ChatProvider = ({
 
 	// 只在 _session 变化时更新 session
 	useEffect(() => {
-		if (_session?.id !== session?.id) {
-			setSession(_session);
-		}
+		setSession(_session);
 	}, [_session]);
 
 	if (!store) return null;
