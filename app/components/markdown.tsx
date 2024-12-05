@@ -14,6 +14,16 @@ import React from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { showImageModal } from "./ui-lib";
 
+import { Modal } from "@/app/components/ui-lib"; // 确保你有一个 Modal 组件
+import { Copy, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+
 export function Mermaid(props: { code: string }) {
 	const ref = useRef<HTMLDivElement>(null);
 	const [hasError, setHasError] = useState(false);
@@ -64,6 +74,8 @@ export function PreCode(props: { children: any }) {
 	const ref = useRef<HTMLPreElement>(null);
 	const refText = ref.current?.innerText;
 	const [mermaidCode, setMermaidCode] = useState("");
+	const [viewerOpen, setViewerOpen] = useState(false);
+	const [codeType, setCodeType] = useState<"svg" | "html" | null>(null);
 
 	const renderMermaid = useDebouncedCallback(() => {
 		if (!ref.current) return;
@@ -73,32 +85,114 @@ export function PreCode(props: { children: any }) {
 		}
 	}, 600);
 
+	const handleView = () => {
+		if (!ref.current) return;
+		const code = ref.current.innerText;
+		const codeClass = ref.current.querySelector("code")?.className || "";
+
+		if (codeClass.includes("language-svg")) {
+			setCodeType("svg");
+			setViewerOpen(true);
+		} else if (codeClass.includes("language-html")) {
+			setCodeType("html");
+			setViewerOpen(true);
+		}
+	};
+
 	useEffect(() => {
 		setTimeout(renderMermaid, 1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [refText]);
+
+	const getCodeLanguage = () => {
+		if (!ref.current) return null;
+		const codeElement = ref.current.querySelector("code");
+		if (codeElement?.className.includes("language-svg")) return "svg";
+		if (codeElement?.className.includes("language-html")) return "html";
+		return null;
+	};
 
 	return (
 		<>
 			{mermaidCode.length > 0 && (
 				<Mermaid code={mermaidCode} key={mermaidCode} />
 			)}
-			<pre ref={ref}>
-				<span
-					className="copy-code-button"
-					onClick={() => {
-						if (ref.current) {
-							const code = ref.current.innerText;
-							copyToClipboard(code);
-						}
-					}}
-				></span>
+			<pre ref={ref} className="group relative">
+				<div className="absolute right-2 top-2 flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+					<Button
+						variant="outline"
+						size="icon"
+						className="h-6 w-6 border-none bg-transparent hover:bg-black/20 hover:text-white"
+						onClick={() => {
+							if (ref.current) {
+								copyToClipboard(ref.current.innerText);
+							}
+						}}
+					>
+						<Copy className="h-4 w-4" />
+					</Button>
+					{getCodeLanguage() && (
+						<Button
+							variant="outline"
+							size="sm"
+							className="h-6 bg-transparent hover:bg-black/20 hover:text-white"
+							onClick={handleView}
+						>
+							Preview
+						</Button>
+					)}
+				</div>
 				{props.children}
 			</pre>
+
+			<Dialog open={viewerOpen} onOpenChange={(open) => setViewerOpen(open)}>
+				<DialogContent className="h-[80vh] max-w-3xl">
+					<DialogHeader>
+						<DialogTitle className="flex items-center justify-between">
+							{`${codeType?.toUpperCase()} Preview`}
+						</DialogTitle>
+					</DialogHeader>
+					<div className="h-full overflow-auto">
+						{codeType === "svg" ? (
+							<div
+								dangerouslySetInnerHTML={{
+									__html: ref.current?.innerText || "",
+								}}
+								className="flex items-center justify-center rounded bg-white p-4"
+							/>
+						) : (
+							<div className="overflow-hidden rounded bg-white">
+								<iframe
+									srcDoc={ref.current?.innerText || ""}
+									className="h-full min-h-[50vh] w-full border-0"
+									sandbox="allow-scripts allow-same-origin"
+									title="HTML Preview"
+								/>
+							</div>
+						)}
+					</div>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }
-
+function escapeBrackets(text: string) {
+	const pattern =
+		/(```[\s\S]*?```|`.*?`)|\\\[([\s\S]*?[^\\])\\\]|\\\((.*?)\\\)/g;
+	return text.replace(
+		pattern,
+		(match, codeBlock, squareBracket, roundBracket) => {
+			if (codeBlock) {
+				return codeBlock; // 保持代码块不变
+			} else if (squareBracket) {
+				return `$$${squareBracket}$$`; // 将 \[...\] 转换为 $$...$$
+			} else if (roundBracket) {
+				return `$${roundBracket}$`; // 将 \(...\) 转换为 $...$
+			}
+			return match;
+		},
+	);
+}
 function escapeDollarNumber(text: string) {
 	let escapedText = "";
 
@@ -115,12 +209,10 @@ function escapeDollarNumber(text: string) {
 
 	return escapedText;
 }
-
 function MarkdownWrapper(props: { content: string; imageBase64?: string }) {
-	const escapedContent = useMemo(
-		() => escapeDollarNumber(props.content),
-		[props.content],
-	);
+	const escapedContent = useMemo(() => {
+		return escapeBrackets(escapeDollarNumber(props.content));
+	}, [props.content]);
 
 	return (
 		<div style={{ fontSize: "inherit" }}>
@@ -142,11 +234,35 @@ function MarkdownWrapper(props: { content: string; imageBase64?: string }) {
 				components={{
 					pre: PreCode as any,
 					p: (pProps) => <p {...pProps} dir="auto" />,
+					code: ({ node, inline, className, children, ...props }) => {
+						const match = /language-(\w+)/.exec(className || "");
+						const lang = match && match[1];
+
+						if (lang === "svg" || lang === "html") {
+							return (
+								<code className={className} {...props}>
+									{children}
+								</code>
+							);
+						}
+
+						return (
+							<code className={className} {...props}>
+								{children}
+							</code>
+						);
+					},
 					a: (aProps) => {
 						const href = aProps.href || "";
 						const isInternal = /^\/#/i.test(href);
 						const target = isInternal ? "_self" : (aProps.target ?? "_blank");
-						return <a {...aProps} target={target} />;
+						return (
+							<a
+								{...aProps}
+								target={target}
+								rel={isInternal ? undefined : "noopener noreferrer"}
+							/>
+						);
 					},
 				}}
 			>

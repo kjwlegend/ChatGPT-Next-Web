@@ -47,7 +47,7 @@ import { identifyDefaultClaudeModel } from "@/app/utils/checkers";
 import { useAppConfig } from "@/app/store";
 
 const Markdown = dynamic(
-	async () => (await import("./components/markdown")).Markdown,
+	async () => (await import("@/app/components/markdown")).Markdown,
 	{
 		loading: () => <LoadingIcon />,
 	},
@@ -301,7 +301,7 @@ export function RenderExport(props: {
 					id={`${m.role}:${i}`}
 					className={EXPORT_MESSAGE_CLASS_NAME}
 				>
-					<Markdown content={getMessageTextContent(m)} defaultShow />
+					<Markdown content={getMessageTextContent(m)} />
 				</div>
 			))}
 		</div>
@@ -610,7 +610,6 @@ export function ImagePreviewer(props: {
 								<Markdown
 									content={getMessageTextContent(m)}
 									fontSize={config.fontSize}
-									defaultShow
 								/>
 								{getMessageImages(m).length == 1 && (
 									<img
